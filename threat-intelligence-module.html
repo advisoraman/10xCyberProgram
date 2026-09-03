@@ -1,0 +1,2014 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Threat Intelligence — Study Module</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,700&family=IBM+Plex+Mono:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:        #08090a;
+  --bg2:       #0e1012;
+  --bg3:       #141618;
+  --bg4:       #1a1d20;
+  --border:    #1f2328;
+  --border2:   #272c32;
+  --text:      #d4cfc9;
+  --text-muted:#7a7570;
+  --text-dim:  #3d3a37;
+  --gold:      #c9a84c;
+  --gold-dim:  #4a3a18;
+  --gold-glow: rgba(201,168,76,0.07);
+  --red:       #c0392b;
+  --red-bright:#e74c3c;
+  --red-dim:   #4a1510;
+  --teal:      #2ecc71;
+  --teal-dim:  #0d3d20;
+  --blue:      #5dade2;
+  --blue-dim:  #1a3a52;
+  --amber:     #e67e22;
+  --amber-dim: #4a2a08;
+  --sand:      #d4c5a9;
+  --sidebar-w: 250px;
+}
+
+*{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+
+body{
+  font-family:'IBM Plex Mono',monospace;
+  background:var(--bg);
+  color:var(--text);
+  font-size:13px;
+  line-height:1.75;
+  min-height:100vh;
+}
+
+/* grain texture */
+body::after{
+  content:'';
+  position:fixed;top:0;left:0;right:0;bottom:0;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
+  pointer-events:none;z-index:0;opacity:0.4;
+}
+
+.layout{display:flex;min-height:100vh;position:relative;z-index:1;}
+
+/* ── SIDEBAR ── */
+.sidebar{
+  width:var(--sidebar-w);flex-shrink:0;
+  background:var(--bg2);
+  border-right:1px solid var(--border);
+  position:sticky;top:0;height:100vh;
+  overflow-y:auto;display:flex;flex-direction:column;
+}
+.sidebar::-webkit-scrollbar{width:3px;}
+.sidebar::-webkit-scrollbar-thumb{background:var(--border2);}
+
+.sb-head{
+  padding:22px 18px 18px;
+  border-bottom:1px solid var(--border);
+}
+
+.sb-eyebrow{
+  font-size:9px;letter-spacing:0.14em;text-transform:uppercase;
+  color:var(--gold);font-weight:500;margin-bottom:12px;
+  display:flex;align-items:center;gap:8px;
+}
+.sb-eyebrow::before{content:'▪';font-size:8px;}
+
+.sb-title{
+  font-family:'Playfair Display',serif;
+  font-size:16px;font-weight:700;
+  color:var(--text);line-height:1.3;
+}
+
+.sb-meta{font-size:10px;color:var(--text-muted);margin-top:6px;}
+
+.nav-group-label{
+  padding:14px 18px 4px;
+  font-size:9px;letter-spacing:0.1em;text-transform:uppercase;
+  color:var(--text-dim);font-weight:500;
+}
+
+.nav-item{
+  display:flex;align-items:center;gap:10px;
+  padding:7px 18px;
+  font-size:11.5px;color:var(--text-muted);
+  cursor:pointer;transition:all 0.15s;
+  text-decoration:none;
+  border-left:2px solid transparent;
+}
+.nav-item:hover{color:var(--text);background:var(--bg3);border-left-color:var(--border2);}
+.nav-item.active{color:var(--gold);background:var(--gold-glow);border-left-color:var(--gold);}
+
+.nav-idx{font-size:9px;color:var(--text-dim);min-width:18px;text-align:right;}
+
+.sb-footer{
+  margin-top:auto;
+  padding:14px 18px;
+  border-top:1px solid var(--border);
+}
+.sb-prog-label{display:flex;justify-content:space-between;font-size:10px;color:var(--text-muted);margin-bottom:6px;}
+.sb-prog-track{height:2px;background:var(--border2);border-radius:99px;overflow:hidden;}
+.sb-prog-fill{height:100%;background:var(--gold);border-radius:99px;transition:width 0.5s ease;}
+
+/* ── MAIN ── */
+.main{flex:1;overflow-x:hidden;}
+
+/* Hero */
+.hero{
+  padding:56px 64px 44px;
+  border-bottom:1px solid var(--border);
+  background:radial-gradient(ellipse at 20% 0%, rgba(201,168,76,0.05) 0%, transparent 60%);
+  position:relative;overflow:hidden;
+}
+
+.hero::before{
+  content:'INTELLIGENCE';
+  position:absolute;right:-20px;top:50%;transform:translateY(-50%);
+  font-family:'Playfair Display',serif;
+  font-size:120px;font-weight:900;
+  color:rgba(201,168,76,0.04);
+  letter-spacing:-4px;white-space:nowrap;
+  pointer-events:none;user-select:none;
+}
+
+.hero-eyebrow{
+  font-size:10px;letter-spacing:0.14em;text-transform:uppercase;
+  color:var(--gold);font-weight:500;margin-bottom:16px;
+  display:flex;align-items:center;gap:10px;
+}
+
+.hero-eyebrow span{
+  display:inline-block;width:32px;height:1px;
+  background:var(--gold);opacity:0.5;
+}
+
+.hero-title{
+  font-family:'Playfair Display',serif;
+  font-size:48px;font-weight:900;
+  color:var(--text);line-height:1.05;
+  letter-spacing:-0.02em;margin-bottom:18px;
+}
+
+.hero-title em{color:var(--gold);font-style:italic;}
+
+.hero-desc{
+  font-size:13px;color:var(--text-muted);
+  max-width:580px;line-height:1.8;
+  border-left:2px solid var(--gold-dim);
+  padding-left:16px;
+}
+
+.hero-stats{
+  display:flex;gap:0;margin-top:36px;
+  border:1px solid var(--border);
+  border-radius:6px;overflow:hidden;
+  display:inline-flex;
+}
+
+.hero-stat{
+  padding:12px 22px;
+  border-right:1px solid var(--border);
+  display:flex;flex-direction:column;gap:2px;
+}
+.hero-stat:last-child{border-right:none;}
+
+.hs-val{
+  font-family:'Playfair Display',serif;
+  font-size:22px;font-weight:700;color:var(--text);
+}
+.hs-val.g{color:var(--teal);}
+.hs-val.gold{color:var(--gold);}
+.hs-val.r{color:var(--red-bright);}
+.hs-label{font-size:9.5px;color:var(--text-muted);letter-spacing:0.04em;text-transform:uppercase;}
+
+/* Content */
+.content{padding:0 64px 80px;}
+
+/* Section */
+.section{margin-top:56px;animation:riseIn 0.4s ease both;}
+
+@keyframes riseIn{from{opacity:0;transform:translateY(10px);}to{opacity:1;transform:translateY(0);}}
+
+.sec-head{
+  display:flex;align-items:flex-start;gap:18px;
+  margin-bottom:26px;padding-bottom:18px;
+  border-bottom:1px solid var(--border);
+  position:relative;
+}
+
+.sec-head::after{
+  content:'';position:absolute;bottom:-1px;left:0;
+  width:60px;height:1px;background:var(--gold);opacity:0.6;
+}
+
+.sec-num{
+  font-size:10px;font-weight:500;color:var(--text-dim);
+  padding-top:4px;min-width:22px;
+  font-family:'Playfair Display',serif;
+}
+
+.sec-meta{flex:1;}
+
+.sec-title{
+  font-family:'Playfair Display',serif;
+  font-size:26px;font-weight:700;color:var(--text);
+  line-height:1.15;margin-bottom:4px;
+  letter-spacing:-0.01em;
+}
+
+.sec-sub{font-size:11px;color:var(--text-muted);}
+
+.sec-badge{
+  font-size:9px;font-weight:500;letter-spacing:0.08em;
+  text-transform:uppercase;padding:4px 10px;
+  border-radius:2px;flex-shrink:0;margin-top:2px;
+}
+.badge-gold{background:var(--gold-glow);color:var(--gold);border:1px solid var(--gold-dim);}
+.badge-red {background:rgba(192,57,43,0.08);color:var(--red-bright);border:1px solid var(--red-dim);}
+.badge-teal{background:rgba(46,204,113,0.07);color:var(--teal);border:1px solid var(--teal-dim);}
+.badge-blue{background:rgba(93,173,226,0.07);color:var(--blue);border:1px solid var(--blue-dim);}
+.badge-amber{background:rgba(230,126,34,0.07);color:var(--amber);border:1px solid var(--amber-dim);}
+
+/* Theory card */
+.theory{
+  background:var(--bg2);
+  border:1px solid var(--border);
+  border-radius:6px;
+  padding:20px 24px;
+  margin-bottom:14px;
+}
+
+.theory h4{
+  font-family:'Playfair Display',serif;
+  font-size:14px;font-weight:700;
+  color:var(--gold);margin-bottom:10px;
+  display:flex;align-items:center;gap:8px;
+}
+.theory h4::before{content:'§';font-size:11px;opacity:0.6;}
+
+.theory p{font-size:12.5px;color:var(--text-muted);margin-bottom:8px;line-height:1.8;}
+.theory p:last-child{margin-bottom:0;}
+.theory strong{color:var(--text);font-weight:500;}
+.theory em{color:var(--gold);font-style:normal;font-weight:500;}
+
+/* Grid cards */
+.grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(210px,1fr));
+  gap:8px;margin:12px 0;
+}
+
+.card{
+  background:var(--bg3);border:1px solid var(--border);
+  border-radius:5px;padding:14px 16px;
+  transition:border-color 0.15s,background 0.15s;
+}
+.card:hover{border-color:var(--border2);background:var(--bg4);}
+
+.card-key{
+  font-size:10px;font-weight:600;letter-spacing:0.05em;
+  text-transform:uppercase;margin-bottom:6px;
+  color:var(--gold);
+}
+.card-key.r{color:var(--red-bright);}
+.card-key.t{color:var(--teal);}
+.card-key.b{color:var(--blue);}
+.card-key.a{color:var(--amber);}
+
+.card-val{font-size:12px;color:var(--text-muted);line-height:1.65;}
+
+/* Table */
+.dtable{width:100%;border-collapse:collapse;margin:12px 0;font-size:12px;}
+.dtable th{
+  text-align:left;padding:8px 12px;
+  background:var(--bg3);color:var(--text-muted);
+  font-size:9.5px;text-transform:uppercase;letter-spacing:0.07em;
+  border-bottom:1px solid var(--border);font-weight:500;
+}
+.dtable td{
+  padding:9px 12px;border-bottom:1px solid var(--border);
+  color:var(--text-muted);vertical-align:top;
+}
+.dtable tr:last-child td{border-bottom:none;}
+.dtable tr:hover td{background:var(--bg3);color:var(--text);}
+
+.td-k{color:var(--gold);font-weight:500;white-space:nowrap;}
+.td-r{color:var(--red-bright);font-weight:500;}
+.td-g{color:var(--teal);font-weight:500;}
+.td-a{color:var(--amber);font-weight:500;}
+.td-b{color:var(--blue);font-weight:500;}
+
+/* Practical block */
+.practical{
+  border:1px solid var(--border);
+  border-radius:6px;overflow:hidden;
+  margin-bottom:14px;
+}
+
+.prac-head{
+  background:var(--bg3);
+  padding:11px 16px;
+  display:flex;align-items:center;gap:10px;
+  border-bottom:1px solid var(--border);
+  cursor:pointer;user-select:none;
+  transition:background 0.12s;
+}
+.prac-head:hover{background:rgba(201,168,76,0.04);}
+
+.ph-ico{font-size:14px;}
+.ph-title{font-size:12px;font-weight:500;color:var(--text);flex:1;}
+.ph-tag{
+  font-size:9px;font-weight:600;text-transform:uppercase;
+  letter-spacing:0.07em;padding:2px 8px;border-radius:2px;
+}
+.pt-lab{background:rgba(192,57,43,0.1);color:var(--red-bright);border:1px solid var(--red-dim);}
+.pt-cmd{background:rgba(93,173,226,0.08);color:var(--blue);border:1px solid var(--blue-dim);}
+.pt-osint{background:var(--gold-glow);color:var(--gold);border:1px solid var(--gold-dim);}
+.pt-build{background:rgba(46,204,113,0.07);color:var(--teal);border:1px solid var(--teal-dim);}
+.pt-report{background:rgba(230,126,34,0.07);color:var(--amber);border:1px solid var(--amber-dim);}
+
+.ph-chevron{font-size:9px;color:var(--text-dim);transition:transform 0.2s;}
+.practical.open .ph-chevron{transform:rotate(90deg);}
+
+.prac-body{display:none;padding:18px 22px;}
+.practical.open .prac-body{display:block;}
+
+/* Steps */
+.steps{list-style:none;}
+.step{display:flex;gap:16px;margin-bottom:18px;padding-bottom:18px;border-bottom:1px dashed var(--border);}
+.step:last-child{margin-bottom:0;padding-bottom:0;border-bottom:none;}
+
+.step-num{
+  width:24px;height:24px;border-radius:50%;
+  border:1px solid var(--gold-dim);
+  background:var(--gold-glow);
+  display:flex;align-items:center;justify-content:center;
+  font-size:9px;font-weight:700;color:var(--gold);
+  flex-shrink:0;margin-top:1px;
+  font-family:'Playfair Display',serif;
+}
+
+.step-content{flex:1;}
+.step-title{font-size:12.5px;font-weight:600;color:var(--text);margin-bottom:5px;}
+.step-desc{font-size:12px;color:var(--text-muted);line-height:1.75;margin-bottom:8px;}
+.step-desc:last-child{margin-bottom:0;}
+
+/* Code */
+.code{
+  background:#050607;
+  border:1px solid var(--border);
+  border-radius:4px;
+  padding:13px 16px;
+  font-size:11.5px;
+  color:var(--teal);
+  overflow-x:auto;margin:8px 0;
+  position:relative;
+  line-height:1.7;
+}
+.code .cm{color:var(--text-dim);}
+.code .cmd{color:var(--teal);}
+.code .flag{color:var(--gold);}
+.code .val{color:var(--sand);}
+.code .out{color:var(--text-dim);font-style:italic;}
+.code .kw{color:var(--blue);}
+.code .hi{color:var(--red-bright);}
+.code .str{color:var(--amber);}
+
+.code::before{
+  content:attr(data-label);
+  position:absolute;top:6px;right:10px;
+  font-size:9px;color:var(--text-dim);
+  letter-spacing:0.07em;text-transform:uppercase;
+}
+
+/* Notes */
+.note{
+  display:flex;gap:10px;align-items:flex-start;
+  border-radius:4px;padding:10px 14px;
+  font-size:12px;margin:10px 0;line-height:1.7;
+}
+.note.gold{background:var(--gold-glow);border:1px solid var(--gold-dim);color:var(--text-muted);}
+.note.warn{background:rgba(192,57,43,0.06);border:1px solid var(--red-dim);color:var(--text-muted);}
+.note.info{background:rgba(93,173,226,0.06);border:1px solid var(--blue-dim);color:var(--text-muted);}
+.note.tip{background:rgba(46,204,113,0.05);border:1px solid var(--teal-dim);color:var(--text-muted);}
+.note .ni{font-size:13px;flex-shrink:0;margin-top:1px;}
+.note strong{color:var(--text);}
+
+/* divider */
+.hdiv{border:none;border-top:1px solid var(--border);margin:40px 0 0;}
+
+/* Flow */
+.flow{
+  display:flex;align-items:center;flex-wrap:wrap;
+  gap:4px;margin:12px 0;padding:14px 16px;
+  background:var(--bg3);border:1px solid var(--border);border-radius:5px;
+}
+.flow-step{
+  background:var(--bg2);border:1px solid var(--border2);
+  border-radius:3px;padding:5px 12px;
+  font-size:11px;color:var(--text);
+}
+.flow-step.active{border-color:var(--gold-dim);color:var(--gold);}
+.flow-arrow{color:var(--text-dim);font-size:11px;}
+
+/* Pyramid diagram */
+.pyramid{
+  margin:16px 0;
+  display:flex;flex-direction:column;align-items:center;gap:0;
+}
+
+.pyr-row{
+  display:flex;align-items:center;justify-content:space-between;
+  gap:12px;width:100%;max-width:680px;
+  margin-bottom:2px;
+}
+
+.pyr-label{
+  font-size:11px;color:var(--text-muted);
+  text-align:right;min-width:140px;
+}
+
+.pyr-bar{
+  flex:1;height:38px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:11px;font-weight:500;color:var(--bg);
+  border-radius:2px;
+  clip-path:polygon(4% 0%, 96% 0%, 100% 100%, 0% 100%);
+}
+
+.pyr-difficulty{
+  font-size:10px;min-width:80px;
+}
+
+/* Kill chain */
+.killchain{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(110px,1fr));
+  gap:2px;margin:12px 0;
+}
+
+.kc-step{
+  background:var(--bg3);
+  border:1px solid var(--border);
+  border-radius:3px;
+  padding:10px 10px 10px;
+  text-align:center;
+  position:relative;
+  transition:border-color 0.15s;
+}
+.kc-step:hover{border-color:var(--border2);}
+.kc-step.active{border-color:var(--gold-dim);background:var(--gold-glow);}
+
+.kc-num{
+  font-size:9px;color:var(--text-dim);
+  font-family:'Playfair Display',serif;
+  margin-bottom:4px;
+}
+.kc-name{font-size:11px;font-weight:500;color:var(--text);margin-bottom:4px;}
+.kc-desc{font-size:10.5px;color:var(--text-muted);line-height:1.5;}
+
+/* STIX box */
+.stix-box{
+  background:var(--bg3);border:1px solid var(--border);
+  border-radius:5px;padding:14px 16px;margin:10px 0;
+}
+.stix-title{
+  font-size:10px;text-transform:uppercase;letter-spacing:0.08em;
+  color:var(--text-dim);margin-bottom:10px;font-weight:500;
+}
+.stix-grid{
+  display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));
+  gap:6px;
+}
+.stix-obj{
+  background:var(--bg2);border:1px solid var(--border);
+  border-radius:3px;padding:8px 10px;
+  font-size:11px;color:var(--text-muted);
+  display:flex;flex-direction:column;gap:2px;
+}
+.stix-obj .so-type{font-size:9px;color:var(--text-dim);text-transform:uppercase;letter-spacing:0.06em;}
+.stix-obj .so-name{color:var(--text);font-weight:500;}
+
+/* IOC table row colours */
+.ioc-hash{color:var(--blue);}
+.ioc-ip{color:var(--teal);}
+.ioc-domain{color:var(--amber);}
+.ioc-file{color:var(--red-bright);}
+.ioc-reg{color:var(--gold);}
+
+/* Checklist */
+.checklist{list-style:none;}
+.checklist li{
+  display:flex;align-items:flex-start;gap:10px;
+  padding:5px 8px;border-radius:3px;
+  font-size:12px;color:var(--text-muted);cursor:pointer;
+  transition:background 0.1s;
+}
+.checklist li:hover{background:var(--bg3);color:var(--text);}
+.cb{
+  width:14px;height:14px;border:1px solid var(--border2);
+  border-radius:2px;flex-shrink:0;margin-top:2px;
+  display:flex;align-items:center;justify-content:center;
+  transition:all 0.15s;
+}
+.checklist li.done .cb{background:var(--teal);border-color:var(--teal);}
+.checklist li.done .cb::after{content:'✓';font-size:9px;color:#000;font-weight:bold;}
+.checklist li.done span:last-child{text-decoration:line-through;color:var(--text-dim);}
+
+/* APT card */
+.apt-grid{
+  display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));
+  gap:10px;margin:12px 0;
+}
+
+.apt-card{
+  background:var(--bg2);border:1px solid var(--border);
+  border-radius:5px;padding:16px 18px;
+  transition:border-color 0.15s;
+  position:relative;overflow:hidden;
+}
+.apt-card::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:2px;
+}
+.apt-card.nation::before{background:var(--red-bright);}
+.apt-card.criminal::before{background:var(--amber);}
+.apt-card.hacktivist::before{background:var(--blue);}
+
+.apt-card:hover{border-color:var(--border2);}
+
+.apt-header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:10px;}
+.apt-name{
+  font-family:'Playfair Display',serif;
+  font-size:15px;font-weight:700;color:var(--text);
+}
+.apt-alias{font-size:10px;color:var(--text-dim);margin-top:1px;}
+.apt-origin{
+  font-size:9px;font-weight:600;letter-spacing:0.06em;
+  text-transform:uppercase;padding:2px 8px;border-radius:2px;
+  flex-shrink:0;
+}
+.ao-cn{background:rgba(192,57,43,0.1);color:var(--red-bright);border:1px solid var(--red-dim);}
+.ao-ru{background:rgba(93,173,226,0.08);color:var(--blue);border:1px solid var(--blue-dim);}
+.ao-kr{background:rgba(230,126,34,0.08);color:var(--amber);border:1px solid var(--amber-dim);}
+.ao-ir{background:rgba(46,204,113,0.07);color:var(--teal);border:1px solid var(--teal-dim);}
+.ao-unk{background:var(--gold-glow);color:var(--gold);border:1px solid var(--gold-dim);}
+
+.apt-row{display:flex;gap:8px;margin-bottom:5px;align-items:flex-start;}
+.apt-row-label{font-size:10px;color:var(--text-dim);min-width:70px;flex-shrink:0;text-transform:uppercase;letter-spacing:0.04em;padding-top:1px;}
+.apt-row-val{font-size:11.5px;color:var(--text-muted);flex:1;line-height:1.55;}
+.apt-row-val.highlight{color:var(--text);}
+
+.ttp-tag{
+  display:inline-block;font-size:10px;
+  background:var(--bg3);border:1px solid var(--border);
+  color:var(--text-muted);padding:1px 6px;border-radius:2px;
+  margin:1px;
+}
+
+/* scrollbar */
+::-webkit-scrollbar{width:5px;height:5px;}
+::-webkit-scrollbar-track{background:transparent;}
+::-webkit-scrollbar-thumb{background:var(--border2);border-radius:3px;}
+
+@media(max-width:900px){
+  .sidebar{display:none;}
+  .hero,.content{padding-left:24px;padding-right:24px;}
+  .hero-title{font-size:32px;}
+  .hero::before{display:none;}
+  .grid{grid-template-columns:1fr 1fr;}
+  .apt-grid{grid-template-columns:1fr;}
+  .killchain{grid-template-columns:repeat(4,1fr);}
+}
+</style>
+</head>
+<body>
+<div class="layout">
+
+<!-- SIDEBAR -->
+<nav class="sidebar">
+  <div class="sb-head">
+    <div class="sb-eyebrow">Module 07</div>
+    <div class="sb-title">Threat<br>Intelligence</div>
+    <div class="sb-meta">Week 7 · CTI Track · SOC/GRC Aligned</div>
+  </div>
+
+  <div class="nav-group-label">Foundations</div>
+  <a class="nav-item active" href="#s1"><span class="nav-idx">01</span>CTI Types & Lifecycle</a>
+  <a class="nav-item" href="#s2"><span class="nav-idx">02</span>Pyramid of Pain</a>
+  <a class="nav-item" href="#s3"><span class="nav-idx">03</span>Cyber Kill Chain</a>
+  <a class="nav-item" href="#s4"><span class="nav-idx">04</span>Diamond Model</a>
+
+  <div class="nav-group-label">IOC & Feeds</div>
+  <a class="nav-item" href="#s5"><span class="nav-idx">05</span>IOC Types & Enrichment</a>
+  <a class="nav-item" href="#s6"><span class="nav-idx">06</span>STIX / TAXII</a>
+  <a class="nav-item" href="#s7"><span class="nav-idx">07</span>Open Intel Sources</a>
+
+  <div class="nav-group-label">Tools & Practice</div>
+  <a class="nav-item" href="#s8"><span class="nav-idx">08</span>OSINT Recon Techniques</a>
+  <a class="nav-item" href="#s9"><span class="nav-idx">09</span>MISP Platform</a>
+  <a class="nav-item" href="#s10"><span class="nav-idx">10</span>APT Group Profiles</a>
+  <a class="nav-item" href="#s11"><span class="nav-idx">11</span>Dark Web Awareness</a>
+
+  <div class="nav-group-label">Deliverable</div>
+  <a class="nav-item" href="#s12"><span class="nav-idx">12</span>Write a CTI Report</a>
+
+  <div class="sb-footer">
+    <div class="sb-prog-label"><span>Progress</span><span id="sb-pct">0%</span></div>
+    <div class="sb-prog-track"><div class="sb-prog-fill" id="sb-fill" style="width:0%"></div></div>
+  </div>
+</nav>
+
+<!-- MAIN -->
+<main class="main">
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-eyebrow"><span></span>Module 07 · Cybersecurity Track<span></span></div>
+  <h1 class="hero-title">Threat<br><em>Intelligence</em></h1>
+  <p class="hero-desc">How analysts collect, process, and operationalize knowledge about adversaries — turning raw data into actionable intelligence that protects organizations before attacks land.</p>
+  <div class="hero-stats">
+    <div class="hero-stat"><span class="hs-val gold">12</span><span class="hs-label">Topics</span></div>
+    <div class="hero-stat"><span class="hs-val g">8+</span><span class="hs-label">Labs</span></div>
+    <div class="hero-stat"><span class="hs-val r">20+</span><span class="hs-label">APT Profiles</span></div>
+    <div class="hero-stat"><span class="hs-val">Week 7</span><span class="hs-label">Timeline</span></div>
+  </div>
+</div>
+
+<div class="content">
+
+<!-- ══════════════════════════════════
+01 — CTI Types & Lifecycle
+══════════════════════════════════ -->
+<div class="section" id="s1">
+  <div class="sec-head">
+    <span class="sec-num">01</span>
+    <div class="sec-meta">
+      <div class="sec-title">CTI Types & Intelligence Lifecycle</div>
+      <div class="sec-sub">What threat intelligence actually is and how it flows</div>
+    </div>
+    <span class="sec-badge badge-gold">Foundation</span>
+  </div>
+
+  <div class="theory">
+    <h4>What is Cyber Threat Intelligence?</h4>
+    <p><strong>CTI is evidence-based knowledge about adversaries</strong> — who they are, what they want, how they operate, and what indicators they leave behind. The goal is to move from reactive security ("we got hacked") to proactive security ("we knew this attack was coming").</p>
+    <p>Raw data is not intelligence. A list of IP addresses is <em>data</em>. Understanding that those IPs belong to APT41's C2 infrastructure targeting Indian fintech companies is <em>intelligence</em>. The transformation requires context, analysis, and relevance to your organization.</p>
+  </div>
+
+  <div class="grid">
+    <div class="card">
+      <div class="card-key">Strategic</div>
+      <div class="card-val">High-level trends for executives and boards. "APT groups are targeting Indian pharma sector this quarter." Non-technical. Used for budgets, risk decisions.</div>
+    </div>
+    <div class="card">
+      <div class="card-key a">Operational</div>
+      <div class="card-val">Specific campaigns and attack plans. "Phishing campaign targeting BFSI sector using fake RBI notices." Used by SOC managers, IR teams.</div>
+    </div>
+    <div class="card">
+      <div class="card-key b">Tactical</div>
+      <div class="card-val">TTPs — Tactics, Techniques, Procedures. How the attacker operates step-by-step. Used to tune detection rules and defenses.</div>
+    </div>
+    <div class="card">
+      <div class="card-key r">Technical</div>
+      <div class="card-val">Raw IOCs — IPs, domains, hashes, URLs. Machine-consumable, fed directly into SIEMs, firewalls, EDR. Short shelf life.</div>
+    </div>
+  </div>
+
+  <div class="theory" style="margin-top:16px;">
+    <h4>The Intelligence Lifecycle — 6 Phases</h4>
+    <p>Every professional CTI team follows this cycle. It's iterative — the output of each cycle feeds requirements for the next.</p>
+  </div>
+
+  <div class="flow" style="flex-direction:column;align-items:flex-start;gap:10px;">
+    <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
+      <div class="flow-step active">1. Planning & Direction</div>
+      <span class="flow-arrow">→</span>
+      <div class="flow-step">2. Collection</div>
+      <span class="flow-arrow">→</span>
+      <div class="flow-step">3. Processing</div>
+      <span class="flow-arrow">→</span>
+      <div class="flow-step">4. Analysis</div>
+      <span class="flow-arrow">→</span>
+      <div class="flow-step">5. Dissemination</div>
+      <span class="flow-arrow">→</span>
+      <div class="flow-step active">6. Feedback</div>
+    </div>
+  </div>
+
+  <div class="grid" style="margin-top:10px;">
+    <div class="card"><div class="card-key">1. Planning</div><div class="card-val">Define Intelligence Requirements (IRs): What do we need to know? Who is likely to attack us? What assets are most critical?</div></div>
+    <div class="card"><div class="card-key a">2. Collection</div><div class="card-val">Gather raw data from OSINT, dark web monitoring, vendor feeds, honeypots, internal telemetry, ISACs.</div></div>
+    <div class="card"><div class="card-key b">3. Processing</div><div class="card-val">Normalize, filter, deduplicate raw data. Convert to usable formats (STIX, structured CSV, enriched JSON).</div></div>
+    <div class="card"><div class="card-key">4. Analysis</div><div class="card-val">Apply analytical frameworks (Diamond Model, Kill Chain). Assess attacker intent, capability, opportunity. Produce finished intelligence.</div></div>
+    <div class="card"><div class="card-key r">5. Dissemination</div><div class="card-val">Deliver intelligence to the right audience in the right format — executive brief, SOC alert, SIEM rule, firewall block list.</div></div>
+    <div class="card"><div class="card-key t">6. Feedback</div><div class="card-val">Consumers review intelligence quality. Was it actionable? Timely? Accurate? Drives improvement for next cycle.</div></div>
+  </div>
+
+  <div class="practical open">
+    <div class="prac-head" onclick="toggleP(this)">
+      <span class="ph-ico">📋</span>
+      <span class="ph-title">Lab 1.1 — Define Intelligence Requirements for a fictional Indian bank</span>
+      <span class="ph-tag pt-build">Exercise</span>
+      <span class="ph-chevron">▶</span>
+    </div>
+    <div class="prac-body">
+      <div class="note gold"><span class="ni">💡</span><span><strong>Goal:</strong> Before you consume any threat intelligence, you must know what questions you're trying to answer. This exercise builds that muscle.</span></div>
+      <ol class="steps" style="margin-top:14px;">
+        <li class="step">
+          <span class="step-num">1</span>
+          <div class="step-content">
+            <div class="step-title">Define your hypothetical organization</div>
+            <div class="step-desc">You are CTI analyst at <strong>IndusCore Bank</strong> — a mid-size Indian private bank with 300 branches, UPI/NEFT infrastructure, mobile banking app, and 2,000 employees. Assets: Core Banking System (CBS), SWIFT network, customer PII database, ATM network.</div>
+          </div>
+        </li>
+        <li class="step">
+          <span class="step-num">2</span>
+          <div class="step-content">
+            <div class="step-title">Write 5 Priority Intelligence Requirements (PIRs)</div>
+            <div class="step-desc">Open a Google Doc and write these PIRs based on the bank's profile:</div>
+            <div class="code" data-label="PIR examples">
+<span class="cm">PIR-1:</span> <span class="val">Which threat actors are currently targeting Indian banking/BFSI sector?</span>
+<span class="cm">PIR-2:</span> <span class="val">What phishing campaigns are active against Indian banking customers?</span>
+<span class="cm">PIR-3:</span> <span class="val">Are there known exploits targeting the Oracle FLEXCUBE CBS platform?</span>
+<span class="cm">PIR-4:</span> <span class="val">Is IndusCore Bank mentioned in any dark web leak forums or paste sites?</span>
+<span class="cm">PIR-5:</span> <span class="val">What TTPs are being used against SWIFT infrastructure globally?</span>
+            </div>
+          </div>
+        </li>
+        <li class="step">
+          <span class="step-num">3</span>
+          <div class="step-content">
+            <div class="step-title">Map each PIR to an intelligence type</div>
+            <div class="step-desc">PIR-1 → Strategic & Tactical. PIR-2 → Operational & Technical. PIR-3 → Technical. PIR-4 → Operational. PIR-5 → Tactical. This determines where you'll collect data for each question.</div>
+          </div>
+        </li>
+      </ol>
+    </div>
+  </div>
+</div>
+
+<hr class="hdiv">
+
+<!-- ══════════════════════════════════
+02 — Pyramid of Pain
+══════════════════════════════════ -->
+<div class="section" id="s2">
+  <div class="sec-head">
+    <span class="sec-num">02</span>
+    <div class="sec-meta">
+      <div class="sec-title">The Pyramid of Pain</div>
+      <div class="sec-sub">Why blocking hashes is useless and TTPs are gold</div>
+    </div>
+    <span class="sec-badge badge-gold">Must Know</span>
+  </div>
+
+  <div class="theory">
+    <h4>David Bianco's Pyramid — The Most Important CTI Concept</h4>
+    <p>The Pyramid of Pain (David Bianco, 2013) shows that different types of IOCs cause different levels of "pain" to attackers when you detect and block them. <strong>The higher up the pyramid, the harder it is for an attacker to change their behavior</strong> — and the more valuable that intelligence is.</p>
+    <p>Most organizations focus on the bottom. Elite CTI teams focus on the top.</p>
+  </div>
+
+  <div class="pyramid">
+    <div class="pyr-row">
+      <div class="pyr-label" style="color:var(--red-bright);font-weight:600;">TTPs</div>
+      <div class="pyr-bar" style="background:var(--red-bright);clip-path:polygon(15% 0%, 85% 0%, 100% 100%, 0% 100%);">Tactics, Techniques & Procedures</div>
+      <div class="pyr-difficulty" style="color:var(--red-bright);font-weight:600;">Tough!</div>
+    </div>
+    <div class="pyr-row">
+      <div class="pyr-label" style="color:var(--amber);">Tools</div>
+      <div class="pyr-bar" style="background:var(--amber);clip-path:polygon(12% 0%, 88% 0%, 100% 100%, 0% 100%);">Malware, exploits, custom tooling</div>
+      <div class="pyr-difficulty" style="color:var(--amber);">Challenging</div>
+    </div>
+    <div class="pyr-row">
+      <div class="pyr-label" style="color:var(--gold);">Network/Host Artifacts</div>
+      <div class="pyr-bar" style="background:var(--gold);clip-path:polygon(9% 0%, 91% 0%, 100% 100%, 0% 100%);">Registry keys, mutex, C2 URIs</div>
+      <div class="pyr-difficulty" style="color:var(--gold);">Annoying</div>
+    </div>
+    <div class="pyr-row">
+      <div class="pyr-label" style="color:var(--blue);">Domain Names</div>
+      <div class="pyr-bar" style="background:var(--blue);clip-path:polygon(6% 0%, 94% 0%, 100% 100%, 0% 100%);">C2 domains, phishing domains</div>
+      <div class="pyr-difficulty" style="color:var(--blue);">Simple</div>
+    </div>
+    <div class="pyr-row">
+      <div class="pyr-label" style="color:var(--teal);">IP Addresses</div>
+      <div class="pyr-bar" style="background:var(--teal);clip-path:polygon(4% 0%, 96% 0%, 100% 100%, 0% 100%);">C2 IPs, scanning IPs</div>
+      <div class="pyr-difficulty" style="color:var(--teal);">Easy</div>
+    </div>
+    <div class="pyr-row">
+      <div class="pyr-label" style="color:var(--text-muted);">Hash Values</div>
+      <div class="pyr-bar" style="background:var(--text-muted);clip-path:polygon(2% 0%, 98% 0%, 100% 100%, 0% 100%);">MD5, SHA1, SHA256 of malware</div>
+      <div class="pyr-difficulty" style="color:var(--text-muted);">Trivial</div>
+    </div>
+  </div>
+
+  <div class="note warn" style="margin-top:16px;">
+    <span class="ni">⚠️</span>
+    <span><strong>The hard truth:</strong> Blocking a hash takes an attacker 30 seconds to bypass (recompile the malware). Blocking an IP takes minutes (new VPS). Detecting a TTP forces them to fundamentally change how they operate — that costs weeks of effort. Invest intelligence resources at the top of the pyramid.</span>
+  </div>
+
+  <div class="practical open">
+    <div class="prac-head" onclick="toggleP(this)">
+      <span class="ph-ico">🔺</span>
+      <span class="ph-title">Lab 2.1 — Classify a real IOC report using the Pyramid of Pain</span>
+      <span class="ph-tag pt-osint">Analysis</span>
+      <span class="ph-chevron">▶</span>
+    </div>
+    <div class="prac-body">
+      <ol class="steps">
+        <li class="step">
+          <span class="step-num">1</span>
+          <div class="step-content">
+            <div class="step-title">Go to AlienVault OTX and find a recent pulse for a known threat</div>
+            <div class="step-desc">Navigate to <code style="color:var(--teal)">otx.alienvault.com</code> → search "APT28" or "Lazarus". Open a recent pulse (a structured threat report with IOCs).</div>
+          </div>
+        </li>
+        <li class="step">
+          <span class="step-num">2</span>
+          <div class="step-content">
+            <div class="step-title">List all IOCs from the pulse and classify each by pyramid level</div>
+            <div class="code" data-label="classification exercise">
+<span class="cm"># Example from an APT28 pulse:</span>
+
+<span class="kw">IOC</span>: <span class="val">185.220.101.47</span>
+<span class="cm">→ Pyramid Level:</span> <span class="str">IP Address (Trivial to change)</span>
+<span class="cm">→ Defensive action:</span> <span class="str">Firewall block (low value, do anyway)</span>
+
+<span class="kw">IOC</span>: <span class="val">secure-update.microsoft.com.phishingdomain.ru</span>
+<span class="cm">→ Pyramid Level:</span> <span class="str">Domain Name (Simple to change)</span>
+<span class="cm">→ Defensive action:</span> <span class="str">DNS block + update email filters</span>
+
+<span class="kw">IOC</span>: <span class="val">SHA256: a3f9d2c8e1b4...</span>
+<span class="cm">→ Pyramid Level:</span> <span class="str">Hash Value (Trivial — lowest value)</span>
+<span class="cm">→ Defensive action:</span> <span class="str">AV sig, but attacker recompiles in seconds</span>
+
+<span class="kw">TTP</span>: <span class="val">Uses PowerShell to download from C2 via HTTPS, decodes base64 payload</span>
+<span class="cm">→ Pyramid Level:</span> <span class="str">TTP (Hard — forces attacker to redesign)</span>
+<span class="cm">→ Defensive action:</span> <span class="str">SIEM rule for base64 PS + HTTPS to new domains</span>
+            </div>
+          </div>
+        </li>
+        <li class="step">
+          <span class="step-num">3</span>
+          <div class="step-content">
+            <div class="step-title">Identify which IOCs are worth operationalizing for a SOC</div>
+            <div class="step-desc">Write a 5-line analyst note: "Of the 14 IOCs in this pulse, 3 IPs and 2 domains are actionable for immediate blocking. The TTP of PowerShell LOLBin execution with base64 encoding (T1059.001) should be prioritized as a detection rule in Wazuh/Splunk."</div>
+          </div>
+        </li>
+      </ol>
+    </div>
+  </div>
+</div>
+
+<hr class="hdiv">
+
+<!-- ══════════════════════════════════
+03 — Cyber Kill Chain
+══════════════════════════════════ -->
+<div class="section" id="s3">
+  <div class="sec-head">
+    <span class="sec-num">03</span>
+    <div class="sec-meta">
+      <div class="sec-title">Cyber Kill Chain</div>
+      <div class="sec-sub">Lockheed Martin's 7-stage adversary model</div>
+    </div>
+    <span class="sec-badge badge-amber">Framework</span>
+  </div>
+
+  <div class="theory">
+    <h4>The Kill Chain Concept</h4>
+    <p>Originally a military targeting model, the <strong>Cyber Kill Chain</strong> (Lockheed Martin, 2011) maps the 7 stages an attacker must complete to achieve their objective. <strong>Defenders win by breaking the chain at any stage.</strong> The earlier you break it, the less damage occurs.</p>
+    <p>CTI analysts use the Kill Chain to map attack campaigns — understanding what stage attackers are at helps defenders prioritize response and predict next moves.</p>
+  </div>
+
+  <div class="killchain">
+    <div class="kc-step active">
+      <div class="kc-num">Stage 1</div>
+      <div class="kc-name">Reconnaissance</div>
+      <div class="kc-desc">OSINT, scanning, LinkedIn, Shodan, DNS enumeration. Attacker maps the target.</div>
+    </div>
+    <div class="kc-step">
+      <div class="kc-num">Stage 2</div>
+      <div class="kc-name">Weaponization</div>
+      <div class="kc-desc">Building malware, exploit + payload, phishing document. Happens offline — hardest to detect.</div>
+    </div>
+    <div class="kc-step">
+      <div class="kc-num">Stage 3</div>
+      <div class="kc-name">Delivery</div>
+      <div class="kc-desc">Email phishing, watering hole, USB, supply chain. Malware reaches the target.</div>
+    </div>
+    <div class="kc-step active">
+      <div class="kc-num">Stage 4</div>
+      <div class="kc-name">Exploitation</div>
+      <div class="kc-desc">Vulnerability triggered, macro executed, user clicked. Code runs on target system.</div>
+    </div>
+    <div class="kc-step">
+      <div class="kc-num">Stage 5</div>
+      <div class="kc-name">Installation</div>
+      <div class="kc-desc">Backdoor/RAT installed for persistent access. Registry Run keys, scheduled tasks, services.</div>
+    </div>
+    <div class="kc-step active">
+      <div class="kc-num">Stage 6</div>
+      <div class="kc-name">C2</div>
+      <div class="kc-desc">Malware phones home. Attacker gains interactive control. HTTPS, DNS tunneling, social media used as C2.</div>
+    </div>
+    <div class="kc-step">
+      <div class="kc-num">Stage 7</div>
+      <div class="kc-name">Actions on Objectives</div>
+      <div class="kc-desc">Data exfil, ransomware, lateral movement, sabotage. The attacker's final goal executed.</div>
+    </div>
+  </div>
+
+  <div class="theory" style="margin-top:16px;">
+    <h4>Defensive Measures Per Stage</h4>
+  </div>
+
+  <table class="dtable">
+    <thead><tr><th>Stage</th><th>What to Detect</th><th>Defensive Control</th><th>CTI Role</th></tr></thead>
+    <tbody>
+      <tr><td class="td-k">Reconnaissance</td><td>Shodan scans of your IPs, LinkedIn scraping, port scans</td><td>Minimize attack surface, honeypots, passive monitoring</td><td>Track recon campaigns against your sector</td></tr>
+      <tr><td class="td-k">Weaponization</td><td>New malware families targeting your sector</td><td>Threat feeds, dark web monitoring</td><td>Identify new weapon toolkits in actor forums</td></tr>
+      <tr><td class="td-k">Delivery</td><td>Phishing emails, malicious attachments, drive-by downloads</td><td>Email gateway, sandbox, user training</td><td>Track active phishing campaigns against your sector</td></tr>
+      <tr><td class="td-k">Exploitation</td><td>Vulnerability being exploited, process injection, shellcode</td><td>Patch management, EDR, DEP/ASLR</td><td>Monitor CVE PoCs being weaponized by actors</td></tr>
+      <tr><td class="td-k">Installation</td><td>Scheduled task creation, registry Run keys, new services</td><td>Application whitelisting, SIEM rules for persistence</td><td>Identify actor's preferred persistence techniques</td></tr>
+      <tr><td class="td-k">C2</td><td>Outbound HTTPS to new domains, DNS anomalies, beaconing</td><td>DNS filtering, SIEM C2 detection rules, proxy inspection</td><td>Block known C2 IPs/domains from threat feeds</td></tr>
+      <tr><td class="td-k">Actions</td><td>Large data transfers, encryption activity, lateral movement</td><td>DLP, network segmentation, UEBA</td><td>Understand actor's end goals for accurate impact assessment</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<hr class="hdiv">
+
+<!-- ══════════════════════════════════
+04 — Diamond Model
+══════════════════════════════════ -->
+<div class="section" id="s4">
+  <div class="sec-head">
+    <span class="sec-num">04</span>
+    <div class="sec-meta">
+      <div class="sec-title">Diamond Model of Intrusion Analysis</div>
+      <div class="sec-sub">Structuring adversary analysis around 4 core features</div>
+    </div>
+    <span class="sec-badge badge-blue">Framework</span>
+  </div>
+
+  <div class="theory">
+    <h4>The Diamond Model</h4>
+    <p>Developed by Caltagirone, Pendergast & Betz (2013), the Diamond Model states that every intrusion event has <strong>four core features</strong>: Adversary, Capability, Infrastructure, and Victim. These four sit at the vertices of a diamond. Relationships between them reveal attacker behavior and allow attribution.</p>
+    <p>Where the Kill Chain is <em>temporal</em> (what happens when), the Diamond Model is <em>structural</em> (who uses what against whom).</p>
+  </div>
+
+  <div class="grid" style="grid-template-columns:repeat(2,1fr);">
+    <div class="card" style="border-color:var(--red-dim);">
+      <div class="card-key r">Adversary</div>
+      <div class="card-val">The threat actor — individual, group, nation-state. Includes intent (why), capability (what skills), and attribution. Often the most unknown vertex initially.</div>
+    </div>
+    <div class="card" style="border-color:var(--gold-dim);">
+      <div class="card-key">Capability</div>
+      <div class="card-val">Tools, malware, exploits, TTPs used. What technical means does the adversary possess? Custom malware vs off-the-shelf tools tells you about resourcing.</div>
+    </div>
+    <div class="card" style="border-color:var(--blue-dim);">
+      <div class="card-key b">Infrastructure</div>
+      <div class="card-val">C2 servers, staging servers, phishing domains, bulletproof hosting, VPNs, compromised intermediaries. Connecting infrastructure reveals actor patterns.</div>
+    </div>
+    <div class="card" style="border-color:var(--teal-dim);">
+      <div class="card-key t">Victim</div>
+      <div class="card-val">The targeted organization, person, or asset. Understanding victim profile helps predict future targets in the same sector or geography.</div>
+    </div>
+  </div>
+
+  <div class="theory" style="margin-top:14px;">
+    <h4>Meta-Features (Extended Diamond)</h4>
+    <p>Beyond the four vertices, analysts also track: <strong>Timestamp</strong> (when), <strong>Phase</strong> (which kill chain stage), <strong>Result</strong> (success/fail/unknown), <strong>Direction</strong> (infra to victim or reverse), and <strong>Methodology</strong> (social engineering, watering hole, etc.).</p>
+  </div>
+
+  <div class="practical open">
+    <div class="prac-head" onclick="toggleP(this)">
+      <span class="ph-ico">💎</span>
+      <span class="ph-title">Lab 4.1 — Apply Diamond Model to a real-world attack scenario</span>
+      <span class="ph-tag pt-build">Analysis</span>
+      <span class="ph-chevron">▶</span>
+    </div>
+    <div class="prac-body">
+      <div class="note gold"><span class="ni">💡</span><span><strong>Scenario:</strong> An Indian logistics company received a spear-phishing email with a malicious Excel attachment. The attachment executed a PowerShell downloader that connected to a domain registered 3 days prior. Use the Diamond Model to structure your analysis.</span></div>
+      <ol class="steps" style="margin-top:14px;">
+        <li class="step">
+          <span class="step-num">1</span>
+          <div class="step-content">
+            <div class="step-title">Fill in each Diamond vertex from the scenario</div>
+            <div class="code" data-label="diamond analysis">
+<span class="kw">ADVERSARY:</span>
+<span class="cm">  Known:</span> <span class="val">Uses spear-phishing against logistics sector</span>
+<span class="cm">  Unknown:</span> <span class="val">Identity, nation-state vs criminal</span>
+<span class="cm">  Hypothesis:</span> <span class="val">Possibly TA505 or financially-motivated group (Excel + PS = common TA505 TTP)</span>
+
+<span class="kw">CAPABILITY:</span>
+<span class="cm">  Delivery:</span> <span class="val">Spear-phishing email with Excel .xlsm</span>
+<span class="cm">  Exploit:</span> <span class="val">Excel 4.0 macro (deprecated, bypasses many AVs)</span>
+<span class="cm">  Malware:</span> <span class="val">PowerShell downloader → unknown second-stage payload</span>
+<span class="cm">  TTP:</span> <span class="val">T1566.001 (Phishing Attachment), T1059.001 (PowerShell)</span>
+
+<span class="kw">INFRASTRUCTURE:</span>
+<span class="cm">  C2 domain:</span> <span class="val">tracklogistics-update[.]com (3 days old, Namecheap)</span>
+<span class="cm">  C2 IP:</span> <span class="val">185.220.x.x (Bulletproof hosting, Eastern Europe)</span>
+<span class="cm">  Email sender:</span> <span class="val">Spoofed DHL domain</span>
+
+<span class="kw">VICTIM:</span>
+<span class="cm">  Org type:</span> <span class="val">Indian logistics company, 500 employees</span>
+<span class="cm">  Targeted role:</span> <span class="val">Finance team (email subject: "Invoice overdue")</span>
+<span class="cm">  Asset at risk:</span> <span class="val">Finance systems, banking credentials</span>
+            </div>
+          </div>
+        </li>
+        <li class="step">
+          <span class="step-num">2</span>
+          <div class="step-content">
+            <div class="step-title">Use Infrastructure to pivot and find more victims</div>
+            <div class="step-desc">The C2 IP can be searched on VirusTotal, Shodan, and PassiveDNS to find all domains resolving to it. If 10 other domains point to the same IP, all their victims are potentially related — you've now mapped a campaign, not just one incident.</div>
+          </div>
+        </li>
+        <li class="step">
+          <span class="step-num">3</span>
+          <div class="step-content">
+            <div class="step-title">Use Capability to predict future attacks</div>
+            <div class="step-desc">This adversary consistently uses Excel macros + PowerShell. Write a Wazuh/Splunk rule: alert when Excel spawns PowerShell. That single TTP-based rule will catch this attacker regardless of which domain or IP they use next time.</div>
+          </div>
+        </li>
+      </ol>
+    </div>
+  </div>
+</div>
+
+<hr class="hdiv">
+
+<!-- ══════════════════════════════════
+05 — IOC Types & Enrichment
+══════════════════════════════════ -->
+<div class="section" id="s5">
+  <div class="sec-head">
+    <span class="sec-num">05</span>
+    <div class="sec-meta">
+      <div class="sec-title">IOC Types & Enrichment Workflow</div>
+      <div class="sec-sub">From raw indicator to actionable intelligence</div>
+    </div>
+    <span class="sec-badge badge-teal">Core Skill</span>
+  </div>
+
+  <div class="theory">
+    <h4>Indicators of Compromise (IOCs)</h4>
+    <p>An <strong>IOC</strong> is a forensic artifact that indicates a system may have been compromised. By itself, an IOC is just a data point. <em>Enriched</em>, it becomes intelligence — context about who used it, when, against whom, and what it does.</p>
+    <p><strong>IOC enrichment</strong> means taking a raw value (like an IP address) and adding context from multiple sources: geolocation, ASN, reputation, associated malware families, linked domains, open ports, historical scan data.</p>
+  </div>
+
+  <table class="dtable">
+    <thead><tr><th>IOC Type</th><th>Example</th><th>Enrichment Sources</th><th>Lifespan</th></tr></thead>
+    <tbody>
+      <tr><td><span class="ioc-hash">File Hash (MD5/SHA256)</span></td><td><code style="color:var(--blue)">a3f9...c81d</code></td><td>VirusTotal, MalwareBazaar, Hybrid Analysis</td><td class="td-r">Hours–Days (easily changed)</td></tr>
+      <tr><td><span class="ioc-ip">IP Address</span></td><td><code style="color:var(--teal)">185.220.101.47</code></td><td>AbuseIPDB, Shodan, GreyNoise, IPInfo</td><td class="td-a">Days–Weeks</td></tr>
+      <tr><td><span class="ioc-domain">Domain Name</span></td><td><code style="color:var(--amber)">evil-c2.ru</code></td><td>VirusTotal, URLScan, PassiveDNS, WHOIS</td><td class="td-a">Weeks–Months</td></tr>
+      <tr><td><span class="ioc-file">URL</span></td><td><code style="color:var(--red-bright)">http://evil.ru/payload.exe</code></td><td>URLScan.io, VirusTotal URL, URLhaus</td><td class="td-r">Hours–Days</td></tr>
+      <tr><td><span class="ioc-reg">Registry Key</span></td><td><code style="color:var(--gold)">HKLM\Run\svchost32</code></td><td>VirusTotal Behavior, Any.run, Hybrid Analysis</td><td class="td-g">Months (harder to change)</td></tr>
+      <tr><td><span class="ioc-ip">Email Address</span></td><td><code style="color:var(--teal)">noreply@spoof-dhl.com</code></td><td>Hunter.io, PhishTank, EmailRep.io</td><td class="td-a">Weeks</td></tr>
+      <tr><td><span class="ioc-domain">Mutex</span></td><td><code style="color:var(--amber)">Global\{GUID}</code></td><td>Any.run sandbox, Cuckoo reports</td><td class="td-g">Long (attacker must recode)</td></tr>
+      <tr><td><span class="ioc-hash">JA3/JA3S Hash</span></td><td><code style="color:var(--blue)">769...</code></td><td>SIEM, Zeek/Suricata, Shodan</td><td class="td-g">Long (TLS fingerprint of malware)</td></tr>
+    </tbody>
+  </table>
+
+  <div class="practical open">
+    <div class="prac-head" onclick="toggleP(this)">
+      <span class="ph-ico">🔍</span>
+      <span class="ph-title">Lab 5.1 — Full IOC enrichment workflow on a suspicious IP</span>
+      <span class="ph-tag pt-osint">OSINT Lab</span>
+      <span class="ph-chevron">▶</span>
+    </div>
+    <div class="prac-body">
+      <div class="note gold"><span class="ni">💡</span><span>Use this IP as your practice target: <code style="color:var(--teal)">185.220.101.47</code> — it's a known Tor exit node frequently listed in threat feeds. Completely safe to investigate (never connect to it).</span></div>
+      <ol class="steps" style="margin-top:14px;">
+        <li class="step">
+          <span class="step-num">1</span>
+          <div class="step-content">
+            <div class="step-title">Check AbuseIPDB — reputation & abuse reports</div>
+            <div class="code" data-label="browser or curl">
+<span class="cm"># Browser:</span>
+https://www.abuseipdb.com/check/<span class="val">185.220.101.47</span>
+
+<span class="cm"># API (free key from abuseipdb.com):</span>
+<span class="cmd">curl</span> <span class="flag">-G</span> https://api.abuseipdb.com/api/v2/check \
+  <span class="flag">--data-urlencode</span> <span class="val">"ipAddress=185.220.101.47"</span> \
+  <span class="flag">--data-urlencode</span> <span class="val">"maxAgeInDays=90"</span> \
+  <span class="flag">-H</span> <span class="str">"Key: YOUR_API_KEY"</span> \
+  <span class="flag">-H</span> <span class="str">"Accept: application/json"</span> | <span class="cmd">python3 -m json.tool</span>
+
+<span class="cm"># Note: abuseConfidenceScore, totalReports, lastReportedAt, usageType</span>
+            </div>
+          </div>
+        </li>
+        <li class="step">
+          <span class="step-num">2</span>
+          <div class="step-content">
+            <div class="step-title">Check Shodan — open ports, running services, history</div>
+            <div class="code" data-label="shodan">
+<span class="cm"># Browser:</span>
+https://www.shodan.io/host/<span class="val">185.220.101.47</span>
+
+<span class="cm"># Shodan CLI (pip install shodan, free API key):</span>
+<span class="cmd">shodan host</span> <span class="val">185.220.101.47</span>
+
+<span class="cm"># Record: open ports, banners, hostnames, org, country, vulnerabilities</span>
+            </div>
+          </div>
+        </li>
+        <li class="step">
+          <span class="step-num">3</span>
+          <div class="step-content">
+            <div class="step-title">Check GreyNoise — internet scanner or targeted attacker?</div>
+            <div class="step-desc">GreyNoise distinguishes between background internet scanners (Shodan, Masscan bots) and targeted attackers. A "benign" GreyNoise label doesn't mean safe — it means it's a mass scanner, not targeted.</div>
+            <div class="code" data-label="greynoise">
+https://viz.greynoise.io/ip/<span class="val">185.220.101.47</span>
+<span class="cm"># Look for: classification (benign/malicious/unknown), tags, first/last seen</span>
+            </div>
+          </div>
+        </li>
+        <li class="step">
+          <span class="step-num">4</span>
+          <div class="step-content">
+            <div class="step-title">Pivot to related domains via PassiveDNS (VirusTotal)</div>
+            <div class="code" data-label="virustotal">
+https://www.virustotal.com/gui/ip-address/<span class="val">185.220.101.47</span>/relations
+<span class="cm"># Check: Resolutions (what domains pointed here?)</span>
+<span class="cm">          Communicating Files (what malware phoned home here?)</span>
+<span class="cm">          Detected URLs (what malicious URLs hosted here?)</span>
+            </div>
+          </div>
+        </li>
+        <li class="step">
+          <span class="step-num">5</span>
+          <div class="step-content">
+            <div class="step-title">Write a 1-paragraph enrichment summary</div>
+            <div class="code" data-label="analyst note">
+<span class="cm">IOC Enrichment Summary — 185.220.101.47</span>
+<span class="cm">Analyst: [your name] | Date: [today]</span>
+
+<span class="val">IP 185.220.101.47 belongs to a Tor exit node operated by [org] in Germany.
+AbuseIPDB confidence score: 87% (340 reports, last reported 2 days ago).
+Shodan shows ports 9001 and 9030 open (Tor relay/exit).
+GreyNoise: classified as known malicious scanner.
+VirusTotal: 3 malware samples phoned home to this IP.
+
+Recommendation: Block at perimeter firewall. Add to SIEM watchlist.
+Threat level: MEDIUM (mass scanner, likely Tor exit — not targeted attack).</span>
+            </div>
+          </div>
+        </li>
+      </ol>
+    </div>
+  </div>
+</div>
+
+<hr class="hdiv">
+
+<!-- ══════════════════════════════════
+06 — STIX / TAXII
+══════════════════════════════════ -->
+<div class="section" id="s6">
+  <div class="sec-head">
+    <span class="sec-num">06</span>
+    <div class="sec-meta">
+      <div class="sec-title">STIX & TAXII — Structured Threat Sharing</div>
+      <div class="sec-sub">The standard language and protocol for machine-readable CTI</div>
+    </div>
+    <span class="sec-badge badge-blue">Standard</span>
+  </div>
+
+  <div class="theory">
+    <h4>Why We Need STIX/TAXII</h4>
+    <p>Before STIX, every CTI vendor had a different format — PDFs, CSVs, proprietary JSON. You couldn't automate ingestion. <strong>STIX (Structured Threat Information Expression)</strong> is a standardized JSON schema for expressing threat intelligence. <strong>TAXII (Trusted Automated eXchange of Intelligence Information)</strong> is the transport protocol for sharing STIX over HTTPS.</p>
+    <p>Together: STIX = what you say, TAXII = how you send it. Like HTML and HTTP for the web.</p>
+  </div>
+
+  <div class="stix-box">
+    <div class="stix-title">STIX 2.1 Domain Objects (SDOs) — the building blocks</div>
+    <div class="stix-grid">
+      <div class="stix-obj"><span class="so-type">SDO</span><span class="so-name">Indicator</span><span style="font-size:10.5px;color:var(--text-dim)">Pattern to detect malicious activity</span></div>
+      <div class="stix-obj"><span class="so-type">SDO</span><span class="so-name">Threat Actor</span><span style="font-size:10.5px;color:var(--text-dim)">Individual, group, or organization</span></div>
+      <div class="stix-obj"><span class="so-type">SDO</span><span class="so-name">Malware</span><span style="font-size:10.5px;color:var(--text-dim)">Malicious code instance</span></div>
+      <div class="stix-obj"><span class="so-type">SDO</span><span class="so-name">Attack Pattern</span><span style="font-size:10.5px;color:var(--text-dim)">TTP description, MITRE ATT&CK linkable</span></div>
+      <div class="stix-obj"><span class="so-type">SDO</span><span class="so-name">Campaign</span><span style="font-size:10.5px;color:var(--text-dim)">Grouped activity over time</span></div>
+      <div class="stix-obj"><span class="so-type">SDO</span><span class="so-name">Course of Action</span><span style="font-size:10.5px;color:var(--text-dim)">Recommended defensive measure</span></div>
+      <div class="stix-obj"><span class="so-type">SDO</span><span class="so-name">Vulnerability</span><span style="font-size:10.5px;color:var(--text-dim)">CVE or weakness reference</span></div>
+      <div class="stix-obj"><span class="so-type">SCO</span><span class="so-name">IPv4 Address</span><span style="font-size:10.5px;color:var(--text-dim)">Observable IP object</span></div>
+      <div class="stix-obj"><span class="so-type">SCO</span><span class="so-name">Domain Name</span><span style="font-size:10.5px;color:var(--text-dim)">Observable domain object</span></div>
+      <div class="stix-obj"><span class="so-type">SCO</span><span class="so-name">File (Hash)</span><span style="font-size:10.5px;color:var(--text-dim)">Observable file with hashes</span></div>
+    </div>
+  </div>
+
+  <div class="practical open">
+    <div class="prac-head" onclick="toggleP(this)">
+      <span class="ph-ico">📡</span>
+      <span class="ph-title">Lab 6.1 — Subscribe to a TAXII feed and ingest IOCs into MISP</span>
+      <span class="ph-tag pt-cmd">Feed Lab</span>
+      <span class="ph-chevron">▶</span>
+    </div>
+    <div class="prac-body">
+      <ol class="steps">
+        <li class="step">
+          <span class="step-num">1</span>
+          <div class="step-content">
+            <div class="step-title">Use Python's cabby library to query a public TAXII 2.1 server</div>
+            <div class="code" data-label="bash">
+<span class="cmd">pip3 install</span> requests <span class="flag">--break-system-packages</span>
+            </div>
+          </div>
+        </li>
+        <li class="step">
+          <span class="step-num">2</span>
+          <div class="step-content">
+            <div class="step-title">Query the MITRE ATT&CK TAXII server (free, public)</div>
+            <div class="code" data-label="python3">
+<span class="kw">import</span> requests, json
+
+<span class="cm"># MITRE ATT&CK STIX/TAXII 2.1 server</span>
+BASE = <span class="str">"https://cti-taxii.mitre.org/taxii/"</span>
+headers = {<span class="str">"Accept"</span>: <span class="str">"application/taxii+json;version=2.1"</span>}
+
+<span class="cm"># Discover API root</span>
+r = requests.<span class="cmd">get</span>(BASE, headers=headers)
+data = r.<span class="cmd">json</span>()
+<span class="cmd">print</span>(json.<span class="cmd">dumps</span>(data, indent=2))
+
+<span class="cm"># List collections (ATT&CK Enterprise, Mobile, ICS)</span>
+r2 = requests.<span class="cmd">get</span>(BASE + <span class="str">"api-root/collections/"</span>, headers=headers)
+collections = r2.<span class="cmd">json</span>()
+<span class="kw">for</span> c <span class="kw">in</span> collections[<span class="str">"collections"</span>]:
+    <span class="cmd">print</span>(c[<span class="str">"id"</span>], <span class="str">"-"</span>, c[<span class="str">"title"</span>])
+            </div>
+          </div>
+        </li>
+        <li class="step">
+          <span class="step-num">3</span>
+          <div class="step-content">
+            <div class="step-title">Fetch all APT28 (Fancy Bear) STIX objects</div>
+            <div class="code" data-label="python3">
+<span class="cm"># Enterprise ATT&CK collection ID:</span>
+COLL_ID = <span class="str">"95ecc380-afe9-11e4-9b6c-751b66dd541e"</span>
+URL = f<span class="str">"{BASE}api-root/collections/{COLL_ID}/objects/"</span>
+
+<span class="cm"># Filter by APT28 threat actor name</span>
+params = {<span class="str">"match[type]"</span>: <span class="str">"intrusion-set"</span>}
+r = requests.<span class="cmd">get</span>(URL, headers=headers, params=params)
+actors = r.<span class="cmd">json</span>()
+
+<span class="kw">for</span> obj <span class="kw">in</span> actors[<span class="str">"objects"</span>]:
+    <span class="kw">if</span> <span class="str">"APT28"</span> <span class="kw">in</span> obj.<span class="cmd">get</span>(<span class="str">"aliases"</span>, []):
+        <span class="cmd">print</span>(<span class="str">"Name:"</span>, obj[<span class="str">"name"</span>])
+        <span class="cmd">print</span>(<span class="str">"Description:"</span>, obj[<span class="str">"description"</span>][:300])
+            </div>
+          </div>
+        </li>
+      </ol>
+    </div>
+  </div>
+</div>
+
+<hr class="hdiv">
+
+<!-- ══════════════════════════════════
+07 — Open Intel Sources
+══════════════════════════════════ -->
+<div class="section" id="s7">
+  <div class="sec-head">
+    <span class="sec-num">07</span>
+    <div class="sec-meta">
+      <div class="sec-title">Open-Source Intelligence Sources</div>
+      <div class="sec-sub">The analyst's toolkit — free, structured, and powerful</div>
+    </div>
+    <span class="sec-badge badge-gold">Toolbox</span>
+  </div>
+
+  <table class="dtable">
+    <thead><tr><th>Source</th><th>URL</th><th>Best For</th><th>Free?</th></tr></thead>
+    <tbody>
+      <tr><td class="td-k">VirusTotal</td><td style="color:var(--text-muted)">virustotal.com</td><td>File/URL/IP/domain analysis, 70+ AV engines, YARA rules, behavior</td><td class="td-g">Yes (limits)</td></tr>
+      <tr><td class="td-k">AlienVault OTX</td><td style="color:var(--text-muted)">otx.alienvault.com</td><td>Community threat pulses, structured IOC feeds, STIX export</td><td class="td-g">Yes</td></tr>
+      <tr><td class="td-k">Shodan</td><td style="color:var(--text-muted)">shodan.io</td><td>Internet-wide port/service scans, exposed devices, CVE matches</td><td class="td-a">Partial</td></tr>
+      <tr><td class="td-k">Censys</td><td style="color:var(--text-muted)">censys.io</td><td>TLS certificate scan, host profiles, better IPv6 coverage than Shodan</td><td class="td-a">Partial</td></tr>
+      <tr><td class="td-k">AbuseIPDB</td><td style="color:var(--text-muted)">abuseipdb.com</td><td>IP reputation from community reports. Great for quick triage</td><td class="td-g">Yes (API)</td></tr>
+      <tr><td class="td-k">GreyNoise</td><td style="color:var(--text-muted)">greynoise.io</td><td>Distinguish targeted attackers from background internet noise</td><td class="td-a">Community</td></tr>
+      <tr><td class="td-k">URLScan.io</td><td style="color:var(--text-muted)">urlscan.io</td><td>Screenshot + DOM analysis of URLs. Detect phishing page clones</td><td class="td-g">Yes</td></tr>
+      <tr><td class="td-k">MalwareBazaar</td><td style="color:var(--text-muted)">bazaar.abuse.ch</td><td>Upload/download malware samples, YARA/tag search, MalShare integration</td><td class="td-g">Yes</td></tr>
+      <tr><td class="td-k">URLhaus</td><td style="color:var(--text-muted)">urlhaus.abuse.ch</td><td>Malware distribution URLs, download the blocklist for your DNS</td><td class="td-g">Yes</td></tr>
+      <tr><td class="td-k">Feodo Tracker</td><td style="color:var(--text-muted)">feodotracker.abuse.ch</td><td>Botnet C2 IPs (Emotet, QakBot, IcedID). Download as firewall blocklist</td><td class="td-g">Yes</td></tr>
+      <tr><td class="td-k">Malpedia</td><td style="color:var(--text-muted)">malpedia.caad.fkie.fraunhofer.de</td><td>Malware family profiles, actors, YARA rules, relationships</td><td class="td-g">Yes</td></tr>
+      <tr><td class="td-k">MITRE ATT&CK</td><td style="color:var(--text-muted)">attack.mitre.org</td><td>TTP knowledge base, actor profiles, detection guidance, Navigator</td><td class="td-g">Yes</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<hr class="hdiv">
+
+<!-- ══════════════════════════════════
+08 — OSINT Recon Techniques
+══════════════════════════════════ -->
+<div class="section" id="s8">
+  <div class="sec-head">
+    <span class="sec-num">08</span>
+    <div class="sec-meta">
+      <div class="sec-title">OSINT Recon Techniques</div>
+      <div class="sec-sub">Actively gathering intelligence on threat actors and campaigns</div>
+    </div>
+    <span class="sec-badge badge-red">Active Lab</span>
+  </div>
+
+  <div class="theory">
+    <h4>Offensive OSINT for CTI Analysts</h4>
+    <p>CTI analysts use the same OSINT tools as attackers — but to understand adversaries and map their infrastructure, not to attack targets. This is called <strong>threat actor infrastructure mapping</strong>. You start with one IOC and pivot until you've traced the entire campaign's infrastructure.</p>
+  </div>
+
+  <div class="practical open">
+    <div class="prac-head" onclick="toggleP(this)">
+      <span class="ph-ico">🕸️</span>
+      <span class="ph-title">Lab 8.1 — Map a phishing campaign infrastructure from a single domain</span>
+      <span class="ph-tag pt-osint">OSINT</span>
+      <span class="ph-chevron">▶</span>
+    </div>
+    <div class="prac-body">
+      <div class="note warn"><span class="ni">⚠️</span><span><strong>Never visit suspicious URLs directly.</strong> Use URLScan, VirusTotal, or sandboxes. All investigation is passive — looking at data about domains/IPs, not connecting to them.</span></div>
+      <ol class="steps" style="margin-top:14px;">
+        <li class="step">
+          <span class="step-num">1</span>
+          <div class="step-content">
+            <div class="step-title">Start with a phishing domain — WHOIS analysis</div>
+            <div class="code" data-label="bash">
+<span class="cmd">whois</span> phishingdomain-example.com
+<span class="cm"># Record: Registrar, Registration date, Registrant email</span>
+<span class="cm"># Red flags: Registered today/this week, privacy-protected, Namecheap/GoDaddy</span>
+            </div>
+          </div>
+        </li>
+        <li class="step">
+          <span class="step-num">2</span>
+          <div class="step-content">
+            <div class="step-title">DNS lookups — find the hosting IP</div>
+            <div class="code" data-label="bash">
+<span class="cmd">dig</span> phishingdomain-example.com <span class="flag">+short</span>        <span class="cm"># A record → hosting IP</span>
+<span class="cmd">dig</span> phishingdomain-example.com MX <span class="flag">+short</span>    <span class="cm"># Mail server (phishing infra)</span>
+<span class="cmd">dig</span> phishingdomain-example.com NS <span class="flag">+short</span>    <span class="cm"># Name server (actor reuses NS across domains)</span>
+<span class="cmd">dig</span> <span class="flag">-x</span> 185.220.101.47 <span class="flag">+short</span>                <span class="cm"># Reverse DNS of the IP</span>
+            </div>
+          </div>
+        </li>
+        <li class="step">
+          <span class="step-num">3</span>
+          <div class="step-content">
+            <div class="step-title">Pivot: Find all domains on the same IP (passive DNS)</div>
+            <div class="code" data-label="passive dns tools">
+<span class="cm"># Option 1: VirusTotal passive DNS</span>
+https://www.virustotal.com/gui/ip-address/<span class="val">HOSTING_IP</span>/relations
+
+<span class="cm"># Option 2: SecurityTrails (free tier)</span>
+https://securitytrails.com/list/ip/<span class="val">HOSTING_IP</span>
+
+<span class="cm"># Option 3: RiskIQ Community (now Microsoft Defender TI, free tier)</span>
+https://ti.defender.microsoft.com
+<span class="cm"># Paste the IP → see all domains resolved to it historically</span>
+            </div>
+          </div>
+        </li>
+        <li class="step">
+          <span class="step-num">4</span>
+          <div class="step-content">
+            <div class="step-title">Analyze domains for patterns (actor fingerprinting)</div>
+            <div class="step-desc">Real actors reuse naming patterns. Look for: same TLD, similar keywords (update-, secure-, -login, -verify), registered same week, same registrar, same name server. Document the pattern in your CTI report.</div>
+            <div class="code" data-label="example pattern">
+<span class="cm"># Actor pattern identified from pivot:</span>
+<span class="val">secure-hdfc-login.com</span>      <span class="cm"># registered 2024-11-01</span>
+<span class="val">hdfc-verify-account.com</span>    <span class="cm"># registered 2024-11-02</span>
+<span class="val">hdfcbank-update.net</span>        <span class="cm"># registered 2024-11-03</span>
+<span class="cm"># All on same IP, same Namecheap registrar, same NS = same actor campaign</span>
+            </div>
+          </div>
+        </li>
+        <li class="step">
+          <span class="step-num">5</span>
+          <div class="step-content">
+            <div class="step-title">Check TLS certificate for linked infrastructure</div>
+            <div class="code" data-label="censys / shodan">
+<span class="cm"># Shodan SSL cert search — find all hosts using same cert</span>
+https://www.shodan.io/search?query=ssl.cert.subject.cn:<span class="val">phishingdomain-example.com</span>
+
+<span class="cm"># Censys TLS cert pivot</span>
+https://search.censys.io/certificates?q=parsed.names:<span class="val">phishingdomain-example.com</span>
+<span class="cm"># Actors reuse self-signed certs across all C2 nodes — this reveals entire infra</span>
+            </div>
+          </div>
+        </li>
+      </ol>
+    </div>
+  </div>
+
+  <div class="practical">
+    <div class="prac-head" onclick="toggleP(this)">
+      <span class="ph-ico">🔎</span>
+      <span class="ph-title">Lab 8.2 — Recon-ng automated OSINT collection</span>
+      <span class="ph-tag pt-cmd">Tool Lab</span>
+      <span class="ph-chevron">▶</span>
+    </div>
+    <div class="prac-body">
+      <ol class="steps">
+        <li class="step">
+          <span class="step-num">1</span>
+          <div class="step-content">
+            <div class="step-title">Launch Recon-ng on Kali Linux</div>
+            <div class="code" data-label="kali bash">
+<span class="cmd">recon-ng</span>
+<span class="out">[*] Version check disabled.</span>
+<span class="out">[recon-ng][default] ></span>
+            </div>
+          </div>
+        </li>
+        <li class="step">
+          <span class="step-num">2</span>
+          <div class="step-content">
+            <div class="step-title">Create workspace and set target</div>
+            <div class="code" data-label="recon-ng console">
+<span class="flag">workspaces</span> create ctidemo
+<span class="flag">db</span> insert domains
+<span class="cm"># Enter: example-target.com (use a domain you own or are authorized to research)</span>
+            </div>
+          </div>
+        </li>
+        <li class="step">
+          <span class="step-num">3</span>
+          <div class="step-content">
+            <div class="step-title">Run DNS brute-force and host enumeration modules</div>
+            <div class="code" data-label="recon-ng console">
+<span class="flag">marketplace</span> install recon/domains-hosts/hackertarget
+<span class="flag">modules</span> load recon/domains-hosts/hackertarget
+<span class="flag">options</span> set SOURCE example-target.com
+<span class="cmd">run</span>
+<span class="out"># Output: subdomains, IPs, open ports per host</span>
+            </div>
+          </div>
+        </li>
+        <li class="step">
+          <span class="step-num">4</span>
+          <div class="step-content">
+            <div class="step-title">Generate an HTML report</div>
+            <div class="code" data-label="recon-ng console">
+<span class="flag">marketplace</span> install reporting/html
+<span class="flag">modules</span> load reporting/html
+<span class="flag">options</span> set FILENAME <span class="val">/home/kali/ctidemo-report.html</span>
+<span class="cmd">run</span>
+            </div>
+          </div>
+        </li>
+      </ol>
+    </div>
+  </div>
+</div>
+
+<hr class="hdiv">
+
+<!-- ══════════════════════════════════
+09 — MISP Platform
+══════════════════════════════════ -->
+<div class="section" id="s9">
+  <div class="sec-head">
+    <span class="sec-num">09</span>
+    <div class="sec-meta">
+      <div class="sec-title">MISP — Malware Information Sharing Platform</div>
+      <div class="sec-sub">The industry-standard open-source CTI platform</div>
+    </div>
+    <span class="sec-badge badge-teal">Platform Lab</span>
+  </div>
+
+  <div class="theory">
+    <h4>What is MISP?</h4>
+    <p><strong>MISP</strong> (originally Malware Information Sharing Platform) is an open-source platform for collecting, storing, distributing, and sharing CTI in a structured way. It stores IOCs and threat data as <strong>Events</strong>, each linked to attributes (IOCs), galaxies (threat actors, MITRE ATT&CK), and tags.</p>
+    <p>Used by CERTs, ISACs, SOC teams, and MSSPs globally. MISP speaks STIX 2.1 natively and can share with other MISP instances via sync or TAXII.</p>
+  </div>
+
+  <div class="practical open">
+    <div class="prac-head" onclick="toggleP(this)">
+      <span class="ph-ico">🖥️</span>
+      <span class="ph-title">Lab 9.1 — Deploy MISP via Docker and create your first threat event</span>
+      <span class="ph-tag pt-lab">Full Lab</span>
+      <span class="ph-chevron">▶</span>
+    </div>
+    <div class="prac-body">
+      <ol class="steps">
+        <li class="step">
+          <span class="step-num">1</span>
+          <div class="step-content">
+            <div class="step-title">Deploy MISP using Docker on your Ubuntu VM</div>
+            <div class="code" data-label="ubuntu bash">
+<span class="cmd">git clone</span> https://github.com/MISP/misp-docker
+<span class="cmd">cd</span> misp-docker
+<span class="cmd">cp</span> template.env .env
+<span class="cm"># Edit .env — set BASE_URL to your VM IP</span>
+<span class="cmd">nano</span> .env
+<span class="cm"># BASE_URL=https://192.168.56.20</span>
+<span class="cmd">docker compose</span> <span class="flag">-f</span> docker-compose.yml up <span class="flag">-d</span>
+<span class="cm"># Wait 2–3 minutes for startup</span>
+<span class="cm"># Access: https://192.168.56.20 | admin@admin.test / admin</span>
+            </div>
+          </div>
+        </li>
+        <li class="step">
+          <span class="step-num">2</span>
+          <div class="step-content">
+            <div class="step-title">Create a new threat Event for a phishing campaign</div>
+            <div class="step-desc">In MISP Dashboard → Add Event. Fill in: Distribution (This Community Only), Threat Level (Medium), Analysis (Initial), Info: "Indian Banking Phishing Campaign — November 2024".</div>
+          </div>
+        </li>
+        <li class="step">
+          <span class="step-num">3</span>
+          <div class="step-content">
+            <div class="step-title">Add attributes (IOCs) to your event</div>
+            <div class="step-desc">Click "Add Attribute" for each IOC. MISP will auto-suggest types:</div>
+            <div class="code" data-label="misp attributes">
+<span class="cm">Type: ip-dst       | Value: 185.220.101.47     | IDS: ✓</span>
+<span class="cm">Type: domain       | Value: hdfc-secure.phish.ru | IDS: ✓</span>
+<span class="cm">Type: sha256       | Value: a3f9d2c8...           | IDS: ✓</span>
+<span class="cm">Type: email-src    | Value: noreply@spoof.com    | IDS: ✓</span>
+<span class="cm">Type: url          | Value: http://phish.ru/page | IDS: ✓</span>
+            </div>
+          </div>
+        </li>
+        <li class="step">
+          <span class="step-num">4</span>
+          <div class="step-content">
+            <div class="step-title">Tag with MITRE ATT&CK techniques using Galaxy</div>
+            <div class="step-desc">In Event view → Galaxy → ATT&CK. Search and add: T1566.001 (Spearphishing Attachment), T1059.001 (PowerShell). This links your IOCs to TTPs structurally.</div>
+          </div>
+        </li>
+        <li class="step">
+          <span class="step-num">5</span>
+          <div class="step-content">
+            <div class="step-title">Export as STIX 2.1 and ingest into Wazuh</div>
+            <div class="code" data-label="misp api export">
+<span class="cm"># Export event as STIX 2.1 via MISP API</span>
+<span class="cmd">curl</span> <span class="flag">-H</span> <span class="str">"Authorization: YOUR_MISP_KEY"</span> \
+     <span class="flag">-H</span> <span class="str">"Accept: application/json"</span> \
+     https://192.168.56.20/events/restSearch/json \
+     <span class="flag">-d</span> <span class="str">'{"returnFormat":"stix2","tags":["phishing"]}'</span>
+            </div>
+          </div>
+        </li>
+      </ol>
+    </div>
+  </div>
+</div>
+
+<hr class="hdiv">
+
+<!-- ══════════════════════════════════
+10 — APT Group Profiles
+══════════════════════════════════ -->
+<div class="section" id="s10">
+  <div class="sec-head">
+    <span class="sec-num">10</span>
+    <div class="sec-meta">
+      <div class="sec-title">APT Group Profiles</div>
+      <div class="sec-sub">Know your adversaries — state-sponsored and criminal actors</div>
+    </div>
+    <span class="sec-badge badge-red">Intelligence</span>
+  </div>
+
+  <div class="theory">
+    <h4>Why Analyst Attribution Matters</h4>
+    <p>Knowing <em>who</em> is attacking changes everything about your defensive posture. An APT28 intrusion means you're dealing with a sophisticated nation-state actor with deep resources — demand IR retainer, preserve forensics, notify CERT-In. A commodity ransomware infection (REvil affiliate) means patch management failure — different response entirely.</p>
+    <p>Attribution is probabilistic, not certain. Analysts say "we assess with medium confidence this is APT41" not "it definitely is." MITRE ATT&CK Navigator groups map actor TTPs — use them to tune your detections.</p>
+  </div>
+
+  <div class="apt-grid">
+
+    <div class="apt-card nation">
+      <div class="apt-header">
+        <div><div class="apt-name">APT28</div><div class="apt-alias">Fancy Bear · Sofacy · Pawn Storm</div></div>
+        <span class="apt-origin ao-ru">Russia / GRU</span>
+      </div>
+      <div class="apt-row"><span class="apt-row-label">Targets</span><span class="apt-row-val">Governments, NATO, defense, elections, media, Ukrainian military</span></div>
+      <div class="apt-row"><span class="apt-row-label">Key TTPs</span><span class="apt-row-val">Spearphishing (Zebrocy), credential phishing, X-Agent implant, Sofacy, watering hole</span></div>
+      <div class="apt-row"><span class="apt-row-label">MITRE</span><span class="apt-row-val"><span class="ttp-tag">T1566</span><span class="ttp-tag">T1059</span><span class="ttp-tag">T1071</span><span class="ttp-tag">T1003</span></span></div>
+      <div class="apt-row"><span class="apt-row-label">India Risk</span><span class="apt-row-val highlight">Government, defense, geopolitical orgs</span></div>
+    </div>
+
+    <div class="apt-card nation">
+      <div class="apt-header">
+        <div><div class="apt-name">APT29</div><div class="apt-alias">Cozy Bear · Midnight Blizzard · NOBELIUM</div></div>
+        <span class="apt-origin ao-ru">Russia / SVR</span>
+      </div>
+      <div class="apt-row"><span class="apt-row-label">Targets</span><span class="apt-row-val">Governments, think tanks, NGOs, SolarWinds supply chain, Microsoft</span></div>
+      <div class="apt-row"><span class="apt-row-label">Key TTPs</span><span class="apt-row-val">Supply chain attacks, OIDC token theft, password spray, MagicWeb, OAuth abuse</span></div>
+      <div class="apt-row"><span class="apt-row-label">MITRE</span><span class="apt-row-val"><span class="ttp-tag">T1195</span><span class="ttp-tag">T1528</span><span class="ttp-tag">T1110</span><span class="ttp-tag">T1550</span></span></div>
+      <div class="apt-row"><span class="apt-row-label">India Risk</span><span class="apt-row-val">Diplomatic missions, defense procurement orgs</span></div>
+    </div>
+
+    <div class="apt-card nation">
+      <div class="apt-header">
+        <div><div class="apt-name">APT41</div><div class="apt-alias">Winnti · Double Dragon · Barium</div></div>
+        <span class="apt-origin ao-cn">China / MSS</span>
+      </div>
+      <div class="apt-row"><span class="apt-row-label">Targets</span><span class="apt-row-val">Healthcare, telco, gaming, financial, supply chain. Both espionage AND financial crime</span></div>
+      <div class="apt-row"><span class="apt-row-label">Key TTPs</span><span class="apt-row-val">Supply chain compromise, SQL injection, living-off-the-land, PlugX, ShadowPad implant</span></div>
+      <div class="apt-row"><span class="apt-row-label">MITRE</span><span class="apt-row-val"><span class="ttp-tag">T1190</span><span class="ttp-tag">T1059</span><span class="ttp-tag">T1195</span><span class="ttp-tag">T1055</span></span></div>
+      <div class="apt-row"><span class="apt-row-label">India Risk</span><span class="apt-row-val highlight">HIGH — Indian pharma, telco, fintech, border tensions context</span></div>
+    </div>
+
+    <div class="apt-card nation">
+      <div class="apt-header">
+        <div><div class="apt-name">Lazarus Group</div><div class="apt-alias">Hidden Cobra · Zinc · APT38</div></div>
+        <span class="apt-origin ao-kr">North Korea / RGB</span>
+      </div>
+      <div class="apt-row"><span class="apt-row-label">Targets</span><span class="apt-row-val">Banks (SWIFT fraud), crypto exchanges, defense orgs, WannaCry, Bangladesh Bank heist</span></div>
+      <div class="apt-row"><span class="apt-row-label">Key TTPs</span><span class="apt-row-val">Fake job lure PDFs, SWIFT manipulation, crypto wallet drainers, AppleJeus, macOS malware</span></div>
+      <div class="apt-row"><span class="apt-row-label">MITRE</span><span class="apt-row-val"><span class="ttp-tag">T1566</span><span class="ttp-tag">T1204</span><span class="ttp-tag">T1071</span><span class="ttp-tag">T1486</span></span></div>
+      <div class="apt-row"><span class="apt-row-label">India Risk</span><span class="apt-row-val highlight">HIGH — Indian banks, crypto exchanges, defense contractors</span></div>
+    </div>
+
+    <div class="apt-card nation">
+      <div class="apt-header">
+        <div><div class="apt-name">MuddyWater</div><div class="apt-alias">MERCURY · Static Kitten · Seedworm</div></div>
+        <span class="apt-origin ao-ir">Iran / MOIS</span>
+      </div>
+      <div class="apt-row"><span class="apt-row-label">Targets</span><span class="apt-row-val">Middle East governments, telecom, ISPs. Some South Asian government targeting</span></div>
+      <div class="apt-row"><span class="apt-row-label">Key TTPs</span><span class="apt-row-val">Spearphishing with PowerShell droppers, remote admin tools (SimpleHelp, ScreenConnect), PowGoop</span></div>
+      <div class="apt-row"><span class="apt-row-label">MITRE</span><span class="apt-row-val"><span class="ttp-tag">T1566</span><span class="ttp-tag">T1219</span><span class="ttp-tag">T1059.001</span><span class="ttp-tag">T1021</span></span></div>
+      <div class="apt-row"><span class="apt-row-label">India Risk</span><span class="apt-row-val">Government, telecom sector</span></div>
+    </div>
+
+    <div class="apt-card criminal">
+      <div class="apt-header">
+        <div><div class="apt-name">FIN7</div><div class="apt-alias">Carbanak · Navigator Group</div></div>
+        <span class="apt-origin ao-unk">Criminal (E. Europe)</span>
+      </div>
+      <div class="apt-row"><span class="apt-row-label">Targets</span><span class="apt-row-val">Retail, hospitality, restaurants — POS systems, banking trojans, CLOP ransomware affiliate</span></div>
+      <div class="apt-row"><span class="apt-row-label">Key TTPs</span><span class="apt-row-val">Highly targeted spearphishing, Carbanak/GRIFFON backdoor, POS memory scraping, RDP pivoting</span></div>
+      <div class="apt-row"><span class="apt-row-label">MITRE</span><span class="apt-row-val"><span class="ttp-tag">T1566.001</span><span class="ttp-tag">T1055</span><span class="ttp-tag">T1021.001</span><span class="ttp-tag">T1056</span></span></div>
+      <div class="apt-row"><span class="apt-row-label">India Risk</span><span class="apt-row-val">Retail chains, hotel groups, restaurant POS systems</span></div>
+    </div>
+
+  </div>
+
+  <div class="practical">
+    <div class="prac-head" onclick="toggleP(this)">
+      <span class="ph-ico">🔬</span>
+      <span class="ph-title">Lab 10.1 — Build an actor profile from MITRE ATT&CK for an India-relevant threat</span>
+      <span class="ph-tag pt-build">Profile</span>
+      <span class="ph-chevron">▶</span>
+    </div>
+    <div class="prac-body">
+      <ol class="steps">
+        <li class="step">
+          <span class="step-num">1</span>
+          <div class="step-content">
+            <div class="step-title">Go to MITRE ATT&CK → Groups → Search "Lazarus Group"</div>
+            <div class="step-desc">Navigate to <code style="color:var(--teal)">attack.mitre.org/groups</code>. Open the Lazarus Group page. Review: Aliases, Description, Associated Software, Techniques Used.</div>
+          </div>
+        </li>
+        <li class="step">
+          <span class="step-num">2</span>
+          <div class="step-content">
+            <div class="step-title">Open ATT&CK Navigator and load Lazarus's TTP heatmap</div>
+            <div class="step-desc">Go to <code style="color:var(--teal)">mitre-attack.github.io/attack-navigator</code> → Create new layer → Select "Lazarus Group" from the group dropdown. This auto-highlights all their techniques. Export as SVG for your report.</div>
+          </div>
+        </li>
+        <li class="step">
+          <span class="step-num">3</span>
+          <div class="step-content">
+            <div class="step-title">Write a one-page actor profile structured as:</div>
+            <div class="code" data-label="actor profile template">
+<span class="kw">Actor Profile: Lazarus Group</span>
+
+<span class="kw">Classification:</span> Nation-state (North Korean intelligence RGB)
+<span class="kw">Motivation:</span>    Financial gain (sanctions evasion) + espionage
+<span class="kw">Active Since:</span>  2009 (public attribution 2014)
+
+<span class="kw">India-Specific Threat:</span>
+<span class="val">  - Historically targeted Indian banks and SWIFT network</span>
+<span class="val">  - Crypto exchange targeting aligns with India's growing sector</span>
+<span class="val">  - Fake job lure PDFs targeting Indian defense sector documented</span>
+
+<span class="kw">Key TTPs (India context):</span>
+<span class="val">  T1566.001  Spearphishing — fake HR/job lure documents</span>
+<span class="val">  T1055      Process injection — AppleJeus, BLINDINGCAN malware</span>
+<span class="val">  T1071.001  Web protocols for C2 communication</span>
+<span class="val">  T1486      Data encrypted for impact (ransomware)</span>
+
+<span class="kw">Detection Priorities for Indian SOC:</span>
+<span class="val">  1. Alert on Office/PDF → PowerShell execution chain</span>
+<span class="val">  2. Monitor SWIFT transaction anomalies</span>
+<span class="val">  3. Block known Lazarus C2 IP ranges from threat feeds</span>
+<span class="val">  4. User awareness: fake job offer PDF is their primary lure</span>
+
+<span class="kw">Sources:</span> MITRE ATT&CK G0032, Kaspersky GReAT, US-CERT AA21-048A
+            </div>
+          </div>
+        </li>
+      </ol>
+    </div>
+  </div>
+</div>
+
+<hr class="hdiv">
+
+<!-- ══════════════════════════════════
+11 — Dark Web Awareness
+══════════════════════════════════ -->
+<div class="section" id="s11">
+  <div class="sec-head">
+    <span class="sec-num">11</span>
+    <div class="sec-meta">
+      <div class="sec-title">Dark Web Awareness for CTI</div>
+      <div class="sec-sub">What analysts monitor, how, and what not to do</div>
+    </div>
+    <span class="sec-badge badge-red">Awareness</span>
+  </div>
+
+  <div class="theory">
+    <h4>The Dark Web in CTI Context</h4>
+    <p>CTI analysts monitor the dark web not to participate in criminal activity, but to <strong>detect early warning signals</strong> — credentials for sale, data breach dumps, ransomware group announcements, zero-day offerings, and threat actor chatter about specific targets.</p>
+    <p>Key principle: <strong>Passive monitoring only.</strong> You observe, document, and report. You never register accounts, make purchases, or download files from criminal forums. Any such activity may constitute a criminal offense under IT Act Section 66 and IPC provisions.</p>
+  </div>
+
+  <div class="grid">
+    <div class="card">
+      <div class="card-key">Ransomware Leak Sites</div>
+      <div class="card-val">Groups like LockBit, ALPHV, and Cl0p maintain .onion sites listing victims, exfiltrated data previews. Monitor for your client's name.</div>
+    </div>
+    <div class="card">
+      <div class="card-key r">Credential Markets</div>
+      <div class="card-val">Stealer logs (Redline, Vidar data) sold per record. Corporate VPN credentials, banking logins. Monitor for your domain on Have I Been Pwned, DeHashed.</div>
+    </div>
+    <div class="card">
+      <div class="card-key a">Exploit Brokers</div>
+      <div class="card-val">0-day exploits bought and sold. Nation-states and criminal groups purchase. Prices signal criticality — $2M+ for iOS zero-click.</div>
+    </div>
+    <div class="card">
+      <div class="card-key b">Threat Actor Forums</div>
+      <div class="card-val">XSS, Exploit.in, BreachForums (surface), RaidForums archives. Actors announce campaigns, recruit, sell access. Many are now monitored by law enforcement.</div>
+    </div>
+    <div class="card">
+      <div class="card-key t">Initial Access Brokers</div>
+      <div class="card-val">Attackers sell "RDP access to Fortune 500 company, $500". IABs specialize in initial access, sell to ransomware groups. Monitoring these predicts imminent attacks.</div>
+    </div>
+    <div class="card">
+      <div class="card-key">Paste Sites</div>
+      <div class="card-val">Pastebin, Ghostbin, Hastebin used for data dumps, malware configs, stolen credentials. Monitor for company name, domain, email patterns.</div>
+    </div>
+  </div>
+
+  <div class="practical open">
+    <div class="prac-head" onclick="toggleP(this)">
+      <span class="ph-ico">🔒</span>
+      <span class="ph-title">Lab 11.1 — Safe dark web monitoring using legal OSINT tools</span>
+      <span class="ph-tag pt-osint">Safe OSINT</span>
+      <span class="ph-chevron">▶</span>
+    </div>
+    <div class="prac-body">
+      <div class="note warn"><span class="ni">⚠️</span><span><strong>Legal boundary:</strong> The following exercises use surface-web tools that index dark web content. You are NOT accessing Tor or .onion sites directly. Direct access to criminal forums may be illegal under IT Act 2000 Sections 66, 66B, and 66C.</span></div>
+      <ol class="steps" style="margin-top:14px;">
+        <li class="step">
+          <span class="step-num">1</span>
+          <div class="step-content">
+            <div class="step-title">Check Have I Been Pwned for your domain</div>
+            <div class="code" data-label="bash (API)">
+<span class="cm"># Search for breached accounts on your domain</span>
+<span class="cmd">curl</span> <span class="flag">-H</span> <span class="str">"hibp-api-key: YOUR_KEY"</span> \
+  https://haveibeenpwned.com/api/v3/breacheddomain/<span class="val">yourdomain.com</span>
+
+<span class="cm"># Free alternative — search manually at:</span>
+https://haveibeenpwned.com/DomainSearch
+<span class="cm"># Enter your organization domain → see all known breaches</span>
+            </div>
+          </div>
+        </li>
+        <li class="step">
+          <span class="step-num">2</span>
+          <div class="step-content">
+            <div class="step-title">Monitor paste sites for credential leaks using PasteHunter</div>
+            <div class="code" data-label="bash">
+<span class="cmd">git clone</span> https://github.com/kevthehermit/PasteHunter
+<span class="cmd">cd</span> PasteHunter
+<span class="cmd">pip3 install</span> <span class="flag">-r</span> requirements.txt <span class="flag">--break-system-packages</span>
+<span class="cm"># Edit settings.json — add your keywords:</span>
+<span class="cm"># "keywords": ["yourcompany.com", "@yourdomain.com", "COMPANYNAME"]</span>
+<span class="cmd">python3</span> pastehunter.py
+            </div>
+          </div>
+        </li>
+        <li class="step">
+          <span class="step-num">3</span>
+          <div class="step-content">
+            <div class="step-title">Check ransomware leak sites via Ransomlook (indexed aggregator)</div>
+            <div class="code" data-label="browser">
+https://www.ransomlook.io/
+<span class="cm"># Ransomlook indexes ransomware group .onion pages from the surface web</span>
+<span class="cm"># Search for company names across LockBit, ALPHV, Cl0p, BlackBasta etc.</span>
+<span class="cm"># This is fully legal — you are accessing an indexing service, not Tor</span>
+            </div>
+          </div>
+        </li>
+        <li class="step">
+          <span class="step-num">4</span>
+          <div class="step-content">
+            <div class="step-title">Set up a Google alert for credential leaks mentioning your target</div>
+            <div class="step-desc">Go to <code style="color:var(--teal)">google.com/alerts</code>. Create alerts for: <code style="color:var(--teal)">"yourdomain.com" leaked</code>, <code style="color:var(--teal)">"yourcompany" breach</code>, <code style="color:var(--teal)">"yourcompany" ransom</code>. Set frequency to "As it happens". Free and surprisingly effective.</div>
+          </div>
+        </li>
+      </ol>
+    </div>
+  </div>
+</div>
+
+<hr class="hdiv">
+
+<!-- ══════════════════════════════════
+12 — Write a CTI Report
+══════════════════════════════════ -->
+<div class="section" id="s12">
+  <div class="sec-head">
+    <span class="sec-num">12</span>
+    <div class="sec-meta">
+      <div class="sec-title">Write a Professional CTI Report</div>
+      <div class="sec-sub">Module capstone — the deliverable that gets you hired</div>
+    </div>
+    <span class="sec-badge badge-amber">Capstone</span>
+  </div>
+
+  <div class="theory">
+    <h4>CTI Reports — What Makes Them Good</h4>
+    <p>A good CTI report is <strong>actionable, audience-appropriate, and evidence-based</strong>. The most common mistake is writing for the wrong audience — a 20-page technical deep-dive sent to the CISO is useless. Know your consumer.</p>
+    <p>For a SOC/GRC job interview, having a polished CTI report in your GitHub portfolio demonstrates you can <em>think</em> like an analyst, not just run tools.</p>
+  </div>
+
+  <div class="grid" style="grid-template-columns:repeat(3,1fr);">
+    <div class="card">
+      <div class="card-key">Executive Brief</div>
+      <div class="card-val">1 page. Business impact, risk level, recommended action. No technical jargon. For CISO, CTO, board.</div>
+    </div>
+    <div class="card">
+      <div class="card-key a">Tactical Report</div>
+      <div class="card-val">3–5 pages. TTPs, IOCs, detection rules, analyst notes. For SOC manager, IR team.</div>
+    </div>
+    <div class="card">
+      <div class="card-key b">Technical Deep Dive</div>
+      <div class="card-val">Full malware analysis, YARA rules, network IOCs, complete evidence chain. For malware analysts.</div>
+    </div>
+  </div>
+
+  <div class="practical open">
+    <div class="prac-head" onclick="toggleP(this)">
+      <span class="ph-ico">📝</span>
+      <span class="ph-title">Capstone — Write a full CTI report on a real active campaign</span>
+      <span class="ph-tag pt-report">Portfolio Deliverable</span>
+      <span class="ph-chevron">▶</span>
+    </div>
+    <div class="prac-body">
+      <div class="note tip"><span class="ni">✅</span><span><strong>Scenario:</strong> Write a Tactical CTI Report on "Lazarus Group's ongoing targeting of Indian banking and fintech sector." Use MITRE ATT&CK, OTX pulses, and the Diamond Model. Structure below.</span></div>
+      <div class="code" data-label="cti report structure" style="margin-top:14px;">
+<span class="kw">═══════════════════════════════════════════════════════</span>
+<span class="kw">TACTICAL CTI REPORT</span>
+<span class="kw">Lazarus Group — Indian BFSI Targeting Campaign</span>
+<span class="kw">TLP: WHITE | Analyst: [Your Name] | Date: [Date]</span>
+<span class="kw">═══════════════════════════════════════════════════════</span>
+
+<span class="hi">1. EXECUTIVE SUMMARY (5 lines)</span>
+<span class="val">   Lazarus Group (DPRK/RGB) poses an elevated threat to Indian
+   banking and fintech organizations. Their primary objective is
+   financial gain via SWIFT manipulation and crypto theft.
+   Recommended immediate action: block listed IOCs, review SWIFT
+   controls, run phishing awareness for finance staff.</span>
+
+<span class="hi">2. THREAT ACTOR PROFILE</span>
+<span class="val">   - Aliases, origin, motivation, active since</span>
+<span class="val">   - Relevant past campaigns (Bangladesh Bank, WannaCry, Indian targets)</span>
+<span class="val">   - Resources and sophistication assessment</span>
+
+<span class="hi">3. CAMPAIGN ANALYSIS (Diamond Model)</span>
+<span class="val">   Adversary:      Lazarus Group (assessed HIGH confidence)</span>
+<span class="val">   Capability:     AppleJeus, BLINDINGCAN, fake job lure PDFs</span>
+<span class="val">   Infrastructure: ASN 9318 (DPRK + VPS proxies), .ru/.com C2 domains</span>
+<span class="val">   Victim Profile: Indian private banks, crypto exchanges, NBFC</span>
+
+<span class="hi">4. KILL CHAIN MAPPING</span>
+<span class="val">   Recon:       LinkedIn job posts scraping, SWIFT participant lists</span>
+<span class="val">   Delivery:    Spearphish with fake Deloitte/KPMG job offer PDF</span>
+<span class="val">   Exploitation: Embedded shellcode in PDF via CVE-2022-XXXX</span>
+<span class="val">   C2:          HTTPS beacon to newly registered .com domains</span>
+<span class="val">   Objective:   SWIFT transaction injection, credential harvesting</span>
+
+<span class="hi">5. IOCS (Table with enrichment)</span>
+<span class="val">   IP | Domain | Hash | Email pattern | Enrichment verdict</span>
+
+<span class="hi">6. MITRE ATT&CK MAPPING</span>
+<span class="val">   T1566.001, T1204.002, T1059.001, T1071.001, T1486 (mapped to campaign)</span>
+
+<span class="hi">7. DETECTION RULES (Wazuh / Splunk)</span>
+<span class="val">   - SIEM rule: PDF spawning cmd.exe/powershell</span>
+<span class="val">   - SIEM rule: Outbound HTTPS to domains registered &lt;7 days</span>
+<span class="val">   - Firewall: Block listed C2 IP ranges</span>
+
+<span class="hi">8. RECOMMENDATIONS</span>
+<span class="val">   - SWIFT dual-control review</span>
+<span class="val">   - Finance team phishing awareness training</span>
+<span class="val">   - Enable SWIFT Customer Security Programme (CSP) controls</span>
+<span class="val">   - Subscribe to FS-ISAC India feed</span>
+
+<span class="hi">9. SOURCES &amp; CONFIDENCE LEVELS</span>
+<span class="val">   - MITRE ATT&CK G0032 (HIGH confidence)</span>
+<span class="val">   - US-CERT AA21-048A (HIGH confidence)</span>
+<span class="val">   - OTX Pulse: Lazarus BFSI 2024 (MEDIUM confidence)</span>
+      </div>
+
+      <div class="theory" style="margin-top:16px;">
+        <h4>Module Completion Checklist</h4>
+        <ul class="checklist">
+          <li onclick="toggleCheck(this)"><span class="cb"></span><span>Lab 1.1 — Defined 5 Priority Intelligence Requirements for a fictional org</span></li>
+          <li onclick="toggleCheck(this)"><span class="cb"></span><span>Lab 2.1 — Classified IOCs from an OTX pulse using Pyramid of Pain</span></li>
+          <li onclick="toggleCheck(this)"><span class="cb"></span><span>Lab 4.1 — Applied Diamond Model to a phishing scenario</span></li>
+          <li onclick="toggleCheck(this)"><span class="cb"></span><span>Lab 5.1 — Completed full IOC enrichment workflow (AbuseIPDB, Shodan, GreyNoise, VT)</span></li>
+          <li onclick="toggleCheck(this)"><span class="cb"></span><span>Lab 6.1 — Queried MITRE ATT&CK TAXII server via Python</span></li>
+          <li onclick="toggleCheck(this)"><span class="cb"></span><span>Lab 8.1 — Mapped a phishing campaign infrastructure from a domain pivot</span></li>
+          <li onclick="toggleCheck(this)"><span class="cb"></span><span>Lab 9.1 — Deployed MISP, created threat event with IOCs + ATT&CK galaxy tags</span></li>
+          <li onclick="toggleCheck(this)"><span class="cb"></span><span>Lab 10.1 — Built a structured actor profile for Lazarus Group</span></li>
+          <li onclick="toggleCheck(this)"><span class="cb"></span><span>Lab 11.1 — Ran dark web monitoring using HIBP, PasteHunter, Ransomlook</span></li>
+          <li onclick="toggleCheck(this)"><span class="cb"></span><span>Capstone — Wrote a full Tactical CTI Report and pushed to GitHub</span></li>
+        </ul>
+      </div>
+
+      <div class="note tip" style="margin-top:14px;">
+        <span class="ni">🏆</span>
+        <span><strong>Portfolio tip:</strong> A well-written CTI report with Diamond Model analysis, ATT&CK mapping, and actionable detection rules in your GitHub will separate you from 90% of other SOC/GRC candidates in Indian job interviews. Interviewers at Deloitte, KPMG Cyber, and MSSPs actively look for this.</span>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /section 12 -->
+
+</div><!-- /content -->
+</main>
+</div><!-- /layout -->
+
+<script>
+function toggleP(header) {
+  header.closest('.practical').classList.toggle('open');
+  updateProgress();
+}
+
+function toggleCheck(li) {
+  li.classList.toggle('done');
+  updateCheckProgress();
+}
+
+function updateProgress() {
+  const total = document.querySelectorAll('.practical').length;
+  const opened = document.querySelectorAll('.practical.open').length;
+  const pct = Math.round((opened / total) * 100);
+  document.getElementById('sb-fill').style.width = pct + '%';
+  document.getElementById('sb-pct').textContent = pct + '%';
+}
+
+function updateCheckProgress() {
+  const total = document.querySelectorAll('.checklist li').length;
+  const done = document.querySelectorAll('.checklist li.done').length;
+  if (total === 0) return;
+  const pct = Math.round((done / total) * 100);
+  document.getElementById('sb-fill').style.width = pct + '%';
+  document.getElementById('sb-pct').textContent = pct + '%';
+}
+
+// Sidebar active tracking
+const sections = document.querySelectorAll('.section');
+const navItems = document.querySelectorAll('.nav-item');
+
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      const id = entry.target.id;
+      navItems.forEach(item => {
+        item.classList.toggle('active', item.getAttribute('href') === '#' + id);
+      });
+    }
+  });
+}, { rootMargin: '-20% 0px -70% 0px' });
+
+sections.forEach(s => observer.observe(s));
+
+navItems.forEach(item => {
+  item.addEventListener('click', e => {
+    const href = item.getAttribute('href');
+    if (href && href.startsWith('#')) {
+      e.preventDefault();
+      document.querySelector(href)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  });
+});
+
+updateProgress();
+</script>
+</body>
+</html>

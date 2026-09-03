@@ -1,0 +1,1802 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SOC & SIEM Operations — Study Module</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=JetBrains+Mono:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #0d0f0e;
+  --bg2: #131614;
+  --bg3: #1a1d1b;
+  --border: #252825;
+  --border2: #2e332d;
+  --text: #e8ede8;
+  --text-muted: #7a8878;
+  --text-dim: #4a514a;
+  --green: #4ade80;
+  --green-dim: #166534;
+  --green-glow: rgba(74,222,128,0.08);
+  --amber: #fbbf24;
+  --amber-dim: #92400e;
+  --red: #f87171;
+  --red-dim: #7f1d1d;
+  --blue: #60a5fa;
+  --blue-dim: #1e3a5f;
+  --cyan: #22d3ee;
+  --cyan-dim: #164e63;
+  --pink: #f472b6;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: 'JetBrains Mono', monospace;
+  background: var(--bg);
+  color: var(--text);
+  font-size: 13px;
+  line-height: 1.7;
+  min-height: 100vh;
+}
+
+/* Scanline overlay */
+body::before {
+  content: '';
+  position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+  background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.03) 2px, rgba(0,0,0,0.03) 4px);
+  pointer-events: none; z-index: 0;
+}
+
+.layout { display: flex; min-height: 100vh; position: relative; z-index: 1; }
+
+/* ── SIDEBAR ── */
+.sidebar {
+  width: 260px; flex-shrink: 0;
+  background: var(--bg2);
+  border-right: 1px solid var(--border);
+  padding: 0;
+  position: sticky; top: 0; height: 100vh;
+  overflow-y: auto; display: flex; flex-direction: column;
+}
+
+.sidebar::-webkit-scrollbar { width: 4px; }
+.sidebar::-webkit-scrollbar-track { background: transparent; }
+.sidebar::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 2px; }
+
+.sidebar-header {
+  padding: 20px 18px 16px;
+  border-bottom: 1px solid var(--border);
+}
+
+.sidebar-badge {
+  display: inline-flex; align-items: center; gap: 6px;
+  background: var(--green-glow);
+  border: 1px solid var(--green-dim);
+  border-radius: 4px;
+  padding: 3px 8px;
+  font-size: 10px; font-weight: 500;
+  color: var(--green);
+  letter-spacing: 0.06em;
+  margin-bottom: 10px;
+}
+
+.sidebar-badge::before {
+  content: '';
+  width: 6px; height: 6px; border-radius: 50%;
+  background: var(--green);
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.3; }
+}
+
+.sidebar-title {
+  font-family: 'Syne', sans-serif;
+  font-size: 15px; font-weight: 800;
+  color: var(--text);
+  line-height: 1.25;
+}
+
+.sidebar-sub { font-size: 10px; color: var(--text-muted); margin-top: 4px; }
+
+.nav-section {
+  padding: 14px 18px 4px;
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+}
+
+.nav-item {
+  display: flex; align-items: center; gap: 10px;
+  padding: 7px 18px;
+  font-size: 11.5px;
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: all 0.15s;
+  text-decoration: none;
+  border-left: 2px solid transparent;
+  margin: 1px 0;
+}
+
+.nav-item:hover { color: var(--text); background: var(--bg3); border-left-color: var(--border2); }
+.nav-item.active { color: var(--green); background: var(--green-glow); border-left-color: var(--green); }
+
+.nav-num {
+  font-size: 9px; color: var(--text-dim);
+  min-width: 16px; text-align: right;
+  font-weight: 600;
+}
+
+.sidebar-progress {
+  margin-top: auto;
+  padding: 16px 18px;
+  border-top: 1px solid var(--border);
+}
+
+.sp-label { font-size: 10px; color: var(--text-muted); display: flex; justify-content: space-between; margin-bottom: 6px; }
+.sp-track { height: 3px; background: var(--border2); border-radius: 99px; overflow: hidden; }
+.sp-fill { height: 100%; background: var(--green); border-radius: 99px; transition: width 0.5s ease; }
+
+/* ── MAIN ── */
+.main { flex: 1; padding: 0; overflow-x: hidden; }
+
+/* Hero */
+.hero {
+  padding: 52px 60px 40px;
+  border-bottom: 1px solid var(--border);
+  background: linear-gradient(180deg, rgba(74,222,128,0.03) 0%, transparent 100%);
+  animation: fadeIn 0.5s ease;
+}
+
+@keyframes fadeIn { from { opacity:0; transform:translateY(8px); } to { opacity:1; transform:translateY(0); } }
+
+.hero-tag {
+  font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase;
+  color: var(--green); font-weight: 600; margin-bottom: 14px;
+  display: flex; align-items: center; gap: 8px;
+}
+.hero-tag::before { content: '//'; color: var(--text-dim); }
+
+.hero-title {
+  font-family: 'Syne', sans-serif;
+  font-size: 38px; font-weight: 800;
+  color: var(--text);
+  line-height: 1.1; letter-spacing: -0.02em;
+  margin-bottom: 14px;
+}
+
+.hero-title span { color: var(--green); }
+
+.hero-desc { color: var(--text-muted); font-size: 13px; max-width: 600px; line-height: 1.7; }
+
+.hero-stats {
+  display: flex; gap: 24px; margin-top: 28px; flex-wrap: wrap;
+}
+
+.stat {
+  background: var(--bg3);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 10px 16px;
+  display: flex; flex-direction: column; gap: 2px;
+}
+
+.stat-val { font-size: 18px; font-weight: 700; font-family: 'Syne', sans-serif; color: var(--text); }
+.stat-val.g { color: var(--green); }
+.stat-val.a { color: var(--amber); }
+.stat-val.b { color: var(--blue); }
+.stat-label { font-size: 10px; color: var(--text-muted); letter-spacing: 0.04em; }
+
+/* Content area */
+.content { padding: 0 60px 80px; }
+
+/* Section */
+.section {
+  margin-top: 52px;
+  animation: fadeIn 0.4s ease both;
+}
+
+.section-header {
+  display: flex; align-items: flex-start; gap: 16px;
+  margin-bottom: 24px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--border);
+}
+
+.section-num {
+  font-size: 11px; font-weight: 600; color: var(--text-dim);
+  padding-top: 2px; min-width: 24px;
+}
+
+.section-meta { flex: 1; }
+
+.section-title {
+  font-family: 'Syne', sans-serif;
+  font-size: 22px; font-weight: 800;
+  color: var(--text); line-height: 1.2; margin-bottom: 4px;
+}
+
+.section-sub { font-size: 11px; color: var(--text-muted); }
+
+.section-badge {
+  font-size: 9.5px; font-weight: 600;
+  letter-spacing: 0.06em; text-transform: uppercase;
+  padding: 3px 10px; border-radius: 3px; flex-shrink: 0;
+}
+
+.sb-green { background: rgba(74,222,128,0.1); color: var(--green); border: 1px solid var(--green-dim); }
+.sb-amber { background: rgba(251,191,36,0.08); color: var(--amber); border: 1px solid var(--amber-dim); }
+.sb-blue  { background: rgba(96,165,250,0.08); color: var(--blue);  border: 1px solid var(--blue-dim);  }
+.sb-red   { background: rgba(248,113,113,0.08); color: var(--red);   border: 1px solid var(--red-dim);   }
+.sb-cyan  { background: rgba(34,211,238,0.08);  color: var(--cyan);  border: 1px solid var(--cyan-dim);  }
+
+/* Theory box */
+.theory-box {
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 20px 24px;
+  margin-bottom: 16px;
+}
+
+.theory-box h4 {
+  font-family: 'Syne', sans-serif;
+  font-size: 13px; font-weight: 700;
+  color: var(--green); margin-bottom: 10px;
+  display: flex; align-items: center; gap: 8px;
+}
+
+.theory-box h4::before { content: '▸'; font-size: 10px; }
+
+.theory-box p { color: var(--text-muted); font-size: 12.5px; line-height: 1.75; margin-bottom: 8px; }
+.theory-box p:last-child { margin-bottom: 0; }
+
+.theory-box strong { color: var(--text); font-weight: 600; }
+
+/* Key concepts grid */
+.concepts-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 8px;
+  margin: 12px 0;
+}
+
+.concept-card {
+  background: var(--bg3);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 12px 14px;
+  transition: border-color 0.15s;
+}
+
+.concept-card:hover { border-color: var(--border2); }
+
+.concept-card .cc-key {
+  font-size: 10px; font-weight: 600; color: var(--amber);
+  letter-spacing: 0.04em; margin-bottom: 4px;
+}
+
+.concept-card .cc-val {
+  font-size: 11.5px; color: var(--text-muted); line-height: 1.55;
+}
+
+/* Practical block */
+.practical {
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  overflow: hidden;
+  margin-bottom: 16px;
+}
+
+.practical-header {
+  background: var(--bg3);
+  padding: 10px 16px;
+  display: flex; align-items: center; gap: 10px;
+  border-bottom: 1px solid var(--border);
+  cursor: pointer;
+  user-select: none;
+  transition: background 0.12s;
+}
+
+.practical-header:hover { background: rgba(74,222,128,0.04); }
+
+.ph-icon { font-size: 14px; }
+.ph-title { font-size: 12px; font-weight: 600; color: var(--text); flex: 1; }
+.ph-tag {
+  font-size: 9px; font-weight: 600; text-transform: uppercase;
+  letter-spacing: 0.06em; padding: 2px 7px; border-radius: 3px;
+}
+.ph-tag.lab { background: rgba(248,113,113,0.1); color: var(--red); border: 1px solid var(--red-dim); }
+.ph-tag.cmd { background: rgba(34,211,238,0.08); color: var(--cyan); border: 1px solid var(--cyan-dim); }
+.ph-tag.config { background: rgba(251,191,36,0.08); color: var(--amber); border: 1px solid var(--amber-dim); }
+.ph-chevron { font-size: 9px; color: var(--text-dim); transition: transform 0.2s; }
+.practical.open .ph-chevron { transform: rotate(90deg); }
+
+.practical-body { display: none; padding: 16px 20px; }
+.practical.open .practical-body { display: block; }
+
+/* Steps */
+.steps { list-style: none; }
+
+.step {
+  display: flex; gap: 14px; margin-bottom: 16px;
+  padding-bottom: 16px;
+  border-bottom: 1px dashed var(--border);
+}
+
+.step:last-child { margin-bottom: 0; padding-bottom: 0; border-bottom: none; }
+
+.step-num {
+  width: 22px; height: 22px; border-radius: 50%;
+  border: 1px solid var(--green-dim);
+  background: rgba(74,222,128,0.05);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 9px; font-weight: 700; color: var(--green);
+  flex-shrink: 0; margin-top: 1px;
+}
+
+.step-content { flex: 1; }
+
+.step-title {
+  font-size: 12.5px; font-weight: 600; color: var(--text);
+  margin-bottom: 4px;
+}
+
+.step-desc { font-size: 12px; color: var(--text-muted); line-height: 1.65; margin-bottom: 8px; }
+.step-desc:last-child { margin-bottom: 0; }
+
+/* Code block */
+.code-block {
+  background: #0a0c0b;
+  border: 1px solid var(--border);
+  border-radius: 5px;
+  padding: 12px 14px;
+  font-size: 11.5px;
+  color: var(--cyan);
+  overflow-x: auto;
+  margin: 8px 0;
+  position: relative;
+}
+
+.code-block .comment { color: var(--text-dim); }
+.code-block .cmd { color: var(--green); }
+.code-block .flag { color: var(--amber); }
+.code-block .val { color: var(--pink); }
+.code-block .out { color: var(--text-muted); font-style: italic; }
+.code-block .keyword { color: var(--blue); }
+
+.code-block::before {
+  content: attr(data-label);
+  position: absolute; top: 6px; right: 10px;
+  font-size: 9px; color: var(--text-dim); letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+/* Note / tip */
+.note {
+  display: flex; gap: 10px; align-items: flex-start;
+  border-radius: 5px; padding: 10px 14px;
+  font-size: 12px; margin: 10px 0;
+}
+
+.note.tip { background: rgba(74,222,128,0.05); border: 1px solid var(--green-dim); color: var(--text-muted); }
+.note.warn { background: rgba(251,191,36,0.05); border: 1px solid var(--amber-dim); color: var(--text-muted); }
+.note.info { background: rgba(96,165,250,0.05); border: 1px solid var(--blue-dim); color: var(--text-muted); }
+.note .note-icon { font-size: 13px; flex-shrink: 0; margin-top: 1px; }
+.note strong { color: var(--text); }
+
+/* Table */
+.data-table { width: 100%; border-collapse: collapse; margin: 12px 0; font-size: 12px; }
+.data-table th {
+  text-align: left; padding: 7px 12px;
+  background: var(--bg3); color: var(--text-muted);
+  font-size: 10px; text-transform: uppercase; letter-spacing: 0.06em;
+  border-bottom: 1px solid var(--border);
+  font-weight: 600;
+}
+.data-table td {
+  padding: 8px 12px; border-bottom: 1px solid var(--border);
+  color: var(--text-muted); vertical-align: top;
+}
+.data-table tr:last-child td { border-bottom: none; }
+.data-table tr:hover td { background: var(--bg3); color: var(--text); }
+.data-table .td-key { color: var(--cyan); font-weight: 500; white-space: nowrap; }
+.data-table .td-red { color: var(--red); font-weight: 500; }
+.data-table .td-green { color: var(--green); font-weight: 500; }
+.data-table .td-amber { color: var(--amber); font-weight: 500; }
+
+/* Event ID pill */
+.eid {
+  display: inline-block;
+  background: rgba(34,211,238,0.08);
+  border: 1px solid var(--cyan-dim);
+  color: var(--cyan);
+  border-radius: 3px;
+  padding: 0px 6px;
+  font-size: 10.5px; font-weight: 600;
+  margin: 1px 2px;
+}
+
+/* Divider */
+.section-divider {
+  border: none; border-top: 1px solid var(--border);
+  margin: 40px 0 0;
+}
+
+/* Flow diagram */
+.flow {
+  display: flex; align-items: center; flex-wrap: wrap; gap: 4px;
+  margin: 10px 0; padding: 14px 16px;
+  background: var(--bg3); border: 1px solid var(--border); border-radius: 6px;
+}
+
+.flow-step {
+  background: var(--bg2); border: 1px solid var(--border2);
+  border-radius: 4px; padding: 5px 12px;
+  font-size: 11px; color: var(--text);
+}
+.flow-step.active { border-color: var(--green-dim); color: var(--green); }
+.flow-arrow { color: var(--text-dim); font-size: 12px; }
+
+/* Checklist */
+.lab-checklist { list-style: none; margin-top: 8px; }
+.lab-checklist li {
+  display: flex; align-items: flex-start; gap: 10px;
+  padding: 6px 8px; border-radius: 4px;
+  font-size: 12px; color: var(--text-muted); cursor: pointer;
+  transition: background 0.1s;
+}
+.lab-checklist li:hover { background: var(--bg3); color: var(--text); }
+.lc-box {
+  width: 14px; height: 14px; border: 1px solid var(--border2);
+  border-radius: 3px; flex-shrink: 0; margin-top: 2px;
+  display: flex; align-items: center; justify-content: center;
+  transition: all 0.15s;
+}
+.lab-checklist li.done .lc-box { background: var(--green); border-color: var(--green); }
+.lab-checklist li.done .lc-box::after { content: '✓'; font-size: 9px; color: #000; font-weight: bold; }
+.lab-checklist li.done span:last-child { text-decoration: line-through; color: var(--text-dim); }
+
+/* scrollbar global */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 3px; }
+
+@media (max-width: 900px) {
+  .sidebar { display: none; }
+  .hero, .content { padding-left: 24px; padding-right: 24px; }
+  .hero-title { font-size: 28px; }
+  .concepts-grid { grid-template-columns: 1fr 1fr; }
+}
+</style>
+</head>
+<body>
+<div class="layout">
+
+<!-- SIDEBAR -->
+<nav class="sidebar">
+  <div class="sidebar-header">
+    <div class="sidebar-badge">LIVE MODULE</div>
+    <div class="sidebar-title">SOC & SIEM<br>Operations</div>
+    <div class="sidebar-sub">Week 6–7 · Cybersecurity Track</div>
+  </div>
+
+  <div class="nav-section">Topics</div>
+  <a class="nav-item active" href="#s1"><span class="nav-num">01</span> SOC Structure & Roles</a>
+  <a class="nav-item" href="#s2"><span class="nav-num">02</span> Log Sources & Types</a>
+  <a class="nav-item" href="#s3"><span class="nav-num">03</span> Windows Event IDs</a>
+  <a class="nav-item" href="#s4"><span class="nav-num">04</span> Sysmon Deep Dive</a>
+  <a class="nav-item" href="#s5"><span class="nav-num">05</span> Linux Logs</a>
+  <a class="nav-item" href="#s6"><span class="nav-num">06</span> Wazuh SIEM Setup</a>
+  <a class="nav-item" href="#s7"><span class="nav-num">07</span> Splunk SPL Queries</a>
+  <a class="nav-item" href="#s8"><span class="nav-num">08</span> Alert Triage Workflow</a>
+  <a class="nav-item" href="#s9"><span class="nav-num">09</span> MITRE ATT&CK</a>
+  <a class="nav-item" href="#s10"><span class="nav-num">10</span> Incident Response</a>
+  <a class="nav-item" href="#s11"><span class="nav-num">11</span> Malware Awareness</a>
+  <a class="nav-item" href="#s12"><span class="nav-num">12</span> SOC L1 Simulation</a>
+
+  <div class="sidebar-progress">
+    <div class="sp-label"><span>Progress</span><span id="sb-pct">0%</span></div>
+    <div class="sp-track"><div class="sp-fill" id="sb-fill" style="width:0%"></div></div>
+  </div>
+</nav>
+
+<!-- MAIN -->
+<main class="main">
+
+  <!-- HERO -->
+  <div class="hero">
+    <div class="hero-tag">Module 06 · Security Operations</div>
+    <h1 class="hero-title">SOC & <span>SIEM</span><br>Operations</h1>
+    <p class="hero-desc">Hands-on guide to working in a Security Operations Center — understanding logs, running a SIEM, triaging alerts, and responding to incidents. Theory kept short; practical steps kept real.</p>
+    <div class="hero-stats">
+      <div class="stat"><span class="stat-val g">12</span><span class="stat-label">Topics</span></div>
+      <div class="stat"><span class="stat-val a">Week 6–7</span><span class="stat-label">Timeline</span></div>
+      <div class="stat"><span class="stat-val b">8+</span><span class="stat-label">Lab Exercises</span></div>
+      <div class="stat"><span class="stat-val" style="color:var(--pink)">Wazuh · Splunk</span><span class="stat-label">Primary Tools</span></div>
+    </div>
+  </div>
+
+  <div class="content">
+
+    <!-- ══════════════════════════════════════════
+         01 — SOC Structure & Roles
+    ══════════════════════════════════════════ -->
+    <div class="section" id="s1">
+      <div class="section-header">
+        <span class="section-num">01</span>
+        <div class="section-meta">
+          <div class="section-title">SOC Structure & Roles</div>
+          <div class="section-sub">What a SOC is, who does what, and where you fit in</div>
+        </div>
+        <span class="section-badge sb-green">Foundation</span>
+      </div>
+
+      <div class="theory-box">
+        <h4>What is a SOC?</h4>
+        <p>A <strong>Security Operations Center (SOC)</strong> is a team responsible for monitoring, detecting, and responding to security threats in real time — 24/7. Think of it as the nerve center of an organization's security.</p>
+        <p>The SOC ingests logs from every system (servers, endpoints, firewalls, apps), feeds them into a SIEM, and analysts watch for anything suspicious.</p>
+      </div>
+
+      <div class="concepts-grid">
+        <div class="concept-card">
+          <div class="cc-key">SOC L1 Analyst</div>
+          <div class="cc-val">Triage alerts, classify true/false positives, escalate incidents. Entry-level. Your target role.</div>
+        </div>
+        <div class="concept-card">
+          <div class="cc-key">SOC L2 Analyst</div>
+          <div class="cc-val">Deeper investigation, threat hunting, handles escalations from L1.</div>
+        </div>
+        <div class="concept-card">
+          <div class="cc-key">SOC L3 / Threat Hunter</div>
+          <div class="cc-val">Proactively hunts for threats, builds detection rules, incident commander.</div>
+        </div>
+        <div class="concept-card">
+          <div class="cc-key">SIEM Engineer</div>
+          <div class="cc-val">Manages SIEM infra, writes rules, tunes alerts, onboards log sources.</div>
+        </div>
+        <div class="concept-card">
+          <div class="cc-key">Incident Responder</div>
+          <div class="cc-val">Handles confirmed breaches, containment, forensics, recovery.</div>
+        </div>
+        <div class="concept-card">
+          <div class="cc-key">SOC Manager</div>
+          <div class="cc-val">Oversees team, metrics (MTTD, MTTR), escalation procedures, client reporting.</div>
+        </div>
+      </div>
+
+      <div class="note tip">
+        <span class="note-icon">💡</span>
+        <span><strong>For your job search:</strong> SOC L1 roles in India (TCS, Wipro, Infosys Cyber, KPMG, Deloitte MSSPs) expect you to know log analysis, basic SIEM navigation, Windows Event IDs, and incident triage. That's exactly what this module covers.</span>
+      </div>
+    </div>
+
+    <hr class="section-divider">
+
+    <!-- ══════════════════════════════════════════
+         02 — Log Sources & Types
+    ══════════════════════════════════════════ -->
+    <div class="section" id="s2">
+      <div class="section-header">
+        <span class="section-num">02</span>
+        <div class="section-meta">
+          <div class="section-title">Log Sources & Types</div>
+          <div class="section-sub">Where logs come from and why each one matters</div>
+        </div>
+        <span class="section-badge sb-blue">Theory + Lab</span>
+      </div>
+
+      <div class="theory-box">
+        <h4>Why Logs Are Everything in a SOC</h4>
+        <p>Logs are digital footprints — every action a system takes gets written somewhere. A SOC analyst's job is to read those footprints and spot the ones that don't belong. <strong>No logs = blind SOC.</strong></p>
+        <p>Log sources are categorized by what generates them. Each has different formats, retention requirements, and attack signals to look for.</p>
+      </div>
+
+      <table class="data-table">
+        <thead>
+          <tr><th>Log Source</th><th>What It Records</th><th>Key Attacks to Detect</th><th>Format</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="td-key">Windows Event Logs</td>
+            <td>Logins, process creation, user changes, policy changes</td>
+            <td>Brute force, privilege escalation, lateral movement</td>
+            <td>EVTX / XML</td>
+          </tr>
+          <tr>
+            <td class="td-key">Linux Syslog/Auth</td>
+            <td>SSH logins, sudo usage, service starts/stops, cron jobs</td>
+            <td>SSH brute force, backdoors, persistence via cron</td>
+            <td>Plain text</td>
+          </tr>
+          <tr>
+            <td class="td-key">Firewall Logs</td>
+            <td>Allowed/denied connections, source IP, destination port</td>
+            <td>Port scans, C2 beaconing, data exfiltration</td>
+            <td>Syslog / CEF</td>
+          </tr>
+          <tr>
+            <td class="td-key">Web Server (Apache/Nginx)</td>
+            <td>URL requests, status codes, user-agent, source IP</td>
+            <td>SQLi attempts, LFI, brute force, web shell upload</td>
+            <td>Combined Log Format</td>
+          </tr>
+          <tr>
+            <td class="td-key">DNS Logs</td>
+            <td>DNS queries and responses per host</td>
+            <td>DNS tunneling, DGA domains, C2 beaconing</td>
+            <td>Syslog / JSON</td>
+          </tr>
+          <tr>
+            <td class="td-key">Endpoint (EDR)</td>
+            <td>Process trees, file changes, network connections per process</td>
+            <td>Malware execution, persistence, lateral movement</td>
+            <td>JSON / proprietary</td>
+          </tr>
+          <tr>
+            <td class="td-key">VPN / Auth Logs</td>
+            <td>Remote login success/failure, IP geolocation</td>
+            <td>Credential stuffing, impossible travel attacks</td>
+            <td>Syslog</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="practical open">
+        <div class="practical-header" onclick="togglePractical(this)">
+          <span class="ph-icon">🔬</span>
+          <span class="ph-title">Lab 2.1 — Manually read Linux auth logs and identify failed SSH attempts</span>
+          <span class="ph-tag lab">LAB</span>
+          <span class="ph-chevron">▶</span>
+        </div>
+        <div class="practical-body">
+          <ol class="steps">
+            <li class="step">
+              <span class="step-num">1</span>
+              <div class="step-content">
+                <div class="step-title">Open the auth log on your Linux VM</div>
+                <div class="step-desc">This file records all authentication events — SSH logins, sudo, su commands.</div>
+                <div class="code-block" data-label="bash">
+<span class="cmd">cat</span> /var/log/auth.log | <span class="cmd">grep</span> <span class="val">"Failed password"</span>
+                </div>
+              </div>
+            </li>
+            <li class="step">
+              <span class="step-num">2</span>
+              <div class="step-content">
+                <div class="step-title">Count failed attempts per source IP</div>
+                <div class="step-desc">This helps identify brute force sources quickly.</div>
+                <div class="code-block" data-label="bash">
+<span class="cmd">grep</span> <span class="val">"Failed password"</span> /var/log/auth.log | <span class="cmd">awk</span> <span class="val">'{print $(NF-3)}'</span> | <span class="cmd">sort</span> | <span class="cmd">uniq -c</span> | <span class="cmd">sort -rn</span> | <span class="cmd">head</span> <span class="flag">-20</span>
+<br><span class="comment"># Output: count  IP_address — high count = brute force candidate</span>
+                </div>
+              </div>
+            </li>
+            <li class="step">
+              <span class="step-num">3</span>
+              <div class="step-content">
+                <div class="step-title">Check successful logins after failures (sign of success)</div>
+                <div class="step-desc">An IP that failed 100 times and then got "Accepted" is a confirmed breach.</div>
+                <div class="code-block" data-label="bash">
+<span class="cmd">grep</span> <span class="val">"Accepted password"</span> /var/log/auth.log
+<span class="cmd">grep</span> <span class="val">"Accepted publickey"</span> /var/log/auth.log
+                </div>
+              </div>
+            </li>
+            <li class="step">
+              <span class="step-num">4</span>
+              <div class="step-content">
+                <div class="step-title">Check for root login attempts</div>
+                <div class="code-block" data-label="bash">
+<span class="cmd">grep</span> <span class="val">"root"</span> /var/log/auth.log | <span class="cmd">grep</span> <span class="val">"Failed"</span>
+                </div>
+                <div class="note warn" style="margin-top:8px;">
+                  <span class="note-icon">⚠️</span>
+                  <span>Direct root SSH brute force is a critical finding. In a real SOC, this triggers a P1 alert immediately.</span>
+                </div>
+              </div>
+            </li>
+          </ol>
+        </div>
+      </div>
+    </div>
+
+    <hr class="section-divider">
+
+    <!-- ══════════════════════════════════════════
+         03 — Windows Event IDs
+    ══════════════════════════════════════════ -->
+    <div class="section" id="s3">
+      <div class="section-header">
+        <span class="section-num">03</span>
+        <div class="section-meta">
+          <div class="section-title">Windows Event IDs for SOC</div>
+          <div class="section-sub">The IDs every L1 analyst must know cold</div>
+        </div>
+        <span class="section-badge sb-amber">Must Know</span>
+      </div>
+
+      <div class="theory-box">
+        <h4>How Windows Logging Works</h4>
+        <p>Windows stores events in <strong>Channels</strong> (Security, System, Application, PowerShell). Each event has an <strong>Event ID</strong> that tells you exactly what happened. The Security channel is the most important for SOC work.</p>
+        <p>You view these in <strong>Event Viewer</strong> (GUI) or query them with <strong>wevtutil</strong> / <strong>PowerShell</strong> (for automation/SIEM ingestion).</p>
+      </div>
+
+      <table class="data-table">
+        <thead>
+          <tr><th>Event ID</th><th>What It Means</th><th>SOC Significance</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><span class="eid">4624</span></td>
+            <td>Successful account logon</td>
+            <td class="td-green">Baseline normal activity — watch for unusual hours, Logon Type 3/10</td>
+          </tr>
+          <tr>
+            <td><span class="eid">4625</span></td>
+            <td>Failed account logon</td>
+            <td class="td-red">Many failures = brute force. Check Sub Status code for reason.</td>
+          </tr>
+          <tr>
+            <td><span class="eid">4648</span></td>
+            <td>Logon using explicit credentials</td>
+            <td class="td-amber">Pass-the-Hash, credential reuse — suspicious in most contexts</td>
+          </tr>
+          <tr>
+            <td><span class="eid">4672</span></td>
+            <td>Special privileges assigned</td>
+            <td class="td-red">Admin/SYSTEM rights granted — always investigate</td>
+          </tr>
+          <tr>
+            <td><span class="eid">4688</span></td>
+            <td>New process created</td>
+            <td class="td-amber">Watch for cmd.exe, powershell.exe, wscript.exe spawned by Office apps</td>
+          </tr>
+          <tr>
+            <td><span class="eid">4698</span></td>
+            <td>Scheduled task created</td>
+            <td class="td-red">Common persistence mechanism — attackers love Task Scheduler</td>
+          </tr>
+          <tr>
+            <td><span class="eid">4720</span></td>
+            <td>User account created</td>
+            <td class="td-red">Unauthorized account creation = attacker establishing foothold</td>
+          </tr>
+          <tr>
+            <td><span class="eid">4732</span></td>
+            <td>User added to security group</td>
+            <td class="td-red">Adding to Administrators group is a critical finding</td>
+          </tr>
+          <tr>
+            <td><span class="eid">4776</span></td>
+            <td>NTLM credential validation</td>
+            <td class="td-amber">Heavy NTLM failures signal Pass-the-Hash or hash spraying</td>
+          </tr>
+          <tr>
+            <td><span class="eid">7045</span></td>
+            <td>New service installed</td>
+            <td class="td-red">Malware often installs as a service for persistence</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="theory-box" style="margin-top:16px;">
+        <h4>Logon Types — Critical for 4624 / 4625</h4>
+        <div class="concepts-grid" style="margin-top:8px;">
+          <div class="concept-card"><div class="cc-key">Type 2 — Interactive</div><div class="cc-val">Local keyboard login. Normal at workstations.</div></div>
+          <div class="concept-card"><div class="cc-key">Type 3 — Network</div><div class="cc-val">File share, SMB access. Watch for lateral movement.</div></div>
+          <div class="concept-card"><div class="cc-key">Type 10 — RemoteInteractive</div><div class="cc-val">RDP login. Always scrutinize source IP.</div></div>
+          <div class="concept-card"><div class="cc-key">Type 5 — Service</div><div class="cc-val">Service account login. Baseline, but watch for changes.</div></div>
+        </div>
+      </div>
+
+      <div class="practical open">
+        <div class="practical-header" onclick="togglePractical(this)">
+          <span class="ph-icon">💻</span>
+          <span class="ph-title">Lab 3.1 — Query Windows Event Logs with PowerShell</span>
+          <span class="ph-tag cmd">CMD</span>
+          <span class="ph-chevron">▶</span>
+        </div>
+        <div class="practical-body">
+          <ol class="steps">
+            <li class="step">
+              <span class="step-num">1</span>
+              <div class="step-content">
+                <div class="step-title">Open PowerShell as Administrator on your Windows VM</div>
+                <div class="step-desc">Press Win+X → Windows PowerShell (Admin)</div>
+              </div>
+            </li>
+            <li class="step">
+              <span class="step-num">2</span>
+              <div class="step-content">
+                <div class="step-title">Get last 20 failed login attempts (Event ID 4625)</div>
+                <div class="code-block" data-label="powershell">
+<span class="cmd">Get-WinEvent</span> <span class="flag">-FilterHashtable</span> @{LogName=<span class="val">'Security'</span>; Id=<span class="val">4625</span>} <span class="flag">-MaxEvents</span> <span class="val">20</span> |
+  <span class="cmd">Select-Object</span> TimeCreated, Message |
+  <span class="cmd">Format-List</span>
+                </div>
+              </div>
+            </li>
+            <li class="step">
+              <span class="step-num">3</span>
+              <div class="step-content">
+                <div class="step-title">Find all process creation events (4688) in last 1 hour</div>
+                <div class="code-block" data-label="powershell">
+<span class="cmd">Get-WinEvent</span> <span class="flag">-FilterHashtable</span> @{
+  LogName=<span class="val">'Security'</span>; Id=<span class="val">4688</span>
+  StartTime=(Get-Date).<span class="cmd">AddHours</span>(<span class="val">-1</span>)
+} | <span class="cmd">Select-Object</span> TimeCreated,
+  @{N=<span class="val">'Process'</span>;E={$_.Properties[5].Value}},
+  @{N=<span class="val">'ParentProcess'</span>;E={$_.Properties[13].Value}}
+                </div>
+              </div>
+            </li>
+            <li class="step">
+              <span class="step-num">4</span>
+              <div class="step-content">
+                <div class="step-title">Hunt for suspicious: powershell.exe spawned by WINWORD.EXE</div>
+                <div class="step-desc">A classic macro malware execution pattern. Look in the results for any powershell.exe or cmd.exe whose parent process is a Microsoft Office application.</div>
+                <div class="note warn">
+                  <span class="note-icon">⚠️</span>
+                  <span><strong>Red flag:</strong> WINWORD.EXE → cmd.exe → powershell.exe is a textbook malicious macro chain. Escalate immediately as P1.</span>
+                </div>
+              </div>
+            </li>
+          </ol>
+        </div>
+      </div>
+    </div>
+
+    <hr class="section-divider">
+
+    <!-- ══════════════════════════════════════════
+         04 — Sysmon
+    ══════════════════════════════════════════ -->
+    <div class="section" id="s4">
+      <div class="section-header">
+        <span class="section-num">04</span>
+        <div class="section-meta">
+          <div class="section-title">Sysmon Deep Dive</div>
+          <div class="section-sub">Microsoft's free telemetry supercharger for Windows</div>
+        </div>
+        <span class="section-badge sb-cyan">Tool + Lab</span>
+      </div>
+
+      <div class="theory-box">
+        <h4>Why Sysmon?</h4>
+        <p>Default Windows logging is limited. <strong>Sysmon (System Monitor)</strong> adds ~30 event types that Windows natively doesn't log — network connections per process, DLL loading, file creation with hashes, registry changes, and more. It's free, from Microsoft Sysinternals, and used by almost every enterprise SOC.</p>
+      </div>
+
+      <table class="data-table">
+        <thead><tr><th>Sysmon Event ID</th><th>What It Captures</th><th>Why SOC Cares</th></tr></thead>
+        <tbody>
+          <tr><td><span class="eid">1</span></td><td>Process creation with full command line + parent</td><td class="td-red">Best process visibility. Catches LOLBins, encoded PS, malware</td></tr>
+          <tr><td><span class="eid">3</span></td><td>Network connection per process</td><td class="td-amber">Detect C2 beaconing, reverse shells, data exfil</td></tr>
+          <tr><td><span class="eid">7</span></td><td>DLL loaded by process</td><td class="td-amber">DLL hijacking, process injection detection</td></tr>
+          <tr><td><span class="eid">8</span></td><td>CreateRemoteThread — code injected into another process</td><td class="td-red">Classic malware injection technique</td></tr>
+          <tr><td><span class="eid">11</span></td><td>File created (with hash)</td><td class="td-amber">Track dropped malware, correlate file hashes with VirusTotal</td></tr>
+          <tr><td><span class="eid">13</span></td><td>Registry value set</td><td class="td-red">Persistence via Run keys, UAC bypass, malware config</td></tr>
+          <tr><td><span class="eid">22</span></td><td>DNS query made by process</td><td class="td-amber">Detect DGA domains, C2 DNS lookups, DNS tunneling</td></tr>
+        </tbody>
+      </table>
+
+      <div class="practical open">
+        <div class="practical-header" onclick="togglePractical(this)">
+          <span class="ph-icon">⚙️</span>
+          <span class="ph-title">Lab 4.1 — Install Sysmon with SwiftOnSecurity config</span>
+          <span class="ph-tag config">CONFIG</span>
+          <span class="ph-chevron">▶</span>
+        </div>
+        <div class="practical-body">
+          <ol class="steps">
+            <li class="step">
+              <span class="step-num">1</span>
+              <div class="step-content">
+                <div class="step-title">Download Sysmon and the best community config</div>
+                <div class="code-block" data-label="powershell">
+<span class="comment"># Download Sysmon from Sysinternals</span>
+<span class="cmd">Invoke-WebRequest</span> <span class="val">"https://download.sysinternals.com/files/Sysmon.zip"</span> <span class="flag">-OutFile</span> <span class="val">C:\sysmon.zip</span>
+<span class="cmd">Expand-Archive</span> <span class="val">C:\sysmon.zip</span> <span class="flag">-DestinationPath</span> <span class="val">C:\Sysmon</span>
+
+<span class="comment"># Download SwiftOnSecurity config (widely used baseline)</span>
+<span class="cmd">Invoke-WebRequest</span> <span class="val">"https://raw.githubusercontent.com/SwiftOnSecurity/sysmon-config/master/sysmonconfig-export.xml"</span> <span class="flag">-OutFile</span> <span class="val">C:\Sysmon\config.xml</span>
+                </div>
+              </div>
+            </li>
+            <li class="step">
+              <span class="step-num">2</span>
+              <div class="step-content">
+                <div class="step-title">Install Sysmon as a Windows service</div>
+                <div class="code-block" data-label="cmd (admin)">
+cd C:\Sysmon
+<span class="cmd">.\Sysmon64.exe</span> <span class="flag">-accepteula -i</span> config.xml
+<span class="out"># Output: Sysmon64 installed.</span>
+<span class="out"># SysmonDrv installed.</span>
+                </div>
+              </div>
+            </li>
+            <li class="step">
+              <span class="step-num">3</span>
+              <div class="step-content">
+                <div class="step-title">Verify Sysmon is running</div>
+                <div class="code-block" data-label="powershell">
+<span class="cmd">Get-Service</span> Sysmon64
+<span class="out"># Status: Running</span>
+
+<span class="comment"># View live events</span>
+<span class="cmd">Get-WinEvent</span> <span class="flag">-LogName</span> <span class="val">"Microsoft-Windows-Sysmon/Operational"</span> <span class="flag">-MaxEvents</span> <span class="val">10</span>
+                </div>
+              </div>
+            </li>
+            <li class="step">
+              <span class="step-num">4</span>
+              <div class="step-content">
+                <div class="step-title">Trigger and observe a Sysmon Event 1 (process creation)</div>
+                <div class="step-desc">Open cmd.exe → run <code style="color:var(--cyan)">whoami</code>. Then query Sysmon for that process:</div>
+                <div class="code-block" data-label="powershell">
+<span class="cmd">Get-WinEvent</span> <span class="flag">-FilterHashtable</span> @{LogName=<span class="val">'Microsoft-Windows-Sysmon/Operational'</span>; Id=<span class="val">1</span>} <span class="flag">-MaxEvents</span> <span class="val">5</span> |
+  <span class="cmd">Select-Object</span> TimeCreated, Message | <span class="cmd">Format-List</span>
+<span class="comment"># Look for: Image: C:\Windows\System32\whoami.exe</span>
+<span class="comment"># CommandLine: whoami</span>
+<span class="comment"># ParentImage: C:\Windows\System32\cmd.exe</span>
+                </div>
+              </div>
+            </li>
+          </ol>
+        </div>
+      </div>
+    </div>
+
+    <hr class="section-divider">
+
+    <!-- ══════════════════════════════════════════
+         05 — Linux Logs
+    ══════════════════════════════════════════ -->
+    <div class="section" id="s5">
+      <div class="section-header">
+        <span class="section-num">05</span>
+        <div class="section-meta">
+          <div class="section-title">Linux Log Analysis</div>
+          <div class="section-sub">Key log files and parsing techniques for SOC analysts</div>
+        </div>
+        <span class="section-badge sb-green">Lab</span>
+      </div>
+
+      <div class="theory-box">
+        <h4>Linux Log Locations</h4>
+        <p>Linux logs live in <strong>/var/log/</strong>. They're plain text — readable with cat, grep, awk, sed. No GUI needed. Most SOC work on Linux logs is command-line.</p>
+      </div>
+
+      <table class="data-table">
+        <thead><tr><th>Log File</th><th>Contents</th><th>Key Patterns to Grep</th></tr></thead>
+        <tbody>
+          <tr><td class="td-key">/var/log/auth.log</td><td>SSH, sudo, su, PAM logins</td><td>"Failed password", "Invalid user", "sudo:", "BREAK-IN"</td></tr>
+          <tr><td class="td-key">/var/log/syslog</td><td>Kernel, daemon, cron, general system</td><td>cron entries, service crashes, kernel errors</td></tr>
+          <tr><td class="td-key">/var/log/kern.log</td><td>Kernel messages only</td><td>iptables drops, hardware errors, module loads</td></tr>
+          <tr><td class="td-key">/var/log/apache2/access.log</td><td>Web requests — IP, URL, status, size</td><td>SELECT, UNION, ../etc/passwd, .php?cmd=, 500 errors</td></tr>
+          <tr><td class="td-key">/var/log/apache2/error.log</td><td>Apache errors</td><td>PHP errors, file not found, permission denied</td></tr>
+          <tr><td class="td-key">/var/log/cron</td><td>Scheduled job executions</td><td>Unexpected entries, unusual scripts, @reboot jobs</td></tr>
+          <tr><td class="td-key">/var/log/wtmp (binary)</td><td>Login history</td><td>Use: <code style="color:var(--cyan)">last</code> command to read</td></tr>
+        </tbody>
+      </table>
+
+      <div class="practical open">
+        <div class="practical-header" onclick="togglePractical(this)">
+          <span class="ph-icon">🔬</span>
+          <span class="ph-title">Lab 5.1 — Detect SQLi and LFI attempts in Apache access logs</span>
+          <span class="ph-tag lab">LAB</span>
+          <span class="ph-chevron">▶</span>
+        </div>
+        <div class="practical-body">
+          <ol class="steps">
+            <li class="step">
+              <span class="step-num">1</span>
+              <div class="step-content">
+                <div class="step-title">Generate test attacks against your DVWA lab (from Kali)</div>
+                <div class="step-desc">Run a few manual SQLi and LFI requests in your browser against DVWA, then analyze the DVWA container logs.</div>
+              </div>
+            </li>
+            <li class="step">
+              <span class="step-num">2</span>
+              <div class="step-content">
+                <div class="step-title">Search for SQLi indicators in access logs</div>
+                <div class="code-block" data-label="bash">
+<span class="cmd">grep</span> <span class="flag">-iE</span> <span class="val">"(union|select|insert|drop|exec|xp_|%27|%22|'--|;--)"</span> /var/log/apache2/access.log
+                </div>
+              </div>
+            </li>
+            <li class="step">
+              <span class="step-num">3</span>
+              <div class="step-content">
+                <div class="step-title">Find Local File Inclusion (LFI) attempts</div>
+                <div class="code-block" data-label="bash">
+<span class="cmd">grep</span> <span class="flag">-iE</span> <span class="val">"(\.\./|etc/passwd|etc/shadow|proc/self|\.\.%2F)"</span> /var/log/apache2/access.log
+                </div>
+              </div>
+            </li>
+            <li class="step">
+              <span class="step-num">4</span>
+              <div class="step-content">
+                <div class="step-title">Find top attacker IPs by request count</div>
+                <div class="code-block" data-label="bash">
+<span class="cmd">awk</span> <span class="val">'{print $1}'</span> /var/log/apache2/access.log | <span class="cmd">sort</span> | <span class="cmd">uniq -c</span> | <span class="cmd">sort -rn</span> | <span class="cmd">head -10</span>
+                </div>
+              </div>
+            </li>
+            <li class="step">
+              <span class="step-num">5</span>
+              <div class="step-content">
+                <div class="step-title">Find all 500 errors (server errors — often SQLi success)</div>
+                <div class="code-block" data-label="bash">
+<span class="cmd">grep</span> <span class="val">" 500 "</span> /var/log/apache2/access.log | <span class="cmd">awk</span> <span class="val">'{print $1, $7}'</span>
+<span class="comment"># IP address + URL that caused the 500</span>
+                </div>
+              </div>
+            </li>
+          </ol>
+        </div>
+      </div>
+    </div>
+
+    <hr class="section-divider">
+
+    <!-- ══════════════════════════════════════════
+         06 — Wazuh SIEM
+    ══════════════════════════════════════════ -->
+    <div class="section" id="s6">
+      <div class="section-header">
+        <span class="section-num">06</span>
+        <div class="section-meta">
+          <div class="section-title">Wazuh SIEM — Setup & Operations</div>
+          <div class="section-sub">Deploy, connect agents, build rules, investigate alerts</div>
+        </div>
+        <span class="section-badge sb-red">Full Lab</span>
+      </div>
+
+      <div class="theory-box">
+        <h4>What is Wazuh?</h4>
+        <p><strong>Wazuh</strong> is a free, open-source SIEM and XDR platform. It collects logs from agents installed on endpoints, normalizes them, runs detection rules, and raises alerts. It also does File Integrity Monitoring (FIM), vulnerability detection, and compliance checks.</p>
+        <p>Architecture: <strong>Wazuh Agent</strong> (on endpoint) → <strong>Wazuh Manager</strong> (processes events, runs rules) → <strong>Wazuh Indexer</strong> (stores data) → <strong>Wazuh Dashboard</strong> (OpenSearch/Kibana UI).</p>
+      </div>
+
+      <div class="flow">
+        <div class="flow-step active">Endpoint (Agent)</div>
+        <span class="flow-arrow">→</span>
+        <div class="flow-step">Wazuh Manager</div>
+        <span class="flow-arrow">→</span>
+        <div class="flow-step">Wazuh Indexer</div>
+        <span class="flow-arrow">→</span>
+        <div class="flow-step active">Dashboard / Alerts</div>
+      </div>
+
+      <div class="practical open">
+        <div class="practical-header" onclick="togglePractical(this)">
+          <span class="ph-icon">🖥️</span>
+          <span class="ph-title">Lab 6.1 — Deploy Wazuh OVA + connect a Linux agent</span>
+          <span class="ph-tag lab">LAB</span>
+          <span class="ph-chevron">▶</span>
+        </div>
+        <div class="practical-body">
+          <ol class="steps">
+            <li class="step">
+              <span class="step-num">1</span>
+              <div class="step-content">
+                <div class="step-title">Download and import Wazuh OVA (easiest method)</div>
+                <div class="step-desc">Download the pre-built OVA from wazuh.com/install → "Virtual Machine". Import into VirtualBox: File → Import Appliance.</div>
+                <div class="note info"><span class="note-icon">ℹ️</span><span>OVA includes Manager + Indexer + Dashboard in one VM. Needs ~4GB RAM. Set your VM NIC to Host-Only so your other VMs can reach it.</span></div>
+              </div>
+            </li>
+            <li class="step">
+              <span class="step-num">2</span>
+              <div class="step-content">
+                <div class="step-title">Get Wazuh Manager IP and login to dashboard</div>
+                <div class="code-block" data-label="wazuh vm console">
+<span class="cmd">ip a</span>
+<span class="comment"># Note the IP — e.g. 192.168.56.10</span>
+<span class="comment"># Open browser → https://192.168.56.10</span>
+<span class="comment"># Login: admin / admin (or check first-run password)</span>
+                </div>
+              </div>
+            </li>
+            <li class="step">
+              <span class="step-num">3</span>
+              <div class="step-content">
+                <div class="step-title">Install Wazuh Agent on your Ubuntu VM</div>
+                <div class="code-block" data-label="ubuntu vm (bash)">
+<span class="comment"># Add Wazuh repo</span>
+<span class="cmd">curl</span> <span class="flag">-s</span> https://packages.wazuh.com/key/GPG-KEY-WAZUH | <span class="cmd">gpg</span> <span class="flag">--dearmor</span> | <span class="cmd">sudo tee</span> /usr/share/keyrings/wazuh.gpg &gt; /dev/null
+
+<span class="cmd">echo</span> <span class="val">"deb [signed-by=/usr/share/keyrings/wazuh.gpg] https://packages.wazuh.com/4.x/apt/ stable main"</span> | <span class="cmd">sudo tee</span> /etc/apt/sources.list.d/wazuh.list
+
+<span class="cmd">sudo apt-get update</span>
+<span class="comment"># Install agent — replace WAZUH_MANAGER with your manager IP</span>
+<span class="cmd">sudo</span> WAZUH_MANAGER=<span class="val">"192.168.56.10"</span> <span class="cmd">apt-get install</span> <span class="flag">-y</span> wazuh-agent
+<span class="cmd">sudo systemctl enable --now</span> wazuh-agent
+                </div>
+              </div>
+            </li>
+            <li class="step">
+              <span class="step-num">4</span>
+              <div class="step-content">
+                <div class="step-title">Confirm agent appears in Wazuh Dashboard</div>
+                <div class="step-desc">Go to Wazuh Dashboard → Agents. Your Ubuntu VM should appear as "Active" within 30 seconds. Click on it to see its alerts.</div>
+              </div>
+            </li>
+          </ol>
+        </div>
+      </div>
+
+      <div class="practical">
+        <div class="practical-header" onclick="togglePractical(this)">
+          <span class="ph-icon">📝</span>
+          <span class="ph-title">Lab 6.2 — Write a custom Wazuh detection rule</span>
+          <span class="ph-tag config">RULE</span>
+          <span class="ph-chevron">▶</span>
+        </div>
+        <div class="practical-body">
+          <div class="note info"><span class="note-icon">ℹ️</span><span><strong>Goal:</strong> Create a rule that alerts when someone runs <code style="color:var(--cyan)">sudo su</code> (root escalation) on any connected Linux agent.</span></div>
+          <ol class="steps" style="margin-top:12px;">
+            <li class="step">
+              <span class="step-num">1</span>
+              <div class="step-content">
+                <div class="step-title">On Wazuh Manager, create a local rules file</div>
+                <div class="code-block" data-label="wazuh manager (bash)">
+<span class="cmd">sudo nano</span> /var/ossec/etc/rules/local_rules.xml
+                </div>
+              </div>
+            </li>
+            <li class="step">
+              <span class="step-num">2</span>
+              <div class="step-content">
+                <div class="step-title">Add your custom rule</div>
+                <div class="code-block" data-label="xml">
+&lt;<span class="keyword">group</span> name=<span class="val">"custom,sudo,"</span>&gt;
+
+  &lt;<span class="keyword">rule</span> id=<span class="val">"100001"</span> level=<span class="val">"12"</span>&gt;
+    &lt;<span class="keyword">if_sid</span>&gt;5402&lt;/<span class="keyword">if_sid</span>&gt;   <span class="comment">&lt;!-- parent: sudo usage rule --&gt;</span>
+    &lt;<span class="keyword">match</span>&gt;sudo su&lt;/<span class="keyword">match</span>&gt;
+    &lt;<span class="keyword">description</span>&gt;Root escalation via sudo su detected&lt;/<span class="keyword">description</span>&gt;
+    &lt;<span class="keyword">mitre</span>&gt;
+      &lt;<span class="keyword">id</span>&gt;T1548.003&lt;/<span class="keyword">id</span>&gt;  <span class="comment">&lt;!-- Sudo and Sudo Caching --&gt;</span>
+    &lt;/<span class="keyword">mitre</span>&gt;
+  &lt;/<span class="keyword">rule</span>&gt;
+
+&lt;/<span class="keyword">group</span>&gt;
+                </div>
+              </div>
+            </li>
+            <li class="step">
+              <span class="step-num">3</span>
+              <div class="step-content">
+                <div class="step-title">Validate and restart Wazuh Manager</div>
+                <div class="code-block" data-label="bash">
+<span class="cmd">sudo</span> /var/ossec/bin/wazuh-logtest  <span class="comment"># test rules interactively</span>
+<span class="cmd">sudo systemctl restart</span> wazuh-manager
+                </div>
+              </div>
+            </li>
+            <li class="step">
+              <span class="step-num">4</span>
+              <div class="step-content">
+                <div class="step-title">Trigger the rule from your Ubuntu agent and verify alert in dashboard</div>
+                <div class="code-block" data-label="ubuntu bash">
+<span class="cmd">sudo su</span>
+<span class="comment"># Check Wazuh Dashboard → Security Events → filter rule.id:100001</span>
+                </div>
+              </div>
+            </li>
+          </ol>
+        </div>
+      </div>
+    </div>
+
+    <hr class="section-divider">
+
+    <!-- ══════════════════════════════════════════
+         07 — Splunk SPL
+    ══════════════════════════════════════════ -->
+    <div class="section" id="s7">
+      <div class="section-header">
+        <span class="section-num">07</span>
+        <div class="section-meta">
+          <div class="section-title">Splunk SPL Queries</div>
+          <div class="section-sub">Search Processing Language — the SQL of SIEM work</div>
+        </div>
+        <span class="section-badge sb-amber">Practical</span>
+      </div>
+
+      <div class="theory-box">
+        <h4>SPL Basics</h4>
+        <p>SPL is Splunk's query language. Every query starts with a <strong>search</strong> (or implicit search), and you pipe <code style="color:var(--cyan)">|</code> the results through transforming commands. Same mental model as Linux pipes.</p>
+        <p>Structure: <code style="color:var(--green)">index=main sourcetype=WinEventLog EventCode=4625 | stats count by src_ip | sort -count</code></p>
+      </div>
+
+      <table class="data-table">
+        <thead><tr><th>SPL Command</th><th>Purpose</th><th>Example</th></tr></thead>
+        <tbody>
+          <tr><td class="td-key">search</td><td>Filter events by keyword/field</td><td><code style="color:var(--cyan)">index=main "Failed password"</code></td></tr>
+          <tr><td class="td-key">stats</td><td>Aggregate: count, sum, avg, dc</td><td><code style="color:var(--cyan)">| stats count by src_ip</code></td></tr>
+          <tr><td class="td-key">timechart</td><td>Time-series aggregation for charts</td><td><code style="color:var(--cyan)">| timechart span=1h count by EventCode</code></td></tr>
+          <tr><td class="td-key">table</td><td>Select fields to display</td><td><code style="color:var(--cyan)">| table _time, src_ip, user, EventCode</code></td></tr>
+          <tr><td class="td-key">sort</td><td>Order results</td><td><code style="color:var(--cyan)">| sort -count</code></td></tr>
+          <tr><td class="td-key">where</td><td>Filter after aggregation</td><td><code style="color:var(--cyan)">| where count > 50</code></td></tr>
+          <tr><td class="td-key">rex</td><td>Extract fields using regex</td><td><code style="color:var(--cyan)">| rex "IP=(?&lt;src_ip&gt;\d+\.\d+\.\d+\.\d+)"</code></td></tr>
+          <tr><td class="td-key">eval</td><td>Create computed fields</td><td><code style="color:var(--cyan)">| eval severity=if(count>100,"HIGH","LOW")</code></td></tr>
+        </tbody>
+      </table>
+
+      <div class="practical open">
+        <div class="practical-header" onclick="togglePractical(this)">
+          <span class="ph-icon">🔍</span>
+          <span class="ph-title">Lab 7.1 — SOC detection queries in Splunk Free</span>
+          <span class="ph-tag cmd">SPL</span>
+          <span class="ph-chevron">▶</span>
+        </div>
+        <div class="practical-body">
+          <div class="note info"><span class="note-icon">ℹ️</span><span>Install Splunk Free on your Ubuntu VM. Download from splunk.com. Use port 8000 for the web UI. Ingest your auth.log and/or Windows event logs.</span></div>
+          <ol class="steps" style="margin-top:12px;">
+            <li class="step">
+              <span class="step-num">1</span>
+              <div class="step-content">
+                <div class="step-title">Detect SSH brute force — IPs with 10+ failed logins</div>
+                <div class="code-block" data-label="splunk spl">
+index=main sourcetype=linux_secure <span class="val">"Failed password"</span>
+| <span class="cmd">stats count</span> <span class="keyword">by</span> src_ip
+| <span class="keyword">where</span> count &gt; <span class="val">10</span>
+| <span class="cmd">sort</span> <span class="flag">-count</span>
+| <span class="cmd">rename</span> count <span class="keyword">as</span> failed_attempts
+                </div>
+              </div>
+            </li>
+            <li class="step">
+              <span class="step-num">2</span>
+              <div class="step-content">
+                <div class="step-title">Detect Windows account lockouts (Event ID 4740)</div>
+                <div class="code-block" data-label="splunk spl">
+index=windows EventCode=<span class="val">4740</span>
+| <span class="cmd">stats count</span> <span class="keyword">by</span> TargetUserName, SubjectUserName, _time
+| <span class="cmd">sort</span> <span class="flag">-_time</span>
+                </div>
+              </div>
+            </li>
+            <li class="step">
+              <span class="step-num">3</span>
+              <div class="step-content">
+                <div class="step-title">Detect suspicious process spawning (powershell from Office)</div>
+                <div class="code-block" data-label="splunk spl">
+index=windows EventCode=<span class="val">4688</span>
+  NewProcessName=<span class="val">"*powershell*"</span>
+  ParentProcessName IN (<span class="val">"*WINWORD*"</span>, <span class="val">"*EXCEL*"</span>, <span class="val">"*OUTLOOK*"</span>)
+| <span class="cmd">table</span> _time, ComputerName, ParentProcessName, NewProcessName, CommandLine
+                </div>
+              </div>
+            </li>
+            <li class="step">
+              <span class="step-num">4</span>
+              <div class="step-content">
+                <div class="step-title">Build a timechart of failed logins over 24 hours</div>
+                <div class="code-block" data-label="splunk spl">
+index=main sourcetype=linux_secure <span class="val">"Failed password"</span>
+  earliest=<span class="val">-24h</span>
+| <span class="cmd">timechart</span> span=<span class="val">1h</span> count <span class="keyword">by</span> src_ip limit=<span class="val">5</span>
+                </div>
+                <div class="step-desc" style="margin-top:8px;">Save this as a Dashboard panel: "Failed SSH Logins Last 24h". Spike = brute force in progress.</div>
+              </div>
+            </li>
+          </ol>
+        </div>
+      </div>
+    </div>
+
+    <hr class="section-divider">
+
+    <!-- ══════════════════════════════════════════
+         08 — Alert Triage
+    ══════════════════════════════════════════ -->
+    <div class="section" id="s8">
+      <div class="section-header">
+        <span class="section-num">08</span>
+        <div class="section-meta">
+          <div class="section-title">Alert Triage Workflow</div>
+          <div class="section-sub">How a SOC L1 analyst works an alert from start to finish</div>
+        </div>
+        <span class="section-badge sb-red">Core Skill</span>
+      </div>
+
+      <div class="theory-box">
+        <h4>The L1 Analyst's Job in 1 Sentence</h4>
+        <p>You get an alert. You determine: <strong>Is this real? How bad? What do I do?</strong> Everything else is procedure around those three questions.</p>
+      </div>
+
+      <div class="flow" style="flex-direction:column; align-items:flex-start; gap:8px;">
+        <div style="font-size:10px;color:var(--text-dim);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:4px;">Alert Triage Flow</div>
+        <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;">
+          <div class="flow-step active">Alert fires in SIEM</div>
+          <span class="flow-arrow">→</span>
+          <div class="flow-step">Read alert context</div>
+          <span class="flow-arrow">→</span>
+          <div class="flow-step">Gather evidence</div>
+          <span class="flow-arrow">→</span>
+          <div class="flow-step">True Positive?</div>
+          <span class="flow-arrow">→</span>
+          <div class="flow-step active">Escalate / Document / Close</div>
+        </div>
+      </div>
+
+      <div class="theory-box" style="margin-top:16px;">
+        <h4>True Positive vs False Positive</h4>
+        <div class="concepts-grid">
+          <div class="concept-card">
+            <div class="cc-key" style="color:var(--red)">True Positive (TP)</div>
+            <div class="cc-val">Real attack or policy violation. Needs escalation and IR. Document everything.</div>
+          </div>
+          <div class="concept-card">
+            <div class="cc-key" style="color:var(--green)">False Positive (FP)</div>
+            <div class="cc-val">Legitimate activity that triggered a rule. Close the ticket, tune the rule so it doesn't repeat.</div>
+          </div>
+          <div class="concept-card">
+            <div class="cc-key" style="color:var(--amber)">True Negative (TN)</div>
+            <div class="cc-val">No alert, no attack. Normal. Goal is max TNs.</div>
+          </div>
+          <div class="concept-card">
+            <div class="cc-key" style="color:var(--red)">False Negative (FN)</div>
+            <div class="cc-val">Real attack, no alert. Worst case. Fixed by improving detection coverage.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="practical open">
+        <div class="practical-header" onclick="togglePractical(this)">
+          <span class="ph-icon">🎯</span>
+          <span class="ph-title">Lab 8.1 — Work a simulated brute force alert end-to-end</span>
+          <span class="ph-tag lab">SIMULATION</span>
+          <span class="ph-chevron">▶</span>
+        </div>
+        <div class="practical-body">
+          <div class="note tip"><span class="note-icon">💡</span><span><strong>Setup:</strong> Run <code style="color:var(--cyan)">hydra</code> against your Ubuntu VM's SSH from Kali. Let Wazuh detect it. Then work the alert as if you're an L1 analyst at a company.</span></div>
+          <ol class="steps" style="margin-top:12px;">
+            <li class="step">
+              <span class="step-num">1</span>
+              <div class="step-content">
+                <div class="step-title">Generate the attack (from Kali VM)</div>
+                <div class="code-block" data-label="kali bash">
+<span class="cmd">hydra</span> <span class="flag">-l</span> root <span class="flag">-P</span> /usr/share/wordlists/rockyou.txt <span class="flag">-t</span> <span class="val">4</span> ssh://<span class="val">192.168.56.20</span>
+<span class="comment"># Replace IP with your Ubuntu VM's IP</span>
+                </div>
+              </div>
+            </li>
+            <li class="step">
+              <span class="step-num">2</span>
+              <div class="step-content">
+                <div class="step-title">Alert appears in Wazuh — read the alert card</div>
+                <div class="step-desc">Go to Wazuh Dashboard → Security Events. Note: Rule ID, Rule description, Source IP, Destination IP, Timestamp, count of events. Write these down in your incident notes.</div>
+              </div>
+            </li>
+            <li class="step">
+              <span class="step-num">3</span>
+              <div class="step-content">
+                <div class="step-title">Investigate — answer these questions</div>
+                <div class="step-desc">
+                  — What time did attacks start?<br>
+                  — What is the source IP? Is it internal or external?<br>
+                  — Was any login successful? (Check for "Accepted password" after the failures)<br>
+                  — What user was targeted?<br>
+                  — Is this IP seen in prior alerts?
+                </div>
+              </div>
+            </li>
+            <li class="step">
+              <span class="step-num">4</span>
+              <div class="step-content">
+                <div class="step-title">Decision — classify and act</div>
+                <div class="step-desc">If no successful login: <span style="color:var(--amber)">True Positive — Low severity</span>. Recommend firewall block.<br>
+                If successful login followed: <span style="color:var(--red)">True Positive — HIGH severity</span>. Escalate to L2 immediately. Isolate host.</div>
+              </div>
+            </li>
+            <li class="step">
+              <span class="step-num">5</span>
+              <div class="step-content">
+                <div class="step-title">Write the incident ticket (practice with Google Docs)</div>
+                <div class="code-block" data-label="incident ticket template">
+<span class="comment">Incident ID:</span>  INC-2024-001
+<span class="comment">Date/Time:</span>     2024-11-15 14:32 IST
+<span class="comment">Detection:</span>     Wazuh Rule 5712 — SSH brute force
+<span class="comment">Source IP:</span>     192.168.56.5 (Internal — Kali VM)
+<span class="comment">Target:</span>        192.168.56.20 — ubuntu-server
+<span class="comment">Attempts:</span>      847 failed login attempts over 4 minutes
+<span class="comment">Success:</span>       No successful logins detected
+<span class="comment">Severity:</span>      Medium
+<span class="comment">Action Taken:</span>  Recommend block source IP at firewall. Monitor for 24h.
+<span class="comment">Escalated to:</span>  N/A — closed by L1
+                </div>
+              </div>
+            </li>
+          </ol>
+        </div>
+      </div>
+    </div>
+
+    <hr class="section-divider">
+
+    <!-- ══════════════════════════════════════════
+         09 — MITRE ATT&CK
+    ══════════════════════════════════════════ -->
+    <div class="section" id="s9">
+      <div class="section-header">
+        <span class="section-num">09</span>
+        <div class="section-meta">
+          <div class="section-title">MITRE ATT&CK Framework</div>
+          <div class="section-sub">Map attacker behavior to tactics and techniques</div>
+        </div>
+        <span class="section-badge sb-cyan">Framework</span>
+      </div>
+
+      <div class="theory-box">
+        <h4>What is MITRE ATT&CK?</h4>
+        <p>MITRE ATT&CK is a knowledge base of <strong>Tactics, Techniques, and Procedures (TTPs)</strong> used by real threat actors — documented from real-world attacks. It's a common language for SOC teams to describe attacker behavior.</p>
+        <p><strong>Tactic</strong> = The goal (e.g., Persistence). <strong>Technique</strong> = How they do it (e.g., T1053 — Scheduled Task). <strong>Sub-technique</strong> = More specific version (e.g., T1053.005 — Windows Task Scheduler).</p>
+      </div>
+
+      <table class="data-table">
+        <thead><tr><th>Tactic</th><th>What Attacker Wants</th><th>Example Techniques</th></tr></thead>
+        <tbody>
+          <tr><td class="td-key">Reconnaissance</td><td>Learn about target</td><td>T1595 Active Scanning, T1596 Search Open Sources</td></tr>
+          <tr><td class="td-key">Initial Access</td><td>Get a foothold</td><td>T1566 Phishing, T1190 Exploit Public-Facing App</td></tr>
+          <tr><td class="td-key">Execution</td><td>Run attacker code</td><td>T1059 Command & Scripting, T1204 User Execution</td></tr>
+          <tr><td class="td-key">Persistence</td><td>Survive reboots</td><td>T1053 Scheduled Task, T1547 Registry Run Keys</td></tr>
+          <tr><td class="td-key">Privilege Escalation</td><td>Get admin/SYSTEM</td><td>T1548 Abuse Elevation Control, T1055 Process Injection</td></tr>
+          <tr><td class="td-key">Defense Evasion</td><td>Avoid detection</td><td>T1070 Indicator Removal, T1562 Impair Defenses</td></tr>
+          <tr><td class="td-key">Lateral Movement</td><td>Spread across network</td><td>T1021 Remote Services (RDP, SMB), T1550 Pass-the-Hash</td></tr>
+          <tr><td class="td-key">Exfiltration</td><td>Steal data</td><td>T1041 Exfil over C2, T1048 Exfil via Alternative Protocol</td></tr>
+          <tr><td class="td-key">Command & Control</td><td>Communicate with malware</td><td>T1071 Application Layer Protocol, T1132 Data Encoding</td></tr>
+        </tbody>
+      </table>
+
+      <div class="practical open">
+        <div class="practical-header" onclick="togglePractical(this)">
+          <span class="ph-icon">🗺️</span>
+          <span class="ph-title">Lab 9.1 — Map your brute force incident to MITRE ATT&CK Navigator</span>
+          <span class="ph-tag lab">LAB</span>
+          <span class="ph-chevron">▶</span>
+        </div>
+        <div class="practical-body">
+          <ol class="steps">
+            <li class="step">
+              <span class="step-num">1</span>
+              <div class="step-content">
+                <div class="step-title">Go to ATT&CK Navigator</div>
+                <div class="step-desc">Open <code style="color:var(--cyan)">https://mitre-attack.github.io/attack-navigator/</code> → Create new layer → Enterprise.</div>
+              </div>
+            </li>
+            <li class="step">
+              <span class="step-num">2</span>
+              <div class="step-content">
+                <div class="step-title">Map the Hydra SSH brute force attack</div>
+                <div class="step-desc">Search and highlight these techniques in the Navigator:</div>
+                <div class="concepts-grid" style="margin-top:8px;">
+                  <div class="concept-card"><div class="cc-key">T1110.001</div><div class="cc-val">Password Guessing — Brute Force sub-technique (Credential Access)</div></div>
+                  <div class="concept-card"><div class="cc-key">T1021.004</div><div class="cc-val">SSH — Remote Services (Lateral Movement / Initial Access)</div></div>
+                  <div class="concept-card"><div class="cc-key">T1078</div><div class="cc-val">Valid Accounts — if brute force succeeds (Persistence)</div></div>
+                </div>
+              </div>
+            </li>
+            <li class="step">
+              <span class="step-num">3</span>
+              <div class="step-content">
+                <div class="step-title">Include the technique IDs in your incident ticket</div>
+                <div class="step-desc">Adding MITRE IDs to your tickets is standard practice in enterprise SOCs. It shows professionalism and helps threat intelligence teams track TTPs across incidents.</div>
+              </div>
+            </li>
+          </ol>
+        </div>
+      </div>
+    </div>
+
+    <hr class="section-divider">
+
+    <!-- ══════════════════════════════════════════
+         10 — Incident Response
+    ══════════════════════════════════════════ -->
+    <div class="section" id="s10">
+      <div class="section-header">
+        <span class="section-num">10</span>
+        <div class="section-meta">
+          <div class="section-title">Incident Response — NIST SP 800-61</div>
+          <div class="section-sub">The standard IR lifecycle every SOC follows</div>
+        </div>
+        <span class="section-badge sb-red">Critical</span>
+      </div>
+
+      <div class="theory-box">
+        <h4>NIST IR Lifecycle — 4 Phases</h4>
+        <p>NIST SP 800-61 defines the gold standard for incident response. Every SOC, regardless of size, follows some version of this. As an L1 analyst you operate mostly in Detection and Containment.</p>
+      </div>
+
+      <div class="concepts-grid">
+        <div class="concept-card" style="border-color:var(--blue-dim);">
+          <div class="cc-key" style="color:var(--blue)">Phase 1 — Preparation</div>
+          <div class="cc-val">Build playbooks, IR policies, tool stack, escalation matrix. Done before incidents happen.</div>
+        </div>
+        <div class="concept-card" style="border-color:var(--amber-dim);">
+          <div class="cc-key" style="color:var(--amber)">Phase 2 — Detection & Analysis</div>
+          <div class="cc-val">Alert fires → triage → classify → determine scope. Your primary L1 job.</div>
+        </div>
+        <div class="concept-card" style="border-color:var(--red-dim);">
+          <div class="cc-key" style="color:var(--red)">Phase 3 — Containment, Eradication & Recovery</div>
+          <div class="cc-val">Isolate affected systems. Remove malware. Restore from clean backups. Primarily L2/L3.</div>
+        </div>
+        <div class="concept-card" style="border-color:var(--green-dim);">
+          <div class="cc-key" style="color:var(--green)">Phase 4 — Post-Incident Activity</div>
+          <div class="cc-val">Lessons learned meeting. Update playbooks. Improve detection rules. Root cause analysis.</div>
+        </div>
+      </div>
+
+      <div class="practical open">
+        <div class="practical-header" onclick="togglePractical(this)">
+          <span class="ph-icon">📄</span>
+          <span class="ph-title">Lab 10.1 — Write a full incident response report for your brute force lab</span>
+          <span class="ph-tag lab">DELIVERABLE</span>
+          <span class="ph-chevron">▶</span>
+        </div>
+        <div class="practical-body">
+          <div class="note tip"><span class="note-icon">💡</span><span>This deliverable goes directly into your GitHub portfolio. A well-written IR report is often the deciding factor in L1 SOC interviews in India.</span></div>
+          <div class="code-block" data-label="ir report structure" style="margin-top:12px;">
+<span class="keyword">1. Executive Summary</span>
+<span class="comment">   Brief: what happened, when, impact, status. 3–5 lines.</span>
+
+<span class="keyword">2. Incident Timeline</span>
+<span class="comment">   14:31 IST — First failed SSH attempt detected</span>
+<span class="comment">   14:32 IST — Wazuh alert fired (Rule 5712)</span>
+<span class="comment">   14:35 IST — L1 analyst began triage</span>
+<span class="comment">   14:40 IST — Confirmed brute force, no compromise</span>
+<span class="comment">   14:45 IST — Block rule recommended and approved</span>
+
+<span class="keyword">3. Technical Findings</span>
+<span class="comment">   Source IP: 192.168.56.5</span>
+<span class="comment">   Attack type: SSH credential brute force (T1110.001)</span>
+<span class="comment">   Tool used: Hydra (identified by User-Agent in logs)</span>
+<span class="comment">   Attempts: 847 | Duration: 4 minutes</span>
+<span class="comment">   Successful logins: None</span>
+
+<span class="keyword">4. Evidence Collected</span>
+<span class="comment">   - auth.log snippet (attached)</span>
+<span class="comment">   - Wazuh alert screenshot (attached)</span>
+<span class="comment">   - MITRE ATT&CK mapping: T1110.001, T1021.004</span>
+
+<span class="keyword">5. Containment Actions</span>
+<span class="comment">   - iptables rule to block 192.168.56.5</span>
+<span class="comment">   - Monitoring increased for this subnet</span>
+
+<span class="keyword">6. Recommendations</span>
+<span class="comment">   - Disable password auth; use SSH keys only</span>
+<span class="comment">   - Implement fail2ban for automated blocking</span>
+<span class="comment">   - Rate-limit SSH connections at firewall</span>
+
+<span class="keyword">7. Lessons Learned</span>
+<span class="comment">   - Detection was timely (2 min MTTD)</span>
+<span class="comment">   - Need automated containment playbook</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <hr class="section-divider">
+
+    <!-- ══════════════════════════════════════════
+         11 — Malware Awareness
+    ══════════════════════════════════════════ -->
+    <div class="section" id="s11">
+      <div class="section-header">
+        <span class="section-num">11</span>
+        <div class="section-meta">
+          <div class="section-title">Malware Awareness for SOC</div>
+          <div class="section-sub">Types, IOCs, and basic static/dynamic analysis</div>
+        </div>
+        <span class="section-badge sb-blue">Theory + Tool</span>
+      </div>
+
+      <div class="theory-box">
+        <h4>Malware Types You Must Recognize</h4>
+        <p>You won't reverse-engineer malware as an L1 — that's malware analysts. But you need to recognize <strong>behavioral signatures</strong> in logs and alerts to identify what type of malware you're dealing with.</p>
+      </div>
+
+      <table class="data-table">
+        <thead><tr><th>Type</th><th>Behavior in Logs</th><th>Key IOCs to Hunt</th></tr></thead>
+        <tbody>
+          <tr><td class="td-key">RAT (Remote Access Trojan)</td><td>Outbound connections to uncommon IPs, periodic beaconing, PowerShell spawning</td><td>C2 IPs/domains, beacon intervals, unusual process network activity</td></tr>
+          <tr><td class="td-key">Ransomware</td><td>Mass file renames (.encrypted ext), shadow copy deletion (vssadmin), high disk I/O</td><td>vssadmin.exe delete, bcdedit.exe, .locked/.encrypted extensions</td></tr>
+          <tr><td class="td-key">Keylogger</td><td>Process writing to unusual files, clipboard access, low-level keyboard hooks</td><td>Unusual files in %TEMP%, startup registry entries</td></tr>
+          <tr><td class="td-key">Rootkit</td><td>Hidden processes, hidden files, BSOD on AV scan, API hooking</td><td>Discrepancies between process list and raw disk scan</td></tr>
+          <tr><td class="td-key">Trojan</td><td>Disguised as legitimate software, installs backdoor silently</td><td>Hash mismatch on known files, unexpected parent processes</td></tr>
+          <tr><td class="td-key">Worm</td><td>Rapid lateral spread via SMB/RDP, port scanning activity from endpoint</td><td>Mass outbound connection attempts, Event ID 4776 failures across multiple hosts</td></tr>
+        </tbody>
+      </table>
+
+      <div class="practical open">
+        <div class="practical-header" onclick="togglePractical(this)">
+          <span class="ph-icon">🧪</span>
+          <span class="ph-title">Lab 11.1 — Analyze a suspicious file with VirusTotal + Any.run</span>
+          <span class="ph-tag cmd">OSINT</span>
+          <span class="ph-chevron">▶</span>
+        </div>
+        <div class="practical-body">
+          <ol class="steps">
+            <li class="step">
+              <span class="step-num">1</span>
+              <div class="step-content">
+                <div class="step-title">Get the file hash — NEVER upload suspicious files directly from a production system</div>
+                <div class="code-block" data-label="powershell">
+<span class="cmd">Get-FileHash</span> C:\Users\user\Downloads\suspicious.exe <span class="flag">-Algorithm</span> SHA256
+                </div>
+                <div class="code-block" data-label="bash (linux)">
+<span class="cmd">sha256sum</span> suspicious.elf
+                </div>
+              </div>
+            </li>
+            <li class="step">
+              <span class="step-num">2</span>
+              <div class="step-content">
+                <div class="step-title">Search the hash on VirusTotal</div>
+                <div class="step-desc">Go to <code style="color:var(--cyan)">virustotal.com</code> → paste the SHA256 hash (not the file). Look at: Detection ratio, Community score, Behavior tab, Relations tab (domains/IPs it contacts), MITRE ATT&CK techniques.</div>
+              </div>
+            </li>
+            <li class="step">
+              <span class="step-num">3</span>
+              <div class="step-content">
+                <div class="step-title">Run in Any.run sandbox for dynamic analysis</div>
+                <div class="step-desc">Go to <code style="color:var(--cyan)">any.run</code> (free tier). Upload the suspicious file. Run in Windows 10 VM. Observe: processes spawned, network connections, registry changes, files dropped, DNS queries. Extract IOCs from the report.</div>
+              </div>
+            </li>
+            <li class="step">
+              <span class="step-num">4</span>
+              <div class="step-content">
+                <div class="step-title">Cross-reference C2 IPs with AbuseIPDB</div>
+                <div class="code-block" data-label="browser / curl">
+<span class="comment"># Check reputation of C2 IP from sandbox report</span>
+https://www.abuseipdb.com/check/<span class="val">YOUR_SUSPICIOUS_IP</span>
+
+<span class="comment"># Or via curl with API key</span>
+<span class="cmd">curl</span> <span class="flag">-G</span> https://api.abuseipdb.com/api/v2/check \
+  <span class="flag">--data-urlencode</span> <span class="val">"ipAddress=1.2.3.4"</span> \
+  <span class="flag">-H</span> <span class="val">"Key: YOUR_API_KEY"</span>
+                </div>
+              </div>
+            </li>
+          </ol>
+        </div>
+      </div>
+    </div>
+
+    <hr class="section-divider">
+
+    <!-- ══════════════════════════════════════════
+         12 — SOC L1 Day Simulation
+    ══════════════════════════════════════════ -->
+    <div class="section" id="s12">
+      <div class="section-header">
+        <span class="section-num">12</span>
+        <div class="section-meta">
+          <div class="section-title">SOC L1 Daily Workflow Simulation</div>
+          <div class="section-sub">Full-day simulation — end of module capstone</div>
+        </div>
+        <span class="section-badge sb-green">Capstone</span>
+      </div>
+
+      <div class="theory-box">
+        <h4>What an L1 Analyst Actually Does on Shift</h4>
+        <p>Each shift starts with a handover briefing, then you work the alert queue — oldest unacknowledged alerts first. You classify, investigate, document, escalate when needed, and keep the queue moving. Speed + accuracy = good L1.</p>
+      </div>
+
+      <div class="practical open">
+        <div class="practical-header" onclick="togglePractical(this)">
+          <span class="ph-icon">🎓</span>
+          <span class="ph-title">Capstone Lab — Work 4 different alert types in your Wazuh lab</span>
+          <span class="ph-tag lab">CAPSTONE</span>
+          <span class="ph-chevron">▶</span>
+        </div>
+        <div class="practical-body">
+          <div class="note tip"><span class="note-icon">💡</span><span>Generate all 4 scenarios in your lab, then triage each one. Write a ticket for each. Document all 4 in a single PDF as your portfolio deliverable.</span></div>
+
+          <div class="concepts-grid" style="margin:16px 0;">
+            <div class="concept-card" style="border-color:var(--red-dim);">
+              <div class="cc-key" style="color:var(--red)">Scenario A</div>
+              <div class="cc-val">SSH brute force from Kali → Ubuntu. Generate with Hydra. Expected: TP, Medium.</div>
+            </div>
+            <div class="concept-card" style="border-color:var(--amber-dim);">
+              <div class="cc-key" style="color:var(--amber)">Scenario B</div>
+              <div class="cc-val">New user added to sudo group on Linux. Simulate manually. Expected: TP, High.</div>
+            </div>
+            <div class="concept-card" style="border-color:var(--red-dim);">
+              <div class="cc-key" style="color:var(--red)">Scenario C</div>
+              <div class="cc-val">SQLi attempt in Apache logs against DVWA. Run sqlmap. Expected: TP, Medium.</div>
+            </div>
+            <div class="concept-card" style="border-color:var(--green-dim);">
+              <div class="cc-key" style="color:var(--green)">Scenario D</div>
+              <div class="cc-val">Scheduled task created on Windows VM. Create one normally. Expected: FP, investigate context.</div>
+            </div>
+          </div>
+
+          <div class="theory-box">
+            <h4>For each scenario, complete this checklist</h4>
+            <ul class="lab-checklist">
+              <li onclick="toggleLab(this)"><span class="lc-box"></span><span>Screenshot the SIEM alert</span></li>
+              <li onclick="toggleLab(this)"><span class="lc-box"></span><span>Identify the log source and key fields</span></li>
+              <li onclick="toggleLab(this)"><span class="lc-box"></span><span>Classify: TP / FP / Benign</span></li>
+              <li onclick="toggleLab(this)"><span class="lc-box"></span><span>Map to MITRE ATT&CK technique</span></li>
+              <li onclick="toggleLab(this)"><span class="lc-box"></span><span>Write a 5-line incident ticket</span></li>
+              <li onclick="toggleLab(this)"><span class="lc-box"></span><span>State containment action or reason for closing</span></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <div class="note tip" style="margin-top:16px;">
+        <span class="note-icon">🏆</span>
+        <span><strong>Module Complete.</strong> Push your 4 incident tickets + IR report from Lab 10 to GitHub. In interviews, walk the interviewer through one scenario — they'll immediately know you've actually done this, not just read about it.</span>
+      </div>
+    </div>
+
+  </div><!-- /content -->
+</main>
+</div>
+
+<script>
+  function togglePractical(header) {
+    header.closest('.practical').classList.toggle('open');
+  }
+
+  function toggleLab(li) {
+    li.classList.toggle('done');
+  }
+
+  // Sidebar active tracking
+  const sections = document.querySelectorAll('.section');
+  const navItems = document.querySelectorAll('.nav-item');
+
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        const id = entry.target.id;
+        navItems.forEach(item => {
+          item.classList.toggle('active', item.getAttribute('href') === '#' + id);
+        });
+      }
+    });
+  }, { rootMargin: '-20% 0px -70% 0px' });
+
+  sections.forEach(s => observer.observe(s));
+
+  navItems.forEach(item => {
+    item.addEventListener('click', e => {
+      const href = item.getAttribute('href');
+      if (href && href.startsWith('#')) {
+        e.preventDefault();
+        document.querySelector(href)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    });
+  });
+
+  // Progress based on practicals opened
+  function updateProgress() {
+    const total = document.querySelectorAll('.practical').length;
+    const opened = document.querySelectorAll('.practical.open').length;
+    const pct = Math.round((opened / total) * 100);
+    document.getElementById('sb-fill').style.width = pct + '%';
+    document.getElementById('sb-pct').textContent = pct + '%';
+  }
+
+  document.querySelectorAll('.practical-header').forEach(h => {
+    h.addEventListener('click', () => setTimeout(updateProgress, 100));
+  });
+
+  updateProgress();
+</script>
+</body>
+</html>

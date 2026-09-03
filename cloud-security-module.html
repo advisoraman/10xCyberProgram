@@ -1,0 +1,2126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cloud Security — Study Module</title>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Fira+Code:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:        #f0f4ff;
+  --bg2:       #e8eeff;
+  --bg3:       #dde4fb;
+  --bg4:       #d0d8f5;
+  --surface:   #ffffff;
+  --border:    #c8d2f0;
+  --border2:   #b0bcec;
+  --text:      #0f1535;
+  --text-muted:#4a5480;
+  --text-dim:  #8a96c0;
+  --navy:      #0f1535;
+  --blue:      #2563eb;
+  --blue-light:#eff4ff;
+  --blue-mid:  #3b82f6;
+  --sky:       #0ea5e9;
+  --sky-light: #f0f9ff;
+  --teal:      #0d9488;
+  --teal-light:#f0fdfa;
+  --orange:    #ea580c;
+  --orange-light:#fff7ed;
+  --red:       #dc2626;
+  --red-light: #fef2f2;
+  --green:     #16a34a;
+  --green-light:#f0fdf4;
+  --violet:    #7c3aed;
+  --violet-light:#f5f3ff;
+  --sidebar-w: 258px;
+}
+
+*{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+
+body{
+  font-family:'Outfit',sans-serif;
+  background:var(--bg);
+  color:var(--text);
+  font-size:13.5px;
+  line-height:1.7;
+  min-height:100vh;
+}
+
+/* grid background */
+body::before{
+  content:'';
+  position:fixed;top:0;left:0;right:0;bottom:0;
+  background-image:
+    linear-gradient(rgba(37,99,235,0.04) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(37,99,235,0.04) 1px,transparent 1px);
+  background-size:40px 40px;
+  pointer-events:none;z-index:0;
+}
+
+.layout{display:flex;min-height:100vh;position:relative;z-index:1;}
+
+/* ── SIDEBAR ── */
+.sidebar{
+  width:var(--sidebar-w);flex-shrink:0;
+  background:var(--navy);
+  position:sticky;top:0;height:100vh;
+  overflow-y:auto;display:flex;flex-direction:column;
+}
+.sidebar::-webkit-scrollbar{width:3px;}
+.sidebar::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.12);}
+
+.sb-head{
+  padding:22px 18px 18px;
+  border-bottom:1px solid rgba(255,255,255,0.07);
+}
+
+.sb-icon{font-size:28px;margin-bottom:10px;display:block;}
+
+.sb-title{
+  font-family:'Outfit',sans-serif;
+  font-size:16px;font-weight:800;
+  color:#fff;line-height:1.25;letter-spacing:-0.01em;
+}
+.sb-sub{
+  font-family:'Fira Code',monospace;
+  font-size:9.5px;color:rgba(255,255,255,0.3);
+  margin-top:5px;letter-spacing:0.04em;
+}
+
+.nav-sec{
+  padding:13px 18px 3px;
+  font-family:'Fira Code',monospace;
+  font-size:8.5px;letter-spacing:0.12em;text-transform:uppercase;
+  color:rgba(255,255,255,0.2);
+}
+
+.nav-item{
+  display:flex;align-items:center;gap:9px;
+  padding:7px 18px;
+  font-size:11.5px;font-weight:500;
+  color:rgba(255,255,255,0.42);
+  cursor:pointer;transition:all 0.14s;
+  text-decoration:none;
+  border-left:2px solid transparent;
+}
+.nav-item:hover{color:rgba(255,255,255,0.82);background:rgba(255,255,255,0.05);}
+.nav-item.active{color:#fff;background:rgba(59,130,246,0.18);border-left-color:var(--blue-mid);}
+
+.nav-n{
+  font-family:'Fira Code',monospace;
+  font-size:9px;color:rgba(255,255,255,0.18);
+  min-width:18px;text-align:right;
+}
+
+.sb-progress{
+  margin-top:auto;padding:14px 18px;
+  border-top:1px solid rgba(255,255,255,0.07);
+}
+.spp-row{
+  display:flex;justify-content:space-between;
+  font-family:'Fira Code',monospace;
+  font-size:9.5px;color:rgba(255,255,255,0.28);margin-bottom:6px;
+}
+.spp-track{height:3px;background:rgba(255,255,255,0.08);border-radius:99px;overflow:hidden;}
+.spp-fill{height:100%;background:var(--blue-mid);border-radius:99px;transition:width 0.5s;}
+
+/* ── MAIN ── */
+.main{flex:1;overflow-x:hidden;}
+
+/* Hero */
+.hero{
+  padding:52px 64px 42px;
+  border-bottom:1px solid var(--border);
+  background:linear-gradient(135deg,var(--surface) 0%,var(--bg2) 100%);
+  position:relative;overflow:hidden;
+}
+
+.hero::after{
+  content:'';
+  position:absolute;top:-60px;right:-80px;
+  width:420px;height:420px;border-radius:50%;
+  background:radial-gradient(circle,rgba(37,99,235,0.08) 0%,transparent 70%);
+  pointer-events:none;
+}
+
+.hero-pill{
+  display:inline-flex;align-items:center;gap:6px;
+  background:var(--blue-light);
+  border:1px solid rgba(37,99,235,0.2);
+  border-radius:99px;
+  padding:4px 12px;
+  font-size:10.5px;font-weight:600;
+  color:var(--blue);letter-spacing:0.04em;
+  text-transform:uppercase;margin-bottom:16px;
+}
+.hero-pill::before{
+  content:'';width:6px;height:6px;border-radius:50%;
+  background:var(--blue);
+  animation:blink 2s infinite;
+}
+@keyframes blink{0%,100%{opacity:1;}50%{opacity:0.3;}}
+
+.hero-title{
+  font-family:'Outfit',sans-serif;
+  font-size:48px;font-weight:800;
+  color:var(--navy);line-height:1.0;
+  letter-spacing:-0.03em;margin-bottom:16px;
+}
+.hero-title span{color:var(--blue);}
+
+.hero-desc{
+  font-size:14px;color:var(--text-muted);
+  max-width:560px;line-height:1.75;margin-bottom:28px;
+  font-weight:400;
+}
+
+.hero-stats{
+  display:flex;gap:0;
+  border:1px solid var(--border);
+  border-radius:8px;overflow:hidden;
+  display:inline-flex;background:var(--surface);
+  box-shadow:0 2px 8px rgba(37,99,235,0.06);
+}
+.hs{
+  padding:12px 22px;border-right:1px solid var(--border);
+  display:flex;flex-direction:column;gap:2px;
+}
+.hs:last-child{border-right:none;}
+.hs-v{font-size:20px;font-weight:800;color:var(--navy);}
+.hs-v.b{color:var(--blue);}
+.hs-v.g{color:var(--green);}
+.hs-v.o{color:var(--orange);}
+.hs-l{font-family:'Fira Code',monospace;font-size:9px;color:var(--text-dim);text-transform:uppercase;letter-spacing:0.05em;}
+
+/* Content */
+.content{padding:0 64px 80px;}
+
+/* Section */
+.section{margin-top:52px;animation:up 0.35s ease both;}
+@keyframes up{from{opacity:0;transform:translateY(10px);}to{opacity:1;transform:translateY(0);}}
+
+.sec-head{
+  display:flex;align-items:flex-start;gap:16px;
+  margin-bottom:26px;padding-bottom:18px;
+  border-bottom:1px solid var(--border);
+}
+.sec-num{
+  font-family:'Fira Code',monospace;
+  font-size:11px;color:var(--text-dim);
+  padding-top:4px;min-width:22px;
+}
+.sec-meta{flex:1;}
+.sec-title{
+  font-size:24px;font-weight:800;color:var(--navy);
+  letter-spacing:-0.02em;line-height:1.15;margin-bottom:3px;
+}
+.sec-sub{font-family:'Fira Code',monospace;font-size:10.5px;color:var(--text-muted);}
+
+.badge{
+  font-family:'Fira Code',monospace;
+  font-size:9px;font-weight:500;letter-spacing:0.06em;
+  text-transform:uppercase;padding:4px 10px;
+  border-radius:4px;flex-shrink:0;margin-top:3px;border:1px solid;
+}
+.b-blue{background:var(--blue-light);color:var(--blue);border-color:rgba(37,99,235,0.2);}
+.b-sky{background:var(--sky-light);color:var(--sky);border-color:rgba(14,165,233,0.2);}
+.b-teal{background:var(--teal-light);color:var(--teal);border-color:rgba(13,148,136,0.2);}
+.b-orange{background:var(--orange-light);color:var(--orange);border-color:rgba(234,88,12,0.2);}
+.b-red{background:var(--red-light);color:var(--red);border-color:rgba(220,38,38,0.2);}
+.b-green{background:var(--green-light);color:var(--green);border-color:rgba(22,163,74,0.2);}
+.b-violet{background:var(--violet-light);color:var(--violet);border-color:rgba(124,58,237,0.2);}
+
+/* Theory */
+.theory{
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-left:3px solid var(--blue);
+  border-radius:6px;padding:18px 22px;margin-bottom:14px;
+}
+.theory.sky{border-left-color:var(--sky);}
+.theory.teal{border-left-color:var(--teal);}
+.theory.orange{border-left-color:var(--orange);}
+.theory.red{border-left-color:var(--red);}
+.theory.green{border-left-color:var(--green);}
+.theory.violet{border-left-color:var(--violet);}
+
+.theory h4{
+  font-size:13.5px;font-weight:700;color:var(--navy);
+  margin-bottom:9px;display:flex;align-items:center;gap:7px;
+}
+.theory h4::before{content:'›';color:var(--blue);font-size:16px;}
+.theory.sky h4::before{color:var(--sky);}
+.theory.orange h4::before{color:var(--orange);}
+.theory.red h4::before{color:var(--red);}
+.theory.green h4::before{color:var(--green);}
+.theory.teal h4::before{color:var(--teal);}
+.theory.violet h4::before{color:var(--violet);}
+
+.theory p{font-size:13px;color:var(--text-muted);margin-bottom:7px;line-height:1.8;}
+.theory p:last-child{margin-bottom:0;}
+.theory strong{color:var(--text);font-weight:600;}
+.theory em{color:var(--blue);font-style:normal;font-weight:500;}
+
+/* Grid */
+.grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(210px,1fr));
+  gap:8px;margin:12px 0;
+}
+.card{
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:6px;padding:14px 16px;
+  transition:all 0.14s;
+}
+.card:hover{border-color:var(--border2);transform:translateY(-1px);box-shadow:0 4px 12px rgba(37,99,235,0.07);}
+
+.ck{
+  font-family:'Fira Code',monospace;
+  font-size:10px;font-weight:500;letter-spacing:0.04em;
+  text-transform:uppercase;margin-bottom:6px;color:var(--blue);
+}
+.ck.s{color:var(--sky);}
+.ck.t{color:var(--teal);}
+.ck.o{color:var(--orange);}
+.ck.r{color:var(--red);}
+.ck.g{color:var(--green);}
+.ck.v{color:var(--violet);}
+.cv{font-size:12.5px;color:var(--text-muted);line-height:1.7;}
+
+/* Table */
+.dtable{width:100%;border-collapse:collapse;margin:12px 0;font-size:12.5px;}
+.dtable th{
+  text-align:left;padding:9px 12px;
+  background:var(--navy);color:rgba(255,255,255,0.82);
+  font-family:'Fira Code',monospace;
+  font-size:9px;text-transform:uppercase;letter-spacing:0.08em;font-weight:500;
+}
+.dtable td{
+  padding:9px 12px;border-bottom:1px solid var(--border);
+  color:var(--text-muted);vertical-align:top;
+}
+.dtable tr:last-child td{border-bottom:none;}
+.dtable tr:hover td{background:var(--bg2);color:var(--text);}
+.dtable tbody tr:nth-child(even) td{background:var(--bg);}
+
+.tk{color:var(--navy);font-weight:600;}
+.tr-b{color:var(--blue);font-weight:600;}
+.tr-r{color:var(--red);font-weight:600;}
+.tr-g{color:var(--green);font-weight:600;}
+.tr-o{color:var(--orange);font-weight:600;}
+.tr-t{color:var(--teal);font-weight:600;}
+
+/* Practical block */
+.practical{
+  border:1px solid var(--border);border-radius:8px;
+  overflow:hidden;margin-bottom:14px;
+  background:var(--surface);
+}
+.prac-head{
+  background:var(--bg2);padding:11px 16px;
+  display:flex;align-items:center;gap:10px;
+  border-bottom:1px solid var(--border);
+  cursor:pointer;user-select:none;transition:background 0.12s;
+}
+.prac-head:hover{background:var(--bg3);}
+.ph-i{font-size:14px;}
+.ph-t{font-size:12.5px;font-weight:700;color:var(--navy);flex:1;}
+.ph-tag{
+  font-family:'Fira Code',monospace;
+  font-size:9px;font-weight:500;text-transform:uppercase;
+  letter-spacing:0.07em;padding:2px 8px;border-radius:4px;border:1px solid;
+}
+.pt-lab{background:var(--red-light);color:var(--red);border-color:rgba(220,38,38,0.2);}
+.pt-cli{background:var(--sky-light);color:var(--sky);border-color:rgba(14,165,233,0.2);}
+.pt-cfg{background:var(--orange-light);color:var(--orange);border-color:rgba(234,88,12,0.2);}
+.pt-audit{background:var(--green-light);color:var(--green);border-color:rgba(22,163,74,0.2);}
+.pt-build{background:var(--violet-light);color:var(--violet);border-color:rgba(124,58,237,0.2);}
+.ph-chev{font-size:9px;color:var(--text-dim);transition:transform 0.2s;}
+.practical.open .ph-chev{transform:rotate(90deg);}
+.prac-body{display:none;padding:18px 22px;}
+.practical.open .prac-body{display:block;}
+
+/* Steps */
+.steps{list-style:none;}
+.step{display:flex;gap:14px;margin-bottom:18px;padding-bottom:18px;border-bottom:1px dashed var(--border);}
+.step:last-child{margin-bottom:0;padding-bottom:0;border-bottom:none;}
+.sn{
+  width:24px;height:24px;border-radius:6px;
+  background:var(--blue-light);border:1px solid rgba(37,99,235,0.2);
+  display:flex;align-items:center;justify-content:center;
+  font-family:'Fira Code',monospace;
+  font-size:10px;font-weight:600;color:var(--blue);
+  flex-shrink:0;margin-top:1px;
+}
+.sc{flex:1;}
+.st{font-size:13px;font-weight:700;color:var(--navy);margin-bottom:4px;}
+.sd{font-size:12.5px;color:var(--text-muted);line-height:1.75;margin-bottom:8px;}
+.sd:last-child{margin-bottom:0;}
+
+/* Code block */
+.code{
+  background:#0f1535;
+  border:1px solid rgba(59,130,246,0.15);
+  border-radius:6px;padding:13px 16px;
+  font-family:'Fira Code',monospace;
+  font-size:11.5px;color:#94a3b8;
+  overflow-x:auto;margin:8px 0;
+  position:relative;line-height:1.75;
+}
+.code .cm{color:#334155;}
+.code .cmd{color:#34d399;}
+.code .flag{color:#fbbf24;}
+.code .val{color:#93c5fd;}
+.code .kw{color:#818cf8;}
+.code .hi{color:#f87171;}
+.code .ok{color:#34d399;}
+.code .warn{color:#fbbf24;}
+.code::before{
+  content:attr(data-label);
+  position:absolute;top:7px;right:12px;
+  font-size:9px;color:#334155;
+  letter-spacing:0.07em;text-transform:uppercase;
+}
+
+/* Notes */
+.note{
+  display:flex;gap:10px;align-items:flex-start;
+  border-radius:6px;padding:11px 14px;
+  font-size:12.5px;margin:10px 0;line-height:1.75;
+}
+.note.blue{background:var(--blue-light);border:1px solid rgba(37,99,235,0.15);color:var(--text-muted);}
+.note.sky{background:var(--sky-light);border:1px solid rgba(14,165,233,0.15);color:var(--text-muted);}
+.note.orange{background:var(--orange-light);border:1px solid rgba(234,88,12,0.15);color:var(--text-muted);}
+.note.red{background:var(--red-light);border:1px solid rgba(220,38,38,0.15);color:var(--text-muted);}
+.note.green{background:var(--green-light);border:1px solid rgba(22,163,74,0.15);color:var(--text-muted);}
+.note.teal{background:var(--teal-light);border:1px solid rgba(13,148,136,0.15);color:var(--text-muted);}
+.note .ni{font-size:14px;flex-shrink:0;margin-top:1px;}
+.note strong{color:var(--text);}
+
+/* divider */
+.hdiv{border:none;border-top:1px solid var(--border);margin:42px 0 0;}
+
+/* SRM visual */
+.srm{display:grid;grid-template-columns:repeat(3,1fr);gap:0;border:1px solid var(--border);border-radius:8px;overflow:hidden;margin:14px 0;}
+.srm-col{border-right:1px solid var(--border);}
+.srm-col:last-child{border-right:none;}
+.srm-head{
+  background:var(--navy);padding:10px 14px;
+  font-size:12px;font-weight:700;color:#fff;text-align:center;
+}
+.srm-body{padding:12px 14px;}
+.srm-row{
+  display:flex;align-items:flex-start;gap:7px;
+  padding:5px 0;border-bottom:1px dashed var(--border);
+  font-size:11.5px;color:var(--text-muted);
+}
+.srm-row:last-child{border-bottom:none;}
+.srm-dot{width:5px;height:5px;border-radius:50%;flex-shrink:0;margin-top:6px;}
+.dot-g{background:var(--green);}
+.dot-b{background:var(--blue);}
+.dot-r{background:var(--red);}
+
+/* IAM policy */
+.policy-block{
+  background:#0f1535;border-radius:8px;padding:16px 18px;
+  margin:10px 0;overflow-x:auto;
+}
+.policy-block .pb-title{
+  font-family:'Fira Code',monospace;
+  font-size:9.5px;color:#334155;text-transform:uppercase;
+  letter-spacing:0.07em;margin-bottom:10px;
+}
+.policy-block pre{
+  font-family:'Fira Code',monospace;
+  font-size:11.5px;color:#94a3b8;line-height:1.75;
+  white-space:pre-wrap;
+}
+.policy-block .j-key{color:#818cf8;}
+.policy-block .j-str{color:#93c5fd;}
+.policy-block .j-val{color:#34d399;}
+.policy-block .j-warn{color:#f87171;}
+
+/* checklist */
+.checklist{list-style:none;}
+.checklist li{
+  display:flex;align-items:flex-start;gap:10px;
+  padding:5px 8px;border-radius:4px;
+  font-size:12.5px;color:var(--text-muted);cursor:pointer;transition:background 0.1s;
+}
+.checklist li:hover{background:var(--bg2);color:var(--text);}
+.cb{
+  width:14px;height:14px;border:1.5px solid var(--border2);
+  border-radius:3px;flex-shrink:0;margin-top:3px;
+  display:flex;align-items:center;justify-content:center;transition:all 0.15s;
+}
+.checklist li.done .cb{background:var(--green);border-color:var(--green);}
+.checklist li.done .cb::after{content:'✓';font-size:9px;color:#fff;font-weight:bold;}
+.checklist li.done span:last-child{text-decoration:line-through;color:var(--text-dim);}
+
+/* scrollbar */
+::-webkit-scrollbar{width:5px;height:5px;}
+::-webkit-scrollbar-track{background:transparent;}
+::-webkit-scrollbar-thumb{background:var(--border2);border-radius:3px;}
+
+@media(max-width:900px){
+  .sidebar{display:none;}
+  .hero,.content{padding-left:22px;padding-right:22px;}
+  .hero-title{font-size:32px;}
+  .grid{grid-template-columns:1fr 1fr;}
+  .srm{grid-template-columns:1fr;}
+  .srm-col{border-right:none;border-bottom:1px solid var(--border);}
+  .srm-col:last-child{border-bottom:none;}
+}
+</style>
+</head>
+<body>
+<div class="layout">
+
+<!-- SIDEBAR -->
+<nav class="sidebar">
+  <div class="sb-head">
+    <span class="sb-icon">☁️</span>
+    <div class="sb-title">Cloud Security</div>
+    <div class="sb-sub">Module 09 · AWS & Azure · Week 7–8</div>
+  </div>
+
+  <div class="nav-sec">Foundations</div>
+  <a class="nav-item active" href="#s1"><span class="nav-n">01</span>Cloud Security Fundamentals</a>
+  <a class="nav-item" href="#s2"><span class="nav-n">02</span>Shared Responsibility Model</a>
+  <a class="nav-item" href="#s3"><span class="nav-n">03</span>Cloud Threat Landscape</a>
+
+  <div class="nav-sec">AWS Security</div>
+  <a class="nav-item" href="#s4"><span class="nav-n">04</span>AWS IAM Deep Dive</a>
+  <a class="nav-item" href="#s5"><span class="nav-n">05</span>S3 Security & Encryption</a>
+  <a class="nav-item" href="#s6"><span class="nav-n">06</span>VPC Security</a>
+  <a class="nav-item" href="#s7"><span class="nav-n">07</span>CloudTrail & Logging</a>
+  <a class="nav-item" href="#s8"><span class="nav-n">08</span>AWS GuardDuty & Security Hub</a>
+
+  <div class="nav-sec">Azure Security</div>
+  <a class="nav-item" href="#s9"><span class="nav-n">09</span>Azure AD / Entra ID</a>
+  <a class="nav-item" href="#s10"><span class="nav-n">10</span>Azure Sentinel & Defender</a>
+
+  <div class="nav-sec">CSPM & Containers</div>
+  <a class="nav-item" href="#s11"><span class="nav-n">11</span>CSPM — Prowler & ScoutSuite</a>
+  <a class="nav-item" href="#s12"><span class="nav-n">12</span>Container & Kubernetes Security</a>
+
+  <div class="nav-sec">Capstone</div>
+  <a class="nav-item" href="#s13"><span class="nav-n">13</span>Cloud Security Audit Report</a>
+
+  <div class="sb-progress">
+    <div class="spp-row"><span>Progress</span><span id="sb-pct">0%</span></div>
+    <div class="spp-track"><div class="spp-fill" id="sb-fill" style="width:0%"></div></div>
+  </div>
+</nav>
+
+<!-- MAIN -->
+<main class="main">
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-pill">Module 09 · Security Track</div>
+  <h1 class="hero-title">Cloud<br><span>Security</span></h1>
+  <p class="hero-desc">AWS, Azure, CSPM, containers, and cloud-native detection. Short theory, real CLI labs, free-tier hands-on — built for SOC and security engineering roles targeting cloud environments.</p>
+  <div class="hero-stats">
+    <div class="hs"><span class="hs-v">13</span><span class="hs-l">Topics</span></div>
+    <div class="hs"><span class="hs-v b">10+</span><span class="hs-l">CLI Labs</span></div>
+    <div class="hs"><span class="hs-v g">AWS · Azure</span><span class="hs-l">Platforms</span></div>
+    <div class="hs"><span class="hs-v o">Free Tier</span><span class="hs-l">All Labs</span></div>
+  </div>
+</div>
+
+<div class="content">
+
+<!-- ══════════════════════════
+01 — Cloud Security Fundamentals
+══════════════════════════ -->
+<div class="section" id="s1">
+  <div class="sec-head">
+    <span class="sec-num">01</span>
+    <div class="sec-meta">
+      <div class="sec-title">Cloud Security Fundamentals</div>
+      <div class="sec-sub">Service models, deployment types, and why cloud security differs from on-prem</div>
+    </div>
+    <span class="badge b-blue">Foundation</span>
+  </div>
+
+  <div class="theory">
+    <h4>Why Cloud Security Is Different</h4>
+    <p>On-premises security had a clear perimeter — your firewall was the edge. Cloud dissolves that perimeter. <strong>Identity becomes the new perimeter</strong>: an attacker with a stolen AWS key has the same access as your admin, regardless of where they are on the planet. Misconfiguration — not malware — is the #1 cause of cloud breaches.</p>
+    <p>Cloud security requires new skills: understanding IAM policies, recognizing dangerous resource configurations, reading audit logs from APIs instead of network logs, and using cloud-native security tools instead of traditional SIEM-only approaches.</p>
+  </div>
+
+  <div class="grid">
+    <div class="card">
+      <div class="ck">IaaS</div>
+      <div class="cv"><strong>Infrastructure as a Service.</strong> You manage OS, runtime, apps, data. Provider manages physical hardware, network, hypervisor. AWS EC2, Azure VMs. Most control = most responsibility.</div>
+    </div>
+    <div class="card">
+      <div class="ck s">PaaS</div>
+      <div class="cv"><strong>Platform as a Service.</strong> Provider also manages OS and runtime. You manage app and data. AWS Lambda, Azure App Service, RDS. Less control, less responsibility.</div>
+    </div>
+    <div class="card">
+      <div class="ck t">SaaS</div>
+      <div class="cv"><strong>Software as a Service.</strong> Provider manages everything — you manage data and access. Salesforce, Office 365, Google Workspace. Least control — security focus is configuration and access.</div>
+    </div>
+    <div class="card">
+      <div class="ck o">Serverless</div>
+      <div class="cv"><strong>Functions as a Service.</strong> AWS Lambda, Azure Functions. You write code only; no servers. Security: function permissions, event triggers, secrets in env vars, code vulnerabilities.</div>
+    </div>
+    <div class="card">
+      <div class="ck g">Public Cloud</div>
+      <div class="cv">Multi-tenant infrastructure operated by a provider (AWS, Azure, GCP). Most scalable, most feature-rich, but you share physical hardware with other customers (with strong isolation).</div>
+    </div>
+    <div class="card">
+      <div class="ck v">Private / Hybrid</div>
+      <div class="cv">Private cloud: dedicated infrastructure. Hybrid: mix of on-prem + cloud. Common in Indian BFSI (RBI data localization) and government. Security spans both environments.</div>
+    </div>
+  </div>
+
+  <div class="theory sky" style="margin-top:14px;">
+    <h4>Cloud-Specific Security Risks</h4>
+    <p><strong>Misconfiguration</strong> — Public S3 buckets, open security groups, no MFA on root. Easy to create accidentally; catastrophic when exploited. This is #1.</p>
+    <p><strong>Overprivileged IAM</strong> — "Give admin and we'll tighten later" never gets tightened. Compromised overprivileged credentials = full account takeover.</p>
+    <p><strong>Insecure APIs</strong> — Cloud is API-driven. Exposed APIs, weak auth, no rate limiting = cloud-specific OWASP risks.</p>
+    <p><strong>Insufficient logging</strong> — CloudTrail/Activity Logs disabled = forensically blind. Attackers know this and disable logging first.</p>
+    <p><strong>Supply chain / third-party access</strong> — SaaS integrations, CI/CD pipelines with cloud credentials, cross-account roles. Each is a lateral movement path.</p>
+  </div>
+</div>
+
+<hr class="hdiv">
+
+<!-- ══════════════════════════
+02 — Shared Responsibility Model
+══════════════════════════ -->
+<div class="section" id="s2">
+  <div class="sec-head">
+    <span class="sec-num">02</span>
+    <div class="sec-meta">
+      <div class="sec-title">Shared Responsibility Model</div>
+      <div class="sec-sub">Who secures what — the foundational concept of all cloud security</div>
+    </div>
+    <span class="badge b-sky">Core Concept</span>
+  </div>
+
+  <div class="theory sky">
+    <h4>The Model in One Sentence</h4>
+    <p>The cloud provider secures <em>"security of the cloud"</em> (the infrastructure). You are responsible for <em>"security in the cloud"</em> (what you put on it). Misunderstanding this is the root cause of many cloud breaches — organizations assume the provider handles things that are actually their responsibility.</p>
+  </div>
+
+  <div class="srm">
+    <div class="srm-col">
+      <div class="srm-head" style="background:var(--red);">Customer Responsibility</div>
+      <div class="srm-body">
+        <div class="srm-row"><span class="srm-dot dot-r"></span><span>Customer data & encryption</span></div>
+        <div class="srm-row"><span class="srm-dot dot-r"></span><span>Identity & access management (IAM)</span></div>
+        <div class="srm-row"><span class="srm-dot dot-r"></span><span>OS-level security on EC2/VMs</span></div>
+        <div class="srm-row"><span class="srm-dot dot-r"></span><span>Network config (Security Groups, NACLs)</span></div>
+        <div class="srm-row"><span class="srm-dot dot-r"></span><span>Application security & code</span></div>
+        <div class="srm-row"><span class="srm-dot dot-r"></span><span>Client-side encryption</span></div>
+        <div class="srm-row"><span class="srm-dot dot-r"></span><span>Firewall config & MFA</span></div>
+      </div>
+    </div>
+    <div class="srm-col">
+      <div class="srm-head" style="background:var(--orange);">Shared (Varies by Service)</div>
+      <div class="srm-body">
+        <div class="srm-row"><span class="srm-dot" style="background:var(--orange)"></span><span>Patch management (IaaS: customer; PaaS: provider)</span></div>
+        <div class="srm-row"><span class="srm-dot" style="background:var(--orange)"></span><span>Logging & monitoring setup</span></div>
+        <div class="srm-row"><span class="srm-dot" style="background:var(--orange)"></span><span>Identity federation setup</span></div>
+        <div class="srm-row"><span class="srm-dot" style="background:var(--orange)"></span><span>Encryption key management</span></div>
+        <div class="srm-row"><span class="srm-dot" style="background:var(--orange)"></span><span>Container host OS (EKS/AKS)</span></div>
+      </div>
+    </div>
+    <div class="srm-col">
+      <div class="srm-head" style="background:var(--green);">AWS/Azure Responsibility</div>
+      <div class="srm-body">
+        <div class="srm-row"><span class="srm-dot dot-g"></span><span>Physical data centre security</span></div>
+        <div class="srm-row"><span class="srm-dot dot-g"></span><span>Hardware & hypervisor</span></div>
+        <div class="srm-row"><span class="srm-dot dot-g"></span><span>Global network infrastructure</span></div>
+        <div class="srm-row"><span class="srm-dot dot-g"></span><span>Availability zones & regions</span></div>
+        <div class="srm-row"><span class="srm-dot dot-g"></span><span>Managed service security (RDS engine, Lambda runtime)</span></div>
+        <div class="srm-row"><span class="srm-dot dot-g"></span><span>DDoS protection (Shield Standard)</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="note orange">
+    <span class="ni">⚠️</span>
+    <span><strong>The S3 bucket breach example:</strong> AWS secures the S3 infrastructure (hardware, availability, durability). But if YOU set the bucket ACL to "public read," that's YOUR misconfiguration — AWS is not responsible for the breach. This distinction is asked in every cloud security interview.</span>
+  </div>
+</div>
+
+<hr class="hdiv">
+
+<!-- ══════════════════════════
+03 — Cloud Threat Landscape
+══════════════════════════ -->
+<div class="section" id="s3">
+  <div class="sec-head">
+    <span class="sec-num">03</span>
+    <div class="sec-meta">
+      <div class="sec-title">Cloud Threat Landscape</div>
+      <div class="sec-sub">Real attack paths, OWASP Top 10 for cloud, and common misconfigurations</div>
+    </div>
+    <span class="badge b-red">Threats</span>
+  </div>
+
+  <div class="theory red">
+    <h4>How Attackers Compromise Cloud Environments</h4>
+    <p>Cloud attacks rarely start with exploiting vulnerabilities in AWS/Azure itself — the provider's infrastructure is hardened. They start by exploiting <strong>customer misconfigurations and credentials</strong>. A typical cloud attack chain: find exposed credential (GitHub, env var, metadata service) → enumerate permissions → escalate privileges → establish persistence → exfiltrate data or deploy crypto miners.</p>
+  </div>
+
+  <table class="dtable">
+    <thead><tr><th>Attack Vector</th><th>How It Works</th><th>Real Example</th><th>Prevention</th></tr></thead>
+    <tbody>
+      <tr>
+        <td class="tk">Exposed AWS Keys</td>
+        <td>AWS_ACCESS_KEY_ID pushed to GitHub or in Docker image</td>
+        <td>Attacker runs <code style="color:var(--blue)">aws s3 ls</code> within minutes of exposure</td>
+        <td class="tr-g">GitGuardian, git-secrets, short-lived roles (no static keys)</td>
+      </tr>
+      <tr>
+        <td class="tk">SSRF → IMDSv1</td>
+        <td>Server-Side Request Forgery hits EC2 metadata endpoint 169.254.169.254 to steal IAM credentials</td>
+        <td>Capital One breach 2019 — $80M fine, 100M records</td>
+        <td class="tr-g">Enforce IMDSv2 (token-required), block metadata IP at WAF</td>
+      </tr>
+      <tr>
+        <td class="tk">Public S3 Bucket</td>
+        <td>Bucket ACL set to public; sensitive data browseable by anyone</td>
+        <td>Twitch, GoDaddy, dozens of Indian companies exposed customer PII</td>
+        <td class="tr-g">S3 Block Public Access (account-level), Bucket Policy, Macie scanning</td>
+      </tr>
+      <tr>
+        <td class="tk">Overprivileged Lambda</td>
+        <td>Lambda function has AdministratorAccess; exploiting function = full account access</td>
+        <td>Code injection in Lambda → attacker calls iam:CreateUser</td>
+        <td class="tr-g">Least privilege execution role, deny iam:* explicitly</td>
+      </tr>
+      <tr>
+        <td class="tk">Terraform/IaC Secret Leak</td>
+        <td>Terraform state file (.tfstate) contains database passwords, API keys in plaintext</td>
+        <td>Publicly accessible S3 terraform.tfstate = complete infrastructure map + secrets</td>
+        <td class="tr-g">Use Terraform Cloud / encrypt state, never store state locally in public repos</td>
+      </tr>
+      <tr>
+        <td class="tk">Container Image with Secrets</td>
+        <td>Hardcoded credentials in Dockerfile or baked into image layers</td>
+        <td>Docker Hub images scanned by Sysdig found 7% had secrets</td>
+        <td class="tr-g">Trivy/Grype scanning in CI, use Secrets Manager, .dockerignore</td>
+      </tr>
+      <tr>
+        <td class="tk">Privilege Escalation via IAM</td>
+        <td>Role with iam:PassRole + ec2:RunInstances can launch EC2 with admin role</td>
+        <td>rhino-security-labs documents 20+ IAM privilege escalation paths</td>
+        <td class="tr-g">iam:PassRole condition constraints, IAM Access Analyzer</td>
+      </tr>
+      <tr>
+        <td class="tk">Cryptomining via Exposed Keys</td>
+        <td>Attacker finds exposed credentials, spins up hundreds of GPU instances for mining</td>
+        <td>$50,000+ AWS bill in 24 hours — common result of GitHub key exposure</td>
+        <td class="tr-g">GuardDuty (detects unusual API patterns), billing alerts, short-lived credentials</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<hr class="hdiv">
+
+<!-- ══════════════════════════
+04 — AWS IAM Deep Dive
+══════════════════════════ -->
+<div class="section" id="s4">
+  <div class="sec-head">
+    <span class="sec-num">04</span>
+    <div class="sec-meta">
+      <div class="sec-title">AWS IAM Deep Dive</div>
+      <div class="sec-sub">Users, roles, policies, least privilege, and privilege escalation paths</div>
+    </div>
+    <span class="badge b-orange">Core AWS</span>
+  </div>
+
+  <div class="theory orange">
+    <h4>IAM Is the Most Important AWS Security Control</h4>
+    <p>AWS Identity and Access Management (IAM) controls who can do what to which AWS resource. <strong>Every action in AWS is an API call</strong>, and every API call is evaluated against IAM policies. Get IAM wrong and every other security control can be bypassed by a sufficiently privileged attacker.</p>
+    <p>IAM has four main components: <strong>Users</strong> (human identities with long-term credentials), <strong>Groups</strong> (collections of users sharing policies), <strong>Roles</strong> (temporary identities assumed by services, Lambda, EC2, or cross-account), <strong>Policies</strong> (JSON documents defining allow/deny rules).</p>
+  </div>
+
+  <div class="grid">
+    <div class="card">
+      <div class="ck">IAM User</div>
+      <div class="cv">Long-term credentials (access key + secret). Use for human console access. Enable MFA mandatory. <strong>Avoid programmatic access keys — use roles instead.</strong></div>
+    </div>
+    <div class="card">
+      <div class="ck s">IAM Role</div>
+      <div class="cv">Temporary credentials via STS. Assumed by EC2, Lambda, ECS, cross-account access. <strong>Preferred over access keys</strong> — credentials auto-rotate, no long-term secret to leak.</div>
+    </div>
+    <div class="card">
+      <div class="ck o">Identity Policy</div>
+      <div class="cv">Attached to users/groups/roles. Defines what that identity can do. Managed (AWS or customer) or inline. Identity policies are evaluated per-identity.</div>
+    </div>
+    <div class="card">
+      <div class="ck t">Resource Policy</div>
+      <div class="cv">Attached to the resource itself (S3 bucket, SQS queue, KMS key). Controls who can access this resource. Both identity AND resource policies must allow access.</div>
+    </div>
+    <div class="card">
+      <div class="ck g">SCPs (Org-level)</div>
+      <div class="cv">Service Control Policies in AWS Organizations. Define the maximum permissions boundary for entire accounts. Even root cannot exceed an SCP deny. Powerful guardrail.</div>
+    </div>
+    <div class="card">
+      <div class="ck v">Permission Boundaries</div>
+      <div class="cv">Cap the maximum permissions a user/role can have, even if their attached policies are broader. Used to safely delegate IAM management to developers.</div>
+    </div>
+  </div>
+
+  <div class="theory" style="margin-top:14px;">
+    <h4>IAM Policy Evaluation Logic</h4>
+    <p>AWS evaluates policies in this order: <strong>1) Explicit Deny (any policy)</strong> → immediately denied. <strong>2) Explicit Allow (identity + resource + SCP + boundary)</strong> → allowed if all applicable allow. <strong>3) Implicit Deny</strong> → default; everything not explicitly allowed is denied.</p>
+    <p>The key: <em>an explicit Deny anywhere always wins</em>. Use this for security guardrails — a Deny in an SCP cannot be overridden by any identity policy.</p>
+  </div>
+
+  <div class="practical open">
+    <div class="prac-head" onclick="toggleP(this)">
+      <span class="ph-i">🔑</span>
+      <span class="ph-t">Lab 4.1 — Create a least-privilege IAM policy and test it</span>
+      <span class="ph-tag pt-cli">AWS CLI</span>
+      <span class="ph-chev">▶</span>
+    </div>
+    <div class="prac-body">
+      <div class="note blue"><span class="ni">💡</span><span><strong>Free Tier:</strong> All IAM operations are free. Use AWS Free Tier account. Install AWS CLI: <code style="color:var(--blue)">pip install awscli</code> then <code style="color:var(--blue)">aws configure</code> with your access key.</span></div>
+      <ol class="steps" style="margin-top:14px;">
+        <li class="step">
+          <span class="sn">1</span>
+          <div class="sc">
+            <div class="st">Create a least-privilege S3 read-only policy (JSON)</div>
+            <div class="sd">Save this as <code style="color:var(--blue)">s3-readonly-policy.json</code></div>
+            <div class="policy-block">
+              <div class="pb-title">s3-readonly-policy.json</div>
+              <pre>{
+  <span class="j-key">"Version"</span>: <span class="j-str">"2012-10-17"</span>,
+  <span class="j-key">"Statement"</span>: [
+    {
+      <span class="j-key">"Sid"</span>: <span class="j-str">"AllowS3ReadOnlySpecificBucket"</span>,
+      <span class="j-key">"Effect"</span>: <span class="j-val">"Allow"</span>,
+      <span class="j-key">"Action"</span>: [
+        <span class="j-str">"s3:GetObject"</span>,
+        <span class="j-str">"s3:ListBucket"</span>,
+        <span class="j-str">"s3:GetBucketLocation"</span>
+      ],
+      <span class="j-key">"Resource"</span>: [
+        <span class="j-str">"arn:aws:s3:::your-bucket-name"</span>,
+        <span class="j-str">"arn:aws:s3:::your-bucket-name/*"</span>
+      ]
+    },
+    {
+      <span class="j-key">"Sid"</span>: <span class="j-str">"DenyDeleteAndWrite"</span>,
+      <span class="j-key">"Effect"</span>: <span class="j-val">"Deny"</span>,
+      <span class="j-key">"Action"</span>: [
+        <span class="j-warn">"s3:DeleteObject"</span>,
+        <span class="j-warn">"s3:PutObject"</span>,
+        <span class="j-warn">"s3:DeleteBucket"</span>,
+        <span class="j-warn">"iam:*"</span>
+      ],
+      <span class="j-key">"Resource"</span>: <span class="j-str">"*"</span>
+    }
+  ]
+}</pre>
+            </div>
+          </div>
+        </li>
+        <li class="step">
+          <span class="sn">2</span>
+          <div class="sc">
+            <div class="st">Create the policy in AWS and attach to a test user</div>
+            <div class="code" data-label="aws cli">
+<span class="cm"># Create the managed policy</span>
+<span class="cmd">aws iam create-policy</span> \
+  <span class="flag">--policy-name</span> <span class="val">S3ReadOnlySpecific</span> \
+  <span class="flag">--policy-document</span> file://s3-readonly-policy.json
+
+<span class="cm"># Create a test user</span>
+<span class="cmd">aws iam create-user</span> <span class="flag">--user-name</span> <span class="val">test-readonly-user</span>
+
+<span class="cm"># Attach policy to user (replace ACCOUNT_ID)</span>
+<span class="cmd">aws iam attach-user-policy</span> \
+  <span class="flag">--user-name</span> <span class="val">test-readonly-user</span> \
+  <span class="flag">--policy-arn</span> <span class="val">arn:aws:iam::ACCOUNT_ID:policy/S3ReadOnlySpecific</span>
+            </div>
+          </div>
+        </li>
+        <li class="step">
+          <span class="sn">3</span>
+          <div class="sc">
+            <div class="st">Test with IAM Policy Simulator</div>
+            <div class="sd">Go to AWS Console → IAM → Policy Simulator. Select your user and test these actions:</div>
+            <div class="code" data-label="test cases">
+<span class="ok">✓ ALLOW:</span>  s3:GetObject on arn:aws:s3:::your-bucket/file.txt
+<span class="ok">✓ ALLOW:</span>  s3:ListBucket on arn:aws:s3:::your-bucket
+<span class="hi">✗ DENY:</span>   s3:DeleteObject on arn:aws:s3:::your-bucket/file.txt
+<span class="hi">✗ DENY:</span>   s3:PutObject on arn:aws:s3:::your-bucket/newfile.txt
+<span class="hi">✗ DENY:</span>   iam:CreateUser (explicit deny)
+<span class="hi">✗ DENY:</span>   ec2:DescribeInstances (implicit deny — not in policy)
+            </div>
+          </div>
+        </li>
+        <li class="step">
+          <span class="sn">4</span>
+          <div class="sc">
+            <div class="st">Use IAM Access Analyzer to find overprivileged roles in your account</div>
+            <div class="code" data-label="aws cli">
+<span class="cm"># Enable Access Analyzer</span>
+<span class="cmd">aws accessanalyzer create-analyzer</span> \
+  <span class="flag">--analyzer-name</span> <span class="val">security-review</span> \
+  <span class="flag">--type</span> <span class="val">ACCOUNT</span>
+
+<span class="cm"># List findings (resources shared externally)</span>
+<span class="cmd">aws accessanalyzer list-findings</span> \
+  <span class="flag">--analyzer-arn</span> <span class="val">arn:aws:access-analyzer:ap-south-1:ACCOUNT:analyzer/security-review</span>
+
+<span class="cm"># Generate least-privilege policy based on CloudTrail usage (90 days)</span>
+<span class="cmd">aws iam generate-service-last-accessed-details</span> \
+  <span class="flag">--arn</span> <span class="val">arn:aws:iam::ACCOUNT:role/your-role-name</span>
+            </div>
+          </div>
+        </li>
+      </ol>
+    </div>
+  </div>
+
+  <div class="practical">
+    <div class="prac-head" onclick="toggleP(this)">
+      <span class="ph-i">⚠️</span>
+      <span class="ph-t">Lab 4.2 — Detect IAM privilege escalation paths with Pacu</span>
+      <span class="ph-tag pt-lab">Attack Simulation</span>
+      <span class="ph-chev">▶</span>
+    </div>
+    <div class="prac-body">
+      <div class="note red"><span class="ni">⚠️</span><span><strong>Ethics boundary:</strong> Run Pacu ONLY against your own AWS account. Never against accounts you don't own or have explicit written permission to test.</span></div>
+      <ol class="steps" style="margin-top:14px;">
+        <li class="step">
+          <span class="sn">1</span>
+          <div class="sc">
+            <div class="st">Install Pacu (AWS exploitation framework)</div>
+            <div class="code" data-label="bash">
+<span class="cmd">pip3 install</span> pacu <span class="flag">--break-system-packages</span>
+<span class="cmd">pacu</span>
+<span class="cm"># Create a new session: set session mypracticelab</span>
+<span class="cm"># Import AWS credentials: import_keys --access-key KEY --secret-key SECRET</span>
+            </div>
+          </div>
+        </li>
+        <li class="step">
+          <span class="sn">2</span>
+          <div class="sc">
+            <div class="st">Enumerate IAM permissions of current user/role</div>
+            <div class="code" data-label="pacu console">
+<span class="cm"># Enumerate all IAM data for account</span>
+<span class="cmd">run iam__enum_permissions</span>
+<span class="cmd">run iam__enum_users_roles_policies_groups</span>
+
+<span class="cm"># Check for privilege escalation paths</span>
+<span class="cmd">run iam__privesc_scan</span>
+<span class="cm"># Output: lists all potential privilege escalation paths</span>
+<span class="cm"># e.g., "iam:PassRole + ec2:RunInstances = can assume admin role"</span>
+            </div>
+          </div>
+        </li>
+        <li class="step">
+          <span class="sn">3</span>
+          <div class="sc">
+            <div class="st">Review and remediate findings</div>
+            <div class="sd">For each escalation path Pacu identifies, add an explicit Deny statement in your IAM policies or SCPs to block that combination. Document as a finding in your lab report.</div>
+          </div>
+        </li>
+      </ol>
+    </div>
+  </div>
+</div>
+
+<hr class="hdiv">
+
+<!-- ══════════════════════════
+05 — S3 Security & Encryption
+══════════════════════════ -->
+<div class="section" id="s5">
+  <div class="sec-head">
+    <span class="sec-num">05</span>
+    <div class="sec-meta">
+      <div class="sec-title">S3 Security & Encryption</div>
+      <div class="sec-sub">Bucket policies, ACLs, public access blocks, encryption, and Macie</div>
+    </div>
+    <span class="badge b-sky">AWS Storage</span>
+  </div>
+
+  <div class="theory sky">
+    <h4>S3 — The Most Commonly Misconfigured AWS Service</h4>
+    <p>S3 stores virtually everything in AWS — backups, logs, application data, Terraform state, CI/CD artifacts. <strong>A single misconfigured bucket ACL has caused more cloud data breaches than any other configuration error.</strong> AWS added account-level "Block Public Access" in 2018 specifically because misconfigured buckets were epidemic.</p>
+  </div>
+
+  <table class="dtable">
+    <thead><tr><th>S3 Access Control</th><th>What It Does</th><th>Security Setting</th></tr></thead>
+    <tbody>
+      <tr><td class="tk">Block Public Access (Account-level)</td><td>4 settings that override all bucket ACLs and policies to prevent public access. Apply account-wide.</td><td class="tr-g">Enable ALL 4 settings at account level. Only disable for specific use cases.</td></tr>
+      <tr><td class="tk">Bucket Policy (Resource Policy)</td><td>JSON policy attached to bucket. Controls cross-account access, enforces HTTPS, restricts source VPC.</td><td class="tr-g">Deny HTTP (non-TLS), restrict to your VPC via condition: aws:SourceVpc</td></tr>
+      <tr><td class="tk">ACLs (Legacy)</td><td>Access Control Lists — older mechanism, per-object grants. AWS recommends disabling ACLs and using bucket policies instead.</td><td class="tr-o">Disable ACLs (bucket ownership = BucketOwnerEnforced)</td></tr>
+      <tr><td class="tk">Presigned URLs</td><td>Temporary, time-limited URL granting access to a specific object. No credentials needed by recipient.</td><td class="tr-g">Set short expiry (15 min–1 hr). Use for sharing files instead of making objects public.</td></tr>
+      <tr><td class="tk">Object Lock / Versioning</td><td>WORM (Write Once Read Many) for objects. Ransomware protection — objects cannot be deleted/modified during retention period.</td><td class="tr-g">Enable versioning + Object Lock (Compliance mode) for critical buckets.</td></tr>
+    </tbody>
+  </table>
+
+  <div class="theory teal" style="margin-top:14px;">
+    <h4>S3 Encryption Options</h4>
+    <p><strong>SSE-S3:</strong> AWS manages encryption keys using AES-256. Simplest. No additional cost. Good for most use cases.</p>
+    <p><strong>SSE-KMS:</strong> Encryption keys managed in AWS KMS. You control key policy, rotation, and usage auditing via CloudTrail. Required for compliance (PCI, HIPAA, DPDP sensitive data).</p>
+    <p><strong>SSE-C:</strong> You provide the encryption key per request. AWS encrypts/decrypts but never stores your key. Highest control, highest complexity.</p>
+    <p><strong>Client-side encryption:</strong> You encrypt before uploading. AWS stores ciphertext only. For maximum sensitivity — even AWS cannot read the data.</p>
+  </div>
+
+  <div class="practical open">
+    <div class="prac-head" onclick="toggleP(this)">
+      <span class="ph-i">🪣</span>
+      <span class="ph-t">Lab 5.1 — Harden an S3 bucket with policy, encryption, and public access block</span>
+      <span class="ph-tag pt-cli">AWS CLI</span>
+      <span class="ph-chev">▶</span>
+    </div>
+    <div class="prac-body">
+      <ol class="steps">
+        <li class="step">
+          <span class="sn">1</span>
+          <div class="sc">
+            <div class="st">Create a bucket and enable Block Public Access</div>
+            <div class="code" data-label="aws cli">
+<span class="cm"># Create bucket in ap-south-1 (Mumbai)</span>
+<span class="cmd">aws s3api create-bucket</span> \
+  <span class="flag">--bucket</span> <span class="val">my-secure-lab-bucket-$(date +%s)</span> \
+  <span class="flag">--region</span> <span class="val">ap-south-1</span> \
+  <span class="flag">--create-bucket-configuration</span> LocationConstraint=<span class="val">ap-south-1</span>
+
+<span class="cm"># Enable Block Public Access (all 4 settings)</span>
+<span class="cmd">aws s3api put-public-access-block</span> \
+  <span class="flag">--bucket</span> <span class="val">YOUR_BUCKET_NAME</span> \
+  <span class="flag">--public-access-block-configuration</span> \
+    "BlockPublicAcls=true,IgnorePublicAcls=true,BlockPublicPolicy=true,RestrictPublicBuckets=true"
+            </div>
+          </div>
+        </li>
+        <li class="step">
+          <span class="sn">2</span>
+          <div class="sc">
+            <div class="st">Apply a bucket policy enforcing HTTPS-only and denying HTTP</div>
+            <div class="code" data-label="bucket-policy.json">
+{
+  <span class="val">"Version"</span>: <span class="val">"2012-10-17"</span>,
+  <span class="val">"Statement"</span>: [
+    {
+      <span class="val">"Sid"</span>: <span class="val">"DenyNonTLS"</span>,
+      <span class="val">"Effect"</span>: <span class="warn">"Deny"</span>,
+      <span class="val">"Principal"</span>: <span class="val">"*"</span>,
+      <span class="val">"Action"</span>: <span class="val">"s3:*"</span>,
+      <span class="val">"Resource"</span>: [
+        <span class="val">"arn:aws:s3:::YOUR_BUCKET_NAME"</span>,
+        <span class="val">"arn:aws:s3:::YOUR_BUCKET_NAME/*"</span>
+      ],
+      <span class="val">"Condition"</span>: {<span class="val">"Bool"</span>: {<span class="val">"aws:SecureTransport"</span>: <span class="warn">"false"</span>}}
+    }
+  ]
+}
+            </div>
+            <div class="code" data-label="aws cli">
+<span class="cmd">aws s3api put-bucket-policy</span> \
+  <span class="flag">--bucket</span> <span class="val">YOUR_BUCKET_NAME</span> \
+  <span class="flag">--policy</span> file://bucket-policy.json
+            </div>
+          </div>
+        </li>
+        <li class="step">
+          <span class="sn">3</span>
+          <div class="sc">
+            <div class="st">Enable SSE-KMS encryption by default</div>
+            <div class="code" data-label="aws cli">
+<span class="cm"># First create a KMS key for S3</span>
+<span class="cmd">aws kms create-key</span> <span class="flag">--description</span> <span class="val">"S3 encryption key"</span>
+<span class="cm"># Note the KeyId from output</span>
+
+<span class="cm"># Set as default bucket encryption</span>
+<span class="cmd">aws s3api put-bucket-encryption</span> \
+  <span class="flag">--bucket</span> <span class="val">YOUR_BUCKET_NAME</span> \
+  <span class="flag">--server-side-encryption-configuration</span> '{
+    "Rules": [{
+      "ApplyServerSideEncryptionByDefault": {
+        "SSEAlgorithm": "aws:kms",
+        "KMSMasterKeyID": "YOUR_KEY_ID"
+      },
+      "BucketKeyEnabled": true
+    }]
+  }'
+            </div>
+          </div>
+        </li>
+        <li class="step">
+          <span class="sn">4</span>
+          <div class="sc">
+            <div class="st">Enable S3 access logging and versioning</div>
+            <div class="code" data-label="aws cli">
+<span class="cmd">aws s3api put-bucket-versioning</span> \
+  <span class="flag">--bucket</span> <span class="val">YOUR_BUCKET_NAME</span> \
+  <span class="flag">--versioning-configuration</span> Status=<span class="val">Enabled</span>
+
+<span class="cmd">aws s3api put-bucket-logging</span> \
+  <span class="flag">--bucket</span> <span class="val">YOUR_BUCKET_NAME</span> \
+  <span class="flag">--bucket-logging-status</span> '{
+    "LoggingEnabled": {
+      "TargetBucket": "YOUR_LOG_BUCKET",
+      "TargetPrefix": "s3-access-logs/"
+    }
+  }'
+            </div>
+          </div>
+        </li>
+      </ol>
+    </div>
+  </div>
+</div>
+
+<hr class="hdiv">
+
+<!-- ══════════════════════════
+06 — VPC Security
+══════════════════════════ -->
+<div class="section" id="s6">
+  <div class="sec-head">
+    <span class="sec-num">06</span>
+    <div class="sec-meta">
+      <div class="sec-title">VPC Security Architecture</div>
+      <div class="sec-sub">Security Groups, NACLs, VPC Flow Logs, subnets, and network isolation</div>
+    </div>
+    <span class="badge b-teal">AWS Network</span>
+  </div>
+
+  <div class="theory teal">
+    <h4>VPC Is Your Cloud Network Perimeter</h4>
+    <p>A <strong>Virtual Private Cloud (VPC)</strong> is your isolated network within AWS. You define IP ranges, subnets (public and private), route tables, and internet gateways. All EC2 instances, RDS databases, Lambda functions (if VPC-bound) live inside subnets. <strong>Network security in AWS is about controlling what can reach what inside and into the VPC.</strong></p>
+  </div>
+
+  <div class="grid">
+    <div class="card">
+      <div class="ck t">Security Groups</div>
+      <div class="cv"><strong>Stateful</strong> instance-level firewall. Allow rules only (no deny). Automatically allows return traffic. Attached to ENIs (network interfaces). Default: deny all inbound, allow all outbound.</div>
+    </div>
+    <div class="card">
+      <div class="ck t">NACLs</div>
+      <div class="cv"><strong>Stateless</strong> subnet-level firewall. Both allow AND deny rules, evaluated in numbered order. Must explicitly allow return traffic. Applied to entire subnet — blunt instrument.</div>
+    </div>
+    <div class="card">
+      <div class="ck t">Public Subnet</div>
+      <div class="cv">Has route to Internet Gateway (IGW). Resources here can get public IPs and be reachable from internet. Use for: load balancers, bastion hosts, NAT gateways only.</div>
+    </div>
+    <div class="card">
+      <div class="ck t">Private Subnet</div>
+      <div class="cv">No direct route to IGW. Resources have only private IPs. Use for: EC2 app servers, RDS databases, Lambda, ECS containers. Outbound internet via NAT Gateway.</div>
+    </div>
+    <div class="card">
+      <div class="ck t">VPC Flow Logs</div>
+      <div class="cv">Logs all network traffic metadata (IP, port, protocol, accept/reject). Not packet content — like netflow data. Critical for incident investigation. Send to CloudWatch or S3.</div>
+    </div>
+    <div class="card">
+      <div class="ck t">VPC Endpoints</div>
+      <div class="cv">Private connectivity to AWS services (S3, DynamoDB, STS) without traversing the internet. Keeps traffic within AWS network. Gateway endpoints (free) vs Interface endpoints.</div>
+    </div>
+  </div>
+
+  <div class="practical open">
+    <div class="prac-head" onclick="toggleP(this)">
+      <span class="ph-i">🔒</span>
+      <span class="ph-t">Lab 6.1 — Configure VPC Flow Logs and detect a port scan</span>
+      <span class="ph-tag pt-cli">AWS + CLI</span>
+      <span class="ph-chev">▶</span>
+    </div>
+    <div class="prac-body">
+      <ol class="steps">
+        <li class="step">
+          <span class="sn">1</span>
+          <div class="sc">
+            <div class="st">Enable VPC Flow Logs to CloudWatch Logs</div>
+            <div class="code" data-label="aws cli">
+<span class="cm"># Get your VPC ID</span>
+<span class="cmd">aws ec2 describe-vpcs</span> <span class="flag">--query</span> <span class="val">'Vpcs[*].{ID:VpcId,CIDR:CidrBlock}'</span> <span class="flag">--output</span> table
+
+<span class="cm"># Create CloudWatch log group for flow logs</span>
+<span class="cmd">aws logs create-log-group</span> <span class="flag">--log-group-name</span> <span class="val">/aws/vpc/flowlogs</span>
+
+<span class="cm"># Enable flow logs (all traffic, to CloudWatch)</span>
+<span class="cmd">aws ec2 create-flow-logs</span> \
+  <span class="flag">--resource-type</span> <span class="val">VPC</span> \
+  <span class="flag">--resource-ids</span> <span class="val">vpc-XXXXXXXXX</span> \
+  <span class="flag">--traffic-type</span> <span class="val">ALL</span> \
+  <span class="flag">--log-destination-type</span> <span class="val">cloud-watch-logs</span> \
+  <span class="flag">--log-group-name</span> <span class="val">/aws/vpc/flowlogs</span> \
+  <span class="flag">--deliver-logs-permission-arn</span> <span class="val">arn:aws:iam::ACCOUNT:role/flowlogs-role</span>
+            </div>
+          </div>
+        </li>
+        <li class="step">
+          <span class="sn">2</span>
+          <div class="sc">
+            <div class="st">Query Flow Logs in CloudWatch Insights to detect port scans</div>
+            <div class="code" data-label="cloudwatch insights query">
+<span class="cm"># Go to CloudWatch → Logs Insights → select /aws/vpc/flowlogs</span>
+<span class="cm"># Query: find source IPs hitting many different destination ports (port scan)</span>
+
+<span class="val">fields</span> srcAddr, dstAddr, dstPort, action
+| <span class="cmd">filter</span> action = <span class="kw">"REJECT"</span>
+| <span class="cmd">stats</span> count(*) as rejectCount, <span class="kw">count_distinct</span>(dstPort) as portCount by srcAddr
+| <span class="cmd">filter</span> portCount > <span class="warn">20</span>
+| <span class="cmd">sort</span> portCount desc
+| <span class="cmd">limit</span> 20
+
+<span class="cm"># High portCount from a single srcAddr = port scan in progress</span>
+            </div>
+          </div>
+        </li>
+        <li class="step">
+          <span class="sn">3</span>
+          <div class="sc">
+            <div class="st">Harden a Security Group — remove dangerous rules</div>
+            <div class="code" data-label="aws cli security hardening">
+<span class="cm"># Find security groups with 0.0.0.0/0 SSH (port 22) open — dangerous!</span>
+<span class="cmd">aws ec2 describe-security-groups</span> \
+  <span class="flag">--query</span> <span class="val">"SecurityGroups[?contains(IpPermissions[].IpRanges[].CidrIp, '0.0.0.0/0') && contains(IpPermissions[].FromPort, \`22\`)].{GroupId:GroupId,GroupName:GroupName}"</span>
+
+<span class="cm"># Remove the dangerous rule (replace with your SG ID)</span>
+<span class="cmd">aws ec2 revoke-security-group-ingress</span> \
+  <span class="flag">--group-id</span> <span class="val">sg-XXXXXXXXX</span> \
+  <span class="flag">--protocol</span> tcp \
+  <span class="flag">--port</span> 22 \
+  <span class="flag">--cidr</span> <span class="warn">0.0.0.0/0</span>
+
+<span class="cm"># Replace with your specific IP only</span>
+<span class="cmd">aws ec2 authorize-security-group-ingress</span> \
+  <span class="flag">--group-id</span> <span class="val">sg-XXXXXXXXX</span> \
+  <span class="flag">--protocol</span> tcp \
+  <span class="flag">--port</span> 22 \
+  <span class="flag">--cidr</span> <span class="val">YOUR_IP/32</span>
+            </div>
+          </div>
+        </li>
+      </ol>
+    </div>
+  </div>
+</div>
+
+<hr class="hdiv">
+
+<!-- SECTIONS 7-13 continue... -->
+<!-- ══════════════════════════
+07 — CloudTrail & Logging
+══════════════════════════ -->
+<div class="section" id="s7">
+  <div class="sec-head">
+    <span class="sec-num">07</span>
+    <div class="sec-meta">
+      <div class="sec-title">CloudTrail & AWS Logging</div>
+      <div class="sec-sub">Audit logs, event types, log integrity, and SOC detection queries</div>
+    </div>
+    <span class="badge b-violet">Audit Trail</span>
+  </div>
+
+  <div class="theory violet">
+    <h4>CloudTrail — AWS API Audit Log</h4>
+    <p><strong>AWS CloudTrail</strong> records every API call made in your AWS account — who did what, when, from where, to which resource, and what the result was. This is your primary forensic tool for cloud incidents. Without CloudTrail enabled and stored securely, you are <em>forensically blind</em> to cloud incidents.</p>
+    <p>CloudTrail captures three event types: <strong>Management events</strong> (control plane — creating EC2, modifying IAM, enabling S3 versioning — on by default), <strong>Data events</strong> (data plane — S3 GetObject, Lambda invocation — off by default, costs extra), <strong>Insight events</strong> (anomalous API call volumes — off by default).</p>
+  </div>
+
+  <table class="dtable">
+    <thead><tr><th>CloudTrail Event</th><th>What to Hunt For</th><th>MITRE ATT&CK</th></tr></thead>
+    <tbody>
+      <tr><td class="tk">ConsoleLogin with MFA=No</td><td>Login without MFA — policy violation, potential account takeover</td><td class="tr-b">T1078 Valid Accounts</td></tr>
+      <tr><td class="tk">CreateUser / AttachUserPolicy</td><td>New IAM user + admin policy attached = backdoor account creation</td><td class="tr-r">T1136.003 Cloud Account</td></tr>
+      <tr><td class="tk">GetCallerIdentity (repeated)</td><td>Attacker enumerating who they are after credential theft</td><td class="tr-b">T1087 Account Discovery</td></tr>
+      <tr><td class="tk">AssumeRole from unusual IP/region</td><td>Credential use from unexpected geography or ASN</td><td class="tr-r">T1550.001 Cloud Tokens</td></tr>
+      <tr><td class="tk">DeleteTrail / StopLogging</td><td>Attacker disabling CloudTrail — first thing sophisticated attackers do</td><td class="tr-r">T1562.008 Disable Cloud Logs</td></tr>
+      <tr><td class="tk">PutBucketAcl → public</td><td>S3 bucket made public — accidental exposure or data staging for exfil</td><td class="tr-r">T1537 Transfer to Cloud</td></tr>
+      <tr><td class="tk">RunInstances (many, GPU type)</td><td>Cryptocurrency mining — large-scale GPU instance launches</td><td class="tr-o">T1496 Resource Hijacking</td></tr>
+      <tr><td class="tk">GetSecretValue (multiple secrets)</td><td>Bulk secrets retrieval from Secrets Manager — credential harvesting</td><td class="tr-r">T1555 Credentials from Store</td></tr>
+    </tbody>
+  </table>
+
+  <div class="practical open">
+    <div class="prac-head" onclick="toggleP(this)">
+      <span class="ph-i">🔍</span>
+      <span class="ph-t">Lab 7.1 — CloudTrail detection queries for IAM backdoor and logging tampering</span>
+      <span class="ph-tag pt-cli">CloudWatch + CLI</span>
+      <span class="ph-chev">▶</span>
+    </div>
+    <div class="prac-body">
+      <ol class="steps">
+        <li class="step">
+          <span class="sn">1</span>
+          <div class="sc">
+            <div class="st">Enable CloudTrail with log integrity validation and S3 encryption</div>
+            <div class="code" data-label="aws cli">
+<span class="cmd">aws cloudtrail create-trail</span> \
+  <span class="flag">--name</span> <span class="val">security-audit-trail</span> \
+  <span class="flag">--s3-bucket-name</span> <span class="val">your-cloudtrail-logs-bucket</span> \
+  <span class="flag">--enable-log-file-validation</span> \
+  <span class="flag">--kms-key-id</span> <span class="val">arn:aws:kms:ap-south-1:ACCOUNT:key/KEY_ID</span> \
+  <span class="flag">--is-multi-region-trail</span>
+
+<span class="cmd">aws cloudtrail start-logging</span> <span class="flag">--name</span> <span class="val">security-audit-trail</span>
+
+<span class="cm"># Enable CloudTrail insights for anomaly detection</span>
+<span class="cmd">aws cloudtrail put-insight-selectors</span> \
+  <span class="flag">--trail-name</span> <span class="val">security-audit-trail</span> \
+  <span class="flag">--insight-selectors</span> '[{"InsightType":"ApiCallRateInsight"},{"InsightType":"ApiErrorRateInsight"}]'
+            </div>
+          </div>
+        </li>
+        <li class="step">
+          <span class="sn">2</span>
+          <div class="sc">
+            <div class="st">Query CloudTrail — detect console login without MFA</div>
+            <div class="code" data-label="aws cli + jq">
+<span class="cmd">aws cloudtrail lookup-events</span> \
+  <span class="flag">--lookup-attributes</span> AttributeKey=<span class="val">EventName</span>,AttributeValue=<span class="val">ConsoleLogin</span> \
+  <span class="flag">--start-time</span> <span class="val">2024-01-01</span> \
+  <span class="flag">--query</span> <span class="val">"Events[*].CloudTrailEvent"</span> \
+  <span class="flag">--output</span> text | <span class="cmd">python3</span> <span class="flag">-c</span> <span class="val">"
+import sys, json
+for line in sys.stdin:
+  e = json.loads(line)
+  if e.get('additionalEventData',{}).get('MFAUsed') == 'No':
+    print(f'⚠️  NO MFA: {e[\"userIdentity\"][\"arn\"]} at {e[\"eventTime\"]} from {e[\"sourceIPAddress\"]}')
+"</span>
+            </div>
+          </div>
+        </li>
+        <li class="step">
+          <span class="sn">3</span>
+          <div class="sc">
+            <div class="st">Detect CloudTrail deletion or stoppage (attacker covering tracks)</div>
+            <div class="code" data-label="aws cli">
+<span class="cmd">aws cloudtrail lookup-events</span> \
+  <span class="flag">--lookup-attributes</span> AttributeKey=<span class="val">EventName</span>,AttributeValue=<span class="val">DeleteTrail</span>
+
+<span class="cmd">aws cloudtrail lookup-events</span> \
+  <span class="flag">--lookup-attributes</span> AttributeKey=<span class="val">EventName</span>,AttributeValue=<span class="val">StopLogging</span>
+
+<span class="cm"># Set a CloudWatch alarm that fires when CloudTrail is stopped</span>
+<span class="cm"># CIS AWS Benchmark Recommendation 3.5</span>
+<span class="cmd">aws cloudwatch put-metric-alarm</span> \
+  <span class="flag">--alarm-name</span> <span class="val">CloudTrailStopLoggingAlarm</span> \
+  <span class="flag">--metric-name</span> <span class="val">CloudTrailEventCount</span> \
+  <span class="flag">--namespace</span> <span class="val">CloudTrailMetrics</span> \
+  <span class="flag">--statistic</span> <span class="val">Sum</span> \
+  <span class="flag">--period</span> 300 \
+  <span class="flag">--evaluation-periods</span> 1 \
+  <span class="flag">--threshold</span> 1 \
+  <span class="flag">--comparison-operator</span> <span class="val">GreaterThanOrEqualToThreshold</span> \
+  <span class="flag">--alarm-actions</span> <span class="val">arn:aws:sns:ap-south-1:ACCOUNT:security-alerts</span>
+            </div>
+          </div>
+        </li>
+      </ol>
+    </div>
+  </div>
+</div>
+
+<hr class="hdiv">
+
+<!-- ══════════════════════════
+08 — GuardDuty & Security Hub
+══════════════════════════ -->
+<div class="section" id="s8">
+  <div class="sec-head">
+    <span class="sec-num">08</span>
+    <div class="sec-meta">
+      <div class="sec-title">AWS GuardDuty & Security Hub</div>
+      <div class="sec-sub">Threat detection, finding aggregation, and CIS benchmark compliance</div>
+    </div>
+    <span class="badge b-orange">AWS Detection</span>
+  </div>
+
+  <div class="theory orange">
+    <h4>GuardDuty — Cloud-Native Threat Detection</h4>
+    <p><strong>AWS GuardDuty</strong> is a managed threat detection service that analyzes CloudTrail, VPC Flow Logs, DNS logs, EKS audit logs, S3 access logs, and Lambda logs — without you having to configure anything. It uses ML + threat intelligence feeds to surface findings. <strong>One click to enable; no agents needed.</strong></p>
+    <p><strong>AWS Security Hub</strong> aggregates findings from GuardDuty, Macie, Inspector, IAM Access Analyzer, and third-party tools into a single dashboard. It also runs continuous checks against CIS AWS Foundations Benchmark and AWS Security Best Practices standards.</p>
+  </div>
+
+  <table class="dtable">
+    <thead><tr><th>GuardDuty Finding Type</th><th>What It Means</th><th>Response</th></tr></thead>
+    <tbody>
+      <tr><td class="tk">UnauthorizedAccess:IAMUser/ConsoleLoginSuccess.B</td><td>Successful console login from Tor exit node or suspicious IP</td><td class="tr-r">Immediately revoke session tokens, investigate identity</td></tr>
+      <tr><td class="tk">Discovery:S3/MaliciousIPCaller</td><td>S3 API calls from known malicious IP in GuardDuty threat intel</td><td class="tr-r">Block IP in VPC NACL, audit bucket access logs</td></tr>
+      <tr><td class="tk">CryptoCurrency:EC2/BitcoinTool.B</td><td>EC2 instance communicating with Bitcoin/Monero mining pools</td><td class="tr-r">Isolate instance, review IAM for compromise</td></tr>
+      <tr><td class="tk">Trojan:EC2/BlackholeTraffic</td><td>EC2 querying domains in GuardDuty's threat intel (C2 indicator)</td><td class="tr-r">Network isolate EC2, take memory/disk snapshot for forensics</td></tr>
+      <tr><td class="tk">PrivilegeEscalation:IAMUser/AdministrativePermissions</td><td>IAM entity granted admin permissions — policy escalation detected</td><td class="tr-r">Immediately revoke policy, trace via CloudTrail who made the change</td></tr>
+      <tr><td class="tk">Exfiltration:S3/AnomalousBehavior</td><td>S3 GetObject volume anomalous — potential data exfiltration in progress</td><td class="tr-r">Apply S3 bucket policy to deny further access, engage IR team</td></tr>
+    </tbody>
+  </table>
+
+  <div class="practical open">
+    <div class="prac-head" onclick="toggleP(this)">
+      <span class="ph-i">🛡️</span>
+      <span class="ph-t">Lab 8.1 — Enable GuardDuty, generate test findings, triage in Security Hub</span>
+      <span class="ph-tag pt-lab">Full Lab</span>
+      <span class="ph-chev">▶</span>
+    </div>
+    <div class="prac-body">
+      <ol class="steps">
+        <li class="step">
+          <span class="sn">1</span>
+          <div class="sc">
+            <div class="st">Enable GuardDuty (30-day free trial)</div>
+            <div class="code" data-label="aws cli">
+<span class="cmd">aws guardduty create-detector</span> \
+  <span class="flag">--enable</span> \
+  <span class="flag">--finding-publishing-frequency</span> <span class="val">FIFTEEN_MINUTES</span> \
+  <span class="flag">--region</span> <span class="val">ap-south-1</span>
+<span class="cm"># Save the DetectorId from output</span>
+            </div>
+          </div>
+        </li>
+        <li class="step">
+          <span class="sn">2</span>
+          <div class="sc">
+            <div class="st">Generate sample findings to practice triage</div>
+            <div class="code" data-label="aws cli">
+<span class="cm"># Generate sample findings of all types (safe — no real attack)</span>
+<span class="cmd">aws guardduty create-sample-findings</span> \
+  <span class="flag">--detector-id</span> <span class="val">YOUR_DETECTOR_ID</span> \
+  <span class="flag">--finding-types</span> \
+    <span class="val">"UnauthorizedAccess:IAMUser/ConsoleLoginSuccess.B"</span> \
+    <span class="val">"CryptoCurrency:EC2/BitcoinTool.B"</span> \
+    <span class="val">"Trojan:EC2/BlackholeTraffic"</span> \
+    <span class="val">"Discovery:S3/MaliciousIPCaller"</span>
+            </div>
+          </div>
+        </li>
+        <li class="step">
+          <span class="sn">3</span>
+          <div class="sc">
+            <div class="st">Query and triage findings via CLI</div>
+            <div class="code" data-label="aws cli">
+<span class="cm"># List all HIGH and CRITICAL findings</span>
+<span class="cmd">aws guardduty list-findings</span> \
+  <span class="flag">--detector-id</span> <span class="val">YOUR_DETECTOR_ID</span> \
+  <span class="flag">--finding-criteria</span> '{
+    "Criterion": {
+      "severity": {"Gte": 7}
+    }
+  }'
+
+<span class="cm"># Get full details of a specific finding</span>
+<span class="cmd">aws guardduty get-findings</span> \
+  <span class="flag">--detector-id</span> <span class="val">YOUR_DETECTOR_ID</span> \
+  <span class="flag">--finding-ids</span> <span class="val">FINDING_ID</span> \
+  <span class="flag">--query</span> <span class="val">"Findings[0].{Type:Type,Severity:Severity,Resource:Resource,Action:Service.Action}"</span>
+            </div>
+          </div>
+        </li>
+        <li class="step">
+          <span class="sn">4</span>
+          <div class="sc">
+            <div class="st">Enable Security Hub and run CIS AWS Foundations benchmark</div>
+            <div class="code" data-label="aws cli">
+<span class="cmd">aws securityhub enable-security-hub</span> \
+  <span class="flag">--enable-default-standards</span>
+
+<span class="cm"># Get your Security Score (0-100) and failed checks</span>
+<span class="cmd">aws securityhub get-findings</span> \
+  <span class="flag">--filters</span> '{
+    "ComplianceStatus": [{"Value":"FAILED","Comparison":"EQUALS"}],
+    "SeverityLabel": [{"Value":"CRITICAL","Comparison":"EQUALS"}]
+  }' \
+  <span class="flag">--query</span> <span class="val">"Findings[*].{Title:Title,Resource:Resources[0].Id}"</span>
+            </div>
+          </div>
+        </li>
+      </ol>
+    </div>
+  </div>
+</div>
+
+<hr class="hdiv">
+
+<!-- ══════════════════════════
+09 — Azure AD / Entra ID
+══════════════════════════ -->
+<div class="section" id="s9">
+  <div class="sec-head">
+    <span class="sec-num">09</span>
+    <div class="sec-meta">
+      <div class="sec-title">Azure AD / Microsoft Entra ID</div>
+      <div class="sec-sub">RBAC, Conditional Access, PIM, and identity security in Azure</div>
+    </div>
+    <span class="badge b-blue">Azure Identity</span>
+  </div>
+
+  <div class="theory">
+    <h4>Azure Identity Is Different from AWS IAM</h4>
+    <p><strong>Azure Active Directory (now Microsoft Entra ID)</strong> is the identity backbone of Azure — and also a standalone enterprise identity platform used by millions of companies for SSO, MFA, and device management. Unlike AWS IAM (pure cloud), Azure AD also integrates with on-premises Active Directory, making it critical for hybrid environments.</p>
+    <p>Azure uses <strong>RBAC (Role-Based Access Control)</strong> instead of JSON policies. You assign built-in roles (Owner, Contributor, Reader) or custom roles to users/groups at different scopes (Management Group > Subscription > Resource Group > Resource).</p>
+  </div>
+
+  <div class="grid">
+    <div class="card">
+      <div class="ck">Owner</div>
+      <div class="cv">Full access to all resources AND can manage access. Assign only when absolutely necessary. Minimum viable: use Contributor.</div>
+    </div>
+    <div class="card">
+      <div class="ck s">Contributor</div>
+      <div class="cv">Full access to all resources but cannot change access assignments. Good for engineers who need to deploy/manage resources.</div>
+    </div>
+    <div class="card">
+      <div class="ck t">Reader</div>
+      <div class="cv">View all resources, read all configs, but cannot make any changes. Good for auditors, monitoring tools, read-only service accounts.</div>
+    </div>
+    <div class="card">
+      <div class="ck o">Conditional Access</div>
+      <div class="cv">Azure AD policy engine. "If user is external + accessing sensitive app + from non-managed device → require MFA + compliant device." Zero Trust enforcement.</div>
+    </div>
+    <div class="card">
+      <div class="ck v">PIM — Privileged Identity Management</div>
+      <div class="cv">Just-in-time privileged access. Users request elevated permissions for a limited time window. Eliminates standing admin access. Requires Azure AD P2.</div>
+    </div>
+    <div class="card">
+      <div class="ck g">Identity Protection</div>
+      <div class="cv">ML-based risk detection: impossible travel, leaked credentials, anonymous IP, malware-linked IP. Automatically enforces MFA or blocks sign-ins when risk detected.</div>
+    </div>
+  </div>
+
+  <div class="practical open">
+    <div class="prac-head" onclick="toggleP(this)">
+      <span class="ph-i">🔷</span>
+      <span class="ph-t">Lab 9.1 — Configure Conditional Access policy and review Sign-In Logs</span>
+      <span class="ph-tag pt-cfg">Azure Portal</span>
+      <span class="ph-chev">▶</span>
+    </div>
+    <div class="prac-body">
+      <div class="note blue"><span class="ni">💡</span><span><strong>Free tier:</strong> Create a free Azure account (azure.microsoft.com/free). Azure AD free tier includes basic Conditional Access. PIM requires Azure AD P2 (30-day trial available).</span></div>
+      <ol class="steps" style="margin-top:14px;">
+        <li class="step">
+          <span class="sn">1</span>
+          <div class="sc">
+            <div class="st">Create a Conditional Access Policy requiring MFA for all users</div>
+            <div class="code" data-label="azure portal path">
+Azure Portal → Azure Active Directory (Entra ID)
+→ Security → Conditional Access → New Policy
+
+<span class="kw">Name:</span>        <span class="val">Require MFA for all users</span>
+<span class="kw">Users:</span>       All users (exclude break-glass account!)
+<span class="kw">Cloud apps:</span>  All cloud apps
+<span class="kw">Conditions:</span>  None (applies everywhere)
+<span class="kw">Grant:</span>       Require multi-factor authentication
+<span class="kw">Session:</span>     Sign-in frequency: 8 hours
+<span class="kw">State:</span>       Report-only first, then Enabled
+            </div>
+          </div>
+        </li>
+        <li class="step">
+          <span class="sn">2</span>
+          <div class="sc">
+            <div class="st">Review Sign-In logs for risky sign-ins</div>
+            <div class="code" data-label="azure portal / microsoft graph">
+<span class="cm"># Azure Portal: Azure AD → Monitoring → Sign-In Logs</span>
+<span class="cm"># Filter: Risk State = At Risk OR Risk level = High</span>
+
+<span class="cm"># Or via Microsoft Graph API (PowerShell)</span>
+<span class="cmd">Install-Module</span> Microsoft.Graph <span class="flag">-Scope</span> CurrentUser
+<span class="cmd">Connect-MgGraph</span> <span class="flag">-Scopes</span> <span class="val">"AuditLog.Read.All"</span>
+
+<span class="cm"># Get risky sign-ins from last 7 days</span>
+<span class="cmd">Get-MgAuditLogSignIn</span> <span class="flag">-Filter</span> <span class="val">"riskLevelDuringSignIn eq 'high'"</span> \
+  <span class="flag">-Top</span> 20 | <span class="cmd">Select-Object</span> UserDisplayName, IpAddress, Location, RiskDetail, CreatedDateTime
+            </div>
+          </div>
+        </li>
+        <li class="step">
+          <span class="sn">3</span>
+          <div class="sc">
+            <div class="st">Audit users with overprivileged Azure RBAC assignments</div>
+            <div class="code" data-label="azure cli">
+<span class="cm"># Install Azure CLI: brew install azure-cli OR apt install azure-cli</span>
+<span class="cmd">az login</span>
+
+<span class="cm"># List all Owner role assignments in subscription (high risk)</span>
+<span class="cmd">az role assignment list</span> \
+  <span class="flag">--role</span> <span class="val">"Owner"</span> \
+  <span class="flag">--include-inherited</span> \
+  <span class="flag">--query</span> <span class="val">"[*].{Principal:principalName,Scope:scope,Type:principalType}"</span> \
+  <span class="flag">--output</span> table
+
+<span class="cm"># Find users who haven't signed in for 90 days but still have active roles</span>
+<span class="cmd">az ad user list</span> <span class="flag">--query</span> <span class="val">"[?accountEnabled==\`true\`].{Name:displayName,UPN:userPrincipalName,LastSignIn:signInActivity.lastSignInDateTime}"</span>
+            </div>
+          </div>
+        </li>
+      </ol>
+    </div>
+  </div>
+</div>
+
+<hr class="hdiv">
+
+<!-- ══════════════════════════
+10 — Azure Sentinel & Defender
+══════════════════════════ -->
+<div class="section" id="s10">
+  <div class="sec-head">
+    <span class="sec-num">10</span>
+    <div class="sec-meta">
+      <div class="sec-title">Microsoft Sentinel & Defender for Cloud</div>
+      <div class="sec-sub">Cloud-native SIEM/SOAR, KQL queries, and CSPM in Azure</div>
+    </div>
+    <span class="badge b-sky">Azure Detection</span>
+  </div>
+
+  <div class="theory sky">
+    <h4>Microsoft Sentinel — Azure's Cloud-Native SIEM</h4>
+    <p><strong>Microsoft Sentinel</strong> is Azure's SIEM + SOAR platform. It ingests logs from Azure services, Microsoft 365, on-premises systems, and third-party tools. Uses <strong>KQL (Kusto Query Language)</strong> for threat hunting and analytics. Unlike traditional SIEMs, Sentinel is fully cloud-based — no infrastructure to manage, and scales automatically.</p>
+    <p><strong>Microsoft Defender for Cloud</strong> is the CSPM (Cloud Security Posture Management) tool — it continuously assesses Azure (and multi-cloud) resources against security benchmarks, shows a Secure Score, and provides remediation guidance.</p>
+  </div>
+
+  <div class="practical open">
+    <div class="prac-head" onclick="toggleP(this)">
+      <span class="ph-i">🔷</span>
+      <span class="ph-t">Lab 10.1 — KQL threat hunting queries in Microsoft Sentinel</span>
+      <span class="ph-tag pt-cli">KQL Lab</span>
+      <span class="ph-chev">▶</span>
+    </div>
+    <div class="prac-body">
+      <div class="note sky"><span class="ni">💡</span><span>Access Sentinel via Azure Portal → Microsoft Sentinel. Use <strong>Logs</strong> tab for KQL queries. Free trial: first 31 days up to 10GB/day free data ingestion.</span></div>
+      <ol class="steps" style="margin-top:14px;">
+        <li class="step">
+          <span class="sn">1</span>
+          <div class="sc">
+            <div class="st">Detect brute force — multiple failed sign-ins then success</div>
+            <div class="code" data-label="kql — sentinel">
+<span class="cm">// Failed followed by successful login from same IP — credential brute force</span>
+<span class="kw">let</span> FailedLogins = SigninLogs
+  | <span class="cmd">where</span> ResultType != <span class="val">"0"</span>  <span class="cm">// non-zero = failure</span>
+  | <span class="cmd">summarize</span> FailCount=count(), IPs=make_set(IPAddress) <span class="kw">by</span> UserPrincipalName, bin(TimeGenerated, 1h);
+
+<span class="kw">let</span> SuccessLogins = SigninLogs
+  | <span class="cmd">where</span> ResultType == <span class="val">"0"</span>
+  | <span class="cmd">project</span> UserPrincipalName, SuccessTime=TimeGenerated, IPAddress;
+
+FailedLogins
+| <span class="cmd">where</span> FailCount > <span class="warn">10</span>
+| <span class="cmd">join kind=inner</span> SuccessLogins <span class="kw">on</span> UserPrincipalName
+| <span class="cmd">where</span> SuccessTime between (TimeGenerated .. TimeGenerated + 2h)
+| <span class="cmd">project</span> UserPrincipalName, FailCount, IPAddress, SuccessTime
+| <span class="cmd">order by</span> FailCount desc
+            </div>
+          </div>
+        </li>
+        <li class="step">
+          <span class="sn">2</span>
+          <div class="sc">
+            <div class="st">Hunt for impossible travel (sign-in from 2 countries simultaneously)</div>
+            <div class="code" data-label="kql — sentinel">
+<span class="cm">// Impossible travel: same user, 2 different countries within 1 hour</span>
+SigninLogs
+| <span class="cmd">where</span> ResultType == <span class="val">"0"</span>
+| <span class="cmd">project</span> UserPrincipalName, TimeGenerated, Country=Location.countryOrRegion, IPAddress
+| <span class="cmd">order by</span> UserPrincipalName, TimeGenerated asc
+| <span class="cmd">serialize</span> rownum=row_number()
+| <span class="cmd">join kind=inner</span> (
+    SigninLogs | <span class="cmd">where</span> ResultType == <span class="val">"0"</span>
+    | <span class="cmd">project</span> UserPrincipalName, TimeGenerated2=TimeGenerated,
+      Country2=Location.countryOrRegion
+  ) <span class="kw">on</span> UserPrincipalName
+| <span class="cmd">where</span> Country != Country2
+  <span class="kw">and</span> abs(datetime_diff(<span class="val">'minute'</span>, TimeGenerated, TimeGenerated2)) < <span class="warn">60</span>
+| <span class="cmd">distinct</span> UserPrincipalName, Country, Country2, TimeGenerated
+            </div>
+          </div>
+        </li>
+        <li class="step">
+          <span class="sn">3</span>
+          <div class="sc">
+            <div class="st">Detect new owner role assignment (privilege escalation)</div>
+            <div class="code" data-label="kql — sentinel">
+<span class="cm">// Alert on Owner role being assigned — critical finding</span>
+AzureActivity
+| <span class="cmd">where</span> OperationNameValue == <span class="val">"MICROSOFT.AUTHORIZATION/ROLEASSIGNMENTS/WRITE"</span>
+  <span class="kw">and</span> ActivityStatusValue == <span class="val">"Success"</span>
+| <span class="cmd">extend</span> RoleAssigned = tostring(parse_json(Properties).requestbody)
+| <span class="cmd">where</span> RoleAssigned <span class="cmd">contains</span> <span class="val">"8e3af657-a8ff-443c-a75c-2fe8c4bcb635"</span>
+  <span class="cm">// Owner role definition ID</span>
+| <span class="cmd">project</span> TimeGenerated, Caller, CallerIpAddress, RoleAssigned, ResourceGroup
+| <span class="cmd">order by</span> TimeGenerated desc
+            </div>
+          </div>
+        </li>
+      </ol>
+    </div>
+  </div>
+</div>
+
+<hr class="hdiv">
+
+<!-- ══════════════════════════
+11 — CSPM: Prowler & ScoutSuite
+══════════════════════════ -->
+<div class="section" id="s11">
+  <div class="sec-head">
+    <span class="sec-num">11</span>
+    <div class="sec-meta">
+      <div class="sec-title">CSPM — Prowler & ScoutSuite</div>
+      <div class="sec-sub">Automated cloud security posture assessment — find every misconfiguration</div>
+    </div>
+    <span class="badge b-green">CSPM Lab</span>
+  </div>
+
+  <div class="theory green">
+    <h4>What is CSPM?</h4>
+    <p><strong>Cloud Security Posture Management (CSPM)</strong> tools continuously scan your cloud environment for misconfigurations, compliance violations, and security risks — automatically, without manual checklist work. They compare your config against benchmarks (CIS, NIST, SOC 2, ISO 27001, DPDP control objectives) and report findings with severity and remediation steps.</p>
+    <p><strong>Prowler</strong> is the leading open-source CSPM for AWS, Azure, and GCP. <strong>ScoutSuite</strong> is another open-source tool with excellent multi-cloud reporting. Both run against your cloud APIs using read-only credentials — they don't touch your workloads.</p>
+  </div>
+
+  <div class="practical open">
+    <div class="prac-head" onclick="toggleP(this)">
+      <span class="ph-i">🔎</span>
+      <span class="ph-t">Lab 11.1 — Run Prowler against your AWS account and build a findings report</span>
+      <span class="ph-tag pt-audit">CSPM Full Lab</span>
+      <span class="ph-chev">▶</span>
+    </div>
+    <div class="prac-body">
+      <ol class="steps">
+        <li class="step">
+          <span class="sn">1</span>
+          <div class="sc">
+            <div class="st">Install Prowler and configure read-only AWS credentials</div>
+            <div class="code" data-label="bash">
+<span class="cmd">pip3 install</span> prowler <span class="flag">--break-system-packages</span>
+
+<span class="cm"># Configure read-only AWS profile for Prowler</span>
+<span class="cm"># Prowler needs: SecurityAudit + ViewOnlyAccess managed policies</span>
+<span class="cmd">aws iam create-user</span> <span class="flag">--user-name</span> <span class="val">prowler-readonly</span>
+<span class="cmd">aws iam attach-user-policy</span> <span class="flag">--user-name</span> prowler-readonly \
+  <span class="flag">--policy-arn</span> <span class="val">arn:aws:iam::aws:policy/SecurityAudit</span>
+<span class="cmd">aws iam attach-user-policy</span> <span class="flag">--user-name</span> prowler-readonly \
+  <span class="flag">--policy-arn</span> <span class="val">arn:aws:iam::aws:policy/job-function/ViewOnlyAccess</span>
+<span class="cmd">aws iam create-access-key</span> <span class="flag">--user-name</span> prowler-readonly
+<span class="cm"># Use these credentials in aws configure --profile prowler</span>
+            </div>
+          </div>
+        </li>
+        <li class="step">
+          <span class="sn">2</span>
+          <div class="sc">
+            <div class="st">Run Prowler CIS AWS Foundations Benchmark check</div>
+            <div class="code" data-label="bash">
+<span class="cm"># Full CIS Level 1 checks — Mumbai region</span>
+<span class="cmd">prowler</span> aws \
+  <span class="flag">--profile</span> prowler \
+  <span class="flag">--region</span> ap-south-1 \
+  <span class="flag">-c</span> cis_level1 \
+  <span class="flag">-M</span> html,json \
+  <span class="flag">-o</span> ./prowler-output
+
+<span class="cm"># Run specific check categories only (faster)</span>
+<span class="cmd">prowler</span> aws <span class="flag">-c</span> iam,s3,cloudtrail,guardduty,kms \
+  <span class="flag">--profile</span> prowler <span class="flag">--region</span> ap-south-1
+
+<span class="cm"># Check for public S3 buckets across ALL regions</span>
+<span class="cmd">prowler</span> aws <span class="flag">-c</span> s3_bucket_public_access \
+  <span class="flag">--profile</span> prowler
+            </div>
+          </div>
+        </li>
+        <li class="step">
+          <span class="sn">3</span>
+          <div class="sc">
+            <div class="st">Interpret Prowler output and prioritize findings</div>
+            <div class="code" data-label="prowler output example">
+<span class="hi">CRITICAL</span> guardduty_is_enabled — GuardDuty not enabled in ap-south-1
+  Remediation: aws guardduty create-detector --enable
+
+<span class="hi">CRITICAL</span> iam_root_mfa_enabled — Root account MFA not enabled
+  Remediation: Enable MFA on AWS root account immediately
+
+<span class="warn">HIGH</span>     cloudtrail_multi_region_enabled — No multi-region trail
+  Remediation: Create trail with --is-multi-region-trail
+
+<span class="warn">HIGH</span>     s3_bucket_default_encryption — 3 buckets without encryption
+  Buckets: logs-bucket-01, backup-bucket-02, app-assets
+  Remediation: aws s3api put-bucket-encryption ...
+
+<span class="ok">MEDIUM</span>   iam_password_policy_lowercase — Password policy too weak
+<span class="ok">LOW</span>      cloudwatch_alarm_root_account_usage — No root account alarm
+            </div>
+          </div>
+        </li>
+        <li class="step">
+          <span class="sn">4</span>
+          <div class="sc">
+            <div class="st">Run ScoutSuite for a visual HTML report (multi-cloud)</div>
+            <div class="code" data-label="bash">
+<span class="cmd">pip3 install</span> scoutsuite <span class="flag">--break-system-packages</span>
+
+<span class="cm"># Run against AWS</span>
+<span class="cmd">scout</span> aws <span class="flag">--profile</span> prowler <span class="flag">--report-dir</span> ./scoutsuite-report
+
+<span class="cm"># Run against Azure</span>
+<span class="cmd">az login</span>
+<span class="cmd">scout</span> azure <span class="flag">--cli</span>
+
+<span class="cm"># Open report in browser</span>
+<span class="cmd">open</span> ./scoutsuite-report/scoutsuite-report.html
+<span class="cm"># Interactive visual dashboard of all findings by service</span>
+            </div>
+          </div>
+        </li>
+      </ol>
+    </div>
+  </div>
+</div>
+
+<hr class="hdiv">
+
+<!-- ══════════════════════════
+12 — Container & Kubernetes Security
+══════════════════════════ -->
+<div class="section" id="s12">
+  <div class="sec-head">
+    <span class="sec-num">12</span>
+    <div class="sec-meta">
+      <div class="sec-title">Container & Kubernetes Security</div>
+      <div class="sec-sub">Docker security, image scanning, EKS/AKS hardening, and runtime protection</div>
+    </div>
+    <span class="badge b-violet">Containers</span>
+  </div>
+
+  <div class="theory violet">
+    <h4>Container Security Attack Surface</h4>
+    <p>Containers are the dominant cloud workload deployment model. Security risks span four layers: <strong>Image</strong> (vulnerable packages, hardcoded secrets, running as root), <strong>Registry</strong> (public images with malware, unsigned images, no scanning), <strong>Runtime</strong> (privileged containers, capabilities abuse, container escape), and <strong>Orchestration</strong> (Kubernetes RBAC misconfiguration, exposed API server, etcd without auth).</p>
+  </div>
+
+  <div class="grid">
+    <div class="card">
+      <div class="ck v">Trivy — Image Scanning</div>
+      <div class="cv">Open-source vulnerability scanner for container images, filesystem, git repos, IaC. Finds CVEs in OS packages and application dependencies. Free, fast, CI/CD-ready.</div>
+    </div>
+    <div class="card">
+      <div class="ck v">Dockerfile Best Practices</div>
+      <div class="cv">Non-root USER, minimal base image (distroless/alpine), no secrets in ENV or layers, multi-stage builds to reduce attack surface, read-only filesystem.</div>
+    </div>
+    <div class="card">
+      <div class="ck v">Kubernetes RBAC</div>
+      <div class="cv">Roles + RoleBindings. Principle of least privilege: no cluster-admin for app accounts. Namespace isolation. Avoid wildcard permissions (* verbs).</div>
+    </div>
+    <div class="card">
+      <div class="ck v">Pod Security</div>
+      <div class="cv">Pod Security Standards: Restricted/Baseline/Privileged. Deny privileged containers, hostPID/hostNetwork, hostPath mounts. OPA Gatekeeper / Kyverno for policy enforcement.</div>
+    </div>
+    <div class="card">
+      <div class="ck v">Secrets Management</div>
+      <div class="cv">Never store secrets in ConfigMaps. Use Kubernetes Secrets (base64, not encrypted by default!) + enable etcd encryption at rest + use AWS Secrets Manager/Vault via CSI driver.</div>
+    </div>
+    <div class="card">
+      <div class="ck v">Falco — Runtime Security</div>
+      <div class="cv">CNCF runtime security tool. Detects abnormal container behavior in real-time: shell spawned in container, unexpected network connection, sensitive file read. Sends alerts to SIEM.</div>
+    </div>
+  </div>
+
+  <div class="practical open">
+    <div class="prac-head" onclick="toggleP(this)">
+      <span class="ph-i">🐳</span>
+      <span class="ph-t">Lab 12.1 — Scan Docker images with Trivy and harden a Dockerfile</span>
+      <span class="ph-tag pt-lab">Container Lab</span>
+      <span class="ph-chev">▶</span>
+    </div>
+    <div class="prac-body">
+      <ol class="steps">
+        <li class="step">
+          <span class="sn">1</span>
+          <div class="sc">
+            <div class="st">Install Trivy and scan a real public image</div>
+            <div class="code" data-label="bash">
+<span class="cm"># Install Trivy</span>
+<span class="cmd">curl</span> <span class="flag">-sfL</span> https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/install.sh | <span class="cmd">sh</span> <span class="flag">-s --</span> <span class="flag">-b</span> /usr/local/bin
+
+<span class="cm"># Scan a specific image (e.g., an old node image — intentionally vulnerable)</span>
+<span class="cmd">trivy image</span> node:14-slim
+<span class="cm"># Output: CRITICAL, HIGH, MEDIUM CVEs with CVE-IDs and fix versions</span>
+
+<span class="cm"># Scan for secrets in image layers</span>
+<span class="cmd">trivy image</span> <span class="flag">--scanners</span> secret node:14-slim
+
+<span class="cm"># Scan your own Dockerfile for misconfigurations</span>
+<span class="cmd">trivy config</span> ./Dockerfile
+            </div>
+          </div>
+        </li>
+        <li class="step">
+          <span class="sn">2</span>
+          <div class="sc">
+            <div class="st">Compare insecure vs secure Dockerfile</div>
+            <div class="code" data-label="insecure Dockerfile ❌">
+<span class="hi">FROM node:14</span>          <span class="cm"># bloated image, many CVEs</span>
+<span class="hi">WORKDIR /app</span>
+<span class="hi">COPY . .</span>
+<span class="hi">ENV DB_PASSWORD=mysecret123</span>  <span class="cm"># secret in image layer!</span>
+<span class="hi">ENV AWS_SECRET_KEY=XXXXX</span>     <span class="cm"># leaked in docker history</span>
+<span class="hi">RUN npm install</span>
+<span class="hi">EXPOSE 3000</span>
+<span class="hi">CMD ["node", "server.js"]</span>    <span class="cm"># runs as ROOT</span>
+            </div>
+            <div class="code" data-label="secure Dockerfile ✓">
+<span class="ok">FROM node:20-alpine AS builder</span>  <span class="cm"># minimal, updated base</span>
+<span class="ok">WORKDIR /app</span>
+<span class="ok">COPY package*.json ./</span>
+<span class="ok">RUN npm ci --only=production</span>    <span class="cm"># only production deps</span>
+
+<span class="ok">FROM gcr.io/distroless/nodejs20-debian12 AS runtime</span>
+<span class="ok">WORKDIR /app</span>
+<span class="ok">COPY --from=builder /app .</span>
+<span class="ok">COPY --from=builder /app/node_modules ./node_modules</span>
+<span class="ok">USER 1000</span>                       <span class="cm"># non-root user!</span>
+<span class="ok">EXPOSE 3000</span>
+<span class="ok">CMD ["server.js"]</span>
+<span class="cm"># Secrets injected at runtime via AWS Secrets Manager / env, NOT baked in</span>
+            </div>
+          </div>
+        </li>
+        <li class="step">
+          <span class="sn">3</span>
+          <div class="sc">
+            <div class="st">Add Trivy to a GitHub Actions CI/CD pipeline (prevent deploying vulnerable images)</div>
+            <div class="code" data-label=".github/workflows/security.yml">
+<span class="kw">name:</span> Container Security Scan
+<span class="kw">on:</span> [push, pull_request]
+
+<span class="kw">jobs:</span>
+  <span class="kw">trivy-scan:</span>
+    <span class="kw">runs-on:</span> ubuntu-latest
+    <span class="kw">steps:</span>
+      - <span class="kw">uses:</span> actions/checkout@v4
+      - <span class="kw">name:</span> Build Docker image
+        <span class="kw">run:</span> docker build -t myapp:${{ github.sha }} .
+      - <span class="kw">name:</span> Run Trivy vulnerability scanner
+        <span class="kw">uses:</span> aquasecurity/trivy-action@master
+        <span class="kw">with:</span>
+          <span class="kw">image-ref:</span> myapp:${{ github.sha }}
+          <span class="kw">format:</span> sarif
+          <span class="kw">exit-code:</span> <span class="val">'1'</span>           <span class="cm"># Fail pipeline on CRITICAL</span>
+          <span class="kw">severity:</span> <span class="val">CRITICAL,HIGH</span>
+          <span class="kw">output:</span> trivy-results.sarif
+      - <span class="kw">name:</span> Upload results to GitHub Security tab
+        <span class="kw">uses:</span> github/codeql-action/upload-sarif@v3
+        <span class="kw">with:</span>
+          <span class="kw">sarif_file:</span> trivy-results.sarif
+            </div>
+          </div>
+        </li>
+      </ol>
+    </div>
+  </div>
+</div>
+
+<hr class="hdiv">
+
+<!-- ══════════════════════════
+13 — Cloud Security Audit Report
+══════════════════════════ -->
+<div class="section" id="s13">
+  <div class="sec-head">
+    <span class="sec-num">13</span>
+    <div class="sec-meta">
+      <div class="sec-title">Cloud Security Audit Report — Capstone</div>
+      <div class="sec-sub">Portfolio deliverable: full CSPM audit report structure and template</div>
+    </div>
+    <span class="badge b-green">Capstone</span>
+  </div>
+
+  <div class="theory green">
+    <h4>Why a Cloud Security Audit Report in Your Portfolio?</h4>
+    <p>Cloud security engineers and GRC analysts who target cloud environments are expected to produce CSPM findings reports for clients. A structured, professional audit report in your GitHub repository — built from your Prowler/ScoutSuite lab results — immediately separates you from candidates who only have certifications.</p>
+  </div>
+
+  <div class="practical open">
+    <div class="prac-head" onclick="toggleP(this)">
+      <span class="ph-i">📊</span>
+      <span class="ph-t">Capstone Lab — Write a full AWS cloud security audit report</span>
+      <span class="ph-tag pt-audit">Portfolio Deliverable</span>
+      <span class="ph-chev">▶</span>
+    </div>
+    <div class="prac-body">
+      <ol class="steps">
+        <li class="step">
+          <span class="sn">1</span>
+          <div class="sc">
+            <div class="st">Structure your report (Google Docs / Word)</div>
+            <div class="code" data-label="report structure">
+<span class="kw">CLOUD SECURITY POSTURE ASSESSMENT</span>
+<span class="kw">TechNova Pvt Ltd — AWS Account</span>
+<span class="kw">Assessment Date: [Date] | Analyst: [Your Name]</span>
+<span class="kw">Tools Used: Prowler v4.x, AWS Security Hub, GuardDuty</span>
+<span class="kw">Scope: ap-south-1, ap-south-2 (all services)</span>
+<span class="kw">Framework: CIS AWS Foundations Benchmark v2.0</span>
+
+<span class="ok">1. EXECUTIVE SUMMARY</span>
+   Overall Security Score: 47/100 (Below Benchmark)
+   Critical Findings: 3
+   High Findings: 8
+   Medium Findings: 14
+   Top Risk: GuardDuty disabled + no multi-region CloudTrail
+
+<span class="ok">2. SCOPE & METHODOLOGY</span>
+   - What was assessed
+   - Tools and credentials used (read-only)
+   - Frameworks applied
+   - What was OUT of scope
+
+<span class="ok">3. CRITICAL FINDINGS (table)</span>
+   ID | Service | Finding | CVSS/Severity | Remediation | Effort
+
+<span class="ok">4. HIGH FINDINGS</span>
+
+<span class="ok">5. MEDIUM / LOW FINDINGS</span>
+
+<span class="ok">6. COMPLIANCE STATUS</span>
+   CIS Level 1: 62% compliant (49/79 checks passing)
+   CIS Level 2: 38% compliant (30/79 checks passing)
+
+<span class="ok">7. REMEDIATION ROADMAP (prioritized)</span>
+   Week 1 (Quick Wins, 1-2 hrs each):
+     1. Enable GuardDuty — ap-south-1
+     2. Enable root MFA
+     3. Enable CloudTrail multi-region
+     4. Block public access on 3 S3 buckets
+
+   Month 1 (Requires planning):
+     5. Deploy VPC Flow Logs on all VPCs
+     6. Rotate all IAM access keys > 90 days
+     7. Enable Security Hub + CIS standard
+     8. Patch all EC2 instances with CRITICAL CVEs (Inspector)
+
+<span class="ok">8. APPENDIX — Full Findings List</span>
+   [Prowler JSON output or ScoutSuite HTML as annex]
+            </div>
+          </div>
+        </li>
+        <li class="step">
+          <span class="sn">2</span>
+          <div class="sc">
+            <div class="st">Write 3 critical findings in detail (per finding template)</div>
+            <div class="code" data-label="finding detail template">
+<span class="kw">Finding ID:</span>   CLOUD-001
+<span class="kw">Title:</span>        GuardDuty Not Enabled — ap-south-1
+<span class="kw">Service:</span>      AWS GuardDuty
+<span class="kw">Severity:</span>     CRITICAL
+<span class="kw">CIS Control:</span>  CIS AWS 2.1.2
+<span class="kw">MITRE ATT&CK:</span> T1562.008 (Disable Cloud Logs)
+
+<span class="kw">Description:</span>
+GuardDuty is not enabled in the ap-south-1 (Mumbai) region. GuardDuty
+provides continuous threat detection by analyzing CloudTrail logs, VPC
+Flow Logs, and DNS queries for anomalous activity. Without it, threats
+such as compromised IAM credentials, cryptomining, and C2 beaconing
+will not be detected by AWS-native tooling.
+
+<span class="kw">Evidence:</span>
+aws guardduty list-detectors --region ap-south-1
+Output: {"DetectorIds": []}  ← empty = not enabled
+
+<span class="kw">Business Impact:</span>
+Without GuardDuty, active threats may persist undetected for months.
+The average dwell time in cloud environments without detection tooling
+is 197 days (IBM X-Force 2024). For a company processing employee
+Aadhaar and salary data, a DPDP Act breach notification obligation
+could trigger penalties up to ₹250 crore.
+
+<span class="kw">Remediation:</span>
+aws guardduty create-detector --enable --region ap-south-1
+Estimated effort: 15 minutes | No cost for first 30 days
+
+<span class="kw">Status:</span> Open | Owner: DevOps Lead | Target: Immediate
+            </div>
+          </div>
+        </li>
+      </ol>
+    </div>
+  </div>
+
+  <!-- Module completion checklist -->
+  <div class="theory" style="margin-top:20px;border-left-color:var(--green);">
+    <h4>Module Completion Checklist</h4>
+    <ul class="checklist">
+      <li onclick="toggleCheck(this)"><span class="cb"></span><span>Lab 4.1 — Created least-privilege IAM policy, attached to test user, verified with Policy Simulator</span></li>
+      <li onclick="toggleCheck(this)"><span class="cb"></span><span>Lab 4.2 — Ran Pacu to enumerate IAM privilege escalation paths in test account</span></li>
+      <li onclick="toggleCheck(this)"><span class="cb"></span><span>Lab 5.1 — Hardened S3 bucket: Block Public Access, HTTPS-only policy, SSE-KMS, versioning</span></li>
+      <li onclick="toggleCheck(this)"><span class="cb"></span><span>Lab 6.1 — Enabled VPC Flow Logs, ran CloudWatch Insights query, removed open SSH security group rule</span></li>
+      <li onclick="toggleCheck(this)"><span class="cb"></span><span>Lab 7.1 — Enabled CloudTrail with log validation, detected console login without MFA, set CloudWatch alarm</span></li>
+      <li onclick="toggleCheck(this)"><span class="cb"></span><span>Lab 8.1 — Enabled GuardDuty, generated sample findings, triaged in Security Hub</span></li>
+      <li onclick="toggleCheck(this)"><span class="cb"></span><span>Lab 9.1 — Configured Conditional Access MFA policy, reviewed risky sign-ins, audited Owner role assignments</span></li>
+      <li onclick="toggleCheck(this)"><span class="cb"></span><span>Lab 10.1 — Wrote 3 KQL queries in Sentinel: brute force, impossible travel, Owner role assignment</span></li>
+      <li onclick="toggleCheck(this)"><span class="cb"></span><span>Lab 11.1 — Ran Prowler CIS scan, interpreted findings, ran ScoutSuite HTML report</span></li>
+      <li onclick="toggleCheck(this)"><span class="cb"></span><span>Lab 12.1 — Scanned Docker images with Trivy, rewrote Dockerfile securely, added to GitHub Actions pipeline</span></li>
+      <li onclick="toggleCheck(this)"><span class="cb"></span><span>Capstone — Wrote full cloud security audit report (3 detailed findings, remediation roadmap) — pushed to GitHub</span></li>
+    </ul>
+  </div>
+
+  <div class="note green" style="margin-top:14px;">
+    <span class="ni">🏆</span>
+    <span><strong>Portfolio package for cloud security roles:</strong> Push to GitHub: (1) IAM least-privilege policy JSON, (2) S3 hardening scripts, (3) Prowler findings CSV/JSON, (4) Trivy CI/CD workflow YAML, (5) Cloud Security Audit Report PDF. This level of evidence is rare among freshers and early-career candidates at Indian IT companies targeting cloud security roles (TCS, Infosys Cloud Security, HCL CyberSec, Wipro Cloud Practice).</span>
+  </div>
+</div>
+
+</div><!-- /content -->
+</main>
+</div><!-- /layout -->
+
+<script>
+function toggleP(header) {
+  header.closest('.practical').classList.toggle('open');
+  updateProgress();
+}
+
+function toggleCheck(li) {
+  li.classList.toggle('done');
+  updateProgress();
+}
+
+function updateProgress() {
+  const all = document.querySelectorAll('.checklist li');
+  const done = document.querySelectorAll('.checklist li.done');
+  const pct = all.length > 0 ? Math.round((done.length / all.length) * 100) : 0;
+  document.getElementById('sb-fill').style.width = pct + '%';
+  document.getElementById('sb-pct').textContent = pct + '%';
+}
+
+// Sidebar active tracking
+const sections = document.querySelectorAll('.section');
+const navItems = document.querySelectorAll('.nav-item');
+
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      const id = entry.target.id;
+      navItems.forEach(item => {
+        item.classList.toggle('active', item.getAttribute('href') === '#' + id);
+      });
+    }
+  });
+}, { rootMargin: '-20% 0px -70% 0px' });
+
+sections.forEach(s => observer.observe(s));
+
+navItems.forEach(item => {
+  item.addEventListener('click', e => {
+    const href = item.getAttribute('href');
+    if (href && href.startsWith('#')) {
+      e.preventDefault();
+      document.querySelector(href)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  });
+});
+
+updateProgress();
+</script>
+</body>
+</html>

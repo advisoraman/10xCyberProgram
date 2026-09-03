@@ -1,0 +1,2319 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cryptography & PKI — Study Module</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Inconsolata:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:         #f5f4f0;
+  --bg2:        #eeece6;
+  --bg3:        #e5e2d8;
+  --bg4:        #dbd7cc;
+  --surface:    #ffffff;
+  --border:     #d4d0c4;
+  --border2:    #bab5a6;
+  --text:       #1a1a16;
+  --text-muted: #5a5850;
+  --text-dim:   #9a9588;
+  --teal:       #0e7490;
+  --teal-light: #ecfeff;
+  --teal-mid:   #0891b2;
+  --teal-dim:   #164e63;
+  --slate:      #1e3a5f;
+  --slate-light:#f0f4ff;
+  --slate-mid:  #2d5a8e;
+  --amber:      #92400e;
+  --amber-light:#fffbeb;
+  --amber-mid:  #b45309;
+  --rose:       #9f1239;
+  --rose-light: #fff1f2;
+  --rose-mid:   #be123c;
+  --sage:       #14532d;
+  --sage-light: #f0fdf4;
+  --sage-mid:   #15803d;
+  --violet:     #4c1d95;
+  --violet-light:#faf5ff;
+  --violet-mid: #7c3aed;
+  --sidebar-w:  260px;
+}
+
+*{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+
+body{
+  font-family:'Inconsolata',monospace;
+  background:var(--bg);
+  color:var(--text);
+  font-size:13.5px;
+  line-height:1.75;
+  min-height:100vh;
+}
+
+/* subtle hex pattern background */
+body::before{
+  content:'';
+  position:fixed;top:0;left:0;right:0;bottom:0;
+  background-image:radial-gradient(circle at 1px 1px,rgba(14,116,144,0.06) 1px,transparent 0);
+  background-size:28px 28px;
+  pointer-events:none;z-index:0;
+}
+
+.layout{display:flex;min-height:100vh;position:relative;z-index:1;}
+
+/* ── SIDEBAR ── */
+.sidebar{
+  width:var(--sidebar-w);flex-shrink:0;
+  background:var(--slate);
+  position:sticky;top:0;height:100vh;
+  overflow-y:auto;display:flex;flex-direction:column;
+}
+.sidebar::-webkit-scrollbar{width:3px;}
+.sidebar::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.12);}
+
+.sb-head{
+  padding:24px 20px 18px;
+  border-bottom:1px solid rgba(255,255,255,0.07);
+}
+
+.sb-symbol{
+  font-family:'DM Serif Display',serif;
+  font-size:32px;color:rgba(255,255,255,0.9);
+  margin-bottom:10px;line-height:1;
+  font-style:italic;
+  text-shadow:0 0 20px rgba(14,116,144,0.3);
+}
+
+.sb-title{
+  font-family:'DM Serif Display',serif;
+  font-size:15.5px;font-weight:400;font-style:italic;
+  color:#fff;line-height:1.3;
+}
+
+.sb-sub{
+  font-size:9px;color:rgba(255,255,255,0.28);
+  letter-spacing:0.1em;text-transform:uppercase;margin-top:6px;
+}
+
+.nav-grp{
+  padding:14px 20px 4px;
+  font-size:8.5px;letter-spacing:0.12em;text-transform:uppercase;
+  color:rgba(255,255,255,0.2);
+}
+
+.nav-item{
+  display:flex;align-items:center;gap:10px;
+  padding:7px 20px;
+  font-size:11.5px;color:rgba(255,255,255,0.42);
+  cursor:pointer;transition:all 0.13s;
+  text-decoration:none;
+  border-left:2px solid transparent;
+}
+.nav-item:hover{color:rgba(255,255,255,0.78);background:rgba(255,255,255,0.05);}
+.nav-item.active{color:#fff;background:rgba(14,116,144,0.2);border-left-color:var(--teal-mid);}
+
+.nav-n{font-size:9px;color:rgba(255,255,255,0.18);min-width:18px;text-align:right;}
+
+.sb-foot{
+  margin-top:auto;padding:16px 20px;
+  border-top:1px solid rgba(255,255,255,0.07);
+}
+.sf-row{
+  display:flex;justify-content:space-between;
+  font-size:9.5px;color:rgba(255,255,255,0.28);margin-bottom:6px;
+}
+.sf-track{height:2px;background:rgba(255,255,255,0.1);border-radius:99px;overflow:hidden;}
+.sf-fill{height:100%;background:var(--teal-mid);border-radius:99px;transition:width 0.5s;}
+
+/* ── MAIN ── */
+.main{flex:1;overflow-x:hidden;}
+
+/* Hero */
+.hero{
+  padding:56px 66px 44px;
+  border-bottom:2px solid var(--border);
+  background:linear-gradient(160deg,var(--surface) 0%,var(--bg2) 100%);
+  position:relative;overflow:hidden;
+}
+
+.hero::after{
+  content:'∑ π λ φ';
+  position:absolute;right:40px;top:50%;transform:translateY(-50%);
+  font-family:'DM Serif Display',serif;
+  font-size:100px;font-style:italic;
+  color:rgba(14,116,144,0.05);
+  pointer-events:none;user-select:none;
+  letter-spacing:10px;
+}
+
+.hero-label{
+  font-size:10px;letter-spacing:0.14em;text-transform:uppercase;
+  color:var(--teal);font-weight:500;margin-bottom:14px;
+  display:flex;align-items:center;gap:8px;
+}
+.hero-label::before{content:'—';color:var(--border2);}
+
+.hero-title{
+  font-family:'DM Serif Display',serif;
+  font-size:52px;font-weight:400;font-style:italic;
+  color:var(--slate);line-height:1.0;
+  letter-spacing:-0.02em;margin-bottom:8px;
+}
+
+.hero-subtitle{
+  font-family:'DM Serif Display',serif;
+  font-size:18px;font-weight:400;
+  color:var(--text-muted);margin-bottom:18px;
+  font-style:normal;
+}
+
+.hero-desc{
+  font-size:13.5px;color:var(--text-muted);
+  max-width:580px;line-height:1.8;
+  border-left:2px solid var(--teal-mid);
+  padding-left:16px;margin-bottom:30px;
+}
+
+.hero-stats{
+  display:inline-flex;
+  border:1px solid var(--border);
+  border-radius:4px;overflow:hidden;
+  background:var(--surface);
+  box-shadow:0 2px 8px rgba(14,116,144,0.05);
+}
+.hs{
+  padding:12px 22px;border-right:1px solid var(--border);
+  display:flex;flex-direction:column;gap:2px;
+}
+.hs:last-child{border-right:none;}
+.hs-v{
+  font-family:'DM Serif Display',serif;
+  font-size:22px;font-weight:400;color:var(--slate);font-style:italic;
+}
+.hs-v.t{color:var(--teal);}
+.hs-v.g{color:var(--sage-mid);}
+.hs-v.a{color:var(--amber-mid);}
+.hs-l{font-size:9px;color:var(--text-dim);letter-spacing:0.07em;text-transform:uppercase;}
+
+/* Content */
+.content{padding:0 66px 80px;}
+
+/* Section */
+.section{margin-top:52px;animation:reveal 0.35s ease both;}
+@keyframes reveal{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:translateY(0);}}
+
+.sec-head{
+  display:flex;align-items:flex-start;gap:18px;
+  margin-bottom:26px;padding-bottom:18px;
+  border-bottom:1px solid var(--border);
+  position:relative;
+}
+.sec-head::after{
+  content:'';position:absolute;bottom:-1px;left:0;
+  width:48px;height:2px;background:var(--teal);
+}
+
+.sec-num{
+  font-size:11px;color:var(--text-dim);
+  padding-top:5px;min-width:22px;
+  font-family:'DM Serif Display',serif;font-style:italic;
+}
+.sec-meta{flex:1;}
+.sec-title{
+  font-family:'DM Serif Display',serif;
+  font-size:28px;font-weight:400;font-style:italic;
+  color:var(--slate);line-height:1.1;margin-bottom:3px;
+}
+.sec-sub{font-size:10.5px;color:var(--text-muted);letter-spacing:0.02em;}
+
+.badge{
+  font-size:9px;font-weight:500;letter-spacing:0.09em;
+  text-transform:uppercase;padding:4px 11px;
+  border-radius:2px;flex-shrink:0;margin-top:3px;border:1px solid;
+}
+.b-teal{background:var(--teal-light);color:var(--teal);border-color:rgba(14,116,144,0.2);}
+.b-slate{background:var(--slate-light);color:var(--slate);border-color:rgba(30,58,95,0.2);}
+.b-amber{background:var(--amber-light);color:var(--amber);border-color:rgba(146,64,14,0.2);}
+.b-rose{background:var(--rose-light);color:var(--rose);border-color:rgba(159,18,57,0.2);}
+.b-sage{background:var(--sage-light);color:var(--sage);border-color:rgba(20,83,45,0.2);}
+.b-violet{background:var(--violet-light);color:var(--violet);border-color:rgba(76,29,149,0.2);}
+
+/* Theory */
+.theory{
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-left:3px solid var(--teal);
+  border-radius:3px;padding:18px 22px;margin-bottom:14px;
+}
+.theory.slate{border-left-color:var(--slate-mid);}
+.theory.amber{border-left-color:var(--amber-mid);}
+.theory.rose{border-left-color:var(--rose-mid);}
+.theory.sage{border-left-color:var(--sage-mid);}
+.theory.violet{border-left-color:var(--violet-mid);}
+
+.theory h4{
+  font-family:'DM Serif Display',serif;
+  font-size:15px;font-weight:400;font-style:italic;
+  color:var(--teal);margin-bottom:9px;
+}
+.theory.slate h4{color:var(--slate);}
+.theory.amber h4{color:var(--amber);}
+.theory.rose h4{color:var(--rose);}
+.theory.sage h4{color:var(--sage);}
+.theory.violet h4{color:var(--violet-mid);}
+
+.theory p{font-size:13px;color:var(--text-muted);margin-bottom:7px;line-height:1.82;}
+.theory p:last-child{margin-bottom:0;}
+.theory strong{color:var(--text);font-weight:600;}
+.theory em{color:var(--teal);font-style:normal;font-weight:500;}
+
+/* Math formula display */
+.formula{
+  background:var(--bg2);
+  border:1px solid var(--border);
+  border-radius:3px;
+  padding:14px 18px;
+  margin:10px 0;
+  font-family:'DM Serif Display',serif;
+  font-size:15px;font-style:italic;
+  color:var(--slate);
+  text-align:center;
+  letter-spacing:0.02em;
+}
+.formula-label{
+  font-family:'Inconsolata',monospace;
+  font-size:9.5px;color:var(--text-dim);
+  text-transform:uppercase;letter-spacing:0.07em;
+  display:block;margin-bottom:6px;font-style:normal;
+}
+.formula sub{font-size:11px;}
+.formula sup{font-size:11px;}
+
+/* Grid */
+.grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(215px,1fr));
+  gap:8px;margin:12px 0;
+}
+.card{
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:3px;padding:14px 16px;
+  transition:all 0.13s;
+}
+.card:hover{border-color:var(--border2);box-shadow:0 3px 10px rgba(14,116,144,0.06);}
+
+.ck{
+  font-size:9.5px;font-weight:600;letter-spacing:0.07em;
+  text-transform:uppercase;margin-bottom:6px;color:var(--teal);
+}
+.ck.s{color:var(--slate);}
+.ck.a{color:var(--amber);}
+.ck.r{color:var(--rose);}
+.ck.g{color:var(--sage);}
+.ck.v{color:var(--violet-mid);}
+.cv{font-size:12.5px;color:var(--text-muted);line-height:1.7;}
+
+/* Table */
+.dtable{width:100%;border-collapse:collapse;margin:12px 0;font-size:12.5px;}
+.dtable th{
+  text-align:left;padding:9px 12px;
+  background:var(--slate);color:rgba(255,255,255,0.85);
+  font-size:9px;text-transform:uppercase;letter-spacing:0.09em;font-weight:500;
+}
+.dtable td{
+  padding:9px 12px;border-bottom:1px solid var(--border);
+  color:var(--text-muted);vertical-align:top;
+}
+.dtable tr:last-child td{border-bottom:none;}
+.dtable tr:hover td{background:var(--bg2);color:var(--text);}
+.dtable tbody tr:nth-child(even) td{background:var(--bg);}
+
+.tk{color:var(--slate);font-weight:600;}
+.tt{color:var(--teal);font-weight:600;}
+.ta{color:var(--amber);font-weight:600;}
+.tr{color:var(--rose);font-weight:600;}
+.tg{color:var(--sage);font-weight:600;}
+.tv{color:var(--violet-mid);font-weight:600;}
+
+/* Practical */
+.practical{
+  border:1px solid var(--border);border-radius:4px;
+  overflow:hidden;margin-bottom:14px;
+  background:var(--surface);
+}
+.prac-head{
+  background:var(--bg2);padding:11px 16px;
+  display:flex;align-items:center;gap:10px;
+  border-bottom:1px solid var(--border);
+  cursor:pointer;user-select:none;transition:background 0.12s;
+}
+.prac-head:hover{background:var(--bg3);}
+
+.ph-i{font-size:14px;}
+.ph-t{
+  font-family:'DM Serif Display',serif;
+  font-size:14px;font-style:italic;color:var(--slate);flex:1;
+}
+.ph-tag{
+  font-size:9px;font-weight:500;text-transform:uppercase;
+  letter-spacing:0.08em;padding:2px 9px;border-radius:2px;border:1px solid;
+}
+.pt-lab{background:var(--rose-light);color:var(--rose);border-color:rgba(159,18,57,0.2);}
+.pt-cli{background:var(--teal-light);color:var(--teal);border-color:rgba(14,116,144,0.2);}
+.pt-concept{background:var(--violet-light);color:var(--violet);border-color:rgba(76,29,149,0.2);}
+.pt-build{background:var(--sage-light);color:var(--sage);border-color:rgba(20,83,45,0.2);}
+.pt-audit{background:var(--amber-light);color:var(--amber);border-color:rgba(146,64,14,0.2);}
+
+.ph-chev{font-size:9px;color:var(--text-dim);transition:transform 0.2s;}
+.practical.open .ph-chev{transform:rotate(90deg);}
+.prac-body{display:none;padding:18px 22px;}
+.practical.open .prac-body{display:block;}
+
+/* Steps */
+.steps{list-style:none;}
+.step{display:flex;gap:16px;margin-bottom:18px;padding-bottom:18px;border-bottom:1px dashed var(--border);}
+.step:last-child{margin-bottom:0;padding-bottom:0;border-bottom:none;}
+.sn{
+  width:24px;height:24px;border-radius:3px;
+  background:var(--teal-light);border:1px solid rgba(14,116,144,0.2);
+  display:flex;align-items:center;justify-content:center;
+  font-family:'DM Serif Display',serif;
+  font-size:12px;font-style:italic;color:var(--teal);
+  flex-shrink:0;margin-top:1px;
+}
+.sc{flex:1;}
+.st{
+  font-family:'DM Serif Display',serif;
+  font-size:14.5px;font-style:italic;color:var(--slate);margin-bottom:5px;
+}
+.sd{font-size:12.5px;color:var(--text-muted);line-height:1.8;margin-bottom:8px;}
+.sd:last-child{margin-bottom:0;}
+
+/* Code */
+.code{
+  background:#1a1f2e;
+  border:1px solid rgba(14,116,144,0.2);
+  border-radius:4px;padding:13px 16px;
+  font-size:11.5px;color:#94a3b8;
+  overflow-x:auto;margin:8px 0;
+  position:relative;line-height:1.8;
+}
+.code .cm{color:#334155;}
+.code .cmd{color:#34d399;}
+.code .flag{color:#fbbf24;}
+.code .val{color:#7dd3fc;}
+.code .kw{color:#a78bfa;}
+.code .hi{color:#f87171;}
+.code .ok{color:#34d399;}
+.code .warn{color:#fbbf24;}
+.code .str{color:#86efac;}
+.code::before{
+  content:attr(data-label);
+  position:absolute;top:7px;right:12px;
+  font-size:8.5px;color:#334155;
+  letter-spacing:0.08em;text-transform:uppercase;
+}
+
+/* Notes */
+.note{
+  display:flex;gap:10px;align-items:flex-start;
+  border-radius:3px;padding:11px 14px;
+  font-size:12.5px;margin:9px 0;line-height:1.78;
+}
+.note.teal{background:var(--teal-light);border:1px solid rgba(14,116,144,0.15);color:var(--text-muted);}
+.note.amber{background:var(--amber-light);border:1px solid rgba(146,64,14,0.15);color:var(--text-muted);}
+.note.rose{background:var(--rose-light);border:1px solid rgba(159,18,57,0.15);color:var(--text-muted);}
+.note.sage{background:var(--sage-light);border:1px solid rgba(20,83,45,0.15);color:var(--text-muted);}
+.note.slate{background:var(--slate-light);border:1px solid rgba(30,58,95,0.15);color:var(--text-muted);}
+.note.violet{background:var(--violet-light);border:1px solid rgba(76,29,149,0.15);color:var(--text-muted);}
+.note .ni{font-size:14px;flex-shrink:0;margin-top:1px;}
+.note strong{color:var(--text);}
+
+/* divider */
+.hdiv{border:none;border-top:1px solid var(--border);margin:44px 0 0;}
+
+/* Flow diagram */
+.flow{
+  display:flex;align-items:center;flex-wrap:wrap;
+  gap:4px;margin:12px 0;padding:14px 16px;
+  background:var(--bg2);border:1px solid var(--border);border-radius:3px;
+}
+.flow-step{
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:2px;padding:6px 12px;
+  font-size:11.5px;color:var(--text);
+}
+.flow-step.active{border-color:rgba(14,116,144,0.3);color:var(--teal);background:var(--teal-light);}
+.flow-step.rose{border-color:rgba(159,18,57,0.3);color:var(--rose);background:var(--rose-light);}
+.flow-arrow{color:var(--text-dim);font-size:12px;}
+
+/* TLS handshake visual */
+.handshake{
+  display:grid;grid-template-columns:1fr auto 1fr;
+  gap:0;margin:12px 0;
+  border:1px solid var(--border);border-radius:3px;overflow:hidden;
+}
+.hs-side{
+  background:var(--surface);padding:14px 16px;
+  border-right:1px solid var(--border);
+}
+.hs-side:last-child{border-right:none;border-left:1px solid var(--border);}
+.hs-center{
+  background:var(--bg2);padding:14px 12px;
+  display:flex;flex-direction:column;gap:6px;
+  min-width:200px;align-items:center;
+}
+.hs-title{
+  font-family:'DM Serif Display',serif;
+  font-size:13px;font-style:italic;color:var(--slate);
+  margin-bottom:8px;text-align:center;
+}
+.hs-msg{
+  font-size:10.5px;color:var(--text-muted);
+  padding:4px 8px;background:var(--surface);
+  border:1px solid var(--border);border-radius:2px;
+  width:100%;text-align:center;
+}
+.hs-msg.t{color:var(--teal);border-color:rgba(14,116,144,0.2);}
+.hs-msg.s{color:var(--slate);border-color:rgba(30,58,95,0.2);}
+.hs-msg.g{color:var(--sage);border-color:rgba(20,83,45,0.2);}
+.hs-item{font-size:11.5px;color:var(--text-muted);padding:3px 0;border-bottom:1px dashed var(--border);}
+.hs-item:last-child{border-bottom:none;}
+.hs-item strong{color:var(--slate);display:block;font-size:10px;text-transform:uppercase;letter-spacing:0.05em;margin-bottom:1px;}
+
+/* x509 cert viewer */
+.cert-viewer{
+  background:#1a1f2e;border-radius:4px;
+  border:1px solid rgba(14,116,144,0.2);
+  padding:16px 18px;margin:10px 0;
+  font-size:11px;line-height:1.85;
+}
+.cv-head{
+  color:#94a3b8;font-size:9px;text-transform:uppercase;
+  letter-spacing:0.09em;margin-bottom:10px;
+  border-bottom:1px solid #334155;padding-bottom:7px;
+}
+.cv-field{display:flex;gap:0;margin:2px 0;}
+.cv-key{color:#7dd3fc;min-width:180px;flex-shrink:0;}
+.cv-val{color:#e2e8f0;}
+.cv-val.ok{color:#34d399;}
+.cv-val.warn{color:#fbbf24;}
+.cv-val.bad{color:#f87171;}
+.cv-section{
+  color:#a78bfa;font-size:9px;text-transform:uppercase;
+  letter-spacing:0.08em;margin:10px 0 4px;
+}
+
+/* checklist */
+.checklist{list-style:none;}
+.checklist li{
+  display:flex;align-items:flex-start;gap:10px;
+  padding:5px 8px;border-radius:3px;
+  font-size:12.5px;color:var(--text-muted);cursor:pointer;transition:background 0.1s;
+}
+.checklist li:hover{background:var(--bg2);color:var(--text);}
+.cb{
+  width:14px;height:14px;border:1.5px solid var(--border2);
+  border-radius:2px;flex-shrink:0;margin-top:3px;
+  display:flex;align-items:center;justify-content:center;transition:all 0.15s;
+}
+.checklist li.done .cb{background:var(--sage-mid);border-color:var(--sage-mid);}
+.checklist li.done .cb::after{content:'✓';font-size:9px;color:#fff;font-weight:bold;}
+.checklist li.done span:last-child{text-decoration:line-through;color:var(--text-dim);}
+
+/* scrollbar */
+::-webkit-scrollbar{width:5px;height:5px;}
+::-webkit-scrollbar-track{background:transparent;}
+::-webkit-scrollbar-thumb{background:var(--border2);border-radius:3px;}
+
+@media(max-width:900px){
+  .sidebar{display:none;}
+  .hero,.content{padding-left:22px;padding-right:22px;}
+  .hero-title{font-size:38px;}
+  .hero::after{display:none;}
+  .grid{grid-template-columns:1fr 1fr;}
+  .handshake{grid-template-columns:1fr;}
+  .hs-side{border-right:none;border-bottom:1px solid var(--border);}
+  .hs-side:last-child{border-left:none;}
+  .hs-center{min-width:auto;}
+}
+</style>
+</head>
+<body>
+<div class="layout">
+
+<!-- SIDEBAR -->
+<nav class="sidebar">
+  <div class="sb-head">
+    <div class="sb-symbol">∑</div>
+    <div class="sb-title">Cryptography<br>& PKI</div>
+    <div class="sb-sub">Module 02 · Week 2 · Security Core</div>
+  </div>
+
+  <div class="nav-grp">Foundations</div>
+  <a class="nav-item active" href="#s1"><span class="nav-n">01</span>Cryptography Fundamentals</a>
+  <a class="nav-item" href="#s2"><span class="nav-n">02</span>Symmetric Encryption</a>
+  <a class="nav-item" href="#s3"><span class="nav-n">03</span>Asymmetric Encryption</a>
+  <a class="nav-item" href="#s4"><span class="nav-n">04</span>Hashing & Integrity</a>
+
+  <div class="nav-grp">Advanced Cryptography</div>
+  <a class="nav-item" href="#s5"><span class="nav-n">05</span>Key Exchange — DH & ECDH</a>
+  <a class="nav-item" href="#s6"><span class="nav-n">06</span>Digital Signatures & HMAC</a>
+  <a class="nav-item" href="#s7"><span class="nav-n">07</span>Cryptographic Attacks</a>
+
+  <div class="nav-grp">PKI</div>
+  <a class="nav-item" href="#s8"><span class="nav-n">08</span>PKI Architecture</a>
+  <a class="nav-item" href="#s9"><span class="nav-n">09</span>X.509 Certificates</a>
+  <a class="nav-item" href="#s10"><span class="nav-n">10</span>TLS / SSL Deep Dive</a>
+  <a class="nav-item" href="#s11"><span class="nav-n">11</span>Certificate Lifecycle</a>
+
+  <div class="nav-grp">Applied Labs</div>
+  <a class="nav-item" href="#s12"><span class="nav-n">12</span>OpenSSL Mastery</a>
+  <a class="nav-item" href="#s13"><span class="nav-n">13</span>SSH & Real-World PKI</a>
+
+  <div class="sb-foot">
+    <div class="sf-row"><span>Progress</span><span id="sb-pct">0%</span></div>
+    <div class="sf-track"><div class="sf-fill" id="sb-fill" style="width:0%"></div></div>
+  </div>
+</nav>
+
+<!-- MAIN -->
+<main class="main">
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-label">Module 02 · Security Core</div>
+  <h1 class="hero-title">Cryptography</h1>
+  <p class="hero-subtitle">& Public Key Infrastructure</p>
+  <p class="hero-desc">From Caesar cipher to post-quantum algorithms — the mathematical backbone of all security. Theory kept rigorous but accessible; every concept backed by OpenSSL labs you run yourself.</p>
+  <div class="hero-stats">
+    <div class="hs"><span class="hs-v">13</span><span class="hs-l">Topics</span></div>
+    <div class="hs"><span class="hs-v t">10+</span><span class="hs-l">Labs</span></div>
+    <div class="hs"><span class="hs-v g">OpenSSL</span><span class="hs-l">Primary Tool</span></div>
+    <div class="hs"><span class="hs-v a">Week 2</span><span class="hs-l">Timeline</span></div>
+  </div>
+</div>
+
+<div class="content">
+
+<!-- ══════════════════════
+01 — Cryptography Fundamentals
+══════════════════════ -->
+<div class="section" id="s1">
+  <div class="sec-head">
+    <span class="sec-num">I</span>
+    <div class="sec-meta">
+      <div class="sec-title">Cryptography Fundamentals</div>
+      <div class="sec-sub">Goals, vocabulary, and the core properties every system must achieve</div>
+    </div>
+    <span class="badge b-teal">Foundation</span>
+  </div>
+
+  <div class="theory">
+    <h4>What Cryptography Solves</h4>
+    <p>Cryptography is the science of <strong>protecting information</strong> through mathematical transformations. It does not hide data by obscuring its location — it transforms data so that only authorized parties can understand it. Modern cryptography rests entirely on computational hardness: certain mathematical problems are easy in one direction but computationally infeasible to reverse.</p>
+    <p>Five security goals that cryptography addresses: <em>Confidentiality</em> (only authorized parties read the data), <em>Integrity</em> (data has not been modified), <em>Authentication</em> (parties are who they claim), <em>Non-repudiation</em> (sender cannot deny sending), and <em>Availability</em> (indirectly — protecting systems from cryptographic bypass).</p>
+  </div>
+
+  <div class="grid">
+    <div class="card">
+      <div class="ck">Plaintext</div>
+      <div class="cv">The original, readable data before any cryptographic transformation. Also called cleartext. Example: your password "admin123" before hashing.</div>
+    </div>
+    <div class="card">
+      <div class="ck">Ciphertext</div>
+      <div class="cv">Encrypted, unreadable output produced by applying a cipher to plaintext. Meaningless without the decryption key. Secure even if intercepted.</div>
+    </div>
+    <div class="card">
+      <div class="ck s">Cipher</div>
+      <div class="cv">The algorithm that performs encryption and decryption. Examples: AES, RSA, ChaCha20. Different ciphers have different performance, security, and use-case profiles.</div>
+    </div>
+    <div class="card">
+      <div class="ck s">Key</div>
+      <div class="cv">A secret value that controls the cipher's transformation. Same algorithm + different key = different ciphertext. Security comes from key secrecy, not algorithm secrecy (Kerckhoffs' principle).</div>
+    </div>
+    <div class="card">
+      <div class="ck a">Kerckhoffs' Principle</div>
+      <div class="cv"><strong>"A cryptosystem should be secure even if everything about the system, except the key, is public knowledge."</strong> The algorithm must be open to scrutiny. Security through obscurity does not work.</div>
+    </div>
+    <div class="card">
+      <div class="ck g">Entropy</div>
+      <div class="cv">Measure of randomness/unpredictability in a key or password. High entropy = more secure. 256-bit random key has astronomical entropy; "password1" has near-zero.</div>
+    </div>
+  </div>
+
+  <div class="theory amber" style="margin-top:14px;">
+    <h4>Historical Context — Why Algorithms Were Broken</h4>
+    <p><strong>Caesar Cipher (50 BC):</strong> Shift each letter by a fixed amount. Key space = 25. Broken by frequency analysis — the letter 'e' appears most often in English regardless of shift.</p>
+    <p><strong>DES (1977):</strong> 56-bit key. Broken in 1997 by EFF's Deep Crack in 22 hours by brute force. Key space was too small for modern computing. Retired, replaced by AES.</p>
+    <p><strong>MD5 (1992):</strong> Collision attacks found in 2004 (Wang & Yu). Two different inputs can produce the same hash — catastrophic for digital signatures. Do not use for security.</p>
+    <p><strong>Lesson:</strong> Cryptographic algorithms don't last forever. Always use current recommended algorithms and key sizes.</p>
+  </div>
+</div>
+
+<hr class="hdiv">
+
+<!-- ══════════════════════
+02 — Symmetric Encryption
+══════════════════════ -->
+<div class="section" id="s2">
+  <div class="sec-head">
+    <span class="sec-num">II</span>
+    <div class="sec-meta">
+      <div class="sec-title">Symmetric Encryption</div>
+      <div class="sec-sub">AES, modes of operation, block vs stream ciphers, and key management</div>
+    </div>
+    <span class="badge b-teal">Encryption</span>
+  </div>
+
+  <div class="theory">
+    <h4>Symmetric Encryption — One Key for Both Parties</h4>
+    <p>In symmetric encryption, the <strong>same key is used to encrypt and decrypt</strong>. Both Alice and Bob must possess the identical secret key before any communication begins. This is extremely fast — AES can encrypt gigabytes per second on modern hardware — but has one fundamental problem: <em>key distribution</em>. How do Alice and Bob securely share the key in the first place without an attacker intercepting it?</p>
+    <p>This key distribution problem is what asymmetric cryptography and key exchange protocols solve. In practice, symmetric encryption does the heavy lifting of bulk data encryption, while asymmetric cryptography is used only to securely exchange the symmetric key.</p>
+  </div>
+
+  <div class="formula">
+    <span class="formula-label">Symmetric encryption model</span>
+    Encrypt: C = E<sub>K</sub>(P) &nbsp;·&nbsp; Decrypt: P = D<sub>K</sub>(C) &nbsp;·&nbsp; Same K for both
+  </div>
+
+  <div class="grid">
+    <div class="card">
+      <div class="ck">AES-128</div>
+      <div class="cv">128-bit key, 10 rounds. <strong>Currently unbroken.</strong> Best known attack requires 2<sup>126.1</sup> operations. Sufficient for most use cases including TLS data encryption.</div>
+    </div>
+    <div class="card">
+      <div class="ck">AES-256</div>
+      <div class="cv">256-bit key, 14 rounds. Double the key length. Recommended for top secret and long-term data protection. Slightly slower than AES-128. Required by many compliance frameworks.</div>
+    </div>
+    <div class="card">
+      <div class="ck s">3DES (Triple DES)</div>
+      <div class="cv">Applies DES three times: E<sub>K1</sub>(D<sub>K2</sub>(E<sub>K3</sub>)). Effective key size 112 bits. <strong>Legacy only.</strong> NIST deprecated 2017. Should not be used in new systems.</div>
+    </div>
+    <div class="card">
+      <div class="ck a">ChaCha20</div>
+      <div class="cv">Stream cipher, software-optimized. Used when AES hardware acceleration unavailable (mobile, IoT). Paired with Poly1305 for AEAD — ChaCha20-Poly1305. Used in TLS 1.3.</div>
+    </div>
+    <div class="card">
+      <div class="ck g">Block Cipher</div>
+      <div class="cv">Encrypts fixed-size blocks (AES: 128 bits). Needs a <strong>mode of operation</strong> to handle data longer than one block. Mode determines security properties beyond the block size.</div>
+    </div>
+    <div class="card">
+      <div class="ck v">Stream Cipher</div>
+      <div class="cv">Encrypts data bit-by-bit/byte-by-byte using a keystream XORed with plaintext. No padding needed. Fast for real-time data. Examples: RC4 (broken), ChaCha20 (secure).</div>
+    </div>
+  </div>
+
+  <div class="theory slate" style="margin-top:14px;">
+    <h4>AES Modes of Operation — Critical for Security</h4>
+    <p>The mode determines <em>how</em> AES is applied to data longer than one 128-bit block. The choice of mode dramatically affects security, even when using the same key.</p>
+  </div>
+
+  <table class="dtable">
+    <thead><tr><th>Mode</th><th>Full Name</th><th>Properties</th><th>Use Case</th><th>Security</th></tr></thead>
+    <tbody>
+      <tr>
+        <td class="tk">ECB</td>
+        <td>Electronic Codebook</td>
+        <td>Each block encrypted independently with same key. No IV needed.</td>
+        <td>Almost never — only single-block data</td>
+        <td class="tr">Broken — same plaintext = same ciphertext. Reveals patterns (ECB penguin attack).</td>
+      </tr>
+      <tr>
+        <td class="tk">CBC</td>
+        <td>Cipher Block Chaining</td>
+        <td>Each block XORed with previous ciphertext before encrypting. Requires IV.</td>
+        <td>File encryption, disk encryption (old)</td>
+        <td class="ta">Secure if IV is random and unpredictable. Vulnerable to BEAST, padding oracle if misused.</td>
+      </tr>
+      <tr>
+        <td class="tk">CTR</td>
+        <td>Counter Mode</td>
+        <td>Converts block cipher into stream cipher using an incrementing counter. Parallelizable.</td>
+        <td>Disk encryption, streaming data</td>
+        <td class="tg">Secure. Never reuse nonce+key pair — catastrophic if repeated.</td>
+      </tr>
+      <tr>
+        <td class="tk">GCM ★</td>
+        <td>Galois/Counter Mode</td>
+        <td>CTR mode + GHASH authentication tag. AEAD — provides both encryption AND integrity.</td>
+        <td>TLS 1.2/1.3, HTTPS, storage encryption</td>
+        <td class="tg">Best choice for most applications. Used in AES-256-GCM (TLS 1.3 cipher suite).</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="note amber">
+    <span class="ni">💡</span>
+    <span><strong>AEAD (Authenticated Encryption with Associated Data)</strong> — GCM and ChaCha20-Poly1305 provide both confidentiality AND integrity in one operation. Without authentication, an attacker can flip bits in ciphertext and you won't know the data was tampered with. Always use AEAD modes in new code.</span>
+  </div>
+
+  <div class="practical open">
+    <div class="prac-head" onclick="toggleP(this)">
+      <span class="ph-i">🔐</span>
+      <span class="ph-t">Lab 2.1 — AES Encryption with OpenSSL — ECB vs CBC vs GCM</span>
+      <span class="ph-tag pt-cli">OpenSSL</span>
+      <span class="ph-chev">▶</span>
+    </div>
+    <div class="prac-body">
+      <ol class="steps">
+        <li class="step">
+          <span class="sn">1</span>
+          <div class="sc">
+            <div class="st">Create a test plaintext file</div>
+            <div class="code" data-label="bash">
+<span class="cmd">echo</span> <span class="str">"This is secret data. Hello World! This is secret data."</span> > plaintext.txt
+<span class="cmd">cat</span> plaintext.txt
+<span class="cm"># Note: we repeat "secret data" to observe ECB pattern leakage</span>
+            </div>
+          </div>
+        </li>
+        <li class="step">
+          <span class="sn">2</span>
+          <div class="sc">
+            <div class="st">Encrypt with AES-128-ECB (insecure — for demonstration)</div>
+            <div class="code" data-label="bash">
+<span class="cm"># Encrypt with ECB mode (NEVER use in production)</span>
+<span class="cmd">openssl enc</span> <span class="flag">-aes-128-ecb</span> \
+  <span class="flag">-K</span> <span class="val">00112233445566778899aabbccddeeff</span> \
+  <span class="flag">-in</span> plaintext.txt <span class="flag">-out</span> ecb.enc
+<span class="cmd">xxd</span> ecb.enc | <span class="cmd">head -10</span>
+<span class="cm"># Identical plaintext blocks produce identical ciphertext blocks</span>
+<span class="cm"># This is the "ECB penguin" vulnerability</span>
+            </div>
+          </div>
+        </li>
+        <li class="step">
+          <span class="sn">3</span>
+          <div class="sc">
+            <div class="st">Encrypt with AES-256-CBC (generates random IV)</div>
+            <div class="code" data-label="bash">
+<span class="cm"># Generate a random 256-bit key and 128-bit IV</span>
+<span class="cmd">openssl rand -hex</span> 32 > aes_key.hex
+<span class="cmd">openssl rand -hex</span> 16 > aes_iv.hex
+KEY=$(<span class="cmd">cat</span> aes_key.hex)
+IV=$(<span class="cmd">cat</span> aes_iv.hex)
+
+<span class="cm"># Encrypt with CBC</span>
+<span class="cmd">openssl enc</span> <span class="flag">-aes-256-cbc</span> \
+  <span class="flag">-K</span> $KEY <span class="flag">-iv</span> $IV \
+  <span class="flag">-in</span> plaintext.txt <span class="flag">-out</span> cbc.enc
+
+<span class="cm"># Decrypt</span>
+<span class="cmd">openssl enc</span> <span class="flag">-aes-256-cbc -d</span> \
+  <span class="flag">-K</span> $KEY <span class="flag">-iv</span> $IV \
+  <span class="flag">-in</span> cbc.enc <span class="flag">-out</span> decrypted.txt
+<span class="cmd">diff</span> plaintext.txt decrypted.txt
+<span class="cm"># No output = files are identical — decryption successful</span>
+            </div>
+          </div>
+        </li>
+        <li class="step">
+          <span class="sn">4</span>
+          <div class="sc">
+            <div class="st">Encrypt with AES-256-GCM (recommended — provides integrity too)</div>
+            <div class="code" data-label="bash">
+<span class="cm"># GCM with OpenSSL (requires -aesni or via EVP API)</span>
+<span class="cmd">openssl enc</span> <span class="flag">-aes-256-cbc -pbkdf2 -iter</span> 100000 \
+  <span class="flag">-pass</span> pass:StrongPassphrase123 \
+  <span class="flag">-in</span> plaintext.txt <span class="flag">-out</span> secure.enc
+
+<span class="cm"># Python alternative for AES-GCM (shows the auth tag)</span>
+<span class="cmd">python3</span> << <span class="str">'EOF'</span>
+from cryptography.hazmat.primitives.ciphers.aead import AESGCM
+import os
+key = os.urandom(32)  <span class="cm"># 256-bit key</span>
+nonce = os.urandom(12)  <span class="cm"># 96-bit nonce (recommended for GCM)</span>
+aead = AESGCM(key)
+ciphertext = aead.encrypt(nonce, b"Secret message", b"associated data")
+print(f"Ciphertext+Tag: {ciphertext.hex()}")
+plaintext = aead.decrypt(nonce, ciphertext, b"associated data")
+print(f"Decrypted: {plaintext.decode()}")
+<span class="str">EOF</span>
+            </div>
+          </div>
+        </li>
+      </ol>
+    </div>
+  </div>
+</div>
+
+<hr class="hdiv">
+
+<!-- ══════════════════════
+03 — Asymmetric Encryption
+══════════════════════ -->
+<div class="section" id="s3">
+  <div class="sec-head">
+    <span class="sec-num">III</span>
+    <div class="sec-meta">
+      <div class="sec-title">Asymmetric Encryption</div>
+      <div class="sec-sub">RSA, ECC, public/private key pairs, and how they solve key distribution</div>
+    </div>
+    <span class="badge b-slate">Public Key</span>
+  </div>
+
+  <div class="theory slate">
+    <h4>The Key Distribution Problem — Solved by Asymmetry</h4>
+    <p>Asymmetric cryptography (public-key cryptography) uses a <strong>mathematically linked key pair</strong>: a public key (freely shared with everyone) and a private key (kept secret by owner). Data encrypted with the public key can <em>only</em> be decrypted by the corresponding private key. This elegantly solves key distribution — Alice publishes her public key, anyone can send her encrypted data, only she can decrypt.</p>
+    <p>The security rests on <em>mathematical trapdoor functions</em>: problems that are easy to compute in one direction but computationally infeasible to reverse. RSA's trapdoor is integer factorization. ECC's is the elliptic curve discrete logarithm problem.</p>
+  </div>
+
+  <div class="formula">
+    <span class="formula-label">RSA Key Pair Relationship</span>
+    n = p × q &nbsp;·&nbsp; φ(n) = (p−1)(q−1) &nbsp;·&nbsp; e × d ≡ 1 (mod φ(n))
+  </div>
+
+  <div class="theory" style="margin-top:12px;">
+    <h4>RSA — Rivest–Shamir–Adleman (1977)</h4>
+    <p><strong>Key generation:</strong> Pick two large primes p and q. Compute n = p×q (the public modulus). Compute Euler's totient φ(n) = (p−1)(q−1). Choose public exponent e (usually 65537). Compute private exponent d as the modular multiplicative inverse of e mod φ(n).</p>
+    <p><strong>Encrypt:</strong> C = M<sup>e</sup> mod n. <strong>Decrypt:</strong> M = C<sup>d</sup> mod n. Security: knowing only n (public), factoring it back into p and q is computationally infeasible for large n (2048+ bits).</p>
+    <p><strong>Key sizes:</strong> RSA-1024 broken. RSA-2048 = minimum today. RSA-4096 = recommended for long-term security. RSA is <em>slow</em> — used only to encrypt small data (typically: symmetric keys or hashes for signatures).</p>
+  </div>
+
+  <div class="theory teal" style="margin-top:12px;">
+    <h4>ECC — Elliptic Curve Cryptography</h4>
+    <p>ECC achieves equivalent security to RSA with <strong>much smaller key sizes</strong> by operating on the mathematics of elliptic curves over finite fields: y² = x³ + ax + b. The security comes from the <em>elliptic curve discrete logarithm problem</em> (ECDLP) — given a point P and the result Q = kP, finding k is computationally infeasible.</p>
+    <p>Key size comparison: RSA-3072 ≈ ECC-256 in security. That's a 12× smaller key for the same protection level, which means dramatically faster operations — critical for TLS handshakes on mobile devices and IoT.</p>
+  </div>
+
+  <table class="dtable">
+    <thead><tr><th>Algorithm</th><th>Type</th><th>Key Size (secure)</th><th>Speed</th><th>Use Case</th></tr></thead>
+    <tbody>
+      <tr><td class="tk">RSA-2048</td><td>Asymmetric</td><td>2048–4096 bits</td><td>Slow</td><td>TLS key exchange (legacy), code signing, email encryption (S/MIME)</td></tr>
+      <tr><td class="tk">RSA-4096</td><td>Asymmetric</td><td>4096 bits</td><td>Very slow</td><td>Long-lived root CAs, high-value signing keys</td></tr>
+      <tr><td class="tk">ECDH P-256</td><td>Key Exchange</td><td>256 bits</td><td>Fast</td><td>TLS 1.2/1.3 key exchange (ECDHE), SSH keys</td></tr>
+      <tr><td class="tk">ECDSA P-256</td><td>Signature</td><td>256 bits</td><td>Fast</td><td>TLS certificates, code signing, JWT signing</td></tr>
+      <tr><td class="tk">Ed25519 ★</td><td>Signature</td><td>256 bits</td><td>Fastest</td><td>SSH keys, TLS 1.3, Git commit signing. Recommended for new systems.</td></tr>
+      <tr><td class="tk">X25519</td><td>Key Exchange</td><td>255 bits</td><td>Fastest</td><td>TLS 1.3 preferred key exchange. Used in Signal, WireGuard.</td></tr>
+    </tbody>
+  </table>
+
+  <div class="practical open">
+    <div class="prac-head" onclick="toggleP(this)">
+      <span class="ph-i">🗝️</span>
+      <span class="ph-t">Lab 3.1 — Generate RSA and ECC Key Pairs, Encrypt and Decrypt</span>
+      <span class="ph-tag pt-cli">OpenSSL</span>
+      <span class="ph-chev">▶</span>
+    </div>
+    <div class="prac-body">
+      <ol class="steps">
+        <li class="step">
+          <span class="sn">1</span>
+          <div class="sc">
+            <div class="st">Generate RSA-4096 Key Pair</div>
+            <div class="code" data-label="bash">
+<span class="cm"># Generate private key (RSA 4096-bit)</span>
+<span class="cmd">openssl genrsa</span> <span class="flag">-out</span> rsa_private.pem 4096
+<span class="cm"># File contains PRIVATE KEY — never share this</span>
+
+<span class="cm"># Extract public key from private key</span>
+<span class="cmd">openssl rsa</span> <span class="flag">-in</span> rsa_private.pem <span class="flag">-pubout -out</span> rsa_public.pem
+
+<span class="cm"># Inspect key structure</span>
+<span class="cmd">openssl rsa</span> <span class="flag">-in</span> rsa_private.pem <span class="flag">-text -noout</span>
+<span class="cm"># Shows: modulus (n), public exponent (65537), private exponent (d), p, q, dp, dq, qinv</span>
+            </div>
+          </div>
+        </li>
+        <li class="step">
+          <span class="sn">2</span>
+          <div class="sc">
+            <div class="st">Encrypt with RSA Public Key, Decrypt with Private Key</div>
+            <div class="code" data-label="bash">
+<span class="cm"># Create a small secret (RSA can only encrypt data smaller than key size)</span>
+<span class="cmd">echo</span> <span class="str">"AES session key: 3a8f9c1b2e7d4f6a"</span> > secret.txt
+
+<span class="cm"># Encrypt with public key (OAEP padding — secure)</span>
+<span class="cmd">openssl pkeyutl</span> <span class="flag">-encrypt</span> \
+  <span class="flag">-pubin -inkey</span> rsa_public.pem \
+  <span class="flag">-in</span> secret.txt \
+  <span class="flag">-pkeyopt</span> rsa_padding_mode:oaep \
+  <span class="flag">-pkeyopt</span> rsa_oaep_md:sha256 \
+  <span class="flag">-out</span> secret.enc
+
+<span class="cm"># Decrypt with private key</span>
+<span class="cmd">openssl pkeyutl</span> <span class="flag">-decrypt</span> \
+  <span class="flag">-inkey</span> rsa_private.pem \
+  <span class="flag">-in</span> secret.enc \
+  <span class="flag">-pkeyopt</span> rsa_padding_mode:oaep \
+  <span class="flag">-pkeyopt</span> rsa_oaep_md:sha256
+<span class="cm"># Output: AES session key: 3a8f9c1b2e7d4f6a</span>
+            </div>
+          </div>
+        </li>
+        <li class="step">
+          <span class="sn">3</span>
+          <div class="sc">
+            <div class="st">Generate Ed25519 Key Pair (Modern, Recommended)</div>
+            <div class="code" data-label="bash">
+<span class="cm"># Ed25519 — modern EdDSA signature scheme</span>
+<span class="cmd">openssl genpkey</span> <span class="flag">-algorithm ed25519 -out</span> ed25519_private.pem
+<span class="cmd">openssl pkey</span> <span class="flag">-in</span> ed25519_private.pem <span class="flag">-pubout -out</span> ed25519_public.pem
+
+<span class="cm"># Compare sizes</span>
+<span class="cmd">wc -c</span> rsa_private.pem ed25519_private.pem
+<span class="cm"># RSA: 3.2KB | Ed25519: 119 bytes — 27× smaller!</span>
+
+<span class="cm"># Sign a file with Ed25519</span>
+<span class="cmd">openssl pkeyutl</span> <span class="flag">-sign</span> \
+  <span class="flag">-inkey</span> ed25519_private.pem \
+  <span class="flag">-rawin -in</span> plaintext.txt \
+  <span class="flag">-out</span> signature.sig
+
+<span class="cm"># Verify the signature</span>
+<span class="cmd">openssl pkeyutl</span> <span class="flag">-verify</span> \
+  <span class="flag">-pubin -inkey</span> ed25519_public.pem \
+  <span class="flag">-rawin -in</span> plaintext.txt \
+  <span class="flag">-sigfile</span> signature.sig
+<span class="cm"># Signature Verified Successfully</span>
+            </div>
+          </div>
+        </li>
+      </ol>
+    </div>
+  </div>
+</div>
+
+<hr class="hdiv">
+
+<!-- ══════════════════════
+04 — Hashing & Integrity
+══════════════════════ -->
+<div class="section" id="s4">
+  <div class="sec-head">
+    <span class="sec-num">IV</span>
+    <div class="sec-meta">
+      <div class="sec-title">Hashing & Data Integrity</div>
+      <div class="sec-sub">SHA family, collision resistance, salting, and password hashing</div>
+    </div>
+    <span class="badge b-amber">Integrity</span>
+  </div>
+
+  <div class="theory amber">
+    <h4>Hash Functions — One-Way Transformations</h4>
+    <p>A <strong>cryptographic hash function</strong> takes input of any size and produces a fixed-size output (digest) with four critical properties:</p>
+    <p><strong>Pre-image resistance:</strong> Given hash H, computationally infeasible to find M such that hash(M) = H. <strong>Second pre-image resistance:</strong> Given M, infeasible to find M' ≠ M with same hash. <strong>Collision resistance:</strong> Infeasible to find any two distinct M, M' that produce the same hash. <strong>Avalanche effect:</strong> Changing one bit of input completely changes the output hash.</p>
+    <p>Hash functions are <em>not encryption</em> — they cannot be reversed (no key). They prove integrity: if you hash a file, transmit it, and the recipient's hash matches, the file was not altered.</p>
+  </div>
+
+  <div class="formula">
+    <span class="formula-label">Hash function properties</span>
+    h: {0,1}* → {0,1}<sup>n</sup> &nbsp;·&nbsp; Fixed output length &nbsp;·&nbsp; Deterministic &nbsp;·&nbsp; One-way
+  </div>
+
+  <table class="dtable">
+    <thead><tr><th>Algorithm</th><th>Output Size</th><th>Status</th><th>Use Today?</th><th>Notes</th></tr></thead>
+    <tbody>
+      <tr><td class="tk">MD5</td><td>128 bits (32 hex chars)</td><td class="tr">BROKEN</td><td class="tr">Never for security</td><td>Collision attacks since 2004. Still used for checksums (non-security)</td></tr>
+      <tr><td class="tk">SHA-1</td><td>160 bits (40 hex chars)</td><td class="ta">DEPRECATED</td><td class="ta">No — legacy only</td><td>Practical collision demonstrated by Google (SHAttered, 2017). Banned in TLS</td></tr>
+      <tr><td class="tk">SHA-256</td><td>256 bits (64 hex chars)</td><td class="tg">SECURE</td><td class="tg">Yes — standard choice</td><td>Part of SHA-2 family. Used in TLS, Bitcoin, code signing, certificates</td></tr>
+      <tr><td class="tk">SHA-384</td><td>384 bits</td><td class="tg">SECURE</td><td class="tg">Yes</td><td>Used in Suite B for classified info. More collision resistance than SHA-256</td></tr>
+      <tr><td class="tk">SHA-512</td><td>512 bits</td><td class="tg">SECURE</td><td class="tg">Yes</td><td>Faster than SHA-256 on 64-bit systems. Good for high-security use cases</td></tr>
+      <tr><td class="tk">SHA-3 (Keccak)</td><td>224–512 bits</td><td class="tg">SECURE</td><td class="tg">Yes — future-proof</td><td>Entirely different design from SHA-2. NIST standardized 2015. Not yet widespread</td></tr>
+      <tr><td class="tk">bcrypt</td><td>60-char string</td><td class="tg">SECURE</td><td class="tg">Yes — for passwords</td><td>Intentionally slow (cost factor). Includes salt automatically. Use for passwords</td></tr>
+      <tr><td class="tk">Argon2 ★</td><td>Variable</td><td class="tg">SECURE</td><td class="tg">Best for passwords</td><td>Winner of Password Hashing Competition (2015). Memory-hard. OWASP recommended</td></tr>
+    </tbody>
+  </table>
+
+  <div class="theory sage" style="margin-top:14px;">
+    <h4>Salting — Defeating Rainbow Tables and Precomputed Attacks</h4>
+    <p>A <strong>salt</strong> is a random value added to each password before hashing. This means two users with the same password get different hashes. Without salting, attackers can precompute a <em>rainbow table</em> — a giant lookup table of hash → password mappings for all common passwords. With unique salts, each hash must be attacked individually.</p>
+    <p>The salt is not secret — it's stored alongside the hash in the database. Its purpose is uniqueness, not secrecy. The format is typically: <code style="color:var(--teal)">$algorithm$cost$salt$hash</code> — bcrypt and Argon2 encode all of this in one string.</p>
+  </div>
+
+  <div class="practical open">
+    <div class="prac-head" onclick="toggleP(this)">
+      <span class="ph-i">🔍</span>
+      <span class="ph-t">Lab 4.1 — SHA hashing, salting, and password hash cracking demonstration</span>
+      <span class="ph-tag pt-cli">OpenSSL + Python</span>
+      <span class="ph-chev">▶</span>
+    </div>
+    <div class="prac-body">
+      <ol class="steps">
+        <li class="step">
+          <span class="sn">1</span>
+          <div class="sc">
+            <div class="st">Compute and compare SHA-256 hashes</div>
+            <div class="code" data-label="bash">
+<span class="cm"># Hash a string</span>
+<span class="cmd">echo</span> <span class="flag">-n</span> <span class="str">"password123"</span> | <span class="cmd">openssl dgst -sha256</span>
+<span class="cm"># ef92b778bafe771e89245b89ecbc08a44a4e166c06659911881f383d4473e94f</span>
+
+<span class="cm"># Hash a file</span>
+<span class="cmd">openssl dgst -sha256</span> plaintext.txt
+<span class="cmd">sha256sum</span> plaintext.txt   <span class="cm"># alternative</span>
+
+<span class="cm"># Demonstrate avalanche effect — change ONE bit (one character)</span>
+<span class="cmd">echo</span> <span class="flag">-n</span> <span class="str">"password123"</span> | <span class="cmd">openssl dgst -sha256</span>
+<span class="cmd">echo</span> <span class="flag">-n</span> <span class="str">"password124"</span> | <span class="cmd">openssl dgst -sha256</span>
+<span class="cm"># Outputs are completely different — avalanche effect demonstrated</span>
+            </div>
+          </div>
+        </li>
+        <li class="step">
+          <span class="sn">2</span>
+          <div class="sc">
+            <div class="st">Demonstrate why unsalted MD5 is dangerous</div>
+            <div class="code" data-label="python3">
+<span class="kw">import</span> hashlib
+
+<span class="cm"># "Hash" two users with same password — same hash! (rainbow table works)</span>
+alice = hashlib.md5(<span class="str">b"Password1"</span>).hexdigest()
+bob   = hashlib.md5(<span class="str">b"Password1"</span>).hexdigest()
+print(f<span class="str">"Alice: {alice}"</span>)  <span class="cm"># 7aba4cc...same</span>
+print(f<span class="str">"Bob:   {bob}"</span>)    <span class="cm"># 7aba4cc...same</span>
+<span class="cm"># Attacker sees Alice and Bob have same hash → same password</span>
+<span class="cm"># One rainbow table lookup reveals both passwords</span>
+            </div>
+          </div>
+        </li>
+        <li class="step">
+          <span class="sn">3</span>
+          <div class="sc">
+            <div class="st">Proper salted bcrypt hashing (Python)</div>
+            <div class="code" data-label="bash + python3">
+<span class="cmd">pip3 install</span> bcrypt <span class="flag">--break-system-packages</span>
+            </div>
+            <div class="code" data-label="python3">
+<span class="kw">import</span> bcrypt
+
+<span class="cm"># Hash password with automatic random salt</span>
+password = <span class="str">b"Password1"</span>
+hashed = bcrypt.hashpw(password, bcrypt.gensalt(rounds=<span class="val">12</span>))
+print(f<span class="str">"Hash: {hashed.decode()}"</span>)
+<span class="cm"># $2b$12$SALT_HERE...HASH_HERE</span>
+<span class="cm"># $2b$ = bcrypt | $12$ = cost factor (2^12 iterations) | then salt+hash</span>
+
+<span class="cm"># Hash same password again — different salt each time!</span>
+hashed2 = bcrypt.hashpw(password, bcrypt.gensalt(rounds=<span class="val">12</span>))
+print(f<span class="str">"Hash2: {hashed2.decode()}"</span>)
+<span class="cm"># Completely different — rainbow tables are useless</span>
+
+<span class="cm"># Verify password</span>
+is_valid = bcrypt.checkpw(password, hashed)
+print(f<span class="str">"Valid: {is_valid}"</span>)  <span class="cm"># True</span>
+is_valid = bcrypt.checkpw(<span class="str">b"WrongPass"</span>, hashed)
+print(f<span class="str">"Valid: {is_valid}"</span>)  <span class="cm"># False</span>
+            </div>
+          </div>
+        </li>
+        <li class="step">
+          <span class="sn">4</span>
+          <div class="sc">
+            <div class="st">Argon2 — The Gold Standard for Password Hashing</div>
+            <div class="code" data-label="python3">
+<span class="cmd">pip3 install</span> argon2-cffi <span class="flag">--break-system-packages</span>
+            </div>
+            <div class="code" data-label="python3">
+<span class="kw">from</span> argon2 <span class="kw">import</span> PasswordHasher
+
+ph = PasswordHasher(
+    time_cost=<span class="val">3</span>,      <span class="cm"># number of iterations</span>
+    memory_cost=<span class="val">65536</span>, <span class="cm"># 64 MB RAM required — defeats ASICs/GPUs</span>
+    parallelism=<span class="val">1</span>      <span class="cm"># number of parallel threads</span>
+)
+hashed = ph.hash(<span class="str">"SuperSecretPass99"</span>)
+print(hashed)
+<span class="cm"># $argon2id$v=19$m=65536,t=3,p=1$SALT$HASH</span>
+
+<span class="cm"># Verify</span>
+ph.verify(hashed, <span class="str">"SuperSecretPass99"</span>)  <span class="cm"># True</span>
+<span class="cm"># ph.verify(hashed, "WrongPass")  → raises VerifyMismatchError</span>
+            </div>
+          </div>
+        </li>
+      </ol>
+    </div>
+  </div>
+</div>
+
+<hr class="hdiv">
+
+<!-- ══════════════════════
+05 — Key Exchange
+══════════════════════ -->
+<div class="section" id="s5">
+  <div class="sec-head">
+    <span class="sec-num">V</span>
+    <div class="sec-meta">
+      <div class="sec-title">Key Exchange — DH & ECDH</div>
+      <div class="sec-sub">How two parties establish a shared secret over an insecure channel</div>
+    </div>
+    <span class="badge b-violet">Key Agreement</span>
+  </div>
+
+  <div class="theory violet">
+    <h4>The Diffie-Hellman Miracle (1976)</h4>
+    <p>Whitfield Diffie and Martin Hellman solved one of cryptography's hardest problems: how can Alice and Bob establish a shared secret key over a public channel that an eavesdropper can fully observe — without any prior shared secret? The answer uses the <strong>discrete logarithm problem</strong> as a mathematical trapdoor.</p>
+  </div>
+
+  <div class="formula">
+    <span class="formula-label">Diffie-Hellman key exchange</span>
+    Public: prime p, generator g &nbsp;·&nbsp; Alice: a (private), A = g<sup>a</sup> mod p (public) &nbsp;·&nbsp; Bob: b (private), B = g<sup>b</sup> mod p (public) &nbsp;·&nbsp; Shared secret: K = B<sup>a</sup> mod p = A<sup>b</sup> mod p = g<sup>ab</sup> mod p
+  </div>
+
+  <div class="theory teal" style="margin-top:12px;">
+    <h4>ECDH — Elliptic Curve Diffie-Hellman</h4>
+    <p>ECDH is the modern, efficient version of DH using elliptic curve mathematics instead of integer arithmetic. The public values are points on an elliptic curve, and the shared secret is another curve point. ECDH with X25519 (Curve25519) achieves excellent security with tiny 32-byte key material and is the preferred key exchange in TLS 1.3, WireGuard, and Signal.</p>
+    <p><strong>Forward Secrecy (Perfect Forward Secrecy / PFS):</strong> If you use <em>ephemeral</em> DH keys (DHE or ECDHE) — new keys generated per session — then compromising the server's long-term private key later does NOT expose past session traffic. Past session keys are gone. This is a fundamental security property that DHE/ECDHE provide and plain RSA key exchange does not.</p>
+  </div>
+
+  <div class="practical open">
+    <div class="prac-head" onclick="toggleP(this)">
+      <span class="ph-i">🤝</span>
+      <span class="ph-t">Lab 5.1 — Simulate ECDH Key Exchange with Python</span>
+      <span class="ph-tag pt-concept">Key Exchange Lab</span>
+      <span class="ph-chev">▶</span>
+    </div>
+    <div class="prac-body">
+      <ol class="steps">
+        <li class="step">
+          <span class="sn">1</span>
+          <div class="sc">
+            <div class="st">ECDH Key Exchange — X25519 (Modern)</div>
+            <div class="code" data-label="python3">
+<span class="cmd">pip3 install</span> cryptography <span class="flag">--break-system-packages</span>
+            </div>
+            <div class="code" data-label="python3">
+<span class="kw">from</span> cryptography.hazmat.primitives.asymmetric.x25519 <span class="kw">import</span> X25519PrivateKey
+
+<span class="cm"># === ALICE ===</span>
+alice_private = X25519PrivateKey.generate()
+alice_public  = alice_private.public_key()
+
+<span class="cm"># === BOB ===</span>
+bob_private = X25519PrivateKey.generate()
+bob_public  = bob_private.public_key()
+
+<span class="cm"># === KEY EXCHANGE ===</span>
+<span class="cm"># Alice uses her private key + Bob's public key</span>
+alice_shared = alice_private.exchange(bob_public)
+
+<span class="cm"># Bob uses his private key + Alice's public key</span>
+bob_shared = bob_private.exchange(alice_public)
+
+<span class="cm"># Both arrive at the same shared secret!</span>
+print(f<span class="str">"Alice's shared: {alice_shared.hex()}"</span>)
+print(f<span class="str">"Bob's shared:   {bob_shared.hex()}"</span>)
+print(f<span class="str">"Match: {alice_shared == bob_shared}"</span>)  <span class="cm"># True!</span>
+
+<span class="cm"># Derive a symmetric key from the shared secret using HKDF</span>
+<span class="kw">from</span> cryptography.hazmat.primitives.kdf.hkdf <span class="kw">import</span> HKDF
+<span class="kw">from</span> cryptography.hazmat.primitives <span class="kw">import</span> hashes
+kdf = HKDF(algorithm=hashes.SHA256(), length=<span class="val">32</span>, salt=<span class="val">None</span>, info=<span class="str">b"handshake data")
+aes_key = kdf.derive(alice_shared)
+print(f<span class="str">"Derived AES key: {aes_key.hex()}"</span>)
+            </div>
+          </div>
+        </li>
+      </ol>
+    </div>
+  </div>
+</div>
+
+<hr class="hdiv">
+
+<!-- ══════════════════════
+06 — Digital Signatures & HMAC
+══════════════════════ -->
+<div class="section" id="s6">
+  <div class="sec-head">
+    <span class="sec-num">VI</span>
+    <div class="sec-meta">
+      <div class="sec-title">Digital Signatures & HMAC</div>
+      <div class="sec-sub">Non-repudiation, integrity, authentication — how signing works mathematically</div>
+    </div>
+    <span class="badge b-sage">Signatures</span>
+  </div>
+
+  <div class="theory sage">
+    <h4>Digital Signatures — The Asymmetric Triplet</h4>
+    <p>A digital signature provides three guarantees: <strong>Authentication</strong> (the signer is who they claim), <strong>Integrity</strong> (the signed data was not modified), and <strong>Non-repudiation</strong> (the signer cannot deny signing). Unlike encryption (public key encrypts, private key decrypts), signing reverses the roles: <em>private key signs, public key verifies</em>.</p>
+    <p>Process: Alice hashes her message (SHA-256), then encrypts the hash with her <strong>private key</strong> to produce the signature. Anyone with Alice's <strong>public key</strong> can decrypt the signature, recompute the hash, and verify they match. If they match: message is from Alice (authentication), message is unchanged (integrity), Alice cannot deny it (non-repudiation).</p>
+  </div>
+
+  <div class="flow" style="flex-direction:column;align-items:flex-start;gap:8px;">
+    <div style="font-size:9.5px;color:var(--text-dim);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:4px;">Signing & Verification Flow</div>
+    <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;">
+      <div class="flow-step active">Message M</div>
+      <span class="flow-arrow">→</span>
+      <div class="flow-step">Hash(M) = H</div>
+      <span class="flow-arrow">→</span>
+      <div class="flow-step active">Sign: S = RSA(H, privKey)</div>
+      <span class="flow-arrow">→</span>
+      <div class="flow-step">Send (M, S)</div>
+    </div>
+    <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;">
+      <div class="flow-step rose">Receive (M, S)</div>
+      <span class="flow-arrow">→</span>
+      <div class="flow-step">Hash(M) = H'</div>
+      <span class="flow-arrow">→</span>
+      <div class="flow-step rose">Verify: H = RSA(S, pubKey)?</div>
+      <span class="flow-arrow">→</span>
+      <div class="flow-step">H = H' → VALID ✓</div>
+    </div>
+  </div>
+
+  <div class="theory amber" style="margin-top:14px;">
+    <h4>HMAC — Hash-Based Message Authentication Code</h4>
+    <p>HMAC provides <strong>message authentication and integrity</strong> using a shared symmetric key, not asymmetric keys. Both parties share a secret key K. HMAC = Hash(K ⊕ opad || Hash(K ⊕ ipad || message)). It proves the message came from someone with the shared key and hasn't been modified. <strong>Cannot provide non-repudiation</strong> since both parties share the same key.</p>
+    <p>HMAC is used extensively in APIs (AWS Signature v4, JWT HMAC), secure cookies, and TLS's MAC record authentication. Faster than asymmetric signatures — ideal for high-volume message authentication.</p>
+  </div>
+
+  <div class="practical open">
+    <div class="prac-head" onclick="toggleP(this)">
+      <span class="ph-i">✍️</span>
+      <span class="ph-t">Lab 6.1 — RSA signing, ECDSA signing, and HMAC-SHA256</span>
+      <span class="ph-tag pt-cli">OpenSSL + Python</span>
+      <span class="ph-chev">▶</span>
+    </div>
+    <div class="prac-body">
+      <ol class="steps">
+        <li class="step">
+          <span class="sn">1</span>
+          <div class="sc">
+            <div class="st">Sign and Verify a File with RSA</div>
+            <div class="code" data-label="bash">
+<span class="cm"># Sign: hash the file, encrypt hash with private key</span>
+<span class="cmd">openssl dgst -sha256 -sign</span> rsa_private.pem \
+  <span class="flag">-out</span> file.sig plaintext.txt
+
+<span class="cm"># Verify: decrypt signature with public key, compare hashes</span>
+<span class="cmd">openssl dgst -sha256 -verify</span> rsa_public.pem \
+  <span class="flag">-signature</span> file.sig plaintext.txt
+<span class="cm"># Verified OK ← signature is valid</span>
+
+<span class="cm"># Tamper with the file and try to verify</span>
+<span class="cmd">echo</span> <span class="str">"tampered"</span> >> plaintext.txt
+<span class="cmd">openssl dgst -sha256 -verify</span> rsa_public.pem \
+  <span class="flag">-signature</span> file.sig plaintext.txt
+<span class="cm"># Verification Failure ← integrity check caught the tampering</span>
+            </div>
+          </div>
+        </li>
+        <li class="step">
+          <span class="sn">2</span>
+          <div class="sc">
+            <div class="st">ECDSA Signing with P-256</div>
+            <div class="code" data-label="bash">
+<span class="cm"># Generate EC private key (P-256 / secp256r1)</span>
+<span class="cmd">openssl ecparam</span> <span class="flag">-name prime256v1 -genkey -noout -out</span> ec_private.pem
+<span class="cmd">openssl ec</span> <span class="flag">-in</span> ec_private.pem <span class="flag">-pubout -out</span> ec_public.pem
+
+<span class="cm"># Sign</span>
+<span class="cmd">openssl dgst -sha256 -sign</span> ec_private.pem \
+  <span class="flag">-out</span> ec_sig.der plaintext.txt
+
+<span class="cm"># Verify</span>
+<span class="cmd">openssl dgst -sha256 -verify</span> ec_public.pem \
+  <span class="flag">-signature</span> ec_sig.der plaintext.txt
+<span class="cm"># Verified OK</span>
+
+<span class="cm"># Compare signature sizes</span>
+<span class="cmd">wc -c</span> file.sig ec_sig.der
+<span class="cm"># RSA: 512 bytes | ECDSA: 71 bytes — RSA sig is 7× larger</span>
+            </div>
+          </div>
+        </li>
+        <li class="step">
+          <span class="sn">3</span>
+          <div class="sc">
+            <div class="st">HMAC-SHA256 — Message Authentication Code</div>
+            <div class="code" data-label="bash + python3">
+<span class="cm"># OpenSSL HMAC</span>
+<span class="cmd">echo</span> <span class="flag">-n</span> <span class="str">"API request: GET /users?id=42"</span> | \
+  <span class="cmd">openssl dgst -sha256 -hmac</span> <span class="str">"my_secret_api_key"</span>
+<span class="cm"># SHA256(my_secret_api_key): 3f4e2a1... ← HMAC value</span>
+            </div>
+            <div class="code" data-label="python3">
+<span class="kw">import</span> hmac, hashlib
+
+key = <span class="str">b"my_secret_api_key"</span>
+message = <span class="str">b"GET /users?id=42&timestamp=1700000000"</span>
+
+<span class="cm"># Compute HMAC</span>
+mac = hmac.new(key, message, hashlib.sha256).hexdigest()
+print(f<span class="str">"HMAC: {mac}"</span>)
+
+<span class="cm"># Verify (constant-time comparison prevents timing attacks)</span>
+expected = mac  <span class="cm"># in real scenario, this comes from the request</span>
+computed = hmac.new(key, message, hashlib.sha256).hexdigest()
+is_valid = hmac.compare_digest(expected, computed)
+print(f<span class="str">"Valid: {is_valid}"</span>)  <span class="cm"># True</span>
+<span class="cm"># hmac.compare_digest prevents timing side-channel attacks</span>
+            </div>
+          </div>
+        </li>
+      </ol>
+    </div>
+  </div>
+</div>
+
+<hr class="hdiv">
+
+<!-- ══════════════════════
+07 — Cryptographic Attacks
+══════════════════════ -->
+<div class="section" id="s7">
+  <div class="sec-head">
+    <span class="sec-num">VII</span>
+    <div class="sec-meta">
+      <div class="sec-title">Cryptographic Attacks</div>
+      <div class="sec-sub">Brute force, birthday attacks, padding oracles, BEAST, POODLE, and downgrade attacks</div>
+    </div>
+    <span class="badge b-rose">Attacks</span>
+  </div>
+
+  <div class="theory rose">
+    <h4>Attacks Target Implementations, Not Just Math</h4>
+    <p>Most cryptographic attacks in practice don't break the underlying math (breaking AES mathematically is computationally infeasible). They exploit <strong>implementation flaws, weak configurations, or padding schemes</strong>. Every attack below is the result of real-world misconfigurations you can encounter in pen tests and security audits.</p>
+  </div>
+
+  <table class="dtable">
+    <thead><tr><th>Attack</th><th>Target</th><th>How It Works</th><th>Real Impact</th><th>Prevention</th></tr></thead>
+    <tbody>
+      <tr>
+        <td class="tk">Brute Force</td>
+        <td>Keys, passwords</td>
+        <td>Try every possible key/password until correct. Parallelizable with GPUs/ASICs.</td>
+        <td>Defeats weak passwords, short keys (DES 56-bit)</td>
+        <td class="tg">Long keys (AES-256), strong passwords, MFA, account lockout</td>
+      </tr>
+      <tr>
+        <td class="tk">Birthday Attack</td>
+        <td>Hash functions</td>
+        <td>Due to birthday paradox, collisions in an n-bit hash require ~2<sup>n/2</sup> operations, not 2<sup>n</sup>. SHA-1 (160-bit) needs only 2<sup>80</sup> operations to find a collision.</td>
+        <td>MD5 collisions used to forge CA certificates (2008). SHA-1 collisions by Google (2017)</td>
+        <td class="tg">Use SHA-256 or SHA-3 (collision resistance: 2<sup>128</sup>)</td>
+      </tr>
+      <tr>
+        <td class="tk">Padding Oracle</td>
+        <td>CBC mode ciphertext</td>
+        <td>Server error messages reveal whether padding is valid. Attacker flips ciphertext bits and observes responses to decrypt ciphertext byte-by-byte without the key.</td>
+        <td>BEAST (2011) attack on TLS 1.0 CBC. Allowed session cookie theft.</td>
+        <td class="tg">Use AEAD (GCM) not CBC. Constant-time padding verification. TLS 1.3 removes CBC-based ciphers.</td>
+      </tr>
+      <tr>
+        <td class="tk">POODLE</td>
+        <td>SSLv3 CBC</td>
+        <td>Padding Oracle On Downgraded Legacy Encryption. Forces downgrade to SSLv3, then uses padding oracle to decrypt session cookies.</td>
+        <td>Any browser/server supporting SSLv3 + TLS fallback was vulnerable (2014)</td>
+        <td class="tg">Disable SSLv3 and TLS 1.0/1.1 entirely. Only TLS 1.2+ or TLS 1.3.</td>
+      </tr>
+      <tr>
+        <td class="tk">Downgrade Attack</td>
+        <td>Protocol negotiation</td>
+        <td>MITM forces client and server to negotiate weaker cipher suite or older protocol version they both support. FREAK (export crypto), LOGJAM (512-bit DH).</td>
+        <td>FREAK: servers still supporting "export" 512-bit RSA = breakable in hours</td>
+        <td class="tg">Disable export ciphers. Enforce TLS 1.2/1.3 minimum. Use TLS_FALLBACK_SCSV.</td>
+      </tr>
+      <tr>
+        <td class="tk">Timing Attack</td>
+        <td>Implementation time</td>
+        <td>Measure time to compare strings or perform operations. Variable-time comparison leaks information about the secret (how many characters matched before mismatch).</td>
+        <td>Password bypass by measuring compare_password() execution time</td>
+        <td class="tg">Constant-time comparison (hmac.compare_digest in Python). Never use == for secret comparison.</td>
+      </tr>
+      <tr>
+        <td class="tk">Nonce Reuse</td>
+        <td>Stream ciphers / GCM</td>
+        <td>Reusing the same nonce+key in AES-CTR or GCM allows key recovery via XOR of two ciphertexts. Used in DUAL_EC_DRBG PRNG backdoor.</td>
+        <td>Sony PS3 ECDSA nonce reuse → private key extracted (2010). Bitcoin nonce reuse attacks.</td>
+        <td class="tg">Cryptographically random nonce per message. Use sequence counters. Never reuse nonce+key.</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<hr class="hdiv">
+
+<!-- ══════════════════════
+08 — PKI Architecture
+══════════════════════ -->
+<div class="section" id="s8">
+  <div class="sec-head">
+    <span class="sec-num">VIII</span>
+    <div class="sec-meta">
+      <div class="sec-title">PKI Architecture</div>
+      <div class="sec-sub">Certificate authorities, trust chains, registration authorities, and the web of trust</div>
+    </div>
+    <span class="badge b-slate">PKI</span>
+  </div>
+
+  <div class="theory slate">
+    <h4>Public Key Infrastructure — Solving the Public Key Binding Problem</h4>
+    <p>Asymmetric encryption solves key distribution but creates a new problem: how do you know that the public key you received actually belongs to the intended party and not to an attacker who intercepted it? <strong>PKI solves this</strong> by having a mutually trusted third party — the <em>Certificate Authority (CA)</em> — vouch for the binding between a public key and an identity by issuing a digitally signed certificate.</p>
+    <p>When your browser connects to https://sbi.co.in, it receives SBI's certificate, checks that it was signed by a CA it trusts (DigiCert, GlobalSign, etc.), and verifies the CA's signature. The chain of signatures from a trusted root CA down to SBI's certificate is the <em>certificate chain of trust</em>.</p>
+  </div>
+
+  <div class="grid">
+    <div class="card">
+      <div class="ck s">Root CA</div>
+      <div class="cv">Self-signed certificate at top of trust chain. Absolutely trusted. Private key in Hardware Security Module (HSM), offline in a vault. Annually verified. DigiCert, Let's Encrypt, Sectigo are examples.</div>
+    </div>
+    <div class="card">
+      <div class="ck s">Intermediate CA</div>
+      <div class="cv">Signed by Root CA. Used day-to-day to sign end-entity certificates. Root stays offline — if Intermediate is compromised, revoke it without touching Root. Creates flexibility.</div>
+    </div>
+    <div class="card">
+      <div class="ck">End-Entity Certificate</div>
+      <div class="cv">The certificate for your domain/server/code. Signed by Intermediate CA. Contains: your public key, domain name, validity period, key usage, and CA's digital signature.</div>
+    </div>
+    <div class="card">
+      <div class="ck a">RA — Registration Authority</div>
+      <div class="cv">Handles identity verification on behalf of CA. Checks that domain owner actually controls it (DV), checks organization exists (OV), or verifies individual in person (EV).</div>
+    </div>
+    <div class="card">
+      <div class="ck g">CRL — Certificate Revocation List</div>
+      <div class="cv">Published list of revoked serial numbers maintained by CA. Browser downloads and checks. Downside: large files, caching delays (stale for hours/days).</div>
+    </div>
+    <div class="card">
+      <div class="ck t">OCSP — Online Certificate Status Protocol</div>
+      <div class="cv">Real-time per-certificate revocation check. Browser queries CA's OCSP responder with the certificate serial. Faster than CRL but privacy concern — CA sees which sites you visit.</div>
+    </div>
+  </div>
+
+  <div class="theory teal" style="margin-top:14px;">
+    <h4>Certificate Validation Types — DV, OV, EV</h4>
+    <p><strong>DV (Domain Validation):</strong> CA only checks you control the domain (automated DNS or HTTP challenge). Issued in minutes. Let's Encrypt uses DV. Shows padlock but no organization info. Good for most websites.</p>
+    <p><strong>OV (Organization Validation):</strong> CA verifies domain control AND legal existence of the organization (company registration check). Takes 1–3 days. Organization name shown in certificate details.</p>
+    <p><strong>EV (Extended Validation):</strong> Strictest — in-person or notarized identity verification. Previously showed green address bar (removed in 2019 by browsers). Used by banks, payment processors. Certificate SAN shows legal entity name.</p>
+  </div>
+
+  <div class="practical open">
+    <div class="prac-head" onclick="toggleP(this)">
+      <span class="ph-i">🏛️</span>
+      <span class="ph-t">Lab 8.1 — Build a Private PKI: Root CA, Intermediate CA, and End-Entity Cert</span>
+      <span class="ph-tag pt-build">PKI Build Lab</span>
+      <span class="ph-chev">▶</span>
+    </div>
+    <div class="prac-body">
+      <div class="note teal"><span class="ni">💡</span><span>This creates a complete 3-tier PKI hierarchy from scratch — the same architecture used by enterprise CAs and large TLS deployments. Use for internal labs and portfolio.</span></div>
+      <ol class="steps" style="margin-top:14px;">
+        <li class="step">
+          <span class="sn">1</span>
+          <div class="sc">
+            <div class="st">Set Up Directory Structure</div>
+            <div class="code" data-label="bash">
+<span class="cmd">mkdir -p</span> ~/pki/{root-ca,intermediate-ca,server}/{private,certs,csr,crl}
+<span class="cmd">chmod</span> 700 ~/pki/root-ca/private
+<span class="cmd">chmod</span> 700 ~/pki/intermediate-ca/private
+<span class="cm"># Create serial and index files</span>
+<span class="cmd">echo</span> 1000 > ~/pki/root-ca/serial
+<span class="cmd">echo</span> 1000 > ~/pki/intermediate-ca/serial
+<span class="cmd">touch</span> ~/pki/root-ca/index.txt
+<span class="cmd">touch</span> ~/pki/intermediate-ca/index.txt
+            </div>
+          </div>
+        </li>
+        <li class="step">
+          <span class="sn">2</span>
+          <div class="sc">
+            <div class="st">Generate Root CA Key and Self-Signed Certificate</div>
+            <div class="code" data-label="bash">
+<span class="cm"># Root CA private key — 4096-bit RSA (will be kept offline in real deployments)</span>
+<span class="cmd">openssl genrsa</span> <span class="flag">-aes256 -out</span> ~/pki/root-ca/private/ca.key.pem 4096
+<span class="cmd">chmod</span> 400 ~/pki/root-ca/private/ca.key.pem
+
+<span class="cm"># Self-sign the Root CA certificate (valid 20 years — long for root)</span>
+<span class="cmd">openssl req</span> <span class="flag">-key</span> ~/pki/root-ca/private/ca.key.pem \
+  <span class="flag">-new -x509 -days</span> 7300 \
+  <span class="flag">-sha256 -extensions</span> v3_ca \
+  <span class="flag">-out</span> ~/pki/root-ca/certs/ca.cert.pem \
+  <span class="flag">-subj</span> <span class="str">"/C=IN/ST=Maharashtra/O=MyOrg Root CA/CN=MyOrg Root CA"</span>
+
+<span class="cm"># Verify the root certificate</span>
+<span class="cmd">openssl x509</span> <span class="flag">-in</span> ~/pki/root-ca/certs/ca.cert.pem <span class="flag">-noout -text</span>
+            </div>
+          </div>
+        </li>
+        <li class="step">
+          <span class="sn">3</span>
+          <div class="sc">
+            <div class="st">Generate Intermediate CA (Signed by Root)</div>
+            <div class="code" data-label="bash">
+<span class="cm"># Intermediate CA key</span>
+<span class="cmd">openssl genrsa</span> <span class="flag">-aes256 -out</span> ~/pki/intermediate-ca/private/intermediate.key.pem 4096
+
+<span class="cm"># Intermediate CSR</span>
+<span class="cmd">openssl req</span> <span class="flag">-new -sha256</span> \
+  <span class="flag">-key</span> ~/pki/intermediate-ca/private/intermediate.key.pem \
+  <span class="flag">-out</span> ~/pki/intermediate-ca/csr/intermediate.csr.pem \
+  <span class="flag">-subj</span> <span class="str">"/C=IN/ST=Maharashtra/O=MyOrg/CN=MyOrg Intermediate CA"</span>
+
+<span class="cm"># Root CA signs the Intermediate CA certificate</span>
+<span class="cmd">openssl ca</span> \
+  <span class="flag">-config</span> openssl-root.cnf \
+  <span class="flag">-extensions</span> v3_intermediate_ca \
+  <span class="flag">-days</span> 3650 <span class="flag">-notext -md</span> sha256 \
+  <span class="flag">-in</span> ~/pki/intermediate-ca/csr/intermediate.csr.pem \
+  <span class="flag">-out</span> ~/pki/intermediate-ca/certs/intermediate.cert.pem
+            </div>
+          </div>
+        </li>
+        <li class="step">
+          <span class="sn">4</span>
+          <div class="sc">
+            <div class="st">Issue a Server Certificate (Signed by Intermediate)</div>
+            <div class="code" data-label="bash">
+<span class="cm"># Server private key</span>
+<span class="cmd">openssl genrsa</span> <span class="flag">-out</span> ~/pki/server/private/server.key.pem 2048
+
+<span class="cm"># Server CSR with SANs (Subject Alternative Names — required by modern browsers)</span>
+<span class="cmd">openssl req</span> <span class="flag">-new -sha256</span> \
+  <span class="flag">-key</span> ~/pki/server/private/server.key.pem \
+  <span class="flag">-out</span> ~/pki/server/csr/server.csr.pem \
+  <span class="flag">-subj</span> <span class="str">"/C=IN/ST=Maharashtra/O=MyOrg/CN=app.myorg.internal"</span> \
+  <span class="flag">-addext</span> <span class="str">"subjectAltName=DNS:app.myorg.internal,DNS:*.myorg.internal,IP:192.168.56.10"</span>
+
+<span class="cm"># Intermediate CA signs the server certificate</span>
+<span class="cmd">openssl ca</span> \
+  <span class="flag">-config</span> openssl-intermediate.cnf \
+  <span class="flag">-extensions</span> server_cert \
+  <span class="flag">-days</span> 375 <span class="flag">-notext -md</span> sha256 \
+  <span class="flag">-in</span> ~/pki/server/csr/server.csr.pem \
+  <span class="flag">-out</span> ~/pki/server/certs/server.cert.pem
+
+<span class="cm"># Build the certificate chain (server + intermediate)</span>
+<span class="cmd">cat</span> ~/pki/server/certs/server.cert.pem \
+    ~/pki/intermediate-ca/certs/intermediate.cert.pem > \
+    ~/pki/server/certs/chain.cert.pem
+            </div>
+          </div>
+        </li>
+        <li class="step">
+          <span class="sn">5</span>
+          <div class="sc">
+            <div class="st">Verify the Entire Chain</div>
+            <div class="code" data-label="bash">
+<span class="cmd">openssl verify</span> \
+  <span class="flag">-CAfile</span> ~/pki/root-ca/certs/ca.cert.pem \
+  <span class="flag">-untrusted</span> ~/pki/intermediate-ca/certs/intermediate.cert.pem \
+  ~/pki/server/certs/server.cert.pem
+<span class="cm"># server.cert.pem: OK ← chain verification successful</span>
+            </div>
+          </div>
+        </li>
+      </ol>
+    </div>
+  </div>
+</div>
+
+<hr class="hdiv">
+
+<!-- ══════════════════════
+09 — X.509 Certificates
+══════════════════════ -->
+<div class="section" id="s9">
+  <div class="sec-head">
+    <span class="sec-num">IX</span>
+    <div class="sec-meta">
+      <div class="sec-title">X.509 Certificates — Anatomy</div>
+      <div class="sec-sub">Every field explained — Subject, Issuer, SAN, extensions, key usage</div>
+    </div>
+    <span class="badge b-teal">Certificates</span>
+  </div>
+
+  <div class="theory">
+    <h4>X.509 — The Standard for Digital Certificates</h4>
+    <p>X.509 is the ITU-T standard defining the format of digital certificates used in TLS, S/MIME, code signing, and PKI generally. Every TLS certificate you've ever encountered is an X.509 certificate. Understanding its fields is essential for security engineers, GRC auditors (checking cert expiry and key usage), and SOC analysts (detecting cert abuse).</p>
+  </div>
+
+  <div class="cert-viewer">
+    <div class="cv-head">X.509 Certificate — Annotated Field Guide</div>
+    <div class="cv-section">Identity Fields</div>
+    <div class="cv-field"><span class="cv-key">Version:</span><span class="cv-val">3 (X.509 v3 — must be v3 for extensions)</span></div>
+    <div class="cv-field"><span class="cv-key">Serial Number:</span><span class="cv-val">0A:1B:2C:3D:4E:5F:60:71 (unique per CA — used in CRL/OCSP)</span></div>
+    <div class="cv-field"><span class="cv-key">Signature Algorithm:</span><span class="cv-val ok">sha256WithRSAEncryption (avoid SHA-1 — deprecated)</span></div>
+    <div class="cv-section">Subject & Issuer</div>
+    <div class="cv-field"><span class="cv-key">Subject CN:</span><span class="cv-val">app.example.com (Common Name — legacy, use SAN instead)</span></div>
+    <div class="cv-field"><span class="cv-key">Subject O:</span><span class="cv-val">Example Corp (Organization — present in OV/EV certs only)</span></div>
+    <div class="cv-field"><span class="cv-key">Subject C:</span><span class="cv-val">IN (Country — ISO 3166-1 alpha-2)</span></div>
+    <div class="cv-field"><span class="cv-key">Issuer:</span><span class="cv-val">C=US, O=DigiCert Inc, CN=DigiCert TLS RSA SHA256 2020 CA1</span></div>
+    <div class="cv-section">Validity</div>
+    <div class="cv-field"><span class="cv-key">Not Before:</span><span class="cv-val ok">2024-01-01 00:00:00 UTC</span></div>
+    <div class="cv-field"><span class="cv-key">Not After:</span><span class="cv-val warn">2025-04-15 23:59:59 UTC (max 398 days per browser policy)</span></div>
+    <div class="cv-section">Public Key</div>
+    <div class="cv-field"><span class="cv-key">Public Key Algorithm:</span><span class="cv-val ok">id-ecPublicKey (ECC) — preferred over RSA</span></div>
+    <div class="cv-field"><span class="cv-key">Curve:</span><span class="cv-val ok">prime256v1 (P-256) — strong, fast</span></div>
+    <div class="cv-section">Extensions (v3)</div>
+    <div class="cv-field"><span class="cv-key">Subject Alt Name:</span><span class="cv-val ok">DNS:app.example.com, DNS:www.app.example.com, IP:203.0.113.42</span></div>
+    <div class="cv-field"><span class="cv-key">Key Usage:</span><span class="cv-val">Digital Signature, Key Agreement (for server cert — TLS)</span></div>
+    <div class="cv-field"><span class="cv-key">Extended Key Usage:</span><span class="cv-val">TLS Web Server Authentication, TLS Web Client Authentication</span></div>
+    <div class="cv-field"><span class="cv-key">Basic Constraints:</span><span class="cv-val">CA:FALSE (end-entity cert — cannot sign other certs)</span></div>
+    <div class="cv-field"><span class="cv-key">CRL Distribution Points:</span><span class="cv-val">http://crl3.digicert.com/DigiCertTLSRSA... (revocation check)</span></div>
+    <div class="cv-field"><span class="cv-key">Authority Info Access:</span><span class="cv-val">OCSP: http://ocsp.digicert.com (real-time revocation)</span></div>
+    <div class="cv-field"><span class="cv-key">Certificate Transparency:</span><span class="cv-val ok">Precert Signed Certificate Timestamps (SCT) — CT logs present ✓</span></div>
+    <div class="cv-section">Signature</div>
+    <div class="cv-field"><span class="cv-key">CA's Signature:</span><span class="cv-val">30:46:02:21:00:... (ECDSA signature by issuing CA private key)</span></div>
+  </div>
+
+  <div class="practical open">
+    <div class="prac-head" onclick="toggleP(this)">
+      <span class="ph-i">🔬</span>
+      <span class="ph-t">Lab 9.1 — Inspect live TLS certificates with OpenSSL</span>
+      <span class="ph-tag pt-audit">Certificate Inspection</span>
+      <span class="ph-chev">▶</span>
+    </div>
+    <div class="prac-body">
+      <ol class="steps">
+        <li class="step">
+          <span class="sn">1</span>
+          <div class="sc">
+            <div class="st">Retrieve and Inspect a Live Certificate</div>
+            <div class="code" data-label="bash">
+<span class="cm"># Retrieve the TLS certificate from a live site</span>
+<span class="cmd">openssl s_client</span> <span class="flag">-connect</span> google.com:<span class="val">443</span> \
+  <span class="flag">-servername</span> google.com <span class="flag">-showcerts</span> < /dev/null 2>/dev/null \
+  | <span class="cmd">openssl x509</span> <span class="flag">-noout -text</span>
+
+<span class="cm"># Key fields to check:</span>
+<span class="cm"># Subject: CN= and Subject Alternative Name extensions</span>
+<span class="cm"># Issuer: who signed this certificate?</span>
+<span class="cm"># Validity: Not Before / Not After</span>
+<span class="cm"># Public Key: algorithm and key size</span>
+<span class="cm"># Key Usage: what can this certificate be used for?</span>
+            </div>
+          </div>
+        </li>
+        <li class="step">
+          <span class="sn">2</span>
+          <div class="sc">
+            <div class="st">Quick Certificate Info (Subject, Expiry, SANs)</div>
+            <div class="code" data-label="bash">
+<span class="cm"># One-liner: just the important fields</span>
+<span class="cmd">openssl s_client</span> <span class="flag">-connect</span> sbi.co.in:<span class="val">443</span> <span class="flag">-servername</span> sbi.co.in < /dev/null 2>/dev/null | \
+  <span class="cmd">openssl x509</span> <span class="flag">-noout</span> \
+  <span class="flag">-subject -issuer -dates -ext</span> subjectAltName
+
+<span class="cm"># Check expiry days remaining</span>
+<span class="cmd">openssl s_client</span> <span class="flag">-connect</span> sbi.co.in:<span class="val">443</span> <span class="flag">-servername</span> sbi.co.in < /dev/null 2>/dev/null | \
+  <span class="cmd">openssl x509</span> <span class="flag">-noout -checkend</span> $((86400 * 30))
+<span class="cm"># Returns 0 if cert is valid for next 30 days, 1 if expiring sooner</span>
+            </div>
+          </div>
+        </li>
+        <li class="step">
+          <span class="sn">3</span>
+          <div class="sc">
+            <div class="st">Verify the Full Certificate Chain</div>
+            <div class="code" data-label="bash">
+<span class="cm"># Download full chain (server + intermediates)</span>
+<span class="cmd">openssl s_client</span> <span class="flag">-connect</span> google.com:<span class="val">443</span> \
+  <span class="flag">-servername</span> google.com <span class="flag">-showcerts</span> < /dev/null 2>/dev/null | \
+  <span class="cmd">awk</span> <span class="str">'/-----BEGIN/,/-----END CERTIFICATE-----/{print}'</span> > chain.pem
+
+<span class="cm"># Verify against system trust store</span>
+<span class="cmd">openssl verify</span> <span class="flag">-CAfile</span> /etc/ssl/certs/ca-certificates.crt chain.pem
+<span class="cm"># chain.pem: OK ← chain validates against trusted roots</span>
+            </div>
+          </div>
+        </li>
+      </ol>
+    </div>
+  </div>
+</div>
+
+<hr class="hdiv">
+
+<!-- ══════════════════════
+10 — TLS Deep Dive
+══════════════════════ -->
+<div class="section" id="s10">
+  <div class="sec-head">
+    <span class="sec-num">X</span>
+    <div class="sec-meta">
+      <div class="sec-title">TLS / SSL Deep Dive</div>
+      <div class="sec-sub">TLS 1.2 vs 1.3 handshake, cipher suites, forward secrecy, and HTTPS inspection</div>
+    </div>
+    <span class="badge b-teal">TLS</span>
+  </div>
+
+  <div class="theory">
+    <h4>TLS — Transport Layer Security</h4>
+    <p>TLS (Transport Layer Security, formerly SSL) is the cryptographic protocol that secures HTTPS, email (SMTPS, IMAPS), VPNs, and virtually every other internet-facing service. It provides <strong>confidentiality</strong> (symmetric encryption of traffic), <strong>integrity</strong> (MAC on every record), and <strong>authentication</strong> (certificate verification). TLS 1.3 is the current standard; TLS 1.0 and 1.1 are deprecated.</p>
+  </div>
+
+  <div class="handshake">
+    <div class="hs-side">
+      <div class="hs-title">Client (Browser)</div>
+      <div class="hs-item"><strong>1. ClientHello</strong>TLS version, random bytes, cipher suites list, supported groups</div>
+      <div class="hs-item"><strong>4. Certificate verify</strong>Verify server cert chain against trust store</div>
+      <div class="hs-item"><strong>5. Finished</strong>Send Finished, begin encrypted data transfer</div>
+    </div>
+    <div class="hs-center">
+      <div class="hs-title">TLS 1.3 Handshake</div>
+      <div class="hs-msg t">→ ClientHello (random, key_share)</div>
+      <div class="hs-msg s">← ServerHello (key_share, cipher)</div>
+      <div class="hs-msg s">← Certificate</div>
+      <div class="hs-msg s">← CertificateVerify</div>
+      <div class="hs-msg s">← Finished</div>
+      <div class="hs-msg t">→ Finished</div>
+      <div class="hs-msg g">⟺ Application Data (encrypted)</div>
+    </div>
+    <div class="hs-side">
+      <div class="hs-title">Server</div>
+      <div class="hs-item"><strong>2. ServerHello</strong>Choose cipher suite, key_share (ECDHE), certificate, signature</div>
+      <div class="hs-item"><strong>3. Key derivation</strong>Both sides compute shared key from ECDHE key_share exchange</div>
+      <div class="hs-item"><strong>5. Finished</strong>Everything after this is encrypted</div>
+    </div>
+  </div>
+
+  <div class="theory teal" style="margin-top:14px;">
+    <h4>TLS 1.3 vs TLS 1.2 — What Changed</h4>
+    <p><strong>Removed weak cryptography:</strong> TLS 1.3 completely removed RC4, MD5, SHA-1, 3DES, DES, NULL ciphers, EXPORT ciphers, and all static RSA key exchange. Only 5 cipher suites remain, all with forward secrecy and AEAD.</p>
+    <p><strong>Faster handshake:</strong> TLS 1.3 completes in 1 RTT (vs 2 RTT for TLS 1.2). With 0-RTT resumption, returning clients can send data immediately — though 0-RTT has replay attack risks and should be used carefully.</p>
+    <p><strong>Forward Secrecy mandatory:</strong> TLS 1.3 requires ephemeral key exchange (ECDHE). Compromise of server's long-term private key does NOT expose past sessions. TLS 1.2 allowed static RSA (no forward secrecy).</p>
+  </div>
+
+  <table class="dtable">
+    <thead><tr><th>TLS 1.3 Cipher Suite</th><th>Key Exchange</th><th>Encryption</th><th>Hash/MAC</th></tr></thead>
+    <tbody>
+      <tr><td class="tk">TLS_AES_256_GCM_SHA384</td><td>Mandatory ECDHE/DHE</td><td class="tg">AES-256-GCM</td><td>SHA-384</td></tr>
+      <tr><td class="tk">TLS_AES_128_GCM_SHA256 ★</td><td>Mandatory ECDHE/DHE</td><td class="tg">AES-128-GCM</td><td>SHA-256</td></tr>
+      <tr><td class="tk">TLS_CHACHA20_POLY1305_SHA256</td><td>Mandatory ECDHE/DHE</td><td class="tg">ChaCha20-Poly1305</td><td>SHA-256</td></tr>
+    </tbody>
+  </table>
+
+  <div class="practical open">
+    <div class="prac-head" onclick="toggleP(this)">
+      <span class="ph-i">🔒</span>
+      <span class="ph-t">Lab 10.1 — Inspect TLS configuration and test cipher suite strength</span>
+      <span class="ph-tag pt-audit">TLS Audit</span>
+      <span class="ph-chev">▶</span>
+    </div>
+    <div class="prac-body">
+      <ol class="steps">
+        <li class="step">
+          <span class="sn">1</span>
+          <div class="sc">
+            <div class="st">Check TLS version and cipher suite negotiated</div>
+            <div class="code" data-label="bash">
+<span class="cm"># Check what TLS version and cipher suite a server uses</span>
+<span class="cmd">openssl s_client</span> <span class="flag">-connect</span> google.com:<span class="val">443</span> \
+  <span class="flag">-servername</span> google.com < /dev/null 2>/dev/null | \
+  <span class="cmd">grep</span> <span class="flag">-E</span> <span class="str">"Protocol|Cipher"</span>
+<span class="cm"># Protocol  : TLSv1.3</span>
+<span class="cm"># Cipher    : TLS_AES_256_GCM_SHA384</span>
+
+<span class="cm"># Force specific TLS version to test backward compatibility</span>
+<span class="cmd">openssl s_client</span> <span class="flag">-connect</span> google.com:<span class="val">443</span> <span class="flag">-tls1_2</span> < /dev/null 2>/dev/null | \
+  <span class="cmd">grep</span> <span class="flag">-E</span> <span class="str">"Protocol|Cipher"</span>
+
+<span class="cm"># Test if SSLv3 is accepted (should fail on modern servers)</span>
+<span class="cmd">openssl s_client</span> <span class="flag">-connect</span> google.com:<span class="val">443</span> <span class="flag">-ssl3</span> < /dev/null 2>/dev/null
+<span class="cm"># Should return: error:14094410: SSL routines:ssl3_read_bytes:sslv3 alert handshake failure</span>
+            </div>
+          </div>
+        </li>
+        <li class="step">
+          <span class="sn">2</span>
+          <div class="sc">
+            <div class="st">Enumerate all supported cipher suites with nmap</div>
+            <div class="code" data-label="bash">
+<span class="cmd">nmap</span> <span class="flag">--script</span> ssl-enum-ciphers <span class="flag">-p</span> 443 google.com
+<span class="cm"># Output: lists all cipher suites with strength rating (A/B/C/F)</span>
+<span class="cm"># A = strong | F = weak/broken</span>
+<span class="cm"># Look for: RC4, DES, NULL, EXPORT ciphers → immediate remediation</span>
+            </div>
+          </div>
+        </li>
+        <li class="step">
+          <span class="sn">3</span>
+          <div class="sc">
+            <div class="st">Use testssl.sh for a comprehensive TLS audit (portfolio deliverable)</div>
+            <div class="code" data-label="bash">
+<span class="cm"># Install testssl.sh</span>
+<span class="cmd">git clone</span> https://github.com/drwetter/testssl.sh
+<span class="cmd">cd</span> testssl.sh
+
+<span class="cm"># Full TLS audit of a server</span>
+<span class="cmd">./testssl.sh</span> google.com
+
+<span class="cm"># HTML report (good for VAPT deliverable)</span>
+<span class="cmd">./testssl.sh</span> <span class="flag">--htmlfile</span> tls-audit-google.html google.com
+
+<span class="cm"># Checks: protocols, cipher suites, key exchange, vulnerabilities</span>
+<span class="cm"># Tests: BEAST, POODLE, DROWN, LOGJAM, FREAK, heartbleed, CCS injection</span>
+<span class="cm"># Rating: similar to SSL Labs A+/A/B/C/F scoring</span>
+            </div>
+          </div>
+        </li>
+      </ol>
+    </div>
+  </div>
+</div>
+
+<hr class="hdiv">
+
+<!-- ══════════════════════
+11 — Certificate Lifecycle
+══════════════════════ -->
+<div class="section" id="s11">
+  <div class="sec-head">
+    <span class="sec-num">XI</span>
+    <div class="sec-meta">
+      <div class="sec-title">Certificate Lifecycle</div>
+      <div class="sec-sub">Issuance, renewal, revocation, OCSP stapling, CT logs, and pinning</div>
+    </div>
+    <span class="badge b-sage">Lifecycle</span>
+  </div>
+
+  <div class="theory sage">
+    <h4>Certificates Have a Lifecycle — Managing It Prevents Outages</h4>
+    <p>Certificate expiry is one of the most common and embarrassing security failures in production environments. A single expired certificate can take down a bank's mobile app, payment gateway, or API. Instagram, Microsoft Teams, and Ola have all experienced cert expiry outages. Managing certificate lifecycle requires automation.</p>
+  </div>
+
+  <div class="grid">
+    <div class="card">
+      <div class="ck g">Issuance</div>
+      <div class="cv">Generate CSR → submit to CA → domain/identity validation → CA signs and returns cert. For public certs: DV via ACME (Let's Encrypt) takes 30 seconds automated.</div>
+    </div>
+    <div class="card">
+      <div class="ck g">Renewal</div>
+      <div class="cv">New CSR + new validation. Max validity 398 days (Apple/Google policy). Automate with certbot, acme.sh, or cloud-native cert managers (ACM, cert-manager for k8s).</div>
+    </div>
+    <div class="card">
+      <div class="ck r">Revocation</div>
+      <div class="cv">Invalidate a certificate before expiry (key compromise, misissued, org change). CA adds serial to CRL and updates OCSP responder. Browsers check revocation status.</div>
+    </div>
+    <div class="card">
+      <div class="ck a">OCSP Stapling</div>
+      <div class="cv">Server fetches its own OCSP response from CA and staples it to the TLS handshake. Client gets revocation proof without querying CA directly. Solves OCSP privacy issue.</div>
+    </div>
+    <div class="card">
+      <div class="ck t">Certificate Transparency</div>
+      <div class="cv">All publicly-trusted certs must be logged in public CT logs. Enables monitoring for unauthorized certificates issued for your domain. Check crt.sh for your domain.</div>
+    </div>
+    <div class="card">
+      <div class="ck v">HPKP / CAA Records</div>
+      <div class="cv">CAA DNS records: specify which CAs may issue for your domain. If Let's Encrypt is not in your CAA record, they cannot issue a certificate for you — prevents misissue.</div>
+    </div>
+  </div>
+
+  <div class="practical open">
+    <div class="prac-head" onclick="toggleP(this)">
+      <span class="ph-i">♻️</span>
+      <span class="ph-t">Lab 11.1 — Automate TLS certificate issuance with Let's Encrypt and certbot</span>
+      <span class="ph-tag pt-build">Automation Lab</span>
+      <span class="ph-chev">▶</span>
+    </div>
+    <div class="prac-body">
+      <div class="note teal"><span class="ni">💡</span><span>Requires a domain you control with DNS pointing to your server. For lab purposes, use DNS-01 challenge which doesn't require a public-facing server.</span></div>
+      <ol class="steps" style="margin-top:14px;">
+        <li class="step">
+          <span class="sn">1</span>
+          <div class="sc">
+            <div class="st">Install certbot and issue a certificate</div>
+            <div class="code" data-label="bash">
+<span class="cmd">sudo apt install</span> certbot python3-certbot-nginx
+
+<span class="cm"># Issue cert for a domain (HTTP-01 challenge — server must be accessible on port 80)</span>
+<span class="cmd">sudo certbot</span> <span class="flag">--nginx -d</span> yourdomain.com <span class="flag">-d</span> www.yourdomain.com
+
+<span class="cm"># Or standalone (certbot runs its own server)</span>
+<span class="cmd">sudo certbot certonly</span> <span class="flag">--standalone -d</span> yourdomain.com
+
+<span class="cm"># Certificates are stored at:</span>
+<span class="cm"># /etc/letsencrypt/live/yourdomain.com/fullchain.pem (cert + chain)</span>
+<span class="cm"># /etc/letsencrypt/live/yourdomain.com/privkey.pem   (private key)</span>
+            </div>
+          </div>
+        </li>
+        <li class="step">
+          <span class="sn">2</span>
+          <div class="sc">
+            <div class="st">Test auto-renewal (runs twice daily via systemd timer)</div>
+            <div class="code" data-label="bash">
+<span class="cm"># Test renewal process without actually renewing</span>
+<span class="cmd">sudo certbot renew --dry-run</span>
+
+<span class="cm"># Check when renewal is scheduled</span>
+<span class="cmd">sudo systemctl status</span> certbot.timer
+
+<span class="cm"># Manually trigger renewal check</span>
+<span class="cmd">sudo certbot renew</span>
+<span class="cm"># Only renews if cert expires within 30 days</span>
+            </div>
+          </div>
+        </li>
+        <li class="step">
+          <span class="sn">3</span>
+          <div class="sc">
+            <div class="st">Monitor certificates across your infrastructure with cert expiry checking</div>
+            <div class="code" data-label="bash">
+<span class="cm"># Shell script: check cert expiry for multiple domains</span>
+<span class="cmd">cat</span> << <span class="str">'EOF'</span> > check_certs.sh
+#!/bin/bash
+DOMAINS=<span class="val">("yourdomain.com" "api.yourdomain.com" "sbi.co.in")</span>
+ALERT_DAYS=30
+
+for domain in "${DOMAINS[@]}"; do
+  expiry=$(<span class="cmd">openssl s_client</span> <span class="flag">-connect ${domain}:443 -servername ${domain}</span> < /dev/null 2>/dev/null | \
+    <span class="cmd">openssl x509 -noout -enddate</span> | cut -d= -f2)
+  epoch_expiry=$(date -d "${expiry}" +%s)
+  epoch_now=$(date +%s)
+  days_left=$(( (epoch_expiry - epoch_now) / 86400 ))
+  
+  if [ $days_left -lt $ALERT_DAYS ]; then
+    echo "⚠️  ${domain}: EXPIRES IN ${days_left} DAYS (${expiry})"
+  else
+    echo "✓  ${domain}: ${days_left} days remaining"
+  fi
+done
+<span class="str">EOF</span>
+<span class="cmd">chmod</span> +x check_certs.sh && ./check_certs.sh
+            </div>
+          </div>
+        </li>
+      </ol>
+    </div>
+  </div>
+</div>
+
+<hr class="hdiv">
+
+<!-- ══════════════════════
+12 — OpenSSL Mastery
+══════════════════════ -->
+<div class="section" id="s12">
+  <div class="sec-head">
+    <span class="sec-num">XII</span>
+    <div class="sec-meta">
+      <div class="sec-title">OpenSSL Mastery</div>
+      <div class="sec-sub">Essential commands every security professional uses daily</div>
+    </div>
+    <span class="badge b-teal">OpenSSL</span>
+  </div>
+
+  <div class="theory">
+    <h4>OpenSSL — The Swiss Army Knife of Cryptography</h4>
+    <p>OpenSSL is a production-grade, open-source cryptography library and command-line toolkit. It implements TLS/SSL, X.509 certificates, RSA, ECC, AES, hashing, and more. Learning OpenSSL is learning applied cryptography — every concept in this module can be demonstrated with OpenSSL commands.</p>
+  </div>
+
+  <div class="practical open">
+    <div class="prac-head" onclick="toggleP(this)">
+      <span class="ph-i">⚙️</span>
+      <span class="ph-t">Lab 12.1 — OpenSSL command reference and real-world use cases</span>
+      <span class="ph-tag pt-cli">OpenSSL Reference</span>
+      <span class="ph-chev">▶</span>
+    </div>
+    <div class="prac-body">
+      <ol class="steps">
+        <li class="step">
+          <span class="sn">1</span>
+          <div class="sc">
+            <div class="st">Key Generation Cheatsheet</div>
+            <div class="code" data-label="bash">
+<span class="cm"># RSA 2048/4096 bit</span>
+<span class="cmd">openssl genrsa -out</span> private.pem 4096
+<span class="cmd">openssl genrsa -aes256 -out</span> private_encrypted.pem 4096   <span class="cm"># password-protected</span>
+
+<span class="cm"># EC P-256 (secp256r1)</span>
+<span class="cmd">openssl ecparam -name prime256v1 -genkey -noout -out</span> ec.pem
+
+<span class="cm"># Ed25519 (recommended for new systems)</span>
+<span class="cmd">openssl genpkey -algorithm ed25519 -out</span> ed25519.pem
+
+<span class="cm"># X25519 (key exchange only)</span>
+<span class="cmd">openssl genpkey -algorithm x25519 -out</span> x25519.pem
+
+<span class="cm"># Extract public key from any private key</span>
+<span class="cmd">openssl pkey -in</span> private.pem <span class="flag">-pubout -out</span> public.pem
+            </div>
+          </div>
+        </li>
+        <li class="step">
+          <span class="sn">2</span>
+          <div class="sc">
+            <div class="st">CSR Generation and Inspection</div>
+            <div class="code" data-label="bash">
+<span class="cm"># Generate CSR (Certificate Signing Request)</span>
+<span class="cmd">openssl req -new -sha256</span> \
+  <span class="flag">-key</span> private.pem \
+  <span class="flag">-out</span> request.csr \
+  <span class="flag">-subj</span> <span class="str">"/C=IN/ST=MH/O=MyCompany/CN=api.mycompany.com"</span> \
+  <span class="flag">-addext</span> <span class="str">"subjectAltName=DNS:api.mycompany.com,DNS:*.mycompany.com"</span>
+
+<span class="cm"># Inspect CSR before submitting</span>
+<span class="cmd">openssl req -in</span> request.csr <span class="flag">-noout -text</span>
+<span class="cmd">openssl req -in</span> request.csr <span class="flag">-noout -verify</span>  <span class="cm"># verify signature on CSR</span>
+            </div>
+          </div>
+        </li>
+        <li class="step">
+          <span class="sn">3</span>
+          <div class="sc">
+            <div class="st">Certificate Operations</div>
+            <div class="code" data-label="bash">
+<span class="cm"># Self-sign a certificate (for internal/lab use)</span>
+<span class="cmd">openssl req -x509 -newkey rsa:4096 -keyout key.pem -out cert.pem -days 365 -nodes</span>
+<span class="cm"># -nodes: no password on private key</span>
+
+<span class="cm"># Inspect a certificate</span>
+<span class="cmd">openssl x509 -in</span> cert.pem <span class="flag">-noout -text</span>
+<span class="cmd">openssl x509 -in</span> cert.pem <span class="flag">-noout -subject -issuer -dates -fingerprint</span>
+
+<span class="cm"># Convert certificate formats</span>
+<span class="cmd">openssl x509 -in</span> cert.pem <span class="flag">-outform DER -out</span> cert.der   <span class="cm"># PEM → DER (binary)</span>
+<span class="cmd">openssl x509 -in</span> cert.der <span class="flag">-inform DER -outform PEM -out</span> cert.pem  <span class="cm"># DER → PEM</span>
+<span class="cmd">openssl pkcs12 -export -in</span> cert.pem <span class="flag">-inkey</span> key.pem <span class="flag">-out</span> bundle.p12  <span class="cm"># PEM → PKCS12 (for Java/Windows)</span>
+            </div>
+          </div>
+        </li>
+        <li class="step">
+          <span class="sn">4</span>
+          <div class="sc">
+            <div class="st">TLS Debugging and Testing</div>
+            <div class="code" data-label="bash">
+<span class="cm"># Full TLS handshake debug</span>
+<span class="cmd">openssl s_client -connect</span> google.com:<span class="val">443</span> <span class="flag">-servername</span> google.com <span class="flag">-msg</span>
+
+<span class="cm"># Test specific TLS version</span>
+<span class="cmd">openssl s_client -connect</span> google.com:<span class="val">443</span> <span class="flag">-tls1_3</span>
+<span class="cmd">openssl s_client -connect</span> google.com:<span class="val">443</span> <span class="flag">-tls1_2</span>
+
+<span class="cm"># Start a test HTTPS server</span>
+<span class="cmd">openssl s_server</span> \
+  <span class="flag">-cert</span> cert.pem <span class="flag">-key</span> key.pem \
+  <span class="flag">-port</span> 4433 <span class="flag">-WWW</span>
+<span class="cm"># Connect with: openssl s_client -connect localhost:4433</span>
+
+<span class="cm"># Benchmark cipher suite performance</span>
+<span class="cmd">openssl speed</span> aes-256-gcm rsa4096 ecdsa
+            </div>
+          </div>
+        </li>
+      </ol>
+    </div>
+  </div>
+</div>
+
+<hr class="hdiv">
+
+<!-- ══════════════════════
+13 — SSH & Real-World PKI
+══════════════════════ -->
+<div class="section" id="s13">
+  <div class="sec-head">
+    <span class="sec-num">XIII</span>
+    <div class="sec-meta">
+      <div class="sec-title">SSH & Real-World Cryptography Applications</div>
+      <div class="sec-sub">SSH key types, GPG for email/signing, JWT structure, and post-quantum awareness</div>
+    </div>
+    <span class="badge b-slate">Applied</span>
+  </div>
+
+  <div class="theory slate">
+    <h4>Cryptography in Real Systems</h4>
+    <p>Every tool and protocol you use in security work is built on the primitives you've learned in this module. SSH uses RSA/Ed25519 + ECDHE + AES-256-CTR. HTTPS is X.509 + TLS + AES-GCM. JWTs use HMAC-SHA256 or RSA/ECDSA. GPG uses RSA/ECC. API authentication uses HMAC. Understanding the cryptographic layer underneath these tools lets you make better security decisions and spot misconfigurations.</p>
+  </div>
+
+  <div class="practical open">
+    <div class="prac-head" onclick="toggleP(this)">
+      <span class="ph-i">🔐</span>
+      <span class="ph-t">Lab 13.1 — SSH key hardening, GPG encryption, and JWT inspection</span>
+      <span class="ph-tag pt-build">Applied Lab</span>
+      <span class="ph-chev">▶</span>
+    </div>
+    <div class="prac-body">
+      <ol class="steps">
+        <li class="step">
+          <span class="sn">1</span>
+          <div class="sc">
+            <div class="st">SSH Key Types — Why Ed25519 Over RSA</div>
+            <div class="code" data-label="bash">
+<span class="cm"># Generate Ed25519 SSH key (modern, recommended)</span>
+<span class="cmd">ssh-keygen</span> <span class="flag">-t ed25519 -C</span> <span class="str">"your@email.com"</span> <span class="flag">-f</span> ~/.ssh/id_ed25519
+<span class="cm"># Creates: id_ed25519 (private) + id_ed25519.pub (public)</span>
+<span class="cm"># Key size: 68 bytes private, 68 bytes public — tiny and fast</span>
+
+<span class="cm"># Compare with RSA</span>
+<span class="cmd">ssh-keygen</span> <span class="flag">-t rsa -b</span> 4096 <span class="flag">-C</span> <span class="str">"your@email.com"</span> <span class="flag">-f</span> ~/.ssh/id_rsa4096
+<span class="cmd">wc -c</span> ~/.ssh/id_ed25519 ~/.ssh/id_rsa4096
+<span class="cm"># Ed25519: 411 bytes | RSA 4096: 3.4KB</span>
+
+<span class="cm"># Inspect key fingerprint</span>
+<span class="cmd">ssh-keygen</span> <span class="flag">-l -f</span> ~/.ssh/id_ed25519.pub
+<span class="cm"># 256 SHA256:XXXX... your@email.com (ED25519)</span>
+
+<span class="cm"># Why Ed25519 &gt; RSA for SSH:</span>
+<span class="cm"># 1. Smaller, faster (critical for automation/CI)</span>
+<span class="cm"># 2. No weak-key generation risk (RSA can rarely generate bad keys)</span>
+<span class="cm"># 3. Deterministic signing (not vulnerable to nonce bias like ECDSA)</span>
+<span class="cm"># 4. Immune to side-channel timing attacks (constant-time by design)</span>
+            </div>
+          </div>
+        </li>
+        <li class="step">
+          <span class="sn">2</span>
+          <div class="sc">
+            <div class="st">Harden SSH Server Configuration (Cryptography Settings)</div>
+            <div class="code" data-label="/etc/ssh/sshd_config">
+<span class="cm"># Key exchange algorithms (prefer modern curves)</span>
+KexAlgorithms <span class="val">curve25519-sha256,curve25519-sha256@libssh.org,ecdh-sha2-nistp521</span>
+
+<span class="cm"># Ciphers (AEAD only — no CBC)</span>
+Ciphers <span class="val">chacha20-poly1305@openssh.com,aes256-gcm@openssh.com,aes128-gcm@openssh.com</span>
+
+<span class="cm"># MACs (Encrypt-then-MAC — not MAC-then-encrypt)</span>
+MACs <span class="val">hmac-sha2-512-etm@openssh.com,hmac-sha2-256-etm@openssh.com</span>
+
+<span class="cm"># Host key types (prefer modern)</span>
+HostKeyAlgorithms <span class="val">ssh-ed25519,rsa-sha2-512,rsa-sha2-256</span>
+
+<span class="cm"># Disable deprecated</span>
+PubkeyAuthentication yes
+PasswordAuthentication no      <span class="cm"># Keys only — no password auth</span>
+PermitRootLogin no
+
+<span class="cm"># Reload SSH</span>
+<span class="cmd">sudo systemctl reload</span> sshd
+            </div>
+          </div>
+        </li>
+        <li class="step">
+          <span class="sn">3</span>
+          <div class="sc">
+            <div class="st">JWT Structure and Cryptographic Verification</div>
+            <div class="code" data-label="python3">
+<span class="kw">import</span> base64, json
+
+<span class="cm"># A JWT has 3 base64url-encoded parts: header.payload.signature</span>
+jwt_token = <span class="str">"eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkFtYW4iLCJpYXQiOjE3MDAwMDAwMDB9.SIGNATURE"</span>
+
+header_b64, payload_b64, signature_b64 = jwt_token.split(<span class="str">"."</span>)
+
+<span class="cm"># Decode header (base64url → JSON)</span>
+header = json.loads(base64.b64decode(header_b64 + <span class="str">"=="</span>))
+payload = json.loads(base64.b64decode(payload_b64 + <span class="str">"=="</span>))
+
+print(<span class="str">"Algorithm:"</span>, header[<span class="str">"alg"</span>])   <span class="cm"># RS256 = RSA + SHA256</span>
+print(<span class="str">"Subject:"</span>,   payload[<span class="str">"sub"</span>])
+print(<span class="str">"Name:"</span>,      payload[<span class="str">"name"</span>])
+
+<span class="cm"># SECURITY WARNINGS for JWT:</span>
+<span class="cm"># 1. NEVER use alg:none (no signature — any payload accepted)</span>
+<span class="cm"># 2. RS256 (asymmetric) preferred over HS256 (shared secret)</span>
+<span class="cm"># 3. Always verify signature server-side — never trust unverified claims</span>
+<span class="cm"># 4. Check exp (expiry) claim to reject stale tokens</span>
+<span class="cm"># 5. Algorithm confusion attack: if server accepts both RS256 and HS256,</span>
+<span class="cm">#    attacker can sign with public key using HS256 to bypass verification</span>
+            </div>
+          </div>
+        </li>
+        <li class="step">
+          <span class="sn">4</span>
+          <div class="sc">
+            <div class="st">Post-Quantum Cryptography — Why It Matters Now</div>
+            <div class="code" data-label="awareness (theory)">
+<span class="kw">The Quantum Threat:</span>
+  Shor's algorithm (on a large quantum computer) can factor RSA integers
+  and solve ECDLP in polynomial time — breaking RSA and ECC completely.
+  Grover's algorithm weakens symmetric keys: AES-128 becomes ~64-bit
+  effective. Solution: AES-256 remains secure (2^128 Grover complexity).
+
+<span class="kw">Timeline:</span>
+  "Cryptographically relevant" quantum computer: 10-20 years (est.)
+  "Harvest now, decrypt later" attacks happening NOW:
+  Adversaries store encrypted traffic today to decrypt when QC exists.
+  NIST finalized post-quantum standards in 2024.
+
+<span class="kw">NIST Post-Quantum Standards (2024):</span>
+  ML-KEM (Kyber)     → Key encapsulation (replaces RSA/ECDH)
+  ML-DSA (Dilithium) → Digital signatures (replaces RSA/ECDSA)
+  SLH-DSA (SPHINCS+) → Hash-based signatures (fallback option)
+
+<span class="kw">Action Today:</span>
+  - Use AES-256 (not AES-128) for long-lived data
+  - Enable hybrid key exchange in TLS (X25519 + Kyber)
+  - Crypto agility: design systems to swap algorithms easily
+  - Inventory certificates and encrypted data stores
+            </div>
+          </div>
+        </li>
+      </ol>
+    </div>
+  </div>
+
+  <!-- Module completion checklist -->
+  <div class="theory" style="margin-top:22px;">
+    <h4>Module Completion Checklist</h4>
+    <ul class="checklist">
+      <li onclick="toggleCheck(this)"><span class="cb"></span><span>Lab 2.1 — Encrypted files with AES-128-ECB, AES-256-CBC, and AES-256-GCM; compared outputs</span></li>
+      <li onclick="toggleCheck(this)"><span class="cb"></span><span>Lab 3.1 — Generated RSA-4096 and Ed25519 key pairs; encrypted/decrypted with RSA; signed/verified with Ed25519</span></li>
+      <li onclick="toggleCheck(this)"><span class="cb"></span><span>Lab 4.1 — Computed SHA-256 hashes; demonstrated avalanche effect; implemented bcrypt salting; used Argon2</span></li>
+      <li onclick="toggleCheck(this)"><span class="cb"></span><span>Lab 5.1 — Simulated X25519 ECDH key exchange in Python; derived AES key with HKDF</span></li>
+      <li onclick="toggleCheck(this)"><span class="cb"></span><span>Lab 6.1 — RSA file signing/verification; ECDSA P-256 signing; HMAC-SHA256 for API authentication</span></li>
+      <li onclick="toggleCheck(this)"><span class="cb"></span><span>Lab 8.1 — Built complete 3-tier PKI: Root CA → Intermediate CA → Server Certificate; verified chain</span></li>
+      <li onclick="toggleCheck(this)"><span class="cb"></span><span>Lab 9.1 — Inspected live TLS certificates with openssl s_client; verified certificate chain</span></li>
+      <li onclick="toggleCheck(this)"><span class="cb"></span><span>Lab 10.1 — Audited TLS cipher suites; ran testssl.sh; checked for deprecated protocols</span></li>
+      <li onclick="toggleCheck(this)"><span class="cb"></span><span>Lab 11.1 — Issued Let's Encrypt certificate; tested auto-renewal; built cert expiry monitoring script</span></li>
+      <li onclick="toggleCheck(this)"><span class="cb"></span><span>Lab 12.1 — Mastered OpenSSL key generation, CSR creation, cert conversion, and TLS testing commands</span></li>
+      <li onclick="toggleCheck(this)"><span class="cb"></span><span>Lab 13.1 — Generated Ed25519 SSH keys; hardened sshd_config; decoded and analyzed JWT structure</span></li>
+    </ul>
+  </div>
+
+  <div class="note sage" style="margin-top:14px;">
+    <span class="ni">🏆</span>
+    <span><strong>Portfolio deliverables:</strong> (1) Private PKI hierarchy with 3-tier CA structure (GitHub scripts), (2) TLS audit report from testssl.sh HTML output, (3) cert expiry monitoring shell script, (4) OpenSSL cheatsheet document. Cryptography knowledge is a strong differentiator in Indian security interviews — most candidates only know it conceptually; demonstrating working OpenSSL labs makes you stand out at Deloitte, EY, Wipro CyberSec, and BFSI security teams.</span>
+  </div>
+
+</div>
+
+</div><!-- /content -->
+</main>
+</div><!-- /layout -->
+
+<script>
+function toggleP(header) {
+  header.closest('.practical').classList.toggle('open');
+  updateProgress();
+}
+
+function toggleCheck(li) {
+  li.classList.toggle('done');
+  updateProgress();
+}
+
+function updateProgress() {
+  const all = document.querySelectorAll('.checklist li');
+  const done = document.querySelectorAll('.checklist li.done');
+  const pct = all.length > 0 ? Math.round((done.length / all.length) * 100) : 0;
+  document.getElementById('sb-fill').style.width = pct + '%';
+  document.getElementById('sb-pct').textContent = pct + '%';
+}
+
+// Sidebar active scroll
+const sections = document.querySelectorAll('.section');
+const navItems = document.querySelectorAll('.nav-item');
+
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      const id = entry.target.id;
+      navItems.forEach(item => {
+        item.classList.toggle('active', item.getAttribute('href') === '#' + id);
+      });
+    }
+  });
+}, { rootMargin: '-20% 0px -70% 0px' });
+
+sections.forEach(s => observer.observe(s));
+
+navItems.forEach(item => {
+  item.addEventListener('click', e => {
+    const href = item.getAttribute('href');
+    if (href && href.startsWith('#')) {
+      e.preventDefault();
+      document.querySelector(href)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  });
+});
+
+updateProgress();
+</script>
+</body>
+</html>

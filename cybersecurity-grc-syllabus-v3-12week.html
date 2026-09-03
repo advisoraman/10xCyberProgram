@@ -1,0 +1,1011 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cybersecurity + GRC Syllabus v3 — AI-Augmented | 3-Month Programme</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,300;0,400;0,600;1,300&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #f7f6f3;
+    --surface: #ffffff;
+    --surface2: #f1f0ec;
+    --border: #e3e2de;
+    --text: #1a1a18;
+    --text-muted: #6b6b67;
+    --text-light: #9b9b96;
+    --accent-cyber: #d4380d;
+    --accent-grc: #0958d9;
+    --accent-green: #389e0d;
+    --accent-orange: #d46b08;
+    --accent-purple: #531dab;
+    --accent-ai: #7c3aed;
+    --accent-ai-bg: #f5f3ff;
+    --accent-ai-border: #ddd6fe;
+    --sidebar-w: 230px;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'DM Mono', monospace; background: var(--bg); color: var(--text); font-size: 13.5px; line-height: 1.6; min-height: 100vh; }
+  .app { display: flex; min-height: 100vh; }
+
+  /* Sidebar */
+  .sidebar { width: var(--sidebar-w); background: var(--surface2); border-right: 1px solid var(--border); padding: 20px 0; position: sticky; top: 0; height: 100vh; overflow-y: auto; flex-shrink: 0; }
+  .sidebar::-webkit-scrollbar { width: 4px; } 
+  .sidebar::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+  .sidebar-logo { padding: 0 16px 14px; border-bottom: 1px solid var(--border); margin-bottom: 10px; }
+  .sidebar-logo .icon { font-size: 18px; }
+  .sidebar-logo .title { font-family: 'Fraunces', serif; font-size: 13px; font-weight: 600; color: var(--text); margin-top: 4px; line-height: 1.3; }
+  .sidebar-logo .version { font-size: 10px; color: var(--text-light); margin-top: 3px; display: flex; align-items: center; gap: 4px; }
+  .ai-new-badge { background: var(--accent-ai-bg); color: var(--accent-ai); border: 1px solid var(--accent-ai-border); font-size: 9px; padding: 1px 6px; border-radius: 3px; font-weight: 600; letter-spacing: 0.04em; }
+  .sidebar-section-label { font-size: 10px; font-weight: 500; color: var(--text-light); letter-spacing: 0.08em; text-transform: uppercase; padding: 10px 16px 3px; }
+  .sidebar-item { display: flex; align-items: center; gap: 8px; padding: 5px 16px; font-size: 12px; color: var(--text-muted); cursor: pointer; border-radius: 4px; margin: 1px 6px; transition: background 0.15s; text-decoration: none; }
+  .sidebar-item:hover { background: var(--border); color: var(--text); }
+  .sidebar-item.active { background: var(--border); color: var(--text); font-weight: 500; }
+  .sidebar-item .dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
+  .sidebar-item.ai-item { background: var(--accent-ai-bg); border: 1px solid var(--accent-ai-border); color: var(--accent-ai); font-weight: 500; }
+  .sidebar-item.ai-item:hover { background: #ede9fe; }
+
+  /* Main */
+  .main { flex: 1; padding: 48px 64px 80px; max-width: 960px; }
+  .page-header { margin-bottom: 28px; }
+  .page-icon { font-size: 38px; margin-bottom: 10px; }
+  .page-title { font-family: 'Fraunces', serif; font-size: 32px; font-weight: 600; color: var(--text); letter-spacing: -0.02em; line-height: 1.2; margin-bottom: 6px; }
+  .page-subtitle { color: var(--text-muted); font-size: 12.5px; }
+
+  .ai-banner {
+    display: flex; gap: 12px; align-items: flex-start;
+    background: linear-gradient(135deg, #f5f3ff 0%, #ede9fe 100%);
+    border: 1px solid var(--accent-ai-border);
+    border-left: 3px solid var(--accent-ai);
+    border-radius: 6px; padding: 14px 16px; margin-bottom: 18px;
+    font-size: 12.5px; color: var(--text);
+  }
+  .ai-banner .ab-icon { font-size: 18px; flex-shrink: 0; margin-top: 1px; }
+  .ai-banner strong { color: var(--accent-ai); }
+
+  /* Properties */
+  .properties { border: 1px solid var(--border); border-radius: 6px; padding: 14px 18px; margin-bottom: 24px; background: var(--surface); display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+  .prop { display: flex; flex-direction: column; gap: 3px; }
+  .prop-label { font-size: 10.5px; color: var(--text-light); text-transform: uppercase; letter-spacing: 0.06em; }
+  .prop-value { font-size: 12.5px; color: var(--text); font-weight: 500; }
+  .prop-tag { display: inline-flex; align-items: center; gap: 4px; border-radius: 4px; padding: 2px 8px; font-size: 11px; font-weight: 400; }
+  .prop-tag.red { background: #fff1f0; color: var(--accent-cyber); }
+  .prop-tag.blue { background: #e6f4ff; color: var(--accent-grc); }
+  .prop-tag.green { background: #f6ffed; color: var(--accent-green); }
+  .prop-tag.ai { background: var(--accent-ai-bg); color: var(--accent-ai); border: 1px solid var(--accent-ai-border); }
+
+  /* Progress */
+  .progress-section { margin-bottom: 24px; }
+  .progress-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+  .progress-label { font-size: 12px; color: var(--text-muted); }
+  .progress-pct { font-size: 12px; color: var(--text); font-weight: 500; }
+  .progress-track { height: 6px; background: var(--border); border-radius: 99px; overflow: hidden; }
+  .progress-fill { height: 100%; border-radius: 99px; background: linear-gradient(90deg, #d4380d 0%, #7c3aed 40%, #531dab 70%, #0958d9 100%); transition: width 0.6s ease; }
+
+  .divider { border: none; border-top: 1px solid var(--border); margin: 20px 0; }
+
+  /* Phase */
+  .phase { margin-bottom: 6px; border: 1px solid var(--border); border-radius: 8px; background: var(--surface); overflow: hidden; animation: fadeUp 0.3s ease both; }
+  .phase:nth-child(1){animation-delay:.04s} .phase:nth-child(2){animation-delay:.08s} .phase:nth-child(3){animation-delay:.12s} .phase:nth-child(4){animation-delay:.16s} .phase:nth-child(5){animation-delay:.20s} .phase:nth-child(6){animation-delay:.24s} .phase:nth-child(7){animation-delay:.28s} .phase:nth-child(8){animation-delay:.32s} .phase:nth-child(9){animation-delay:.36s} .phase:nth-child(10){animation-delay:.40s} .phase:nth-child(11){animation-delay:.44s}
+
+  /* AI Phase special styling */
+  .phase.ai-phase { border: 1.5px solid var(--accent-ai-border); }
+  .phase.ai-phase .phase-header { background: linear-gradient(135deg, #f5f3ff 0%, #faf8ff 100%); }
+  .phase.ai-phase .phase-header:hover { background: #ede9fe; }
+  .phase.ai-phase.open .phase-body { background: #fdfcff; }
+
+  .phase-header { display: flex; align-items: center; gap: 12px; padding: 13px 18px; cursor: pointer; user-select: none; transition: background 0.12s; }
+  .phase-header:hover { background: var(--surface2); }
+  .phase-toggle { font-size: 10px; color: var(--text-light); transition: transform 0.2s; flex-shrink: 0; }
+  .phase.open .phase-toggle { transform: rotate(90deg); }
+  .phase-emoji { font-size: 15px; flex-shrink: 0; }
+  .phase-meta { flex: 1; }
+  .phase-name { font-family: 'Fraunces', serif; font-size: 14.5px; font-weight: 600; color: var(--text); }
+  .phase-weeks { font-size: 11px; color: var(--text-muted); margin-top: 1px; }
+  .phase-badge { font-size: 10px; font-weight: 500; padding: 3px 9px; border-radius: 99px; flex-shrink: 0; }
+  .badge-cyber { background: #fff1f0; color: var(--accent-cyber); }
+  .badge-grc { background: #e6f4ff; color: var(--accent-grc); }
+  .badge-both { background: #fff7e6; color: var(--accent-orange); }
+  .badge-launch { background: #f6ffed; color: var(--accent-green); }
+  .badge-cloud { background: #f0f5ff; color: #1d39c4; }
+  .badge-soc { background: #fff0f6; color: #c41d7f; }
+  .badge-threat { background: #fcffe6; color: #5b8c00; }
+  .badge-ai { background: var(--accent-ai-bg); color: var(--accent-ai); border: 1px solid var(--accent-ai-border); font-weight: 600; }
+  .phase-body { display: none; padding: 0 18px 16px; border-top: 1px solid var(--border); }
+  .phase.open .phase-body { display: block; }
+
+  /* Topics */
+  .topic-group { margin-top: 14px; }
+  .topic-group-title { font-size: 10px; text-transform: uppercase; letter-spacing: 0.09em; color: var(--text-light); margin-bottom: 6px; font-weight: 500; }
+  .topic-group-title.ai-group { color: var(--accent-ai); }
+  .checklist { list-style: none; }
+  .checklist li { display: flex; align-items: flex-start; gap: 10px; padding: 5px 8px; border-radius: 4px; font-size: 12.5px; color: var(--text); transition: background 0.1s; cursor: pointer; }
+  .checklist li:hover { background: var(--surface2); }
+  .check-box { width: 14px; height: 14px; border: 1.5px solid var(--border); border-radius: 3px; flex-shrink: 0; margin-top: 2px; display: flex; align-items: center; justify-content: center; transition: all 0.15s; }
+  .checklist li.done .check-box { background: var(--accent-green); border-color: var(--accent-green); }
+  .checklist li.done .check-box::after { content: '✓'; font-size: 9px; color: white; font-weight: bold; }
+  .checklist li.done .check-text { text-decoration: line-through; color: var(--text-light); }
+  .tag-inline { display: inline-block; font-size: 10px; font-weight: 500; padding: 1px 6px; border-radius: 3px; margin-left: 4px; vertical-align: middle; }
+  .tag-tool { background: #f9f0ff; color: #531dab; }
+  .tag-lab  { background: #fff1f0; color: #a8071a; }
+  .tag-cert { background: #e6fffb; color: #006d75; }
+  .tag-soc  { background: #fff0f6; color: #c41d7f; }
+  .tag-ceh  { background: #fcffe6; color: #5b8c00; }
+  .tag-ai   { background: var(--accent-ai-bg); color: var(--accent-ai); border: 1px solid var(--accent-ai-border); font-weight: 600; }
+  .tag-new  { background: #fff7e6; color: #d46b08; font-weight: 700; letter-spacing: 0.04em; }
+
+  /* Week header */
+  .week-label { font-size: 10px; font-weight: 500; color: var(--text-light); background: var(--surface2); border-radius: 4px; padding: 2px 8px; display: inline-block; margin-top: 14px; margin-bottom: 6px; letter-spacing: 0.06em; text-transform: uppercase; }
+  .week-label.ai-week { background: var(--accent-ai-bg); color: var(--accent-ai); border: 1px solid var(--accent-ai-border); }
+
+  /* Tools grid */
+  .tools-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(110px, 1fr)); gap: 5px; margin-top: 8px; }
+  .tool-chip { background: var(--surface2); border: 1px solid var(--border); border-radius: 5px; padding: 6px 10px; font-size: 11.5px; color: var(--text); display: flex; align-items: center; gap: 6px; }
+  .tool-chip .t-icon { font-size: 13px; }
+  .tool-chip.ai-tool { background: var(--accent-ai-bg); border-color: var(--accent-ai-border); color: var(--accent-ai); font-weight: 500; }
+
+  /* Callout */
+  .callout { display: flex; gap: 12px; align-items: flex-start; background: #fffbe6; border: 1px solid #ffe58f; border-radius: 6px; padding: 12px 14px; margin-top: 16px; font-size: 12.5px; color: var(--text); }
+  .callout.blue { background: #e6f4ff; border-color: #91caff; }
+  .callout.green { background: #f6ffed; border-color: #b7eb8f; }
+  .callout.ai { background: var(--accent-ai-bg); border-color: var(--accent-ai-border); }
+  .callout .c-icon { font-size: 16px; flex-shrink: 0; margin-top: 1px; }
+
+  /* AI use-case cards */
+  .ai-usecases { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 8px; margin-top: 12px; }
+  .ai-uc { background: var(--surface); border: 1px solid var(--accent-ai-border); border-radius: 5px; padding: 12px 14px; }
+  .ai-uc-head { display: flex; align-items: center; gap: 7px; margin-bottom: 7px; }
+  .ai-uc-icon { font-size: 16px; }
+  .ai-uc-title { font-size: 12px; font-weight: 600; color: var(--accent-ai); }
+  .ai-uc-desc { font-size: 11.5px; color: var(--text-muted); line-height: 1.6; }
+
+  /* Cert table */
+  .cert-table { width: 100%; border-collapse: collapse; margin-top: 8px; }
+  .cert-table th { text-align: left; font-size: 10px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--text-light); padding: 6px 10px; border-bottom: 1px solid var(--border); }
+  .cert-table td { padding: 8px 10px; font-size: 12px; border-bottom: 1px solid var(--border); }
+  .cert-table tr:last-child td { border-bottom: none; }
+  .cert-table tr:hover td { background: var(--surface2); }
+
+  /* Section header */
+  .section-heading { font-family: 'Fraunces', serif; font-size: 18px; font-weight: 600; margin-bottom: 12px; margin-top: 28px; display: flex; align-items: center; gap: 8px; }
+
+  @keyframes fadeUp { from { opacity:0; transform:translateY(10px); } to { opacity:1; transform:translateY(0); } }
+
+  @media (max-width: 768px) {
+    .sidebar { display: none; }
+    .main { padding: 24px 18px 60px; max-width: 100%; }
+    .properties { grid-template-columns: repeat(2,1fr); }
+    .page-title { font-size: 24px; }
+    .ai-usecases { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+<div class="app">
+
+<!-- Sidebar -->
+<nav class="sidebar">
+  <div class="sidebar-logo">
+    <div class="icon">🛡️</div>
+    <div class="title">Cyber + GRC<br>Study Planner</div>
+    <div class="version">v3.0 <span class="ai-new-badge">AI UPDATED</span></div>
+  </div>
+
+  <div class="sidebar-section-label">Overview</div>
+  <a class="sidebar-item active" href="#overview"><span class="dot" style="background:#595959"></span>Dashboard</a>
+
+  <div class="sidebar-section-label">Foundations</div>
+  <a class="sidebar-item" href="#p-foundations"><span class="dot" style="background:#d46b08"></span>Foundations (Wk 1–3)</a>
+  <a class="sidebar-item" href="#p-crypto"><span class="dot" style="background:#531dab"></span>Cryptography & PKI (Wk 3)</a>
+
+  <div class="sidebar-section-label">Technical Depth</div>
+  <a class="sidebar-item" href="#p-network"><span class="dot" style="background:#d4380d"></span>Network Security (Wk 4–5)</a>
+  <a class="sidebar-item" href="#p-webapp"><span class="dot" style="background:#c41d7f"></span>Web App / VAPT (Wk 5–6)</a>
+  <a class="sidebar-item" href="#p-ethical"><span class="dot" style="background:#5b8c00"></span>Ethical Hacking CEH (Wk 6–7)</a>
+  <a class="sidebar-item" href="#p-soc"><span class="dot" style="background:#c41d7f"></span>SOC & SIEM Ops (Wk 7–8)</a>
+  <a class="sidebar-item" href="#p-threat"><span class="dot" style="background:#5b8c00"></span>Threat Intelligence (Wk 8)</a>
+  <a class="sidebar-item" href="#p-cloud"><span class="dot" style="background:#1d39c4"></span>Cloud Security (Wk 8–9)</a>
+
+  <div class="sidebar-section-label">GRC</div>
+  <a class="sidebar-item" href="#p-grc"><span class="dot" style="background:#0958d9"></span>GRC Deep Dive (Wk 9–10)</a>
+
+  <div class="sidebar-section-label">🤖 NEW — AI Track</div>
+  <a class="sidebar-item ai-item" href="#p-ai"><span class="dot" style="background:#7c3aed"></span>AI-Augmented Security (Wk 10–11)</a>
+
+  <div class="sidebar-section-label">Launch</div>
+  <a class="sidebar-item" href="#p-launch"><span class="dot" style="background:#389e0d"></span>Capstone & Career (Wk 11–12)</a>
+  <a class="sidebar-item" href="#tools"><span class="dot" style="background:#531dab"></span>Tools Arsenal</a>
+  <a class="sidebar-item" href="#certs"><span class="dot" style="background:#006d75"></span>Certifications</a>
+</nav>
+
+<!-- Main -->
+<main class="main">
+  <div class="page-header" id="overview">
+    <div class="page-icon">🛡️</div>
+    <h1 class="page-title">Cybersecurity + GRC<br>Job-Ready Syllabus</h1>
+    <p class="page-subtitle">3-month path · SOC Analyst · GRC Analyst · Security Consultant · CEH-aligned · AI-Augmented</p>
+  </div>
+
+  <div class="ai-banner">
+    <span class="ab-icon">🤖</span>
+    <span><strong>v3 — 3-Month Edition:</strong> Expanded to 12 weeks with 2–3 hrs/day for a more comfortable, deeply practised pace. AI-Augmented Security module (Weeks 10–11) added — covers Claude MCP for pentesting, AI-assisted code review, LLM threat modelling, and prompt injection. Foundations now spans 3 weeks so you actually build your lab environment properly. Capstone is a full 2-week sprint. <strong>Same content. More breathing room. Better retention.</strong></span>
+  </div>
+
+  <div class="properties">
+    <div class="prop"><span class="prop-label">Duration</span><span class="prop-value">12 Weeks</span></div>
+    <div class="prop"><span class="prop-label">Daily Effort</span><span class="prop-value">2–3 hrs/day</span></div>
+    <div class="prop"><span class="prop-label">Total Hours</span><span class="prop-value">~120–130 hrs</span></div>
+    <div class="prop"><span class="prop-label">Focus</span><div style="display:flex;gap:4px;flex-wrap:wrap;margin-top:2px;"><span class="prop-tag red">⚔️ Cyber</span><span class="prop-tag blue">📋 GRC</span><span class="prop-tag ai">🤖 AI</span></div></div>
+    <div class="prop"><span class="prop-label">Target Roles</span><span class="prop-value" style="font-size:11px;">SOC L1 · GRC Analyst · Jr. VAPT</span></div>
+    <div class="prop"><span class="prop-label">Indian Context</span><span class="prop-tag green" style="margin-top:2px;">✓ DPDP · CERT-In · IT Act</span></div>
+  </div>
+
+  <div class="progress-section">
+    <div class="progress-header">
+      <span class="progress-label">Overall Progress — <span id="done-count">0</span> / <span id="total-count">0</span> topics</span>
+      <span class="progress-pct" id="pct-label">0%</span>
+    </div>
+    <div class="progress-track"><div class="progress-fill" id="progress-fill" style="width:0%"></div></div>
+  </div>
+
+  
+  <!-- 3-Month Schedule Overview -->
+  <div style="margin-bottom:24px;">
+    <div style="font-family: 'Fraunces', serif; font-size: 15px; font-weight: 600; margin-bottom: 12px; display:flex; align-items:center; gap:8px;">📅 12-Week Schedule at a Glance</div>
+    <div style="display:grid; grid-template-columns: repeat(4,1fr); gap:4px;">
+      <div style="background:#fff8f0;border:1px solid #ffe0b2;border-top:3px solid #d46b08;border-radius:4px;padding:10px 12px;">
+        <div style="font-size:10px;color:#d46b08;font-weight:600;letter-spacing:0.06em;text-transform:uppercase;margin-bottom:6px;">Month 1 — Wk 1–4</div>
+        <div style="font-size:11.5px;color:var(--text-muted);line-height:1.65;">Foundations &amp; OS (Wk 1–3)<br>Cryptography &amp; PKI (Wk 3)<br>Network Security start (Wk 4)</div>
+      </div>
+      <div style="background:#fff1f0;border:1px solid #ffd0cc;border-top:3px solid #d4380d;border-radius:4px;padding:10px 12px;">
+        <div style="font-size:10px;color:#d4380d;font-weight:600;letter-spacing:0.06em;text-transform:uppercase;margin-bottom:6px;">Month 2 — Wk 5–8</div>
+        <div style="font-size:11.5px;color:var(--text-muted);line-height:1.65;">Network Security (Wk 5)<br>Web App / VAPT (Wk 5–6)<br>Ethical Hacking CEH (Wk 6–7)<br>SOC &amp; SIEM Ops (Wk 7–8)</div>
+      </div>
+      <div style="background:#e6f4ff;border:1px solid #bae0ff;border-top:3px solid #0958d9;border-radius:4px;padding:10px 12px;">
+        <div style="font-size:10px;color:#0958d9;font-weight:600;letter-spacing:0.06em;text-transform:uppercase;margin-bottom:6px;">Month 3 — Wk 9–12</div>
+        <div style="font-size:11.5px;color:var(--text-muted);line-height:1.65;">Threat Intel (Wk 8–9)<br>Cloud Security (Wk 9)<br>GRC Deep Dive (Wk 9–10)<br>AI Security (Wk 10–11)<br>Capstone (Wk 11–12)</div>
+      </div>
+      <div style="background:#f6ffed;border:1px solid #b7eb8f;border-top:3px solid #389e0d;border-radius:4px;padding:10px 12px;">
+        <div style="font-size:10px;color:#389e0d;font-weight:600;letter-spacing:0.06em;text-transform:uppercase;margin-bottom:6px;">Week 12 — Launch</div>
+        <div style="font-size:11.5px;color:var(--text-muted);line-height:1.65;">Portfolio polish<br>Mock interviews<br>Resume &amp; LinkedIn<br>Job applications live</div>
+      </div>
+    </div>
+    <div style="display:flex;gap:16px;margin-top:8px;flex-wrap:wrap;">
+      <span style="font-size:11px;color:var(--text-muted);">⏱ 2–3 hrs/day · 5 days/week</span>
+      <span style="font-size:11px;color:var(--text-muted);">📚 ~120–130 total hours</span>
+      <span style="font-size:11px;color:var(--text-muted);">🗓 Weekend slots for lab practice &amp; capstone projects</span>
+    </div>
+  </div>
+
+<hr class="divider">
+
+  <!-- ===== PHASE: FOUNDATIONS ===== -->
+  <div class="phase open" id="p-foundations">
+    <div class="phase-header" onclick="togglePhase(this)">
+      <span class="phase-toggle">▶</span><span class="phase-emoji">🌱</span>
+      <div class="phase-meta"><div class="phase-name">Foundations — Security Core</div><div class="phase-weeks">Week 1–3 · Concepts · OS · Networking basics · Extra practice time</div></div>
+      <span class="phase-badge badge-both">Cyber + GRC</span>
+    </div>
+    <div class="phase-body">
+      <div class="week-label">Week 1</div>
+      <div class="topic-group">
+        <div class="topic-group-title">Security Fundamentals</div>
+        <ul class="checklist">
+          <li onclick="toggleCheck(this)"><span class="check-box"></span><span class="check-text">CIA Triad — Confidentiality, Integrity, Availability with real-world examples</span></li>
+          <li onclick="toggleCheck(this)"><span class="check-box"></span><span class="check-text">AAA model — Authentication, Authorization, Accounting</span></li>
+          <li onclick="toggleCheck(this)"><span class="check-box"></span><span class="check-text">Types of threat actors — Nation-state, Insider, Hacktivists, Cybercriminals</span></li>
+          <li onclick="toggleCheck(this)"><span class="check-box"></span><span class="check-text">Attack types — Phishing, Social engineering, MITM, DoS/DDoS, Ransomware, APT</span></li>
+          <li onclick="toggleCheck(this)"><span class="check-box"></span><span class="check-text">Security controls — Preventive, Detective, Corrective, Compensating</span></li>
+          <li onclick="toggleCheck(this)"><span class="check-box"></span><span class="check-text">Defense-in-depth strategy</span></li>
+        </ul>
+      </div>
+      <div class="topic-group">
+        <div class="topic-group-title">Operating Systems Security</div>
+        <ul class="checklist">
+          <li onclick="toggleCheck(this)"><span class="check-box"></span><span class="check-text">Linux — file permissions (chmod/chown), users & groups, sudoers <span class="tag-inline tag-lab">LAB</span></span></li>
+          <li onclick="toggleCheck(this)"><span class="check-box"></span><span class="check-text">Linux — processes, cron jobs, /var/log, syslog, journalctl <span class="tag-inline tag-lab">LAB</span></span></li>
+          <li onclick="toggleCheck(this)"><span class="check-box"></span><span class="check-text">Linux — bash scripting basics: loops, conditionals, file parsing <span class="tag-inline tag-lab">LAB</span></span></li>
+          <li onclick="toggleCheck(this)"><span class="check-box"></span><span class="check-text">Windows — Active Directory basics: domains, OUs, users, groups</span></li>
+          <li onclick="toggleCheck(this)"><span class="check-box"></span><span class="check-text">Windows — Group Policy Objects (GPO), local security policy</span></li>
+          <li onclick="toggleCheck(this)"><span class="check-box"></span><span class="check-text">Windows — Event Viewer: Event IDs 4624, 4625, 4688, 4720, 4732 <span class="tag-inline tag-soc">SOC</span></span></li>
+          <li onclick="toggleCheck(this)"><span class="check-box"></span><span class="check-text">Windows — Registry security, startup locations (HKLM Run keys)</span></li>
+        </ul>
+      </div>
+      <div class="week-label">Week 2–3 — Lab Setup &amp; Practice</div>
+      <div class="topic-group">
+        <div class="topic-group-title">Lab Environment</div>
+        <ul class="checklist">
+          <li onclick="toggleCheck(this)"><span class="check-box"></span><span class="check-text">Hypervisor setup — VirtualBox / VMware with NAT + host-only networks <span class="tag-inline tag-lab">LAB</span></span></li>
+          <li onclick="toggleCheck(this)"><span class="check-box"></span><span class="check-text">Deploy Kali Linux, Windows Server 2019 eval, Ubuntu Server <span class="tag-inline tag-lab">LAB</span></span></li>
+          <li onclick="toggleCheck(this)"><span class="check-box"></span><span class="check-text">Deploy vulnerable targets — DVWA, Juice Shop, Metasploitable2 <span class="tag-inline tag-lab">LAB</span></span></li>
+          <li onclick="toggleCheck(this)"><span class="check-box"></span><span class="check-text">GRC intro — Governance vs Risk vs Compliance mental model</span></li>
+          <li onclick="toggleCheck(this)"><span class="check-box"></span><span class="check-text">Frameworks overview — NIST CSF, ISO 27001, CIS Controls v8, SOC 2</span></li>
+          <li onclick="toggleCheck(this)"><span class="check-box"></span><span class="check-text">Indian regulatory landscape — IT Act 2000, DPDP Act 2023, CERT-In directions <span class="tag-inline tag-cert">🇮🇳</span></span></li>
+        </ul>
+      </div>
+
+      <div class="week-label">Week 3 — Consolidation &amp; Deep Practice</div>
+      <div class="topic-group">
+        <div class="topic-group-title">Security Concepts — Reinforcement Labs</div>
+        <ul class="checklist">
+          <li onclick="toggleCheck(this)"><span class="check-box"></span><span class="check-text">CIA Triad mapping exercise — analyse 5 real Indian breach case studies (AIIMS, CoWIN, BigBasket, Dominos, MobiKwik) and identify which properties were violated <span class="tag-inline tag-lab">LAB</span></span></li>
+          <li onclick="toggleCheck(this)"><span class="check-box"></span><span class="check-text">Security controls gap analysis — given a 20-person CA firm's current setup, identify missing preventive/detective/corrective controls and prioritise remediation <span class="tag-inline tag-lab">LAB</span></span></li>
+          <li onclick="toggleCheck(this)"><span class="check-box"></span><span class="check-text">Threat actor profiling exercise — build a 1-page profile of APT28 and Lazarus Group covering motivation, capability, typical TTPs, and Indian targets <span class="tag-inline tag-lab">LAB</span></span></li>
+        </ul>
+      </div>
+      <div class="topic-group">
+        <div class="topic-group-title">OS Security — Advanced Practice</div>
+        <ul class="checklist">
+          <li onclick="toggleCheck(this)"><span class="check-box"></span><span class="check-text">Linux hardening checklist — apply CIS Benchmark Level 1 controls to your Ubuntu VM: disable root SSH, configure fail2ban, set password aging, audit cron <span class="tag-inline tag-lab">LAB</span></span></li>
+          <li onclick="toggleCheck(this)"><span class="check-box"></span><span class="check-text">Windows hardening — enable audit policies via GPO, configure Windows Defender, disable unused services, verify Event Log settings <span class="tag-inline tag-lab">LAB</span></span></li>
+          <li onclick="toggleCheck(this)"><span class="check-box"></span><span class="check-text">Write your first bash security audit script — checks for world-writable files, empty passwords, SUID binaries, and listening services <span class="tag-inline tag-lab">LAB</span></span></li>
+        </ul>
+      </div>
+      <div class="topic-group">
+        <div class="topic-group-title">Lab Verification Checkpoint</div>
+        <ul class="checklist">
+          <li onclick="toggleCheck(this)"><span class="check-box"></span><span class="check-text">Verify all VMs are running and accessible: Kali → Metasploitable2 ping, DVWA login, Juice Shop accessible, Windows Server RDP working</span></li>
+          <li onclick="toggleCheck(this)"><span class="check-box"></span><span class="check-text">Take VM snapshots — "Clean Install" baseline for each VM before any testing begins <span class="tag-inline tag-lab">LAB</span></span></li>
+          <li onclick="toggleCheck(this)"><span class="check-box"></span><span class="check-text">Quiz yourself — 30-question foundations review covering CIA, AAA, attack types, OS concepts, port numbers, and Indian regulatory basics</span></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== PHASE: CRYPTOGRAPHY ===== -->
+  <div class="phase" id="p-crypto">
+    <div class="phase-header" onclick="togglePhase(this)">
+      <span class="phase-toggle">▶</span><span class="phase-emoji">🔐</span>
+      <div class="phase-meta"><div class="phase-name">Cryptography & PKI</div><div class="phase-weeks">Week 3 · Encryption · Hashing · Certificates</div></div>
+      <span class="phase-badge" style="background:#f9f0ff;color:#531dab;">Crypto</span>
+    </div>
+    <div class="phase-body">
+      <div class="topic-group">
+        <div class="topic-group-title">Encryption Concepts</div>
+        <ul class="checklist">
+          <li onclick="toggleCheck(this)"><span class="check-box"></span><span class="check-text">Symmetric encryption — AES-128/256, DES, 3DES; block vs stream ciphers</span></li>
+          <li onclick="toggleCheck(this)"><span class="check-box"></span><span class="check-text">Asymmetric encryption — RSA, ECC; public/private key pairs explained</span></li>
+          <li onclick="toggleCheck(this)"><span class="check-box"></span><span class="check-text">Key exchange — Diffie-Hellman, ECDH</span></li>
+          <li onclick="toggleCheck(this)"><span class="check-box"></span><span class="check-text">Hashing — MD5, SHA-1, SHA-256, SHA-3; collision resistance</span></li>
+          <li onclick="toggleCheck(this)"><span class="check-box"></span><span class="check-text">HMAC — message authentication codes, use in APIs and TLS</span></li>
+          <li onclick="toggleCheck(this)"><span class="check-box"></span><span class="check-text">Salting passwords — bcrypt, Argon2 vs unsalted MD5 <span class="tag-inline tag-lab">LAB</span></span></li>
+        </ul>
+      </div>
+      <div class="topic-group">
+        <div class="topic-group-title">PKI & TLS</div>
+        <ul class="checklist">
+          <li onclick="toggleCheck(this)"><span class="check-box"></span><span class="check-text">PKI components — CA, RA, CRL, OCSP, certificate chain of trust</span></li>
+          <li onclick="toggleCheck(this)"><span class="check-box"></span><span class="check-text">X.509 certificates — structure, fields, SAN, wildcard certs</span></li>
+          <li onclick="toggleCheck(this)"><span class="check-box"></span><span class="check-text">TLS 1.2 vs TLS 1.3 handshake — cipher suites, perfect forward secrecy</span></li>
+          <li onclick="toggleCheck(this)"><span class="check-box"></span><span class="check-text">Inspecting TLS in Wireshark — ClientHello, ServerHello, Certificate <span class="tag-inline tag-lab">LAB</span></span></li>
+          <li onclick="toggleCheck(this)"><span class="check-box"></span><span class="check-text">Common crypto attacks — downgrade, BEAST, POODLE, padding oracle</span></li>
+          <li onclick="toggleCheck(this)"><span class="check-box"></span><span class="check-text">OpenSSL basics — generate keys, sign certs, verify, inspect <span class="tag-inline tag-tool">TOOL</span></span></li>
+          <li onclick="toggleCheck(this)"><span class="check-box"></span><span class="check-text">SSH key pairs — ed25519 vs RSA, authorized_keys, agent forwarding <span class="tag-inline tag-lab">LAB</span></span></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== PHASE: NETWORK SECURITY ===== -->
+  <div class="phase" id="p-network">
+    <div class="phase-header" onclick="togglePhase(this)">
+      <span class="phase-toggle">▶</span><span class="phase-emoji">🌐</span>
+      <div class="phase-meta"><div class="phase-name">Network Security & Protocols</div><div class="phase-weeks">Week 4–5 · Protocols · Scanning · Firewalls · Wireless</div></div>
+      <span class="phase-badge badge-cyber">Cyber</span>
+    </div>
+    <div class="phase-body">
+      <div class="week-label">Week 3</div>
+      <div class="topic-group">
+        <div class="topic-group-title">Protocol Deep Dive</div>
+        <ul class="checklist">
+          <li onclick="toggleCheck(this)"><span class="check-box"></span><span class="check-text">TCP/IP model — IP, TCP, UDP; flags (SYN, ACK, RST, FIN, PSH)</span></li>
+          <li onclick="toggleCheck(this)"><span class="check-box"></span><span class="check-text">DNS — A, AAAA, MX, CNAME, PTR records; zone transfers; DNS poisoning</span></li>
+          <li onclick="toggleCheck(this)"><span class="check-box"></span><span class="check-text">HTTP/S — methods, status codes, headers, cookies, HSTS</span></li>
+          <li onclick="toggleCheck(this)"><span class="check-box"></span><span class="check-text">DHCP — lease process, DORA, rogue DHCP attacks</span></li>
+          <li onclick="toggleCheck(this)"><span class="check-box"></span><span class="check-text">ARP — address resolution, ARP spoofing / poisoning attacks</span></li>
+          <li onclick="toggleCheck(this)"><span class="check-box"></span><span class="check-text">ICMP — ping, traceroute, ICMP tunneling</span></li>
+          <li onclick="toggleCheck(this)"><span class="check-box"></span><span class="check-text">Common ports 1–1024 memorization + key service ports <span class="tag-inline tag-cert">Security+</span></span></li>
+        </ul>
+      </div>
+      <div class="topic-group">
+        <div class="topic-group-title">Packet Analysis</div>
+        <ul class="checklist">
+          <li onclick="toggleCheck(this)"><span class="check-box"></span><span class="check-text">Wireshark — capture filters vs display filters, follow TCP stream <span class="tag-inline tag-tool">TOOL</span> <span class="tag-inline tag-lab">LAB</span></span></li>
+          <li onclick="toggleCheck(this)"><span class="check-box"></span><span class="check-text">Wireshark — identify credentials in cleartext protocols (Telnet, FTP, HTTP) <span class="tag-inline tag-lab">LAB</span></span></li>
+          <li onclick="toggleCheck(this)"><span class="check-box"></span><span class="check-text">Wireshark — detect ARP spoofing, port scans, DNS anomalies <span class="tag-inline tag-lab">LAB</span></span></li>
+          <li onclick="toggleCheck(this)"><span class="check-box"></span><span class="check-text">tcpdump — command-line packet capture for SOC/IR use <span class="tag-inline tag-tool">TOOL</span></span></li>
+        </ul>
+      </div>
+      <div class="week-label">Week 4</div>
+      <div class="topic-group">
+        <div class="topic-group-title">Scanning & Reconnaissance</div>
+        <ul class="checklist">
+          <li onclick="toggleCheck(this)"><span class="check-box"></span><span class="check-text">Nmap — host discovery, port scans (SYN, connect, UDP, stealth) <span class="tag-inline tag-tool">TOOL</span> <span class="tag-inline tag-lab">LAB</span></span></li>
+          <li onclick="toggleCheck(this)"><span class="check-box"></span><span class="check-text">Nmap — OS fingerprinting (-O), service version detection (-sV), NSE scripts <span class="tag-inline tag-lab">LAB</span></span></li>
+          <li onclick="toggleCheck(this)"><span class="check-box"></span><span class="check-text">Passive recon — Shodan, theHarvester, WHOIS, dnsdumpster <span class="tag-inline tag-tool">TOOL</span></span></li>
+          <li onclick="toggleCheck(this)"><span class="check-box"></span><span class="check-text">Google Dorking — finding exposed assets, login pages, sensitive files</span></li>
+        </ul>
+      </div>
+      <div class="topic-group">
+        <div class="topic-group-title">Firewalls, IDS/IPS & Architecture</div>
+        <ul class="checklist">
+          <li onclick="toggleCheck(this)"><span class="check-box"></span><span class="check-text">Firewall types — packet filter, stateful, NGFW, WAF — use cases</span></li>
+          <li onclick="toggleCheck(this)"><span class="check-box"></span><span class="check-text">iptables / nftables basics — allow, deny, chain rules <span class="tag-inline tag-lab">LAB</span></span></li>
+          <li onclick="toggleCheck(this)"><span class="check-box"></span><span class="check-text">IDS vs IPS — Snort/Suricata rules, signature vs anomaly-based detection</span></li>
+          <li onclick="toggleCheck(this)"><span class="check-box"></span><span class="check-text">Network segmentation — DMZ, VLANs, jump server / bastion host</span></li>
+          <li onclick="toggleCheck(this)"><span class="check-box"></span><span class="check-text">VPN types — IPSec, SSL/TLS VPN, split tunneling; Zero Trust vs VPN</span></li>
+          <li onclick="toggleCheck(this)"><span class="check-box"></span><span class="check-text">Wireless security — WEP/WPA/WPA2/WPA3; evil twin attacks, deauth attacks <span class="tag-inline tag-ceh">CEH</span></span></li>
+          <li onclick="toggleCheck(this)"><span class="check-box"></span><span class="check-text">Proxy servers, NAT, load balancers — security implications</span></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== PHASE: WEB APP / VAPT ===== -->
+  <div class="phase" id="p-webapp">
+    <div class="phase-header" onclick="togglePhase(this)">
+      <span class="phase-toggle">▶</span><span class="phase-emoji">🕷️</span>
+      <div class="phase-meta"><div class="phase-name">Web Application Security & VAPT</div><div class="phase-weeks">Week 5–6 · OWASP · Burp Suite · Report Writing</div></div>
+      <span class="phase-badge badge-soc">VAPT</span>
+    </div>
+    <div class="phase-body">
+      <div class="topic-group">
+        <div class="topic-group-title">OWASP Top 10 — Hands-on</div>
+        <ul class="checklist">
+          <li onclick="toggleCheck(this)"><span class="check-box"></span><span class="check-text">A01 Broken Access Control — IDOR, forced browsing, privilege escalation <span class="tag-inline tag-lab">LAB</span></span></li>
+          <li onclick="toggleCheck(this)"><span class="check-box"></span><span class="check-text">A02 Cryptographic Failures — cleartext data, weak ciphers, improper key storage</span></li>
+          <li onclick="toggleCheck(this)"><span class="check-box"></span><span class="check-text">A03 Injection — SQL injection (manual + sqlmap), command injection <span class="tag-inline tag-lab">LAB</span></span></li>
+          <li onclick="toggleCheck(this)"><span class="check-box"></span><span class="check-text">A07 XSS — Reflected, Stored, DOM-based; stealing cookies via XSS <span class="tag-inline tag-lab">LAB</span></span></li>
+          <li onclick="toggleCheck(this)"><span class="check-box"></span><span class="check-text">A05 Security Misconfiguration — exposed admin panels, default creds, directory listing</span></li>
+          <li onclick="toggleCheck(this)"><span class="check-box"></span><span class="check-text">A08 Insecure Deserialization — concept and exploitation basics</span></li>
+          <li onclick="toggleCheck(this)"><span class="check-box"></span><span class="check-text">A09 Vulnerable Components — identifying outdated libs with Retire.js / OWASP Dependency Check</span></li>
+          <li onclick="toggleCheck(this)"><span class="check-box"></span><span class="check-text">CSRF — Cross-Site Request Forgery, SameSite cookies, token validation <span class="tag-inline tag-lab">LAB</span></span></li>
+          <li onclick="toggleCheck(this)"><span class="check-box"></span><span class="check-text">File upload vulnerabilities — bypassing extension filters, webshells <span class="tag-inline tag-lab">LAB</span></span></li>
+          <li onclick="toggleCheck(this)"><span class="check-box"></span><span class="check-text">Authentication attacks — brute force, credential stuffing, session fixation</span></li>
+        </ul>
+      </div>
+      <div class="topic-group">
+        <div class="topic-group-title">Burp Suite Workflow</div>
+        <ul class="checklist">
+          <li onclick="toggleCheck(this)"><span class="check-box"></span><span class="check-text">Burp Suite Community — proxy setup, intercept, repeater, intruder <span class="tag-inline tag-tool">TOOL</span></span></li>
+          <li onclick="toggleCheck(this)"><span class="check-box"></span><span class="check-text">Burp Scanner (Pro) or OWASP ZAP for automated scanning <span class="tag-inline tag-tool">TOOL</span></span></li>
+          <li onclick="toggleCheck(this)"><span class="check-box"></span><span class="check-text">Mapping attack surface — spidering, JS analysis, hidden endpoints <span class="tag-inline tag-lab">LAB</span></span></li>
+          <li onclick="toggleCheck(this)"><span class="check-box"></span><span class="check-text">Testing APIs — REST/JSON, parameter tampering, JWT attacks <span class="tag-inline tag-lab">LAB</span></span></li>
+        </ul>
+      </div>
+      <div class="topic-group">
+        <div class="topic-group-title">Vulnerability Assessment</div>
+        <ul class="checklist">
+          <li onclick="toggleCheck(this)"><span class="check-box"></span><span class="check-text">Nessus Essentials / OpenVAS — full scan, credentialed scan, plugin families <span class="tag-inline tag-tool">TOOL</span> <span class="tag-inline tag-lab">LAB</span></span></li>
+          <li onclick="toggleCheck(this)"><span class="check-box"></span><span class="check-text">CVSS v3.1 scoring — Base, Temporal, Environmental metrics</span></li>
+          <li onclick="toggleCheck(this)"><span class="check-box"></span><span class="check-text">CVE / NVD / Exploit-DB — researching vulnerabilities <span class="tag-inline tag-tool">TOOL</span></span></li>
+          <li onclick="toggleCheck(this)"><span class="check-box"></span><span class="check-text">VAPT report writing — executive summary, findings table, PoC, remediation <span class="tag-inline tag-lab">LAB</span></span></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== PHASE: ETHICAL HACKING ===== -->
+  <div class="phase" id="p-ethical">
+    <div class="phase-header" onclick="togglePhase(this)">
+      <span class="phase-toggle">▶</span><span class="phase-emoji">🎯</span>
+      <div class="phase-meta"><div class="phase-name">Ethical Hacking — CEH Track</div><div class="phase-weeks">Week 6–7 · Exploitation · Post-Exploitation · Social Engineering</div></div>
+      <span class="phase-badge badge-threat">CEH</span>
+    </div>
+    <div class="phase-body">
+      <div class="topic-group">
+        <div class="topic-group-title">Hacking Methodology</div>
+        <ul class="checklist">
+          <li onclick="toggleCheck(this)"><span class="check-box"></span><span class="check-text">CEH phases — Reconnaissance, Scanning, Enumeration, Exploitation, Post-exploitation, Reporting</span></li>
+          <li onclick="toggleCheck(this)"><span class="check-box"></span><span class="check-text">Footprinting — passive (OSINT) vs active; LinkedIn, Maltego, Recon-ng <span class="tag-inline tag-tool">TOOL</span></span></li>
+          <li onclick="toggleCheck(this)"><span class="check-box"></span><span class="check-text">Enumeration — SMB (enum4linux), SNMP, LDAP, NetBIOS <span class="tag-inline tag-lab">LAB</span></span></li>
+        </ul>
+      </div>
+      <div class="topic-group">
+        <div class="topic-group-title">Exploitation</div>
+        <ul class="checklist">
+          <li onclick="toggleCheck(this)"><span class="check-box"></span><span class="check-text">Metasploit Framework — msfconsole, search, use, exploit, payload types <span class="tag-inline tag-tool">TOOL</span> <span class="tag-inline tag-lab">LAB</span></span></li>
+          <li onclick="toggleCheck(this)"><span class="check-box"></span><span class="check-text">Meterpreter sessions — shell, sysinfo, hashdump, upload/download <span class="tag-inline tag-lab">LAB</span></span></li>
+          <li onclick="toggleCheck(this)"><span class="check-box"></span><span class="check-text">Password attacks — John the Ripper, Hashcat, rainbow tables, rule-based <span class="tag-inline tag-tool">TOOL</span> <span class="tag-inline tag-lab">LAB</span></span></li>
+          <li onclick="toggleCheck(this)"><span class="check-box"></span><span class="check-text">Brute forcing services — Hydra against SSH, FTP, HTTP forms <span class="tag-inline tag-tool">TOOL</span> <span class="tag-inline tag-lab">LAB</span></span></li>
+          <li onclick="toggleCheck(this)"><span class="check-box"></span><span class="check-text">Buffer overflow concepts — stack, EIP overwrite (intro level, not DEP/ASLR bypass)</span></li>
+        </ul>
+      </div>
+      <div class="topic-group">
+        <div class="topic-group-title">Post-Exploitation & Evasion</div>
+        <ul class="checklist">
+          <li onclick="toggleCheck(this)"><span class="check-box"></span><span class="check-text">Privilege escalation — Linux (SUID, sudo misconfig) and Windows (token impersonation) <span class="tag-inline tag-lab">LAB</span></span></li>
+          <li onclick="toggleCheck(this)"><span class="check-box"></span><span class="check-text">Lateral movement concepts — Pass-the-Hash, Pass-the-Ticket</span></li>
+          <li onclick="toggleCheck(this)"><span class="check-box"></span><span class="check-text">Covering tracks — clearing logs, timestomping (awareness, not practice)</span></li>
+          <li onclick="toggleCheck(this)"><span class="check-box"></span><span class="check-text">Antivirus evasion techniques — obfuscation, packers, msfvenom payloads <span class="tag-inline tag-ceh">CEH</span></span></li>
+        </ul>
+      </div>
+      <div class="topic-group">
+        <div class="topic-group-title">Social Engineering</div>
+        <ul class="checklist">
+          <li onclick="toggleCheck(this)"><span class="check-box"></span><span class="check-text">Phishing types — spear phishing, whaling, vishing, smishing</span></li>
+          <li onclick="toggleCheck(this)"><span class="check-box"></span><span class="check-text">GoPhish — build and run a phishing simulation campaign <span class="tag-inline tag-tool">TOOL</span> <span class="tag-inline tag-lab">LAB</span></span></li>
+          <li onclick="toggleCheck(this)"><span class="check-box"></span><span class="check-text">SET (Social Engineering Toolkit) — credential harvesting demo <span class="tag-inline tag-tool">TOOL</span></span></li>
+          <li onclick="toggleCheck(this)"><span class="check-box"></span><span class="check-text">Physical security attacks — tailgating, baiting, shoulder surfing</span></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== PHASE: SOC & SIEM ===== -->
+  <div class="phase" id="p-soc">
+    <div class="phase-header" onclick="togglePhase(this)">
+      <span class="phase-toggle">▶</span><span class="phase-emoji">📡</span>
+      <div class="phase-meta"><div class="phase-name">SOC & SIEM Operations</div><div class="phase-weeks">Week 7–8 · Log Analysis · Alert Triage · Incident Response</div></div>
+      <span class="phase-badge badge-soc">SOC Core</span>
+    </div>
+    <div class="phase-body">
+      <div class="topic-group">
+        <div class="topic-group-title">Log Sources & Analysis</div>
+        <ul class="checklist">
+          <li onclick="toggleCheck(this)"><span class="check-box"></span><span class="check-text">Windows Event Logs — Security, System, Application; key Event IDs for SOC <span class="tag-inline tag-soc">SOC</span></span></li>
+          <li onclick="toggleCheck(this)"><span class="check-box"></span><span class="check-text">Sysmon — config, process creation (Event ID 1), network connections (3), file creation (11) <span class="tag-inline tag-tool">TOOL</span></span></li>
+          <li onclick="toggleCheck(this)"><span class="check-box"></span><span class="check-text">Linux logs — /var/log/auth.log, /var/log/syslog, /var/log/apache2/</span></li>
+          <li onclick="toggleCheck(this)"><span class="check-box"></span><span class="check-text">Web server logs — Apache/Nginx access logs; detect SQLi, LFI, brute force patterns <span class="tag-inline tag-lab">LAB</span></span></li>
+          <li onclick="toggleCheck(this)"><span class="check-box"></span><span class="check-text">Firewall & IDS logs — parsing deny rules, failed connection patterns</span></li>
+          <li onclick="toggleCheck(this)"><span class="check-box"></span><span class="check-text">Log centralization — syslog-ng, Filebeat/Winlogbeat forwarding to SIEM <span class="tag-inline tag-lab">LAB</span></span></li>
+        </ul>
+      </div>
+      <div class="topic-group">
+        <div class="topic-group-title">SIEM — Wazuh (Primary)</div>
+        <ul class="checklist">
+          <li onclick="toggleCheck(this)"><span class="check-box"></span><span class="check-text">Wazuh server + agent deployment on Linux and Windows <span class="tag-inline tag-tool">TOOL</span> <span class="tag-inline tag-lab">LAB</span></span></li>
+          <li onclick="toggleCheck(this)"><span class="check-box"></span><span class="check-text">Wazuh — File Integrity Monitoring (FIM), rootkit detection, SCA policies</span></li>
+          <li onclick="toggleCheck(this)"><span class="check-box"></span><span class="check-text">Wazuh — creating custom rules and decoders <span class="tag-inline tag-lab">LAB</span></span></li>
+          <li onclick="toggleCheck(this)"><span class="check-box"></span><span class="check-text">Wazuh + Kibana — building dashboards, alert visualization <span class="tag-inline tag-lab">LAB</span></span></li>
+          <li onclick="toggleCheck(this)"><span class="check-box"></span><span class="check-text">Splunk Free — SPL queries: search, stats, timechart, table <span class="tag-inline tag-tool">TOOL</span> <span class="tag-inline tag-lab">LAB</span></span></li>
+        </ul>
+      </div>
+      <div class="topic-group">
+        <div class="topic-group-title">Alert Triage & Incident Response</div>
+        <ul class="checklist">
+          <li onclick="toggleCheck(this)"><span class="check-box"></span><span class="check-text">Alert triage workflow — true positive vs false positive analysis <span class="tag-inline tag-soc">SOC</span></span></li>
+          <li onclick="toggleCheck(this)"><span class="check-box"></span><span class="check-text">NIST SP 800-61 IR lifecycle — Preparation, Detection, Containment, Eradication, Recovery, Lessons Learned</span></li>
+          <li onclick="toggleCheck(this)"><span class="check-box"></span><span class="check-text">MITRE ATT&CK framework — tactics, techniques, sub-techniques, Navigator <span class="tag-inline tag-tool">TOOL</span></span></li>
+          <li onclick="toggleCheck(this)"><span class="check-box"></span><span class="check-text">Threat hunting — hypothesis-driven queries in SIEM, IOC vs TTP hunting <span class="tag-inline tag-lab">LAB</span></span></li>
+          <li onclick="toggleCheck(this)"><span class="check-box"></span><span class="check-text">Writing incident reports — timeline, IOCs, affected systems, recommendations <span class="tag-inline tag-lab">LAB</span></span></li>
+          <li onclick="toggleCheck(this)"><span class="check-box"></span><span class="check-text">SOC L1 daily workflow simulation — review alerts, escalate, document <span class="tag-inline tag-lab">LAB</span></span></li>
+        </ul>
+      </div>
+      <div class="topic-group">
+        <div class="topic-group-title">Malware Awareness (SOC perspective)</div>
+        <ul class="checklist">
+          <li onclick="toggleCheck(this)"><span class="check-box"></span><span class="check-text">Malware types — virus, worm, trojan, RAT, keylogger, ransomware, rootkit, spyware</span></li>
+          <li onclick="toggleCheck(this)"><span class="check-box"></span><span class="check-text">Static analysis basics — VirusTotal, strings, file hashes, PE headers <span class="tag-inline tag-tool">TOOL</span></span></li>
+          <li onclick="toggleCheck(this)"><span class="check-box"></span><span class="check-text">Dynamic analysis basics — Any.run / Cuckoo sandbox, behavioral IOCs <span class="tag-inline tag-tool">TOOL</span></span></li>
+          <li onclick="toggleCheck(this)"><span class="check-box"></span><span class="check-text">IOC types — file hash, IP, domain, URL, mutex, registry key</span></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== PHASE: THREAT INTELLIGENCE ===== -->
+  <div class="phase" id="p-threat">
+    <div class="phase-header" onclick="togglePhase(this)">
+      <span class="phase-toggle">▶</span><span class="phase-emoji">🔍</span>
+      <div class="phase-meta"><div class="phase-name">Threat Intelligence</div><div class="phase-weeks">Week 8 · CTI · IOCs · Feeds · Threat Actors</div></div>
+      <span class="phase-badge badge-threat">CTI</span>
+    </div>
+    <div class="phase-body">
+      <div class="topic-group">
+        <div class="topic-group-title">CTI Fundamentals</div>
+        <ul class="checklist">
+          <li onclick="toggleCheck(this)"><span class="check-box"></span><span class="check-text">Intelligence types — Strategic, Operational, Tactical, Technical</span></li>
+          <li onclick="toggleCheck(this)"><span class="check-box"></span><span class="check-text">Intelligence lifecycle — planning, collection, processing, analysis, dissemination</span></li>
+          <li onclick="toggleCheck(this)"><span class="check-box"></span><span class="check-text">Pyramid of Pain — hash, IP, domain, artifacts, TTPs (why TTPs matter most)</span></li>
+          <li onclick="toggleCheck(this)"><span class="check-box"></span><span class="check-text">Diamond Model of Intrusion Analysis</span></li>
+          <li onclick="toggleCheck(this)"><span class="check-box"></span><span class="check-text">Cyber Kill Chain — 7 stages, mapping defenses to each stage</span></li>
+        </ul>
+      </div>
+      <div class="topic-group">
+        <div class="topic-group-title">Threat Intel Sources & Tools</div>
+        <ul class="checklist">
+          <li onclick="toggleCheck(this)"><span class="check-box"></span><span class="check-text">OSINT sources — MISP, AlienVault OTX, Shodan, Censys, GreyNoise <span class="tag-inline tag-tool">TOOL</span></span></li>
+          <li onclick="toggleCheck(this)"><span class="check-box"></span><span class="check-text">Threat feeds — STIX/TAXII format, integrating feeds into Wazuh/SIEM <span class="tag-inline tag-lab">LAB</span></span></li>
+          <li onclick="toggleCheck(this)"><span class="check-box"></span><span class="check-text">IOC enrichment — VirusTotal API, AbuseIPDB, URLScan.io <span class="tag-inline tag-tool">TOOL</span></span></li>
+          <li onclick="toggleCheck(this)"><span class="check-box"></span><span class="check-text">Dark web awareness — Tor, .onion sites, paste sites (recon only, no participation)</span></li>
+          <li onclick="toggleCheck(this)"><span class="check-box"></span><span class="check-text">APT group profiles — Lazarus, APT28, APT41, Sandworm; TTPs from MITRE ATT&CK</span></li>
+          <li onclick="toggleCheck(this)"><span class="check-box"></span><span class="check-text">Writing a threat intelligence report for a fictional incident <span class="tag-inline tag-lab">LAB</span></span></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== PHASE: CLOUD SECURITY ===== -->
+  <div class="phase" id="p-cloud">
+    <div class="phase-header" onclick="togglePhase(this)">
+      <span class="phase-toggle">▶</span><span class="phase-emoji">☁️</span>
+      <div class="phase-meta"><div class="phase-name">Cloud Security — AWS & Azure</div><div class="phase-weeks">Week 8–9 · IAM · Misconfigs · CSPM · CIS Benchmarks</div></div>
+      <span class="phase-badge badge-cloud">Cloud</span>
+    </div>
+    <div class="phase-body">
+      <div class="topic-group">
+        <div class="topic-group-title">Cloud Security Fundamentals</div>
+        <ul class="checklist">
+          <li onclick="toggleCheck(this)"><span class="check-box"></span><span class="check-text">Shared Responsibility Model — AWS, Azure, GCP variations</span></li>
+          <li onclick="toggleCheck(this)"><span class="check-box"></span><span class="check-text">Cloud service models — IaaS, PaaS, SaaS security implications</span></li>
+          <li onclick="toggleCheck(this)"><span class="check-box"></span><span class="check-text">Common cloud threats — misconfigured S3 buckets, exposed keys, SSRF, IMDSv1 exploitation</span></li>
+          <li onclick="toggleCheck(this)"><span class="check-box"></span><span class="check-text">Cloud attack surface — metadata service, overprivileged roles, public snapshots</span></li>
+        </ul>
+      </div>
+      <div class="topic-group">
+        <div class="topic-group-title">AWS Security</div>
+        <ul class="checklist">
+          <li onclick="toggleCheck(this)"><span class="check-box"></span><span class="check-text">IAM — users, roles, policies, least privilege, permission boundaries <span class="tag-inline tag-lab">LAB</span></span></li>
+          <li onclick="toggleCheck(this)"><span class="check-box"></span><span class="check-text">S3 security — bucket policies, ACLs, block public access, encryption settings <span class="tag-inline tag-lab">LAB</span></span></li>
+          <li onclick="toggleCheck(this)"><span class="check-box"></span><span class="check-text">CloudTrail — enabling audit logging, identifying suspicious API calls <span class="tag-inline tag-lab">LAB</span></span></li>
+          <li onclick="toggleCheck(this)"><span class="check-box"></span><span class="check-text">AWS Security Hub + GuardDuty — threat detection, findings triage</span></li>
+          <li onclick="toggleCheck(this)"><span class="check-box"></span><span class="check-text">VPC security — security groups vs NACLs, flow logs, VPC peering risks</span></li>
+          <li onclick="toggleCheck(this)"><span class="check-box"></span><span class="check-text">CIS AWS Foundations Benchmark — key controls, automated check with Prowler <span class="tag-inline tag-tool">TOOL</span></span></li>
+        </ul>
+      </div>
+      <div class="topic-group">
+        <div class="topic-group-title">Azure Security</div>
+        <ul class="checklist">
+          <li onclick="toggleCheck(this)"><span class="check-box"></span><span class="check-text">Azure AD (Entra ID) — RBAC, Conditional Access, PIM basics</span></li>
+          <li onclick="toggleCheck(this)"><span class="check-box"></span><span class="check-text">Microsoft Defender for Cloud — secure score, recommendations, alerts</span></li>
+          <li onclick="toggleCheck(this)"><span class="check-box"></span><span class="check-text">Azure Policy + Blueprints — enforcing compliance guardrails</span></li>
+          <li onclick="toggleCheck(this)"><span class="check-box"></span><span class="check-text">Azure Monitor + Sentinel — log analytics, KQL basics, SIEM use case <span class="tag-inline tag-lab">LAB</span></span></li>
+        </ul>
+      </div>
+      <div class="topic-group">
+        <div class="topic-group-title">CSPM & Cloud Auditing</div>
+        <ul class="checklist">
+          <li onclick="toggleCheck(this)"><span class="check-box"></span><span class="check-text">CSPM tools — Prowler (AWS), ScoutSuite (multi-cloud) — run and interpret results <span class="tag-inline tag-tool">TOOL</span> <span class="tag-inline tag-lab">LAB</span></span></li>
+          <li onclick="toggleCheck(this)"><span class="check-box"></span><span class="check-text">Cloud security posture report writing — findings, risk rating, remediation steps <span class="tag-inline tag-lab">LAB</span></span></li>
+          <li onclick="toggleCheck(this)"><span class="check-box"></span><span class="check-text">Container security basics — Docker image scanning with Trivy, least privilege containers <span class="tag-inline tag-tool">TOOL</span></span></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== PHASE: GRC ===== -->
+  <div class="phase" id="p-grc">
+    <div class="phase-header" onclick="togglePhase(this)">
+      <span class="phase-toggle">▶</span><span class="phase-emoji">📋</span>
+      <div class="phase-meta"><div class="phase-name">GRC — Risk, Compliance & Audit</div><div class="phase-weeks">Week 9–10 · ISO 27001 · DPDP · Risk Register · Audit</div></div>
+      <span class="phase-badge badge-grc">GRC</span>
+    </div>
+    <div class="phase-body">
+      <div class="topic-group">
+        <div class="topic-group-title">Risk Management</div>
+        <ul class="checklist">
+          <li onclick="toggleCheck(this)"><span class="check-box"></span><span class="check-text">Risk assessment methodologies — qualitative vs quantitative (ALE = SLE × ARO)</span></li>
+          <li onclick="toggleCheck(this)"><span class="check-box"></span><span class="check-text">Risk treatment options — Accept, Avoid, Transfer, Mitigate (AATR)</span></li>
+          <li onclick="toggleCheck(this)"><span class="check-box"></span><span class="check-text">Building a risk register from scratch for a sample org <span class="tag-inline tag-lab">LAB</span></span></li>
+          <li onclick="toggleCheck(this)"><span class="check-box"></span><span class="check-text">Risk appetite, risk tolerance, risk threshold — defining for an org</span></li>
+          <li onclick="toggleCheck(this)"><span class="check-box"></span><span class="check-text">Threat modeling — STRIDE, PASTA basics; threat modeling for a web app <span class="tag-inline tag-lab">LAB</span></span></li>
+          <li onclick="toggleCheck(this)"><span class="check-box"></span><span class="check-text">BCP / DRP — RTO, RPO, MTD; writing a simple BCP for a sample company <span class="tag-inline tag-lab">LAB</span></span></li>
+        </ul>
+      </div>
+      <div class="topic-group">
+        <div class="topic-group-title">Compliance Frameworks</div>
+        <ul class="checklist">
+          <li onclick="toggleCheck(this)"><span class="check-box"></span><span class="check-text">ISO 27001:2022 — clauses 4–10 and Annex A controls full walkthrough</span></li>
+          <li onclick="toggleCheck(this)"><span class="check-box"></span><span class="check-text">NIST CSF 2.0 — Govern, Identify, Protect, Detect, Respond, Recover</span></li>
+          <li onclick="toggleCheck(this)"><span class="check-box"></span><span class="check-text">CIS Controls v8 — IG1 essential safeguards for SMBs</span></li>
+          <li onclick="toggleCheck(this)"><span class="check-box"></span><span class="check-text">SOC 2 Type I vs Type II — Trust Service Criteria basics</span></li>
+          <li onclick="toggleCheck(this)"><span class="check-box"></span><span class="check-text">DPDP Act 2023 — consent management, data principal rights, data fiduciary obligations, breach reporting <span class="tag-inline tag-cert">🇮🇳 Key</span></span></li>
+          <li onclick="toggleCheck(this)"><span class="check-box"></span><span class="check-text">CERT-In directions (Apr 2022) — 6-hour breach reporting, log retention, VPN user logs <span class="tag-inline tag-cert">🇮🇳 Key</span></span></li>
+          <li onclick="toggleCheck(this)"><span class="check-box"></span><span class="check-text">IT Act 2000 + Amendments — Section 43A, 66, 72A; cyber offences overview <span class="tag-inline tag-cert">🇮🇳</span></span></li>
+        </ul>
+      </div>
+      <div class="topic-group">
+        <div class="topic-group-title">Auditing & Policy</div>
+        <ul class="checklist">
+          <li onclick="toggleCheck(this)"><span class="check-box"></span><span class="check-text">Gap analysis process — current state vs desired state; scoring maturity</span></li>
+          <li onclick="toggleCheck(this)"><span class="check-box"></span><span class="check-text">Conduct ISO 27001 gap analysis for a fictional 50-person company <span class="tag-inline tag-lab">LAB</span></span></li>
+          <li onclick="toggleCheck(this)"><span class="check-box"></span><span class="check-text">Statement of Applicability (SoA) — building one for Annex A <span class="tag-inline tag-lab">LAB</span></span></li>
+          <li onclick="toggleCheck(this)"><span class="check-box"></span><span class="check-text">Audit evidence collection — interviews, observation, document review, testing</span></li>
+          <li onclick="toggleCheck(this)"><span class="check-box"></span><span class="check-text">Control testing basics — design effectiveness vs operating effectiveness</span></li>
+          <li onclick="toggleCheck(this)"><span class="check-box"></span><span class="check-text">Policy writing — Acceptable Use Policy, ISMS Policy, Incident Response Policy <span class="tag-inline tag-lab">LAB</span></span></li>
+          <li onclick="toggleCheck(this)"><span class="check-box"></span><span class="check-text">Third-party / vendor risk management — questionnaires, SLAs, right-to-audit clauses</span></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== PHASE: AI-AUGMENTED SECURITY ===== NEW ===== -->
+  <div class="phase ai-phase open" id="p-ai">
+    <div class="phase-header" onclick="togglePhase(this)">
+      <span class="phase-toggle">▶</span><span class="phase-emoji">🤖</span>
+      <div class="phase-meta">
+        <div class="phase-name">AI-Augmented Security <span class="tag-inline tag-new">NEW</span></div>
+        <div class="phase-weeks">Week 10–11 · Claude MCP · AI Pentesting · LLM Security · Code Review · GRC Automation</div>
+      </div>
+      <span class="phase-badge badge-ai">AI Track</span>
+    </div>
+    <div class="phase-body">
+
+      <div class="callout ai">
+        <span class="c-icon">🤖</span>
+        <span>AI is reshaping every security role. SOC analysts use AI to triage alerts faster. Pentesters use AI to write exploits and generate payloads. GRC analysts use AI to draft policies in minutes. This module teaches you to <strong>use AI as a force multiplier</strong> — and to <strong>understand AI as a new attack surface</strong> your clients need to secure.</span>
+      </div>
+
+      <!-- AI use-case overview cards -->
+      <div class="ai-usecases">
+        <div class="ai-uc">
+          <div class="ai-uc-head"><span class="ai-uc-icon">⚔️</span><span class="ai-uc-title">AI for Pentesting</span></div>
+          <p class="ai-uc-desc">Generate payloads, automate recon, write exploit scripts, and draft VAPT reports using Claude and other LLMs.</p>
+        </div>
+        <div class="ai-uc">
+          <div class="ai-uc-head"><span class="ai-uc-icon">🔎</span><span class="ai-uc-title">AI for SOC / Detection</span></div>
+          <p class="ai-uc-desc">Natural language SIEM queries, AI-assisted alert triage, anomaly explanation, and incident narrative generation.</p>
+        </div>
+        <div class="ai-uc">
+          <div class="ai-uc-head"><span class="ai-uc-icon">📋</span><span class="ai-uc-title">AI for GRC</span></div>
+          <p class="ai-uc-desc">Draft security policies, generate gap analysis reports, map controls to frameworks, and produce risk registers at speed.</p>
+        </div>
+        <div class="ai-uc">
+          <div class="ai-uc-head"><span class="ai-uc-icon">🧪</span><span class="ai-uc-title">AI Security — Attack & Defence</span></div>
+          <p class="ai-uc-desc">Understand prompt injection, jailbreaking, LLM threat modelling, and securing AI-powered applications your clients deploy.</p>
+        </div>
+      </div>
+
+      <div class="week-label ai-week">Section A — AI as Your Pentesting Co-Pilot</div>
+
+      <div class="topic-group">
+        <div class="topic-group-title ai-group">Claude + MCP for Security Testing</div>
+        <ul class="checklist">
+          <li onclick="toggleCheck(this)"><span class="check-box"></span><span class="check-text">What is MCP (Model Context Protocol) — how Claude connects to external tools and data sources <span class="tag-inline tag-ai">AI</span></span></li>
+          <li onclick="toggleCheck(this)"><span class="check-box"></span><span class="check-text">Setting up Claude with MCP filesystem server — give Claude access to your pentest working directory <span class="tag-inline tag-ai">AI</span> <span class="tag-inline tag-lab">LAB</span></span></li>
+          <li onclick="toggleCheck(this)"><span class="check-box"></span><span class="check-text">Claude MCP + Nmap output — feed scan results to Claude, ask it to identify critical vulnerabilities and prioritise exploitation paths <span class="tag-inline tag-ai">AI</span> <span class="tag-inline tag-lab">LAB</span></span></li>
+          <li onclick="toggleCheck(this)"><span class="check-box"></span><span class="check-text">Claude MCP + web fetch — automatically fetch CVE details, MITRE ATT&CK techniques, and exploit-db entries during a pentest <span class="tag-inline tag-ai">AI</span> <span class="tag-inline tag-lab">LAB</span></span></li>
+          <li onclick="toggleCheck(this)"><span class="check-box"></span><span class="check-text">Building a Claude-powered recon pipeline — Shodan results → Claude analysis → target prioritisation report <span class="tag-inline tag-ai">AI</span> <span class="tag-inline tag-lab">LAB</span></span></li>
+          <li onclick="toggleCheck(this)"><span class="check-box"></span><span class="check-text">Using Claude to generate custom Nmap NSE scripts, Burp extensions, and sqlmap tamper scripts for specific targets <span class="tag-inline tag-ai">AI</span> <span class="tag-inline tag-lab">LAB</span></span></li>
+          <li onclick="toggleCheck(this)"><span class="check-box"></span><span class="check-text">Prompt engineering for security — how to frame requests to get Claude to help with pentesting tasks within ethical boundaries <span class="tag-inline tag-ai">AI</span></span></li>
+        </ul>
+      </div>
+
+      <div class="topic-group">
+        <div class="topic-group-title ai-group">AI-Assisted Code Review & Vulnerability Discovery</div>
+        <ul class="checklist">
+          <li onclick="toggleCheck(this)"><span class="check-box"></span><span class="check-text">Paste source code snippets into Claude — identify SQLi, XSS, command injection, hardcoded secrets, and insecure functions <span class="tag-inline tag-ai">AI</span> <span class="tag-inline tag-lab">LAB</span></span></li>
+          <li onclick="toggleCheck(this)"><span class="check-box"></span><span class="check-text">AI-assisted PHP code review — ask Claude to identify all user-controlled variables reaching SQL queries in a legacy app <span class="tag-inline tag-ai">AI</span> <span class="tag-inline tag-lab">LAB</span></span></li>
+          <li onclick="toggleCheck(this)"><span class="check-box"></span><span class="check-text">JavaScript client-side analysis with AI — identify DOM XSS sinks, insecure postMessage handlers, and localStorage credential storage <span class="tag-inline tag-ai">AI</span> <span class="tag-inline tag-lab">LAB</span></span></li>
+          <li onclick="toggleCheck(this)"><span class="check-box"></span><span class="check-text">AI secrets hunting — feed GitHub repo contents to Claude, ask for all hardcoded API keys, credentials, and private keys <span class="tag-inline tag-ai">AI</span> <span class="tag-inline tag-lab">LAB</span></span></li>
+          <li onclick="toggleCheck(this)"><span class="check-box"></span><span class="check-text">Comparing AI-assisted review vs static analysis tools (Semgrep, Bandit, ESLint security) — when AI adds value over scanners <span class="tag-inline tag-ai">AI</span></span></li>
+          <li onclick="toggleCheck(this)"><span class="check-box"></span><span class="check-text">GitHub Copilot and AI coding assistants — how they introduce vulnerabilities and how to audit AI-generated code <span class="tag-inline tag-ai">AI</span></span></li>
+        </ul>
+      </div>
+
+      <div class="topic-group">
+        <div class="topic-group-title ai-group">AI-Powered Exploit & Payload Generation</div>
+        <ul class="checklist">
+          <li onclick="toggleCheck(this)"><span class="check-box"></span><span class="check-text">Using AI to write Python exploit scripts — given a CVE description, generate a PoC exploit skeleton for testing in your lab <span class="tag-inline tag-ai">AI</span> <span class="tag-inline tag-lab">LAB</span></span></li>
+          <li onclick="toggleCheck(this)"><span class="check-box"></span><span class="check-text">AI for payload customisation — ask Claude to modify msfvenom shellcode, XSS payloads, and SQLi strings to bypass specific WAF signatures <span class="tag-inline tag-ai">AI</span></span></li>
+          <li onclick="toggleCheck(this)"><span class="check-box"></span><span class="check-text">Generating social engineering pretexts — use AI to create convincing phishing email templates for authorised simulations <span class="tag-inline tag-ai">AI</span> <span class="tag-inline tag-lab">LAB</span></span></li>
+          <li onclick="toggleCheck(this)"><span class="check-box"></span><span class="check-text">AI for report generation — input raw Nmap + Burp findings, ask Claude to write formatted VAPT findings with CVSS scores and remediation steps <span class="tag-inline tag-ai">AI</span> <span class="tag-inline tag-lab">LAB</span></span></li>
+        </ul>
+      </div>
+
+      <div class="week-label ai-week">Section B — AI for SOC Operations</div>
+
+      <div class="topic-group">
+        <div class="topic-group-title ai-group">AI-Assisted Alert Triage & Threat Hunting</div>
+        <ul class="checklist">
+          <li onclick="toggleCheck(this)"><span class="check-box"></span><span class="check-text">Feeding Wazuh / Splunk alerts into Claude — ask Claude to explain what the alert means, assess severity, and suggest next steps <span class="tag-inline tag-ai">AI</span> <span class="tag-inline tag-lab">LAB</span></span></li>
+          <li onclick="toggleCheck(this)"><span class="check-box"></span><span class="check-text">Natural language SIEM queries — tell Claude what you're looking for, have it generate SPL (Splunk) or KQL (Azure Sentinel) queries <span class="tag-inline tag-ai">AI</span> <span class="tag-inline tag-lab">LAB</span></span></li>
+          <li onclick="toggleCheck(this)"><span class="check-box"></span><span class="check-text">AI for log correlation — paste multi-source logs (Windows Event + firewall + web server) into Claude, ask it to construct an attack timeline <span class="tag-inline tag-ai">AI</span> <span class="tag-inline tag-lab">LAB</span></span></li>
+          <li onclick="toggleCheck(this)"><span class="check-box"></span><span class="check-text">Using AI to draft incident reports — input your findings and ask Claude to structure a NIST 800-61-aligned incident report automatically <span class="tag-inline tag-ai">AI</span> <span class="tag-inline tag-lab">LAB</span></span></li>
+          <li onclick="toggleCheck(this)"><span class="check-box"></span><span class="check-text">AI enrichment workflows — build a Python script that auto-enriches IOCs via VirusTotal API and feeds summaries to Claude for risk scoring <span class="tag-inline tag-ai">AI</span> <span class="tag-inline tag-lab">LAB</span></span></li>
+          <li onclick="toggleCheck(this)"><span class="check-box"></span><span class="check-text">AI-powered MITRE ATT&CK mapping — describe attacker behaviour in plain English, ask Claude to identify relevant techniques and sub-techniques <span class="tag-inline tag-ai">AI</span> <span class="tag-inline tag-lab">LAB</span></span></li>
+        </ul>
+      </div>
+
+      <div class="week-label ai-week">Section C — AI for GRC & Compliance Automation</div>
+
+      <div class="topic-group">
+        <div class="topic-group-title ai-group">AI-Powered GRC Workflows</div>
+        <ul class="checklist">
+          <li onclick="toggleCheck(this)"><span class="check-box"></span><span class="check-text">AI policy drafting — give Claude your org's context, ask it to draft an ISO 27001-aligned Information Security Policy, Acceptable Use Policy, and Incident Response Policy <span class="tag-inline tag-ai">AI</span> <span class="tag-inline tag-lab">LAB</span></span></li>
+          <li onclick="toggleCheck(this)"><span class="check-box"></span><span class="check-text">AI gap analysis — describe your org's current security posture, ask Claude to score it against ISO 27001 Annex A controls and output a prioritised gap list <span class="tag-inline tag-ai">AI</span> <span class="tag-inline tag-lab">LAB</span></span></li>
+          <li onclick="toggleCheck(this)"><span class="check-box"></span><span class="check-text">DPDP Act compliance assistant — use Claude to interpret specific DPDP obligations, map them to technical controls, and generate a compliance checklist for an Indian SMB <span class="tag-inline tag-ai">AI</span> <span class="tag-inline tag-lab">LAB</span></span></li>
+          <li onclick="toggleCheck(this)"><span class="check-box"></span><span class="check-text">AI risk register generation — input a list of business processes and assets, have Claude identify threats, vulnerabilities, likelihood, and impact ratings <span class="tag-inline tag-ai">AI</span> <span class="tag-inline tag-lab">LAB</span></span></li>
+          <li onclick="toggleCheck(this)"><span class="check-box"></span><span class="check-text">Framework mapping with AI — ask Claude to cross-map a set of controls across ISO 27001, NIST CSF, CIS Controls, and DPDP Act simultaneously <span class="tag-inline tag-ai">AI</span> <span class="tag-inline tag-lab">LAB</span></span></li>
+          <li onclick="toggleCheck(this)"><span class="check-box"></span><span class="check-text">AI for vendor risk questionnaires — generate tailored security questionnaire based on vendor type (cloud provider, payment processor, SaaS tool) <span class="tag-inline tag-ai">AI</span></span></li>
+          <li onclick="toggleCheck(this)"><span class="check-box"></span><span class="check-text">Building an AI-powered GRC dashboard — Claude API + spreadsheet to auto-analyse assessment responses and generate maturity scores <span class="tag-inline tag-ai">AI</span> <span class="tag-inline tag-lab">LAB</span></span></li>
+        </ul>
+      </div>
+
+      <div class="week-label ai-week">Section D — AI Security: Attacks on AI Systems</div>
+
+      <div class="topic-group">
+        <div class="topic-group-title ai-group">LLM Security — The New Attack Surface</div>
+        <ul class="checklist">
+          <li onclick="toggleCheck(this)"><span class="check-box"></span><span class="check-text">OWASP LLM Top 10 — overview of the 10 critical risks for LLM-powered applications <span class="tag-inline tag-ai">AI</span></span></li>
+          <li onclick="toggleCheck(this)"><span class="check-box"></span><span class="check-text">Prompt injection — direct (attacker controls input) vs indirect (malicious content in retrieved data) — understand both with demos <span class="tag-inline tag-ai">AI</span> <span class="tag-inline tag-lab">LAB</span></span></li>
+          <li onclick="toggleCheck(this)"><span class="check-box"></span><span class="check-text">Indirect prompt injection in RAG systems — attacker embeds instructions in documents that an AI assistant will read, causing it to exfiltrate data or take unintended actions <span class="tag-inline tag-ai">AI</span></span></li>
+          <li onclick="toggleCheck(this)"><span class="check-box"></span><span class="check-text">LLM insecure output handling — when AI-generated code or content is executed without sanitisation — SQL queries, shell commands, HTML rendering <span class="tag-inline tag-ai">AI</span></span></li>
+          <li onclick="toggleCheck(this)"><span class="check-box"></span><span class="check-text">Training data poisoning and model inversion — conceptual understanding for risk assessment of ML systems in client environments <span class="tag-inline tag-ai">AI</span></span></li>
+          <li onclick="toggleCheck(this)"><span class="check-box"></span><span class="check-text">AI system over-reliance — when organisations deploy AI agents with excessive permissions (file write, email send, DB access) without human-in-the-loop controls <span class="tag-inline tag-ai">AI</span></span></li>
+          <li onclick="toggleCheck(this)"><span class="check-box"></span><span class="check-text">LLM threat modelling — apply STRIDE to an AI-powered application: identify threats specific to the LLM layer, embedding store, and agentic tool calls <span class="tag-inline tag-ai">AI</span> <span class="tag-inline tag-lab">LAB</span></span></li>
+          <li onclick="toggleCheck(this)"><span class="check-box"></span><span class="check-text">Securing AI-powered features — system prompt hardening, output filtering, sandboxed tool execution, rate limiting, and audit logging for LLM API calls <span class="tag-inline tag-ai">AI</span></span></li>
+        </ul>
+      </div>
+
+      <div class="topic-group">
+        <div class="topic-group-title ai-group">Responsible AI Use in Security Work</div>
+        <ul class="checklist">
+          <li onclick="toggleCheck(this)"><span class="check-box"></span><span class="check-text">Ethical boundaries — what AI tools will and won't help with; understanding safety filters and working within them professionally <span class="tag-inline tag-ai">AI</span></span></li>
+          <li onclick="toggleCheck(this)"><span class="check-box"></span><span class="check-text">Data privacy when using AI tools — what NOT to send to public LLMs (client PII, credentials, proprietary source code, live pentest data) <span class="tag-inline tag-ai">AI</span></span></li>
+          <li onclick="toggleCheck(this)"><span class="check-box"></span><span class="check-text">AI hallucination in security contexts — why you always verify CVE details, exploit code, and regulatory interpretations that AI generates <span class="tag-inline tag-ai">AI</span></span></li>
+          <li onclick="toggleCheck(this)"><span class="check-box"></span><span class="check-text">Disclosing AI use in VAPT reports — emerging professional norms, client expectations, and how to frame AI-assisted findings credibly <span class="tag-inline tag-ai">AI</span></span></li>
+          <li onclick="toggleCheck(this)"><span class="check-box"></span><span class="check-text">Building your own AI-assisted security tooling — Claude API + Python wrapper to automate VAPT report generation, policy drafting, and IOC enrichment workflows <span class="tag-inline tag-ai">AI</span> <span class="tag-inline tag-lab">LAB</span></span></li>
+        </ul>
+      </div>
+
+      <div class="callout ai">
+        <span class="c-icon">💡</span>
+        <span><strong>Interview edge:</strong> Most 2025–26 security candidates can't explain prompt injection or demonstrate an AI-assisted VAPT workflow. Doing both during an interview — or showing them in your GitHub portfolio — immediately separates you from hundreds of applicants who only know traditional tools.</span>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ===== PHASE: LAUNCH ===== -->
+  <div class="phase" id="p-launch">
+    <div class="phase-header" onclick="togglePhase(this)">
+      <span class="phase-toggle">▶</span><span class="phase-emoji">🚀</span>
+      <div class="phase-meta"><div class="phase-name">Capstone Projects & Career Launch</div><div class="phase-weeks">Week 11–12 · Portfolios · Interviews · Job Hunt · Mock Interviews</div></div>
+      <span class="phase-badge badge-launch">Job Ready</span>
+    </div>
+    <div class="phase-body">
+      <div class="topic-group">
+        <div class="topic-group-title">Capstone Projects (complete 2–3)</div>
+        <ul class="checklist">
+          <li onclick="toggleCheck(this)"><span class="check-box"></span><span class="check-text">📄 Full VAPT report on DVWA/WebGoat — pentest lifecycle, CVSS ratings, remediation</span></li>
+          <li onclick="toggleCheck(this)"><span class="check-box"></span><span class="check-text">📊 DPDP Act gap assessment for a sample Indian SMB with findings report</span></li>
+          <li onclick="toggleCheck(this)"><span class="check-box"></span><span class="check-text">📈 Wazuh SIEM deployment + incident response report from simulated attack logs</span></li>
+          <li onclick="toggleCheck(this)"><span class="check-box"></span><span class="check-text">🗂️ ISO 27001 risk register + full SoA for a fictional 100-person company</span></li>
+          <li onclick="toggleCheck(this)"><span class="check-box"></span><span class="check-text">☁️ AWS/Azure CSPM audit report using Prowler or ScoutSuite on free-tier account</span></li>
+          <li onclick="toggleCheck(this)"><span class="check-box"></span><span class="check-text">🎣 GoPhish phishing simulation — campaign setup, results analysis, awareness report</span></li>
+          <li onclick="toggleCheck(this)"><span class="check-box"></span><span class="check-text">🤖 AI Security Capstone — demonstrate an MCP-powered pentest recon pipeline OR an AI-assisted GRC policy drafting workflow, published to GitHub <span class="tag-inline tag-ai">AI</span> <span class="tag-inline tag-new">NEW</span></span></li>
+          <li onclick="toggleCheck(this)"><span class="check-box"></span><span class="check-text">🛡️ LLM Threat Model — deliver a STRIDE-based threat model for a fictional AI chatbot application, covering prompt injection, data exfiltration, and over-reliance risks <span class="tag-inline tag-ai">AI</span> <span class="tag-inline tag-new">NEW</span></span></li>
+        </ul>
+      </div>
+      <div class="topic-group">
+        <div class="topic-group-title">Career Preparation</div>
+        <ul class="checklist">
+          <li onclick="toggleCheck(this)"><span class="check-box"></span><span class="check-text">Resume — highlight labs, tools, reports, certifications; SOC/GRC keyword optimization</span></li>
+          <li onclick="toggleCheck(this)"><span class="check-box"></span><span class="check-text">GitHub portfolio — push VAPT reports, scripts, Wazuh configs, policy templates, AI automation scripts <span class="tag-inline tag-new">+AI</span></span></li>
+          <li onclick="toggleCheck(this)"><span class="check-box"></span><span class="check-text">LinkedIn — security certifications, labs section, open to work; connect with Indian CISOs</span></li>
+          <li onclick="toggleCheck(this)"><span class="check-box"></span><span class="check-text">SOC interview prep — alert triage scenario questions, MITRE ATT&CK walkthrough</span></li>
+          <li onclick="toggleCheck(this)"><span class="check-box"></span><span class="check-text">GRC interview prep — framework comparison, risk scenario analysis, audit walk-throughs</span></li>
+          <li onclick="toggleCheck(this)"><span class="check-box"></span><span class="check-text">AI security interview prep — explain prompt injection, OWASP LLM Top 10, and how you used AI tools in your labs <span class="tag-inline tag-ai">AI</span> <span class="tag-inline tag-new">NEW</span></span></li>
+          <li onclick="toggleCheck(this)"><span class="check-box"></span><span class="check-text">Target companies — TCS, Infosys Cyber, Wipro CyberSec, HCL, Big4 GRC practices, MSSPs</span></li>
+        </ul>
+      </div>
+
+      <div class="topic-group">
+        <div class="topic-group-title">Week 12 — Polish, Mock Interviews &amp; Launch</div>
+        <ul class="checklist">
+          <li onclick="toggleCheck(this)"><span class="check-box"></span><span class="check-text">Portfolio review — peer-review your VAPT report and GRC deliverables; check for professional formatting, no placeholder text, working screenshots <span class="tag-inline tag-lab">LAB</span></span></li>
+          <li onclick="toggleCheck(this)"><span class="check-box"></span><span class="check-text">GitHub portfolio audit — each repo has a proper README, tool versions listed, screenshots embedded, legal/ethical disclaimer for offensive security projects</span></li>
+          <li onclick="toggleCheck(this)"><span class="check-box"></span><span class="check-text">Mock SOC interview — record yourself answering: alert triage scenario, MITRE mapping question, incident report walkthrough, tool usage explanation</span></li>
+          <li onclick="toggleCheck(this)"><span class="check-box"></span><span class="check-text">Mock GRC interview — record yourself: ISO 27001 implementation plan for a startup, DPDP Act obligation walkthrough, risk register explanation, what makes a good SoA</span></li>
+          <li onclick="toggleCheck(this)"><span class="check-box"></span><span class="check-text">Technical interview prep — practice explaining: how does a TCP three-way handshake work? What is IDOR? Difference between IDS and IPS? How does bcrypt differ from MD5?</span></li>
+          <li onclick="toggleCheck(this)"><span class="check-box"></span><span class="check-text">Apply to 10 target roles — prepare tailored cover letters for SOC L1, GRC Analyst, and Security Consultant positions at your priority companies</span></li>
+          <li onclick="toggleCheck(this)"><span class="check-box"></span><span class="check-text">LinkedIn profile live — announce completion, tag tools, post a short write-up about your most interesting lab or capstone finding</span></li>
+        </ul>
+      </div>
+      <div class="callout green">
+        <span class="c-icon">✅</span>
+        <span>A public GitHub with a VAPT report, a risk register template, a Wazuh lab write-up, <strong>and an AI-assisted security automation script</strong> will stand out more than a certificate alone in most Indian SOC/GRC/AppSec interviews at the L1–L2 level in 2025–26. The 3-month pace gives you time to polish everything properly — Week 12 is dedicated to exactly that.</span>
+      </div>
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <!-- Tools Arsenal -->
+  <div id="tools">
+    <div class="section-heading">🧰 Tools Arsenal</div>
+    <div class="tools-grid">
+      <div class="tool-chip"><span class="t-icon">🗺️</span> Nmap</div>
+      <div class="tool-chip"><span class="t-icon">🔬</span> Wireshark</div>
+      <div class="tool-chip"><span class="t-icon">🐉</span> Metasploit</div>
+      <div class="tool-chip"><span class="t-icon">🕷️</span> Burp Suite</div>
+      <div class="tool-chip"><span class="t-icon">🔍</span> OpenVAS</div>
+      <div class="tool-chip"><span class="t-icon">📡</span> Wazuh</div>
+      <div class="tool-chip"><span class="t-icon">📊</span> Splunk Free</div>
+      <div class="tool-chip"><span class="t-icon">🎯</span> DVWA</div>
+      <div class="tool-chip"><span class="t-icon">🧃</span> Juice Shop</div>
+      <div class="tool-chip"><span class="t-icon">🐈</span> Netcat</div>
+      <div class="tool-chip"><span class="t-icon">🐧</span> Kali Linux</div>
+      <div class="tool-chip"><span class="t-icon">🔑</span> Hashcat</div>
+      <div class="tool-chip"><span class="t-icon">💧</span> Hydra</div>
+      <div class="tool-chip"><span class="t-icon">🐍</span> sqlmap</div>
+      <div class="tool-chip"><span class="t-icon">🎣</span> GoPhish</div>
+      <div class="tool-chip"><span class="t-icon">🔐</span> OpenSSL</div>
+      <div class="tool-chip"><span class="t-icon">🌐</span> Shodan</div>
+      <div class="tool-chip"><span class="t-icon">🧪</span> Any.run</div>
+      <div class="tool-chip"><span class="t-icon">☁️</span> Prowler</div>
+      <div class="tool-chip"><span class="t-icon">🔎</span> ScoutSuite</div>
+      <div class="tool-chip"><span class="t-icon">🪲</span> Trivy</div>
+      <div class="tool-chip"><span class="t-icon">📍</span> MITRE ATT&CK</div>
+      <div class="tool-chip"><span class="t-icon">🛡️</span> Sysmon</div>
+      <div class="tool-chip"><span class="t-icon">📋</span> CVSS Calc</div>
+      <!-- AI Tools -->
+      <div class="tool-chip ai-tool"><span class="t-icon">🤖</span> Claude AI</div>
+      <div class="tool-chip ai-tool"><span class="t-icon">🔌</span> Claude MCP</div>
+      <div class="tool-chip ai-tool"><span class="t-icon">🐍</span> Anthropic API</div>
+      <div class="tool-chip ai-tool"><span class="t-icon">💻</span> Claude Code</div>
+      <div class="tool-chip ai-tool"><span class="t-icon">🔍</span> Semgrep</div>
+      <div class="tool-chip ai-tool"><span class="t-icon">🐦</span> Bandit (Python)</div>
+    </div>
+  </div>
+
+  <!-- Certifications -->
+  <div id="certs" style="margin-top:28px;">
+    <div class="section-heading">🎓 Certification Alignment</div>
+    <table class="cert-table">
+      <thead>
+        <tr><th>Certification</th><th>Maps To</th><th>Cost (approx ₹)</th><th>For SOC/GRC Job</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><strong>CC — ISC²</strong></td><td>Full syllabus</td><td>Free</td><td><span class="prop-tag green">Start First</span></td></tr>
+        <tr><td><strong>CompTIA Security+</strong></td><td>Phases 1–3, Cloud</td><td>~₹28,000</td><td><span class="prop-tag blue">High Value (SOC)</span></td></tr>
+        <tr><td><strong>CEH v13</strong></td><td>Ethical Hacking, VAPT phases</td><td>~₹35,000</td><td><span class="prop-tag" style="background:#fff7e6;color:#d46b08">VAPT Roles</span></td></tr>
+        <tr><td><strong>ISO 27001 Lead Auditor</strong></td><td>GRC phase fully</td><td>~₹40,000</td><td><span class="prop-tag blue">GRC Roles</span></td></tr>
+        <tr><td><strong>AWS Security Specialty</strong></td><td>Cloud Security phase</td><td>~₹25,000</td><td><span class="prop-tag" style="background:#f0f5ff;color:#1d39c4">Cloud SOC</span></td></tr>
+        <tr style="background:#f5f3ff;"><td><strong>🤖 AI Security Practitioner</strong> <span class="tag-inline tag-new">NEW 2025</span></td><td>AI-Augmented Security phase</td><td>~₹8,000–15,000</td><td><span class="prop-tag ai">All AI Roles</span></td></tr>
+      </tbody>
+    </table>
+    <div class="callout" style="margin-top:12px;">
+      <span class="c-icon">💡</span>
+      <span>AI security certifications are brand new in 2025 — SANS, ISC², and EC-Council are all launching AI security tracks. Getting certified early means minimal competition and maximum employer attention. Watch for: <strong>GIAC AI Security (GAISS)</strong>, <strong>CEH AI Module</strong>, and <strong>ISC² AI Security Practitioner</strong>.</span>
+    </div>
+  </div>
+
+</main>
+</div>
+
+<script>
+  function togglePhase(header) {
+    header.closest('.phase').classList.toggle('open');
+  }
+
+  function toggleCheck(li) {
+    li.classList.toggle('done');
+    updateProgress();
+  }
+
+  function updateProgress() {
+    const all = document.querySelectorAll('.checklist li');
+    const done = document.querySelectorAll('.checklist li.done');
+    const total = all.length;
+    const doneCount = done.length;
+    const pct = total > 0 ? Math.round((doneCount / total) * 100) : 0;
+    document.getElementById('progress-fill').style.width = pct + '%';
+    document.getElementById('pct-label').textContent = pct + '%';
+    document.getElementById('done-count').textContent = doneCount;
+    document.getElementById('total-count').textContent = total;
+  }
+
+  // Init count
+  window.addEventListener('load', updateProgress);
+
+  // Sidebar nav
+  document.querySelectorAll('.sidebar-item').forEach(link => {
+    link.addEventListener('click', function(e) {
+      const href = this.getAttribute('href');
+      if (href && href.startsWith('#')) {
+        e.preventDefault();
+        const target = document.querySelector(href);
+        if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        document.querySelectorAll('.sidebar-item').forEach(l => l.classList.remove('active'));
+        this.classList.add('active');
+      }
+    });
+  });
+</script>
+
+</body>
+</html>

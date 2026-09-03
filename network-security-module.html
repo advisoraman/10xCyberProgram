@@ -1,0 +1,2746 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Network Security — Full Study Module</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Azeret+Mono:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:         #141210;
+  --bg2:        #1c1916;
+  --bg3:        #221f1b;
+  --bg4:        #2a2620;
+  --surface:    #1c1916;
+  --border:     #302b24;
+  --border2:    #3d3529;
+  --text:       #e8ddd0;
+  --text-muted: #8a7d6e;
+  --text-dim:   #4a4035;
+  --orange:     #f97316;
+  --orange-dim: #431a04;
+  --orange-glow:rgba(249,115,22,0.08);
+  --amber:      #fbbf24;
+  --amber-dim:  #3d2d06;
+  --red:        #ef4444;
+  --red-dim:    #3d0a0a;
+  --green:      #4ade80;
+  --green-dim:  #0a2e14;
+  --blue:       #60a5fa;
+  --blue-dim:   #0c1f3a;
+  --cyan:       #22d3ee;
+  --cyan-dim:   #042830;
+  --rose:       #fb7185;
+  --rose-dim:   #3d0a18;
+  --sidebar-w:  260px;
+}
+
+*{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+
+body{
+  font-family:'Azeret Mono',monospace;
+  background:var(--bg);
+  color:var(--text);
+  font-size:13px;
+  line-height:1.75;
+  min-height:100vh;
+}
+
+/* diagonal stripe texture */
+body::before{
+  content:'';
+  position:fixed;top:0;left:0;right:0;bottom:0;
+  background-image:repeating-linear-gradient(
+    -45deg,
+    transparent,transparent 40px,
+    rgba(249,115,22,0.012) 40px,rgba(249,115,22,0.012) 41px
+  );
+  pointer-events:none;z-index:0;
+}
+
+.layout{display:flex;min-height:100vh;position:relative;z-index:1;}
+
+/* ── SIDEBAR ── */
+.sidebar{
+  width:var(--sidebar-w);flex-shrink:0;
+  background:var(--bg2);
+  border-right:1px solid var(--border);
+  position:sticky;top:0;height:100vh;
+  overflow-y:auto;display:flex;flex-direction:column;
+}
+.sidebar::-webkit-scrollbar{width:3px;}
+.sidebar::-webkit-scrollbar-thumb{background:var(--orange-dim);}
+
+.sb-head{
+  padding:20px 18px 16px;
+  border-bottom:2px solid var(--orange-dim);
+}
+
+.sb-badge{
+  font-family:'Bebas Neue',sans-serif;
+  font-size:9px;letter-spacing:0.2em;
+  color:var(--orange);margin-bottom:8px;display:block;
+}
+
+.sb-title{
+  font-family:'Bebas Neue',sans-serif;
+  font-size:24px;color:var(--text);
+  letter-spacing:0.08em;line-height:1.1;
+}
+.sb-title span{color:var(--orange);}
+
+.sb-sub{
+  font-size:9px;color:var(--text-dim);
+  letter-spacing:0.07em;text-transform:uppercase;margin-top:5px;
+}
+
+.nav-grp{
+  padding:13px 18px 3px;
+  font-size:8.5px;letter-spacing:0.12em;text-transform:uppercase;
+  color:var(--text-dim);
+}
+
+.nav-item{
+  display:flex;align-items:center;gap:9px;
+  padding:7px 18px;
+  font-size:11px;color:var(--text-muted);
+  cursor:pointer;transition:all 0.12s;
+  text-decoration:none;
+  border-left:2px solid transparent;
+}
+.nav-item:hover{color:var(--text);background:var(--bg3);}
+.nav-item.active{color:var(--orange);background:var(--orange-glow);border-left-color:var(--orange);}
+
+.nav-n{font-size:9px;color:var(--text-dim);min-width:18px;text-align:right;}
+
+.sb-foot{
+  margin-top:auto;padding:14px 18px;
+  border-top:1px solid var(--border);
+}
+.sf-row{display:flex;justify-content:space-between;font-size:9.5px;color:var(--text-dim);margin-bottom:6px;}
+.sf-track{height:2px;background:var(--border);border-radius:99px;overflow:hidden;}
+.sf-fill{height:100%;background:var(--orange);border-radius:99px;transition:width 0.5s;box-shadow:0 0 6px rgba(249,115,22,0.4);}
+
+/* ── MAIN ── */
+.main{flex:1;overflow-x:hidden;}
+
+/* Hero */
+.hero{
+  padding:50px 64px 40px;
+  border-bottom:1px solid var(--border);
+  background:var(--bg);
+  position:relative;overflow:hidden;
+}
+
+.hero::before{
+  content:'';
+  position:absolute;top:0;left:0;right:0;height:2px;
+  background:linear-gradient(90deg,var(--orange),var(--amber),transparent);
+}
+
+.hero::after{
+  content:'NET';
+  position:absolute;right:40px;top:50%;transform:translateY(-50%);
+  font-family:'Bebas Neue',sans-serif;
+  font-size:220px;letter-spacing:-8px;
+  color:rgba(249,115,22,0.04);
+  pointer-events:none;user-select:none;
+}
+
+.hero-eyebrow{
+  font-family:'Bebas Neue',sans-serif;
+  font-size:11px;letter-spacing:0.2em;
+  color:var(--orange);margin-bottom:12px;
+  display:flex;align-items:center;gap:10px;
+}
+.hero-eyebrow::before{
+  content:'';width:24px;height:1px;background:var(--orange);opacity:0.6;
+}
+
+.hero-title{
+  font-family:'Bebas Neue',sans-serif;
+  font-size:72px;letter-spacing:0.04em;
+  color:var(--text);line-height:0.9;
+  margin-bottom:16px;
+}
+.hero-title span{color:var(--orange);}
+
+.hero-desc{
+  font-size:13px;color:var(--text-muted);
+  max-width:580px;line-height:1.8;margin-bottom:28px;
+}
+
+.hero-stats{
+  display:inline-flex;
+  border:1px solid var(--border);
+  border-top:2px solid var(--orange);
+  border-radius:2px;overflow:hidden;
+}
+.hs{
+  padding:11px 20px;border-right:1px solid var(--border);
+  display:flex;flex-direction:column;gap:2px;
+}
+.hs:last-child{border-right:none;}
+.hs-v{
+  font-family:'Bebas Neue',sans-serif;
+  font-size:22px;letter-spacing:0.06em;color:var(--text);
+}
+.hs-v.o{color:var(--orange);}
+.hs-v.g{color:var(--green);}
+.hs-v.a{color:var(--amber);}
+.hs-l{font-size:9px;color:var(--text-dim);letter-spacing:0.07em;text-transform:uppercase;}
+
+/* Content */
+.content{padding:0 64px 80px;}
+
+/* Section */
+.section{margin-top:52px;animation:slideIn 0.3s ease both;}
+@keyframes slideIn{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:translateY(0);}}
+
+.sec-head{
+  display:flex;align-items:flex-start;gap:16px;
+  margin-bottom:24px;padding-bottom:16px;
+  border-bottom:1px solid var(--border);
+  position:relative;
+}
+.sec-head::after{
+  content:'';position:absolute;bottom:-1px;left:0;
+  width:40px;height:1px;background:var(--orange);
+  box-shadow:0 0 6px rgba(249,115,22,0.5);
+}
+
+.sec-num{
+  font-family:'Bebas Neue',sans-serif;
+  font-size:13px;color:var(--text-dim);
+  padding-top:3px;min-width:22px;letter-spacing:0.1em;
+}
+.sec-meta{flex:1;}
+.sec-title{
+  font-family:'Bebas Neue',sans-serif;
+  font-size:30px;letter-spacing:0.06em;color:var(--text);
+  line-height:1.0;margin-bottom:3px;
+}
+.sec-sub{font-size:10.5px;color:var(--text-muted);}
+
+.badge{
+  font-size:8.5px;font-weight:500;letter-spacing:0.1em;
+  text-transform:uppercase;padding:3px 10px;
+  border-radius:1px;flex-shrink:0;margin-top:4px;border:1px solid;
+}
+.b-orange{background:var(--orange-glow);color:var(--orange);border-color:var(--orange-dim);}
+.b-amber{background:var(--amber-dim);color:var(--amber);border-color:rgba(251,191,36,0.2);}
+.b-red{background:var(--red-dim);color:var(--red);border-color:rgba(239,68,68,0.2);}
+.b-green{background:var(--green-dim);color:var(--green);border-color:rgba(74,222,128,0.2);}
+.b-blue{background:var(--blue-dim);color:var(--blue);border-color:rgba(96,165,250,0.2);}
+.b-cyan{background:var(--cyan-dim);color:var(--cyan);border-color:rgba(34,211,238,0.2);}
+.b-rose{background:var(--rose-dim);color:var(--rose);border-color:rgba(251,113,133,0.2);}
+
+/* Theory */
+.theory{
+  background:var(--bg2);
+  border:1px solid var(--border);
+  border-left:2px solid var(--orange);
+  border-radius:2px;padding:16px 20px;margin-bottom:12px;
+}
+.theory.amber{border-left-color:var(--amber);}
+.theory.red{border-left-color:var(--red);}
+.theory.green{border-left-color:var(--green);}
+.theory.blue{border-left-color:var(--blue);}
+.theory.cyan{border-left-color:var(--cyan);}
+.theory.rose{border-left-color:var(--rose);}
+
+.theory h4{
+  font-family:'Bebas Neue',sans-serif;
+  font-size:16px;letter-spacing:0.08em;
+  color:var(--orange);margin-bottom:8px;
+}
+.theory.amber h4{color:var(--amber);}
+.theory.red h4{color:var(--red);}
+.theory.green h4{color:var(--green);}
+.theory.blue h4{color:var(--blue);}
+.theory.cyan h4{color:var(--cyan);}
+.theory.rose h4{color:var(--rose);}
+
+.theory p{font-size:12.5px;color:var(--text-muted);margin-bottom:7px;line-height:1.82;}
+.theory p:last-child{margin-bottom:0;}
+.theory strong{color:var(--text);font-weight:500;}
+.theory em{color:var(--orange);font-style:normal;}
+
+/* Grid */
+.grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(210px,1fr));
+  gap:7px;margin:10px 0;
+}
+.card{
+  background:var(--bg2);border:1px solid var(--border);
+  border-radius:2px;padding:13px 15px;
+  transition:all 0.12s;
+}
+.card:hover{border-color:var(--border2);background:var(--bg3);}
+
+.ck{
+  font-size:9.5px;font-weight:500;letter-spacing:0.07em;
+  text-transform:uppercase;margin-bottom:6px;color:var(--orange);
+}
+.ck.a{color:var(--amber);}
+.ck.r{color:var(--red);}
+.ck.g{color:var(--green);}
+.ck.b{color:var(--blue);}
+.ck.c{color:var(--cyan);}
+.ck.ro{color:var(--rose);}
+.cv{font-size:12px;color:var(--text-muted);line-height:1.68;}
+
+/* Table */
+.dtable{width:100%;border-collapse:collapse;margin:12px 0;font-size:12px;}
+.dtable th{
+  text-align:left;padding:8px 12px;
+  background:var(--bg3);color:var(--orange);
+  font-size:8.5px;text-transform:uppercase;letter-spacing:0.1em;font-weight:500;
+  border-bottom:1px solid var(--orange-dim);
+}
+.dtable td{
+  padding:8px 12px;border-bottom:1px solid var(--border);
+  color:var(--text-muted);vertical-align:top;
+}
+.dtable tr:last-child td{border-bottom:none;}
+.dtable tr:hover td{background:var(--bg3);color:var(--text);}
+.dtable tbody tr:nth-child(even) td{background:var(--bg2);}
+
+.tk{color:var(--text);font-weight:500;}
+.to{color:var(--orange);font-weight:500;}
+.ta{color:var(--amber);font-weight:500;}
+.tr{color:var(--red);font-weight:500;}
+.tg{color:var(--green);font-weight:500;}
+.tb{color:var(--blue);font-weight:500;}
+.tc{color:var(--cyan);font-weight:500;}
+
+/* Practical */
+.practical{
+  border:1px solid var(--border);border-radius:2px;
+  overflow:hidden;margin-bottom:12px;background:var(--bg2);
+}
+.prac-head{
+  background:var(--bg3);padding:10px 16px;
+  display:flex;align-items:center;gap:10px;
+  border-bottom:1px solid var(--border);
+  cursor:pointer;user-select:none;transition:background 0.12s;
+}
+.prac-head:hover{background:rgba(249,115,22,0.04);}
+
+.ph-i{font-size:13px;}
+.ph-t{
+  font-family:'Bebas Neue',sans-serif;
+  font-size:15px;letter-spacing:0.06em;color:var(--text);flex:1;
+}
+.ph-tag{
+  font-size:8.5px;font-weight:500;text-transform:uppercase;
+  letter-spacing:0.09em;padding:2px 8px;border-radius:1px;border:1px solid;
+}
+.pt-lab{background:var(--red-dim);color:var(--red);border-color:rgba(239,68,68,0.2);}
+.pt-cmd{background:var(--cyan-dim);color:var(--cyan);border-color:rgba(34,211,238,0.2);}
+.pt-cfg{background:var(--amber-dim);color:var(--amber);border-color:rgba(251,191,36,0.2);}
+.pt-tool{background:var(--orange-glow);color:var(--orange);border-color:var(--orange-dim);}
+.pt-design{background:var(--green-dim);color:var(--green);border-color:rgba(74,222,128,0.2);}
+
+.ph-chev{font-size:9px;color:var(--text-dim);transition:transform 0.2s;}
+.practical.open .ph-chev{transform:rotate(90deg);}
+.prac-body{display:none;padding:16px 20px;}
+.practical.open .prac-body{display:block;}
+
+/* Steps */
+.steps{list-style:none;}
+.step{display:flex;gap:14px;margin-bottom:16px;padding-bottom:16px;border-bottom:1px dashed var(--border);}
+.step:last-child{margin-bottom:0;padding-bottom:0;border-bottom:none;}
+.sn{
+  width:22px;height:22px;border-radius:2px;
+  background:var(--orange-glow);border:1px solid var(--orange-dim);
+  display:flex;align-items:center;justify-content:center;
+  font-family:'Bebas Neue',sans-serif;
+  font-size:11px;letter-spacing:0.06em;color:var(--orange);
+  flex-shrink:0;margin-top:1px;
+}
+.sc{flex:1;}
+.st{
+  font-family:'Bebas Neue',sans-serif;
+  font-size:15px;letter-spacing:0.06em;color:var(--text);margin-bottom:4px;
+}
+.sd{font-size:12px;color:var(--text-muted);line-height:1.8;margin-bottom:7px;}
+.sd:last-child{margin-bottom:0;}
+
+/* Code */
+.code{
+  background:#0a0806;
+  border:1px solid var(--border);
+  border-left:2px solid var(--orange-dim);
+  border-radius:2px;padding:12px 15px;
+  font-size:11.5px;color:#6b7280;
+  overflow-x:auto;margin:7px 0;
+  position:relative;line-height:1.8;
+}
+.code .cm{color:#2d2520;}
+.code .cmd{color:var(--green);}
+.code .flag{color:var(--amber);}
+.code .val{color:var(--cyan);}
+.code .kw{color:var(--rose);}
+.code .hi{color:var(--red);}
+.code .ok{color:var(--green);}
+.code .warn{color:var(--orange);}
+.code .out{color:#3d3530;font-style:italic;}
+.code::before{
+  content:attr(data-label);
+  position:absolute;top:6px;right:10px;
+  font-size:8.5px;color:var(--text-dim);
+  letter-spacing:0.08em;text-transform:uppercase;
+}
+
+/* Notes */
+.note{
+  display:flex;gap:10px;align-items:flex-start;
+  border-radius:2px;padding:10px 14px;
+  font-size:12px;margin:8px 0;line-height:1.78;
+}
+.note.orange{background:var(--orange-glow);border:1px solid var(--orange-dim);color:var(--text-muted);}
+.note.amber{background:var(--amber-dim);border:1px solid rgba(251,191,36,0.15);color:var(--text-muted);}
+.note.red{background:var(--red-dim);border:1px solid rgba(239,68,68,0.15);color:var(--text-muted);}
+.note.green{background:var(--green-dim);border:1px solid rgba(74,222,128,0.15);color:var(--text-muted);}
+.note.blue{background:var(--blue-dim);border:1px solid rgba(96,165,250,0.15);color:var(--text-muted);}
+.note.cyan{background:var(--cyan-dim);border:1px solid rgba(34,211,238,0.15);color:var(--text-muted);}
+.note .ni{font-size:13px;flex-shrink:0;margin-top:1px;}
+.note strong{color:var(--text);}
+
+/* divider */
+.hdiv{border:none;border-top:1px solid var(--border);margin:42px 0 0;}
+
+/* OSI layer visual */
+.osi{
+  display:flex;flex-direction:column;gap:2px;margin:12px 0;
+}
+.osi-row{
+  display:flex;align-items:center;gap:0;
+  border:1px solid var(--border);border-radius:2px;overflow:hidden;
+  transition:all 0.12s;cursor:default;
+}
+.osi-row:hover{border-color:var(--border2);}
+.osi-row.active{border-color:var(--orange-dim);}
+.osi-num{
+  font-family:'Bebas Neue',sans-serif;
+  font-size:16px;letter-spacing:0.08em;
+  color:var(--orange);background:var(--bg3);
+  padding:8px 14px;min-width:46px;text-align:center;
+  border-right:1px solid var(--border);
+}
+.osi-row.active .osi-num{background:var(--orange-glow);}
+.osi-name{
+  font-family:'Bebas Neue',sans-serif;
+  font-size:14px;letter-spacing:0.06em;
+  color:var(--text);background:var(--bg3);
+  padding:8px 14px;min-width:160px;
+  border-right:1px solid var(--border);
+}
+.osi-pdu{
+  font-size:11px;color:var(--amber);
+  padding:8px 12px;min-width:100px;
+  background:var(--bg2);
+  border-right:1px solid var(--border);
+}
+.osi-proto{
+  font-size:11px;color:var(--text-muted);
+  padding:8px 12px;flex:1;
+  background:var(--bg2);
+}
+
+/* Packet diagram */
+.packet{
+  display:flex;align-items:stretch;gap:0;
+  border:1px solid var(--border);border-radius:2px;overflow:hidden;
+  margin:10px 0;font-size:11px;
+}
+.pkt-field{
+  padding:8px 10px;text-align:center;
+  border-right:1px solid var(--border);
+  display:flex;flex-direction:column;gap:2px;
+}
+.pkt-field:last-child{border-right:none;}
+.pkt-label{font-size:9px;color:var(--text-dim);text-transform:uppercase;letter-spacing:0.06em;}
+.pkt-val{font-size:11.5px;color:var(--text);font-weight:500;}
+.pkt-bit{font-size:9px;color:var(--orange);}
+
+/* Port category */
+.port-grid{
+  display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));
+  gap:6px;margin:10px 0;
+}
+.port-item{
+  display:flex;align-items:center;gap:10px;
+  background:var(--bg2);border:1px solid var(--border);
+  border-radius:2px;padding:7px 12px;
+  transition:all 0.1s;
+}
+.port-item:hover{border-color:var(--border2);}
+.port-num{
+  font-family:'Bebas Neue',sans-serif;
+  font-size:15px;letter-spacing:0.08em;
+  color:var(--orange);min-width:50px;
+}
+.port-proto{font-size:10px;color:var(--amber);min-width:40px;}
+.port-name{font-size:12px;color:var(--text-muted);}
+.port-risk{
+  margin-left:auto;font-size:9px;
+  padding:2px 6px;border-radius:1px;
+}
+.pr-high{background:var(--red-dim);color:var(--red);}
+.pr-med{background:var(--amber-dim);color:var(--amber);}
+.pr-low{background:var(--green-dim);color:var(--green);}
+
+/* Attack chain */
+.achain{
+  display:flex;align-items:stretch;gap:0;
+  border:1px solid var(--border);border-radius:2px;overflow:hidden;
+  margin:12px 0;
+}
+.ac-step{
+  flex:1;padding:12px 12px 10px;
+  background:var(--bg2);
+  border-right:1px solid var(--border);
+  position:relative;
+}
+.ac-step:last-child{border-right:none;}
+.ac-step.hit{background:var(--orange-glow);border-right-color:var(--orange-dim);}
+.ac-n{font-size:9px;color:var(--text-dim);margin-bottom:3px;letter-spacing:0.06em;}
+.ac-t{
+  font-family:'Bebas Neue',sans-serif;
+  font-size:13px;letter-spacing:0.06em;color:var(--text);margin-bottom:3px;
+}
+.ac-d{font-size:10.5px;color:var(--text-muted);line-height:1.5;}
+
+/* checklist */
+.checklist{list-style:none;}
+.checklist li{
+  display:flex;align-items:flex-start;gap:10px;
+  padding:5px 8px;border-radius:2px;
+  font-size:12px;color:var(--text-muted);cursor:pointer;transition:background 0.1s;
+}
+.checklist li:hover{background:var(--bg3);color:var(--text);}
+.cb{
+  width:14px;height:14px;border:1px solid var(--border2);
+  border-radius:2px;flex-shrink:0;margin-top:2px;
+  display:flex;align-items:center;justify-content:center;transition:all 0.14s;
+}
+.checklist li.done .cb{background:var(--green);border-color:var(--green);}
+.checklist li.done .cb::after{content:'✓';font-size:9px;color:#000;font-weight:bold;}
+.checklist li.done span:last-child{text-decoration:line-through;color:var(--text-dim);}
+
+/* scrollbar */
+::-webkit-scrollbar{width:5px;height:5px;}
+::-webkit-scrollbar-track{background:transparent;}
+::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px;}
+
+@media(max-width:900px){
+  .sidebar{display:none;}
+  .hero,.content{padding-left:20px;padding-right:20px;}
+  .hero-title{font-size:52px;}
+  .hero::after{display:none;}
+  .grid{grid-template-columns:1fr 1fr;}
+  .osi-name{min-width:100px;}
+  .achain{flex-direction:column;}
+  .ac-step{border-right:none;border-bottom:1px solid var(--border);}
+  .ac-step:last-child{border-bottom:none;}
+  .packet{flex-wrap:wrap;}
+}
+</style>
+</head>
+<body>
+<div class="layout">
+
+<!-- SIDEBAR -->
+<nav class="sidebar">
+  <div class="sb-head">
+    <span class="sb-badge">// SECURITY MODULE</span>
+    <div class="sb-title">NETWORK<br><span>SECURITY</span></div>
+    <div class="sb-sub">Module 01 · Week 1–2 · Full Coverage</div>
+  </div>
+
+  <div class="nav-grp">Fundamentals</div>
+  <a class="nav-item active" href="#s1"><span class="nav-n">01</span>OSI & TCP/IP Models</a>
+  <a class="nav-item" href="#s2"><span class="nav-n">02</span>IP Addressing & Subnetting</a>
+  <a class="nav-item" href="#s3"><span class="nav-n">03</span>Protocols Deep Dive</a>
+  <a class="nav-item" href="#s4"><span class="nav-n">04</span>Key Ports & Services</a>
+
+  <div class="nav-grp">Threats & Attacks</div>
+  <a class="nav-item" href="#s5"><span class="nav-n">05</span>Network Attacks</a>
+  <a class="nav-item" href="#s6"><span class="nav-n">06</span>ARP & DNS Attacks</a>
+  <a class="nav-item" href="#s7"><span class="nav-n">07</span>DoS & DDoS Attacks</a>
+
+  <div class="nav-grp">Defences</div>
+  <a class="nav-item" href="#s8"><span class="nav-n">08</span>Firewalls & WAF</a>
+  <a class="nav-item" href="#s9"><span class="nav-n">09</span>IDS / IPS</a>
+  <a class="nav-item" href="#s10"><span class="nav-n">10</span>VPN & Zero Trust</a>
+  <a class="nav-item" href="#s11"><span class="nav-n">11</span>Network Segmentation</a>
+  <a class="nav-item" href="#s12"><span class="nav-n">12</span>Wireless Security</a>
+
+  <div class="nav-grp">Analysis</div>
+  <a class="nav-item" href="#s13"><span class="nav-n">13</span>Packet Analysis — Wireshark</a>
+  <a class="nav-item" href="#s14"><span class="nav-n">14</span>Network Forensics</a>
+  <a class="nav-item" href="#s15"><span class="nav-n">15</span>Capstone — Network Audit</a>
+
+  <div class="sb-foot">
+    <div class="sf-row"><span>Progress</span><span id="sb-pct">0%</span></div>
+    <div class="sf-track"><div class="sf-fill" id="sb-fill" style="width:0%"></div></div>
+  </div>
+</nav>
+
+<!-- MAIN -->
+<main class="main">
+
+<div class="hero">
+  <div class="hero-eyebrow">Module 01 · Security Core</div>
+  <h1 class="hero-title">NETWORK<br><span>SECURITY</span></h1>
+  <p class="hero-desc">Protocols, attacks, defences, and analysis — the complete practitioner's guide to network security. From OSI model to Wireshark packet forensics, every topic is backed by hands-on labs.</p>
+  <div class="hero-stats">
+    <div class="hs"><span class="hs-v">15</span><span class="hs-l">Topics</span></div>
+    <div class="hs"><span class="hs-v o">12+</span><span class="hs-l">Labs</span></div>
+    <div class="hs"><span class="hs-v g">Wireshark · Nmap</span><span class="hs-l">Core Tools</span></div>
+    <div class="hs"><span class="hs-v a">Week 1–2</span><span class="hs-l">Timeline</span></div>
+  </div>
+</div>
+
+<div class="content">
+
+<!-- ══════════════════
+01 — OSI & TCP/IP Models
+══════════════════ -->
+<div class="section" id="s1">
+  <div class="sec-head">
+    <span class="sec-num">01</span>
+    <div class="sec-meta">
+      <div class="sec-title">OSI & TCP/IP Models</div>
+      <div class="sec-sub">Layers, PDUs, encapsulation, and why the model matters for security</div>
+    </div>
+    <span class="badge b-orange">Foundation</span>
+  </div>
+
+  <div class="theory">
+    <h4>Why the OSI Model Matters for Security</h4>
+    <p>The <strong>OSI (Open Systems Interconnection) model</strong> is a conceptual framework that standardizes how network communication works across seven layers. Security professionals use it to precisely locate vulnerabilities — a SQL injection is a Layer 7 attack, ARP spoofing is Layer 2, IP spoofing is Layer 3, SYN flood is Layer 4. When you know what layer an attack operates at, you know which controls to apply.</p>
+    <p>The <strong>TCP/IP model</strong> is the practical 4-layer implementation that the internet actually uses. In job interviews and real-world analysis, you'll reference both. OSI for precision, TCP/IP for implementation context.</p>
+  </div>
+
+  <div class="osi">
+    <div class="osi-row active">
+      <div class="osi-num">7</div>
+      <div class="osi-name">Application</div>
+      <div class="osi-pdu">Data</div>
+      <div class="osi-proto">HTTP, HTTPS, DNS, FTP, SMTP, SSH, SNMP, DHCP, Telnet</div>
+    </div>
+    <div class="osi-row">
+      <div class="osi-num">6</div>
+      <div class="osi-name">Presentation</div>
+      <div class="osi-pdu">Data</div>
+      <div class="osi-proto">TLS/SSL encryption, JPEG/PNG, ASCII/Unicode encoding, MIME</div>
+    </div>
+    <div class="osi-row">
+      <div class="osi-num">5</div>
+      <div class="osi-name">Session</div>
+      <div class="osi-pdu">Data</div>
+      <div class="osi-proto">NetBIOS, RPC, SQL sessions, SMB session establishment</div>
+    </div>
+    <div class="osi-row active">
+      <div class="osi-num">4</div>
+      <div class="osi-name">Transport</div>
+      <div class="osi-pdu">Segment/Datagram</div>
+      <div class="osi-proto">TCP (reliable), UDP (unreliable), ports, flow control, SYN/ACK</div>
+    </div>
+    <div class="osi-row active">
+      <div class="osi-num">3</div>
+      <div class="osi-name">Network</div>
+      <div class="osi-pdu">Packet</div>
+      <div class="osi-proto">IP (IPv4/IPv6), ICMP, OSPF, BGP, IPSec, routing</div>
+    </div>
+    <div class="osi-row active">
+      <div class="osi-num">2</div>
+      <div class="osi-name">Data Link</div>
+      <div class="osi-pdu">Frame</div>
+      <div class="osi-proto">Ethernet, Wi-Fi (802.11), MAC addresses, ARP, VLANs, PPP</div>
+    </div>
+    <div class="osi-row">
+      <div class="osi-num">1</div>
+      <div class="osi-name">Physical</div>
+      <div class="osi-pdu">Bits</div>
+      <div class="osi-proto">Cables (Cat5e/6/7), fibre, radio waves, hubs, repeaters, NICs</div>
+    </div>
+  </div>
+
+  <div class="note orange">
+    <span class="ni">💡</span>
+    <span><strong>Memory trick:</strong> "All People Seem To Need Data Processing" (Application → Physical going down) or "Please Do Not Throw Sausage Pizza Away" (Physical → Application going up). Security tools map to layers — Wireshark = L2–L7, iptables = L3/L4, ModSecurity WAF = L7.</span>
+  </div>
+
+  <div class="theory amber" style="margin-top:12px;">
+    <h4>TCP/IP 4-Layer Model vs OSI</h4>
+    <p><strong>Application (TCP/IP)</strong> = OSI Layers 5+6+7. <strong>Transport (TCP/IP)</strong> = OSI Layer 4. <strong>Internet (TCP/IP)</strong> = OSI Layer 3. <strong>Network Access (TCP/IP)</strong> = OSI Layers 1+2. TCP/IP is what's actually implemented in software — OSI is the reference model for understanding and documentation.</p>
+  </div>
+
+  <div class="theory blue" style="margin-top:12px;">
+    <h4>Encapsulation — How Data Moves Down the Stack</h4>
+    <p>Each layer <strong>wraps the layer above's data with its own header</strong> (and sometimes trailer). As data travels down the OSI stack from Application to Physical, each layer adds its header — this is encapsulation. The receiving end decapsulates from the bottom up, stripping headers at each layer.</p>
+  </div>
+
+  <div class="packet">
+    <div class="pkt-field" style="background:var(--bg3);flex:0.6;">
+      <span class="pkt-label">Ethernet Header</span>
+      <span class="pkt-val">Src MAC + Dst MAC</span>
+      <span class="pkt-bit">L2 · 14 bytes</span>
+    </div>
+    <div class="pkt-field" style="background:var(--bg2);flex:0.7;">
+      <span class="pkt-label">IP Header</span>
+      <span class="pkt-val">Src IP + Dst IP</span>
+      <span class="pkt-bit">L3 · 20 bytes</span>
+    </div>
+    <div class="pkt-field" style="background:var(--bg3);flex:0.6;">
+      <span class="pkt-label">TCP Header</span>
+      <span class="pkt-val">Src Port + Dst Port</span>
+      <span class="pkt-bit">L4 · 20 bytes</span>
+    </div>
+    <div class="pkt-field" style="background:var(--orange-glow);flex:1.5;border-color:var(--orange-dim);">
+      <span class="pkt-label">Payload</span>
+      <span class="pkt-val" style="color:var(--orange);">Application Data</span>
+      <span class="pkt-bit">L5–L7 · variable</span>
+    </div>
+    <div class="pkt-field" style="background:var(--bg3);flex:0.5;">
+      <span class="pkt-label">Ethernet Trailer</span>
+      <span class="pkt-val">FCS</span>
+      <span class="pkt-bit">L2 · 4 bytes</span>
+    </div>
+  </div>
+
+  <div class="practical open">
+    <div class="prac-head" onclick="toggleP(this)">
+      <span class="ph-i">🔬</span>
+      <span class="ph-t">Lab 1.1 — Capture packets and identify each OSI layer in Wireshark</span>
+      <span class="ph-tag pt-tool">Wireshark</span>
+      <span class="ph-chev">▶</span>
+    </div>
+    <div class="prac-body">
+      <ol class="steps">
+        <li class="step">
+          <span class="sn">1</span>
+          <div class="sc">
+            <div class="st">Install and launch Wireshark on Kali Linux</div>
+            <div class="code" data-label="bash">
+<span class="cmd">sudo apt install</span> wireshark
+<span class="cmd">sudo wireshark</span>
+<span class="cm"># Select your network interface (eth0, wlan0, or lo for loopback)</span>
+<span class="cm"># Click the blue shark fin icon to start capture</span>
+            </div>
+          </div>
+        </li>
+        <li class="step">
+          <span class="sn">2</span>
+          <div class="sc">
+            <div class="st">Generate traffic and observe encapsulation</div>
+            <div class="code" data-label="bash (separate terminal)">
+<span class="cmd">curl</span> http://testphp.vulnweb.com/
+<span class="cm"># Or: ping 8.8.8.8</span>
+<span class="cm"># Wireshark will capture the HTTP GET + DNS + TCP + IP + Ethernet frames</span>
+            </div>
+          </div>
+        </li>
+        <li class="step">
+          <span class="sn">3</span>
+          <div class="sc">
+            <div class="st">Click on one HTTP packet and expand each layer in the bottom pane</div>
+            <div class="code" data-label="wireshark layers visible">
+<span class="ok">▼ Frame 42: 478 bytes on wire</span>          <span class="cm">← Physical (L1)</span>
+<span class="ok">▼ Ethernet II, Src: aa:bb:cc:dd, Dst: 11:22:33:44</span>  <span class="cm">← Data Link (L2)</span>
+<span class="ok">▼ Internet Protocol Version 4, Src: 192.168.1.5</span>    <span class="cm">← Network (L3)</span>
+<span class="ok">▼ Transmission Control Protocol, Src Port: 54321</span>    <span class="cm">← Transport (L4)</span>
+<span class="ok">▼ Hypertext Transfer Protocol</span>                       <span class="cm">← Application (L7)</span>
+  GET / HTTP/1.1\r\n
+  Host: testphp.vulnweb.com\r\n
+            </div>
+          </div>
+        </li>
+        <li class="step">
+          <span class="sn">4</span>
+          <div class="sc">
+            <div class="st">Identify all 7 OSI layers in your capture</div>
+            <div class="sd">For each packet type you see, map it to the OSI layer table. Write down: What is the L2 PDU called? What headers does L3 add? Document this as "OSI mapping exercise" in your notes.</div>
+          </div>
+        </li>
+      </ol>
+    </div>
+  </div>
+</div>
+
+<hr class="hdiv">
+
+<!-- ══════════════════
+02 — IP Addressing & Subnetting
+══════════════════ -->
+<div class="section" id="s2">
+  <div class="sec-head">
+    <span class="sec-num">02</span>
+    <div class="sec-meta">
+      <div class="sec-title">IP Addressing & Subnetting</div>
+      <div class="sec-sub">IPv4, IPv6, CIDR notation, subnet math, and private address ranges</div>
+    </div>
+    <span class="badge b-amber">Core Knowledge</span>
+  </div>
+
+  <div class="theory amber">
+    <h4>IPv4 Address Structure</h4>
+    <p>An IPv4 address is <strong>32 bits</strong>, written as four octets in dotted-decimal notation (e.g., 192.168.1.100). Each octet is 8 bits, range 0–255. The address has two parts: the <em>network portion</em> (identifies the subnet) and the <em>host portion</em> (identifies the specific device). The <em>subnet mask</em> (or CIDR prefix) separates these two parts.</p>
+    <p>Understanding subnetting is essential for network security: it determines which hosts are on the same segment, how broadcast traffic flows, and which routes packets take — all of which affect where you place firewalls, how you segment networks, and what traffic a VLAN can see.</p>
+  </div>
+
+  <table class="dtable">
+    <thead><tr><th>Class</th><th>Range</th><th>Default Mask</th><th>Hosts per Network</th><th>Private Range</th></tr></thead>
+    <tbody>
+      <tr><td class="tk">Class A</td><td>1.0.0.0 – 126.255.255.255</td><td>/8 (255.0.0.0)</td><td>16,777,214</td><td class="to">10.0.0.0/8</td></tr>
+      <tr><td class="tk">Class B</td><td>128.0.0.0 – 191.255.255.255</td><td>/16 (255.255.0.0)</td><td>65,534</td><td class="to">172.16.0.0/12</td></tr>
+      <tr><td class="tk">Class C</td><td>192.0.0.0 – 223.255.255.255</td><td>/24 (255.255.255.0)</td><td>254</td><td class="to">192.168.0.0/16</td></tr>
+      <tr><td class="tk">Loopback</td><td>127.0.0.0/8</td><td>—</td><td>—</td><td>127.0.0.1 = localhost</td></tr>
+      <tr><td class="tk">Link-local</td><td>169.254.0.0/16</td><td>—</td><td>—</td><td>APIPA — no DHCP response</td></tr>
+    </tbody>
+  </table>
+
+  <div class="theory" style="margin-top:12px;">
+    <h4>CIDR Subnetting — The Math You Need</h4>
+    <p><strong>CIDR (Classless Inter-Domain Routing)</strong> notation writes the prefix length after a slash: 192.168.1.0/24. The prefix length is the number of bits used for the network portion. The remaining bits identify hosts.</p>
+  </div>
+
+  <table class="dtable">
+    <thead><tr><th>CIDR Prefix</th><th>Subnet Mask</th><th>Total IPs</th><th>Usable Hosts</th><th>Security Use Case</th></tr></thead>
+    <tbody>
+      <tr><td class="tk">/8</td><td>255.0.0.0</td><td>16,777,216</td><td>16,777,214</td><td>Large enterprise backbone</td></tr>
+      <tr><td class="tk">/16</td><td>255.255.0.0</td><td>65,536</td><td>65,534</td><td>Campus network, large org</td></tr>
+      <tr><td class="tk">/24</td><td>255.255.255.0</td><td>256</td><td>254</td><td>Most common subnet — office, server segment</td></tr>
+      <tr><td class="tk">/25</td><td>255.255.255.128</td><td>128</td><td>126</td><td>Split /24 into two segments</td></tr>
+      <tr><td class="tk">/28</td><td>255.255.255.240</td><td>16</td><td>14</td><td>Small server group, DMZ</td></tr>
+      <tr><td class="tk">/30</td><td>255.255.255.252</td><td>4</td><td>2</td><td>Point-to-point router links</td></tr>
+      <tr><td class="tk">/32</td><td>255.255.255.255</td><td>1</td><td>1</td><td>Host route, firewall allow for single IP</td></tr>
+    </tbody>
+  </table>
+
+  <div class="practical open">
+    <div class="prac-head" onclick="toggleP(this)">
+      <span class="ph-i">🔢</span>
+      <span class="ph-t">Lab 2.1 — Subnet calculation and CIDR practice</span>
+      <span class="ph-tag pt-cmd">Calculation</span>
+      <span class="ph-chev">▶</span>
+    </div>
+    <div class="prac-body">
+      <ol class="steps">
+        <li class="step">
+          <span class="sn">1</span>
+          <div class="sc">
+            <div class="st">Calculate subnet details from CIDR notation</div>
+            <div class="code" data-label="python3">
+<span class="kw">import</span> ipaddress
+
+<span class="cm"># Analyse a network</span>
+net = ipaddress.IPv4Network(<span class="val">'192.168.10.0/26'</span>, strict=<span class="val">False</span>)
+
+print(f<span class="val">"Network:        {net.network_address}"</span>)
+print(f<span class="val">"Broadcast:      {net.broadcast_address}"</span>)
+print(f<span class="val">"Subnet mask:    {net.netmask}"</span>)
+print(f<span class="val">"Total IPs:      {net.num_addresses}"</span>)
+print(f<span class="val">"Usable hosts:   {net.num_addresses - 2}"</span>)
+print(f<span class="val">"First host:     {list(net.hosts())[0]}"</span>)
+print(f<span class="val">"Last host:      {list(net.hosts())[-1]}"</span>)
+print(f<span class="val">"Prefix length:  /{net.prefixlen}"</span>)
+
+<span class="cm"># Is a given IP in the network?</span>
+ip = ipaddress.IPv4Address(<span class="val">'192.168.10.45'</span>)
+print(f<span class="val">"192.168.10.45 in network: {ip in net}"</span>)  <span class="cm"># True</span>
+
+<span class="cm"># List all /28 subnets within a /24</span>
+parent = ipaddress.IPv4Network(<span class="val">'10.10.10.0/24'</span>)
+for subnet in parent.subnets(new_prefix=<span class="val">28</span>):
+    print(f<span class="val">"  {subnet} → {subnet.num_addresses - 2} hosts"</span>)
+            </div>
+          </div>
+        </li>
+        <li class="step">
+          <span class="sn">2</span>
+          <div class="sc">
+            <div class="st">Check your host's IP, mask, and gateway</div>
+            <div class="code" data-label="bash">
+<span class="cmd">ip addr show</span>              <span class="cm"># show all interfaces and IPs</span>
+<span class="cmd">ip route show</span>             <span class="cm"># routing table — default gateway</span>
+<span class="cmd">ip addr show</span> eth0          <span class="cm"># specific interface</span>
+<span class="cmd">ifconfig</span> eth0              <span class="cm"># legacy alternative</span>
+<span class="cm"># IPv6 address check</span>
+<span class="cmd">ip -6 addr show</span>
+            </div>
+          </div>
+        </li>
+        <li class="step">
+          <span class="sn">3</span>
+          <div class="sc">
+            <div class="st">IPv6 basics — understand the format</div>
+            <div class="code" data-label="ipv6 reference">
+<span class="cm"># IPv6 is 128 bits — 8 groups of 4 hex digits</span>
+<span class="val">2001:0db8:85a3:0000:0000:8a2e:0370:7334</span>
+<span class="cm"># Shortened: leading zeros in each group can be dropped</span>
+<span class="val">2001:db8:85a3::8a2e:370:7334</span>
+<span class="cm"># :: = consecutive groups of zeros</span>
+
+<span class="cm"># Key IPv6 address types:</span>
+<span class="kw">fe80::/10</span>     <span class="cm"># Link-local (auto-configured, not routed)</span>
+<span class="kw">fc00::/7</span>      <span class="cm"># Unique local (private — like 10.0.0.0/8)</span>
+<span class="kw">2000::/3</span>      <span class="cm"># Global unicast (routable internet addresses)</span>
+<span class="kw">::1</span>           <span class="cm"># Loopback (like 127.0.0.1)</span>
+<span class="kw">ff02::1</span>       <span class="cm"># All-nodes multicast (like broadcast)</span>
+            </div>
+          </div>
+        </li>
+      </ol>
+    </div>
+  </div>
+</div>
+
+<hr class="hdiv">
+
+<!-- ══════════════════
+03 — Protocols Deep Dive
+══════════════════ -->
+<div class="section" id="s3">
+  <div class="sec-head">
+    <span class="sec-num">03</span>
+    <div class="sec-meta">
+      <div class="sec-title">Core Network Protocols</div>
+      <div class="sec-sub">TCP, UDP, DNS, DHCP, HTTP/S, ARP, ICMP — how each works and where they're exploited</div>
+    </div>
+    <span class="badge b-cyan">Protocols</span>
+  </div>
+
+  <div class="theory cyan">
+    <h4>TCP — Reliable, Connection-Oriented</h4>
+    <p><strong>TCP (Transmission Control Protocol)</strong> guarantees ordered, reliable delivery through a <em>three-way handshake</em>, sequence numbers, acknowledgements, and retransmission of lost packets. It's stateful — both sides maintain connection state. Used by HTTP/S, SSH, FTP, SMTP, databases — anything requiring guaranteed delivery.</p>
+    <p>TCP flags drive its state machine: <strong>SYN</strong> (initiate), <strong>ACK</strong> (acknowledge), <strong>FIN</strong> (graceful close), <strong>RST</strong> (abrupt reset), <strong>PSH</strong> (push data now), <strong>URG</strong> (urgent data). Security relevance: SYN without ACK response = SYN flood; RST injection = TCP session hijacking.</p>
+  </div>
+
+  <div class="achain" style="margin:12px 0;">
+    <div class="ac-step hit"><div class="ac-n">Client → Server</div><div class="ac-t">SYN</div><div class="ac-d">Seq=100, SYN=1. "I want to connect. My start seq is 100."</div></div>
+    <div class="ac-step"><div class="ac-n">Server → Client</div><div class="ac-t">SYN-ACK</div><div class="ac-d">Seq=300, Ack=101, SYN=1, ACK=1. "OK, my start seq is 300."</div></div>
+    <div class="ac-step hit"><div class="ac-n">Client → Server</div><div class="ac-t">ACK</div><div class="ac-d">Seq=101, Ack=301, ACK=1. "Confirmed. Connection open."</div></div>
+    <div class="ac-step"><div class="ac-n">Both sides</div><div class="ac-t">DATA</div><div class="ac-d">Bidirectional data exchange with seq/ack tracking.</div></div>
+    <div class="ac-step"><div class="ac-n">FIN / FIN-ACK</div><div class="ac-t">CLOSE</div><div class="ac-d">4-way FIN handshake to gracefully close the connection.</div></div>
+  </div>
+
+  <div class="theory" style="margin-top:12px;">
+    <h4>UDP — Fast, Connectionless</h4>
+    <p><strong>UDP (User Datagram Protocol)</strong> sends datagrams with no handshake, no acknowledgement, no guarantee of delivery or ordering. It's a fire-and-forget protocol — fast and efficient for latency-sensitive traffic where occasional loss is acceptable. Used by DNS queries, VoIP, online gaming, video streaming, NTP, DHCP, SNMP. Security: UDP amplification attacks exploit protocols with small requests producing large responses (DNS, NTP, SSDP).</p>
+  </div>
+
+  <div class="theory amber" style="margin-top:10px;">
+    <h4>DNS — The Internet's Phone Book</h4>
+    <p><strong>DNS (Domain Name System)</strong> translates human-readable hostnames (google.com) to IP addresses. It's hierarchical: Root servers → TLD nameservers (.com) → Authoritative nameservers (google.com's NS). Operates on <strong>UDP port 53</strong> (queries) and TCP port 53 (zone transfers, large responses).</p>
+    <p>DNS record types every security analyst must know: <strong>A</strong> (hostname → IPv4), <strong>AAAA</strong> (hostname → IPv6), <strong>MX</strong> (mail server), <strong>CNAME</strong> (alias), <strong>NS</strong> (authoritative nameserver), <strong>TXT</strong> (SPF, DKIM, DMARC, domain verification), <strong>PTR</strong> (reverse lookup), <strong>SOA</strong> (zone authority info).</p>
+  </div>
+
+  <div class="theory green" style="margin-top:10px;">
+    <h4>DHCP — Dynamic IP Assignment</h4>
+    <p><strong>DHCP (Dynamic Host Configuration Protocol)</strong> automatically assigns IP address, subnet mask, default gateway, DNS server, and lease time to hosts when they join the network. The DORA process: <strong>D</strong>iscover (client broadcasts) → <strong>O</strong>ffer (server offers IP) → <strong>R</strong>equest (client requests offered IP) → <strong>A</strong>cknowledge (server confirms). Security: rogue DHCP servers can redirect all traffic by providing a malicious gateway.</p>
+  </div>
+
+  <div class="theory blue" style="margin-top:10px;">
+    <h4>ICMP — Diagnostics and Control</h4>
+    <p><strong>ICMP (Internet Control Message Protocol)</strong> is used for network diagnostics and error reporting. <strong>Ping</strong> uses ICMP Echo Request (Type 8) and Echo Reply (Type 0). <strong>Traceroute</strong> uses TTL manipulation — sends packets with TTL=1, 2, 3... each router decrements TTL; when it hits 0, the router sends ICMP Time Exceeded back, revealing the hop. Security: ICMP can carry data (covert channels), ping sweeps for host discovery, ICMP redirect attacks to modify routing.</p>
+  </div>
+
+  <div class="practical open">
+    <div class="prac-head" onclick="toggleP(this)">
+      <span class="ph-i">📡</span>
+      <span class="ph-t">Lab 3.1 — Analyze TCP handshake, DNS queries, and DHCP in Wireshark</span>
+      <span class="ph-tag pt-tool">Wireshark</span>
+      <span class="ph-chev">▶</span>
+    </div>
+    <div class="prac-body">
+      <ol class="steps">
+        <li class="step">
+          <span class="sn">1</span>
+          <div class="sc">
+            <div class="st">Capture and filter TCP three-way handshake</div>
+            <div class="code" data-label="wireshark display filter">
+<span class="cm"># Start capture, then run: curl http://example.com</span>
+<span class="cm"># Wireshark display filters:</span>
+
+<span class="cm"># Show only TCP SYN packets (first step of handshake)</span>
+<span class="val">tcp.flags.syn == 1 and tcp.flags.ack == 0</span>
+
+<span class="cm"># Show TCP SYN-ACK (second step)</span>
+<span class="val">tcp.flags.syn == 1 and tcp.flags.ack == 1</span>
+
+<span class="cm"># Show TCP RST packets (connection resets — often indicating blocks/errors)</span>
+<span class="val">tcp.flags.reset == 1</span>
+
+<span class="cm"># Show FIN packets (connection closing)</span>
+<span class="val">tcp.flags.fin == 1</span>
+
+<span class="cm"># Follow a full TCP stream: Right-click packet → Follow → TCP Stream</span>
+            </div>
+          </div>
+        </li>
+        <li class="step">
+          <span class="sn">2</span>
+          <div class="sc">
+            <div class="st">Capture and analyze DNS queries</div>
+            <div class="code" data-label="bash + wireshark">
+<span class="cm"># Generate DNS traffic</span>
+<span class="cmd">dig</span> google.com
+<span class="cmd">nslookup</span> yahoo.com
+<span class="cmd">host</span> -t MX gmail.com
+
+<span class="cm"># Wireshark DNS filters</span>
+<span class="val">dns</span>                            <span class="cm"># all DNS traffic</span>
+<span class="val">dns.qry.name == "google.com"</span>   <span class="cm"># specific domain query</span>
+<span class="val">dns.flags.response == 1</span>        <span class="cm"># DNS responses only</span>
+<span class="val">dns.qry.type == 1</span>              <span class="cm"># A record queries (type 1)</span>
+<span class="val">dns.qry.type == 28</span>             <span class="cm"># AAAA (IPv6) queries</span>
+<span class="val">dns.qry.type == 15</span>             <span class="cm"># MX queries</span>
+            </div>
+          </div>
+        </li>
+        <li class="step">
+          <span class="sn">3</span>
+          <div class="sc">
+            <div class="st">Capture DHCP DORA process</div>
+            <div class="code" data-label="bash + wireshark">
+<span class="cm"># Release and renew DHCP lease to trigger DORA</span>
+<span class="cmd">sudo dhclient -r</span> eth0        <span class="cm"># release</span>
+<span class="cmd">sudo dhclient</span> eth0            <span class="cm"># acquire new lease</span>
+
+<span class="cm"># Wireshark DHCP filter</span>
+<span class="val">dhcp or bootp</span>
+
+<span class="cm"># Observe in order:</span>
+<span class="cm"># DHCP Discover (src: 0.0.0.0, dst: 255.255.255.255)</span>
+<span class="cm"># DHCP Offer    (src: server, dst: 255.255.255.255)</span>
+<span class="cm"># DHCP Request  (src: 0.0.0.0, dst: 255.255.255.255)</span>
+<span class="cm"># DHCP Ack      (src: server, assigns IP to client)</span>
+            </div>
+          </div>
+        </li>
+      </ol>
+    </div>
+  </div>
+</div>
+
+<hr class="hdiv">
+
+<!-- ══════════════════
+04 — Key Ports & Services
+══════════════════ -->
+<div class="section" id="s4">
+  <div class="sec-head">
+    <span class="sec-num">04</span>
+    <div class="sec-meta">
+      <div class="sec-title">Key Ports & Services</div>
+      <div class="sec-sub">Well-known ports 1–1024, registered ports, and security risk rating</div>
+    </div>
+    <span class="badge b-orange">Reference</span>
+  </div>
+
+  <div class="theory">
+    <h4>Why Port Knowledge Is Critical</h4>
+    <p>Ports identify specific services running on a host. During network scanning, open ports reveal what services are exposed. During analysis, suspicious ports indicate malware (C2 callbacks, backdoors). During firewall rule design, you block specific ports to minimize attack surface. Every security role — SOC analyst, pen tester, GRC auditor — needs port knowledge.</p>
+  </div>
+
+  <div class="port-grid">
+    <div class="port-item"><span class="port-num">20/21</span><span class="port-proto">TCP</span><span class="port-name">FTP (data / control) — cleartext file transfer</span><span class="port-risk pr-high">HIGH</span></div>
+    <div class="port-item"><span class="port-num">22</span><span class="port-proto">TCP</span><span class="port-name">SSH — encrypted remote shell</span><span class="port-risk pr-med">MED</span></div>
+    <div class="port-item"><span class="port-num">23</span><span class="port-proto">TCP</span><span class="port-name">Telnet — cleartext remote shell (legacy)</span><span class="port-risk pr-high">HIGH</span></div>
+    <div class="port-item"><span class="port-num">25</span><span class="port-proto">TCP</span><span class="port-name">SMTP — email sending</span><span class="port-risk pr-med">MED</span></div>
+    <div class="port-item"><span class="port-num">53</span><span class="port-proto">TCP/UDP</span><span class="port-name">DNS — domain name resolution</span><span class="port-risk pr-med">MED</span></div>
+    <div class="port-item"><span class="port-num">67/68</span><span class="port-proto">UDP</span><span class="port-name">DHCP (server/client)</span><span class="port-risk pr-med">MED</span></div>
+    <div class="port-item"><span class="port-num">80</span><span class="port-proto">TCP</span><span class="port-name">HTTP — cleartext web</span><span class="port-risk pr-high">HIGH</span></div>
+    <div class="port-item"><span class="port-num">110</span><span class="port-proto">TCP</span><span class="port-name">POP3 — email retrieval (legacy)</span><span class="port-risk pr-high">HIGH</span></div>
+    <div class="port-item"><span class="port-num">119</span><span class="port-proto">TCP</span><span class="port-name">NNTP — network news</span><span class="port-risk pr-low">LOW</span></div>
+    <div class="port-item"><span class="port-num">123</span><span class="port-proto">UDP</span><span class="port-name">NTP — time synchronisation</span><span class="port-risk pr-med">MED</span></div>
+    <div class="port-item"><span class="port-num">135</span><span class="port-proto">TCP</span><span class="port-name">MSRPC — Windows RPC endpoint mapper</span><span class="port-risk pr-high">HIGH</span></div>
+    <div class="port-item"><span class="port-num">137/138/139</span><span class="port-proto">TCP/UDP</span><span class="port-name">NetBIOS — Windows name/session service</span><span class="port-risk pr-high">HIGH</span></div>
+    <div class="port-item"><span class="port-num">143</span><span class="port-proto">TCP</span><span class="port-name">IMAP — email access</span><span class="port-risk pr-med">MED</span></div>
+    <div class="port-item"><span class="port-num">161/162</span><span class="port-proto">UDP</span><span class="port-name">SNMP — network device management</span><span class="port-risk pr-high">HIGH</span></div>
+    <div class="port-item"><span class="port-num">389</span><span class="port-proto">TCP</span><span class="port-name">LDAP — directory services</span><span class="port-risk pr-high">HIGH</span></div>
+    <div class="port-item"><span class="port-num">443</span><span class="port-proto">TCP</span><span class="port-name">HTTPS — encrypted web</span><span class="port-risk pr-low">LOW</span></div>
+    <div class="port-item"><span class="port-num">445</span><span class="port-proto">TCP</span><span class="port-name">SMB — Windows file sharing (EternalBlue)</span><span class="port-risk pr-high">HIGH</span></div>
+    <div class="port-item"><span class="port-num">465/587</span><span class="port-proto">TCP</span><span class="port-name">SMTPS — encrypted email sending</span><span class="port-risk pr-low">LOW</span></div>
+    <div class="port-item"><span class="port-num">514</span><span class="port-proto">UDP</span><span class="port-name">Syslog — log forwarding</span><span class="port-risk pr-med">MED</span></div>
+    <div class="port-item"><span class="port-num">636</span><span class="port-proto">TCP</span><span class="port-name">LDAPS — encrypted LDAP</span><span class="port-risk pr-low">LOW</span></div>
+    <div class="port-item"><span class="port-num">989/990</span><span class="port-proto">TCP</span><span class="port-name">FTPS — encrypted FTP</span><span class="port-risk pr-low">LOW</span></div>
+    <div class="port-item"><span class="port-num">993/995</span><span class="port-proto">TCP</span><span class="port-name">IMAPS/POP3S — encrypted email</span><span class="port-risk pr-low">LOW</span></div>
+    <div class="port-item"><span class="port-num">1433</span><span class="port-proto">TCP</span><span class="port-name">MSSQL — Microsoft SQL Server</span><span class="port-risk pr-high">HIGH</span></div>
+    <div class="port-item"><span class="port-num">1521</span><span class="port-proto">TCP</span><span class="port-name">Oracle DB — database service</span><span class="port-risk pr-high">HIGH</span></div>
+    <div class="port-item"><span class="port-num">3306</span><span class="port-proto">TCP</span><span class="port-name">MySQL — database service</span><span class="port-risk pr-high">HIGH</span></div>
+    <div class="port-item"><span class="port-num">3389</span><span class="port-proto">TCP</span><span class="port-name">RDP — Windows Remote Desktop</span><span class="port-risk pr-high">HIGH</span></div>
+    <div class="port-item"><span class="port-num">5432</span><span class="port-proto">TCP</span><span class="port-name">PostgreSQL — database service</span><span class="port-risk pr-high">HIGH</span></div>
+    <div class="port-item"><span class="port-num">5900</span><span class="port-proto">TCP</span><span class="port-name">VNC — virtual network computing</span><span class="port-risk pr-high">HIGH</span></div>
+    <div class="port-item"><span class="port-num">8080/8443</span><span class="port-proto">TCP</span><span class="port-name">HTTP/S alternate — dev servers, proxies</span><span class="port-risk pr-med">MED</span></div>
+    <div class="port-item"><span class="port-num">27017</span><span class="port-proto">TCP</span><span class="port-name">MongoDB — NoSQL database</span><span class="port-risk pr-high">HIGH</span></div>
+  </div>
+
+  <div class="practical open">
+    <div class="prac-head" onclick="toggleP(this)">
+      <span class="ph-i">🗺️</span>
+      <span class="ph-t">Lab 4.1 — Port scanning with Nmap — identify all running services</span>
+      <span class="ph-tag pt-cmd">Nmap</span>
+      <span class="ph-chev">▶</span>
+    </div>
+    <div class="prac-body">
+      <div class="note red"><span class="ni">⚠</span><span>Run against Metasploitable2 VM (192.168.56.101) on your host-only network only. Never scan external hosts without authorization.</span></div>
+      <ol class="steps" style="margin-top:12px;">
+        <li class="step">
+          <span class="sn">1</span>
+          <div class="sc">
+            <div class="st">Discover all open ports</div>
+            <div class="code" data-label="bash">
+<span class="cm"># Quick scan — top 1000 ports</span>
+<span class="cmd">nmap</span> 192.168.56.101
+
+<span class="cm"># Full port scan — all 65535 ports</span>
+<span class="cmd">nmap</span> <span class="flag">-p-</span> 192.168.56.101
+
+<span class="cm"># UDP scan (many services use UDP — often missed)</span>
+<span class="cmd">sudo nmap</span> <span class="flag">-sU --top-ports</span> 100 192.168.56.101
+            </div>
+          </div>
+        </li>
+        <li class="step">
+          <span class="sn">2</span>
+          <div class="sc">
+            <div class="st">Service and version detection</div>
+            <div class="code" data-label="bash">
+<span class="cmd">nmap</span> <span class="flag">-sV -sC</span> 192.168.56.101
+<span class="cm"># -sV: version detection | -sC: default scripts</span>
+<span class="out"># PORT     STATE SERVICE     VERSION</span>
+<span class="out"># 21/tcp   open  ftp         vsftpd 2.3.4</span>
+<span class="out"># 22/tcp   open  ssh         OpenSSH 4.7p1</span>
+<span class="out"># 80/tcp   open  http        Apache httpd 2.2.8</span>
+<span class="out"># 139/tcp  open  netbios-ssn Samba smbd 3.X</span>
+<span class="out"># 3306/tcp open  mysql       MySQL 5.0.51a</span>
+<span class="out"># 5432/tcp open  postgresql  PostgreSQL 8.3.0</span>
+            </div>
+          </div>
+        </li>
+        <li class="step">
+          <span class="sn">3</span>
+          <div class="sc">
+            <div class="st">Save results and compare against known-dangerous ports</div>
+            <div class="code" data-label="bash">
+<span class="cm"># Save scan results in all formats</span>
+<span class="cmd">nmap</span> <span class="flag">-sV -oA</span> metasploitable_scan 192.168.56.101
+<span class="cm"># Creates: .nmap (text), .xml, .gnmap (greppable)</span>
+
+<span class="cm"># Find all HIGH risk ports from our list above</span>
+<span class="cmd">grep</span> <span class="val">"open"</span> metasploitable_scan.nmap | \
+  <span class="cmd">grep</span> <span class="flag">-E</span> <span class="val">"21|23|25|80|135|139|161|389|445|1433|3306|3389|5900"</span>
+<span class="cm"># Every match = firewall blocking or service hardening needed</span>
+            </div>
+          </div>
+        </li>
+      </ol>
+    </div>
+  </div>
+</div>
+
+<hr class="hdiv">
+
+<!-- ══════════════════
+05 — Network Attacks
+══════════════════ -->
+<div class="section" id="s5">
+  <div class="sec-head">
+    <span class="sec-num">05</span>
+    <div class="sec-meta">
+      <div class="sec-title">Network Attacks</div>
+      <div class="sec-sub">MITM, IP spoofing, TCP session hijacking, port scanning, and sniffing</div>
+    </div>
+    <span class="badge b-red">Attacks</span>
+  </div>
+
+  <div class="theory red">
+    <h4>Network Attacks Target the Protocol Stack</h4>
+    <p>Network attacks exploit weaknesses in protocol design and implementation — not application-layer vulnerabilities. Many core internet protocols (TCP, ARP, DNS, BGP) were designed for a trusted academic network and lack authentication entirely. <strong>Decades of security features have been bolted on</strong> — but legacy protocol weaknesses remain, especially inside corporate LANs.</p>
+  </div>
+
+  <table class="dtable">
+    <thead><tr><th>Attack</th><th>OSI Layer</th><th>Mechanism</th><th>Impact</th><th>Detection</th></tr></thead>
+    <tbody>
+      <tr>
+        <td class="tk">MITM (Man-in-the-Middle)</td>
+        <td>L2–L7</td>
+        <td>Intercept traffic between two parties by positioning self between them (ARP poison, DNS spoof, SSL strip)</td>
+        <td class="tr">Credential theft, session hijacking, data modification</td>
+        <td>ARP monitoring, HTTPS enforcement, cert pinning</td>
+      </tr>
+      <tr>
+        <td class="tk">IP Spoofing</td>
+        <td>L3</td>
+        <td>Forge source IP in packet headers. Bypass IP-based access controls, hide attacker identity, enable reflection attacks</td>
+        <td class="ta">Bypass ACLs, DDoS amplification, blind injection</td>
+        <td>Ingress filtering (BCP38), uRPF on routers</td>
+      </tr>
+      <tr>
+        <td class="tk">TCP Session Hijacking</td>
+        <td>L4</td>
+        <td>Predict/sniff TCP sequence numbers, inject packets into established session as if from trusted party</td>
+        <td class="tr">Command injection into SSH/Telnet, bypass auth</td>
+        <td>Encrypted sessions (SSH), sequence randomization</td>
+      </tr>
+      <tr>
+        <td class="tk">Port Scanning</td>
+        <td>L4</td>
+        <td>Probe ports to identify open services. SYN scan, connect scan, FIN scan, NULL scan for evasion</td>
+        <td class="ta">Reconnaissance — enables targeted exploitation</td>
+        <td>IDS/IPS scan detection, port scan rate limiting</td>
+      </tr>
+      <tr>
+        <td class="tk">Passive Sniffing</td>
+        <td>L2</td>
+        <td>Listen to all traffic on a shared segment (hub, mirrored port). Capture cleartext protocols</td>
+        <td class="tr">Credential theft from FTP, Telnet, HTTP, SMTP</td>
+        <td>Encrypt everything, detect promiscuous mode NICs</td>
+      </tr>
+      <tr>
+        <td class="tk">Active Sniffing</td>
+        <td>L2</td>
+        <td>On switched networks, use ARP poisoning or MAC flooding to redirect traffic to attacker</td>
+        <td class="tr">MITM on switched LANs, capture encrypted sessions</td>
+        <td>Dynamic ARP Inspection (DAI), 802.1X port auth</td>
+      </tr>
+      <tr>
+        <td class="tk">Replay Attack</td>
+        <td>L4–L7</td>
+        <td>Capture valid authentication packet, replay it later to authenticate as the victim</td>
+        <td class="ta">Bypass authentication without knowing credentials</td>
+        <td>Timestamps, nonces, session tokens in requests</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="practical open">
+    <div class="prac-head" onclick="toggleP(this)">
+      <span class="ph-i">🕵️</span>
+      <span class="ph-t">Lab 5.1 — Passive sniffing and credential capture on lab network</span>
+      <span class="ph-tag pt-lab">Sniffing Lab</span>
+      <span class="ph-chev">▶</span>
+    </div>
+    <div class="prac-body">
+      <div class="note red"><span class="ni">⚠</span><span>Run ONLY on your own lab network (VirtualBox host-only adapter). Sniffing traffic without authorization is illegal under IT Act 2000 Section 66B.</span></div>
+      <ol class="steps" style="margin-top:12px;">
+        <li class="step">
+          <span class="sn">1</span>
+          <div class="sc">
+            <div class="st">Capture cleartext credentials from FTP (Metasploitable2)</div>
+            <div class="code" data-label="kali bash">
+<span class="cm"># Start capture on the network interface</span>
+<span class="cmd">sudo tcpdump</span> <span class="flag">-i</span> eth1 <span class="flag">-w</span> capture.pcap <span class="flag">-n</span> &
+
+<span class="cm"># From another terminal: connect to FTP on Metasploitable2</span>
+<span class="cmd">ftp</span> 192.168.56.101
+<span class="cm"># Enter username: msfadmin | password: msfadmin</span>
+<span class="cm"># (Metasploitable2 default credentials)</span>
+
+<span class="cm"># Stop capture</span>
+<span class="cmd">kill</span> %1
+
+<span class="cm"># Find credentials in capture</span>
+<span class="cmd">tcpdump</span> <span class="flag">-r</span> capture.pcap <span class="flag">-A</span> | <span class="cmd">grep</span> <span class="flag">-iE</span> <span class="val">"USER|PASS|login"</span>
+<span class="out"># USER msfadmin</span>
+<span class="out"># PASS msfadmin</span>
+<span class="cm"># Cleartext creds visible — this is why FTP should be replaced by SFTP</span>
+            </div>
+          </div>
+        </li>
+        <li class="step">
+          <span class="sn">2</span>
+          <div class="sc">
+            <div class="st">Capture HTTP credentials in Wireshark</div>
+            <div class="code" data-label="wireshark">
+<span class="cm"># Browse to http://192.168.56.101/dvwa/ (DVWA login page)</span>
+<span class="cm"># Submit credentials: admin / password</span>
+
+<span class="cm"># Wireshark filter: HTTP POST requests</span>
+<span class="val">http.request.method == "POST"</span>
+
+<span class="cm"># Click the POST packet → look at HTTP body in bottom pane</span>
+<span class="cm"># You'll see: username=admin&password=password&Login=Login</span>
+<span class="cm"># Complete cleartext — packet captures reveal credentials on HTTP</span>
+            </div>
+          </div>
+        </li>
+        <li class="step">
+          <span class="sn">3</span>
+          <div class="sc">
+            <div class="st">Detect interfaces in promiscuous mode</div>
+            <div class="code" data-label="bash">
+<span class="cm"># Check if any interface is in promiscuous mode</span>
+<span class="cmd">ip link show</span> | <span class="cmd">grep</span> PROMISC
+<span class="cm"># PROMISC flag = interface capturing all traffic (not just its own)</span>
+
+<span class="cm"># Set an interface to promiscuous mode (for capturing)</span>
+<span class="cmd">sudo ip link set</span> eth1 promisc on
+<span class="cmd">sudo ip link set</span> eth1 promisc off  <span class="cm"># restore after lab</span>
+            </div>
+          </div>
+        </li>
+      </ol>
+    </div>
+  </div>
+</div>
+
+<hr class="hdiv">
+
+<!-- ══════════════════
+06 — ARP & DNS Attacks
+══════════════════ -->
+<div class="section" id="s6">
+  <div class="sec-head">
+    <span class="sec-num">06</span>
+    <div class="sec-meta">
+      <div class="sec-title">ARP & DNS Attacks</div>
+      <div class="sec-sub">ARP poisoning, DNS spoofing, DNS cache poisoning, and Kaminsky attack</div>
+    </div>
+    <span class="badge b-rose">Protocol Abuse</span>
+  </div>
+
+  <div class="theory rose">
+    <h4>ARP — Unauthenticated by Design</h4>
+    <p><strong>ARP (Address Resolution Protocol)</strong> maps IP addresses to MAC addresses on a LAN. It has no authentication — any host can send an unsolicited ARP reply claiming "IP 192.168.1.1 is at MY MAC address." Hosts accept these and update their ARP cache. This is <strong>ARP spoofing / ARP poisoning</strong> — the most common LAN-based MITM attack.</p>
+    <p>Attack flow: Attacker sends ARP replies to victim saying "The gateway (192.168.1.1) is at my MAC." Attacker sends ARP replies to gateway saying "The victim (192.168.1.100) is at my MAC." All traffic between victim and gateway now flows through the attacker — classic MITM. Attacker forwards traffic transparently while reading/modifying it.</p>
+  </div>
+
+  <div class="practical open">
+    <div class="prac-head" onclick="toggleP(this)">
+      <span class="ph-i">☠️</span>
+      <span class="ph-t">Lab 6.1 — ARP poisoning MITM with arpspoof and detection with arpwatch</span>
+      <span class="ph-tag pt-lab">ARP Attack Lab</span>
+      <span class="ph-chev">▶</span>
+    </div>
+    <div class="prac-body">
+      <div class="note red"><span class="ni">⚠</span><span>Perform on your isolated lab network only. ARP poisoning disrupts network connectivity — only on VMs you own.</span></div>
+      <ol class="steps" style="margin-top:12px;">
+        <li class="step">
+          <span class="sn">1</span>
+          <div class="sc">
+            <div class="st">View current ARP table on target</div>
+            <div class="code" data-label="bash (victim or kali)">
+<span class="cmd">arp -n</span>
+<span class="out"># Address          HWtype  HWaddress           Flags</span>
+<span class="out"># 192.168.56.101   ether   08:00:27:ab:cd:ef   C      ← Metasploitable2</span>
+<span class="out"># 192.168.56.1     ether   0a:00:27:00:00:00   C      ← Gateway</span>
+            </div>
+          </div>
+        </li>
+        <li class="step">
+          <span class="sn">2</span>
+          <div class="sc">
+            <div class="st">Enable IP forwarding (so traffic still flows)</div>
+            <div class="code" data-label="kali bash">
+<span class="cm"># Enable IP forwarding — required for MITM (forward traffic between parties)</span>
+<span class="cmd">echo</span> 1 | <span class="cmd">sudo tee</span> /proc/sys/net/ipv4/ip_forward
+<span class="cm"># Without this, traffic is dropped → outage detected immediately</span>
+            </div>
+          </div>
+        </li>
+        <li class="step">
+          <span class="sn">3</span>
+          <div class="sc">
+            <div class="st">ARP poison victim and gateway with arpspoof</div>
+            <div class="code" data-label="kali bash">
+<span class="cm"># Terminal 1: Tell victim that Gateway's IP is our MAC</span>
+<span class="cmd">sudo arpspoof</span> <span class="flag">-i</span> eth1 <span class="flag">-t</span> 192.168.56.101 192.168.56.1
+<span class="cm"># -t TARGET_IP GATEWAY_IP</span>
+
+<span class="cm"># Terminal 2: Tell gateway that Victim's IP is our MAC</span>
+<span class="cmd">sudo arpspoof</span> <span class="flag">-i</span> eth1 <span class="flag">-t</span> 192.168.56.1 192.168.56.101
+
+<span class="cm"># Now all traffic between victim and gateway passes through Kali</span>
+<span class="cm"># Watch traffic: sudo tcpdump -i eth1 -n host 192.168.56.101</span>
+            </div>
+          </div>
+        </li>
+        <li class="step">
+          <span class="sn">4</span>
+          <div class="sc">
+            <div class="st">Detect ARP poisoning with arp monitoring</div>
+            <div class="code" data-label="bash">
+<span class="cm"># On victim: watch for ARP table changes</span>
+<span class="cmd">watch</span> <span class="flag">-n 1</span> <span class="val">"arp -n"</span>
+<span class="cm"># You'll see the gateway's MAC address change to attacker's MAC</span>
+
+<span class="cm"># Install arpwatch to detect ARP anomalies</span>
+<span class="cmd">sudo apt install</span> arpwatch
+<span class="cmd">sudo arpwatch</span> <span class="flag">-i</span> eth1
+<span class="cm"># Alerts on: new station, changed MAC for existing IP, flip-flop</span>
+
+<span class="cm"># Permanent ARP entries (protect gateway IP)</span>
+<span class="cmd">sudo arp</span> <span class="flag">-s</span> 192.168.56.1 0a:00:27:00:00:00
+<span class="cm"># Static entry cannot be overwritten by spoofed ARP replies</span>
+            </div>
+          </div>
+        </li>
+      </ol>
+    </div>
+  </div>
+
+  <div class="theory amber" style="margin-top:14px;">
+    <h4>DNS Spoofing & Cache Poisoning</h4>
+    <p><strong>DNS spoofing</strong> tricks a resolver into caching a malicious IP for a domain. The famous <strong>Kaminsky attack (2008)</strong> showed that DNS's 16-bit transaction ID (65,536 possibilities) made it feasible to flood a resolver with forged responses, poisoning its cache. The fix: randomize source ports (65,536 × 65,536 = 4 billion combinations) and use DNSSEC.</p>
+    <p><strong>DNS zone transfer abuse:</strong> AXFR (full zone transfer) dumps all DNS records for a domain. Should be restricted to authoritative nameservers only — if open, an attacker gets a complete map of all hostnames and IPs.</p>
+  </div>
+
+  <div class="practical">
+    <div class="prac-head" onclick="toggleP(this)">
+      <span class="ph-i">🧨</span>
+      <span class="ph-t">Lab 6.2 — DNS spoofing with dnsspoof and zone transfer testing</span>
+      <span class="ph-tag pt-lab">DNS Attack Lab</span>
+      <span class="ph-chev">▶</span>
+    </div>
+    <div class="prac-body">
+      <ol class="steps">
+        <li class="step">
+          <span class="sn">1</span>
+          <div class="sc">
+            <div class="st">Attempt DNS zone transfer (reconnaissance)</div>
+            <div class="code" data-label="bash">
+<span class="cm"># Test for open zone transfers (many misconfigured DNS servers allow this)</span>
+<span class="cmd">dig</span> axfr @ns1.zonetransfer.me zonetransfer.me
+<span class="cm"># This domain allows AXFR for testing — returns ALL records</span>
+<span class="cm"># Real targets: if successful, you get every hostname/IP</span>
+
+<span class="cm"># More formal test</span>
+<span class="cmd">nmap</span> <span class="flag">--script</span> dns-zone-transfer <span class="flag">-p</span> 53 zonetransfer.me
+            </div>
+          </div>
+        </li>
+        <li class="step">
+          <span class="sn">2</span>
+          <div class="sc">
+            <div class="st">DNS spoofing combined with ARP poisoning (MITM)</div>
+            <div class="code" data-label="kali bash (after arp poisoning)">
+<span class="cm"># Create hosts file for DNS spoofing</span>
+<span class="cmd">echo</span> <span class="val">"192.168.56.1 bank.internal"</span> > /tmp/dnsspoof_hosts
+
+<span class="cm"># Intercept DNS queries from victim and respond with fake IP</span>
+<span class="cmd">sudo dnsspoof</span> <span class="flag">-i</span> eth1 <span class="flag">-f</span> /tmp/dnsspoof_hosts
+<span class="cm"># When victim queries "bank.internal", they get 192.168.56.1 (our IP)</span>
+<span class="cm"># Host a fake login page there → credential harvest</span>
+            </div>
+          </div>
+        </li>
+        <li class="step">
+          <span class="sn">3</span>
+          <div class="sc">
+            <div class="st">Prevention — check DNS security configuration</div>
+            <div class="code" data-label="bash">
+<span class="cm"># Check if DNSSEC is enabled for a domain</span>
+<span class="cmd">dig</span> +dnssec google.com
+<span class="cm"># Look for: AD (Authenticated Data) flag in response</span>
+<span class="cm"># RRSIG records = DNSSEC signatures present</span>
+
+<span class="cm"># Check DNS-over-HTTPS (DoH) / DNS-over-TLS (DoT)</span>
+<span class="cmd">dig</span> @1.1.1.1 +tls google.com  <span class="cm"># Cloudflare DoT (port 853)</span>
+
+<span class="cm"># Block zone transfers in BIND config:</span>
+<span class="cm"># allow-transfer { none; };  ← in named.conf</span>
+            </div>
+          </div>
+        </li>
+      </ol>
+    </div>
+  </div>
+</div>
+
+<hr class="hdiv">
+
+<!-- ══════════════════
+07 — DoS & DDoS Attacks
+══════════════════ -->
+<div class="section" id="s7">
+  <div class="sec-head">
+    <span class="sec-num">07</span>
+    <div class="sec-meta">
+      <div class="sec-title">DoS & DDoS Attacks</div>
+      <div class="sec-sub">SYN flood, UDP flood, amplification attacks, and botnet-based DDoS</div>
+    </div>
+    <span class="badge b-red">Availability</span>
+  </div>
+
+  <div class="theory red">
+    <h4>Denial of Service — Overwhelming Resources</h4>
+    <p><strong>DoS (Denial of Service)</strong> attacks exhaust a target's resources — bandwidth, CPU, memory, connection tables — to prevent legitimate users from accessing the service. <strong>DDoS (Distributed DoS)</strong> uses thousands of compromised systems (botnet) to amplify the attack volume beyond what any single system could generate, and to make blocking by source IP infeasible.</p>
+    <p>DDoS attacks cost organizations an average of $40,000 per hour of downtime (Neustar). The largest recorded DDoS was 3.47 Tbps against Microsoft Azure in November 2021. Protection requires upstream mitigation — your server's bandwidth is simply overwhelmed before packets reach it.</p>
+  </div>
+
+  <table class="dtable">
+    <thead><tr><th>Attack Type</th><th>Layer</th><th>Mechanism</th><th>Volume Potential</th><th>Mitigation</th></tr></thead>
+    <tbody>
+      <tr>
+        <td class="tk">SYN Flood</td>
+        <td>L4</td>
+        <td>Send millions of SYN packets with spoofed IPs. Server allocates half-open connection state for each, exhausting connection table (backlog queue fills)</td>
+        <td class="ta">High — 100+ Gbps possible with botnet</td>
+        <td>SYN cookies, rate limiting SYN packets, firewall connection limits</td>
+      </tr>
+      <tr>
+        <td class="tk">UDP Flood</td>
+        <td>L4</td>
+        <td>Flood with UDP packets to random ports. Target sends ICMP Unreachable for each, consuming bandwidth and CPU</td>
+        <td class="tr">Very high — stateless, easy to generate</td>
+        <td>Rate limiting UDP, blackhole routing, upstream filtering</td>
+      </tr>
+      <tr>
+        <td class="tk">ICMP Flood (Ping Flood)</td>
+        <td>L3</td>
+        <td>Flood with ICMP Echo requests. Target consumes bandwidth responding</td>
+        <td class="ta">Moderate — ICMP often rate-limited</td>
+        <td>Block ICMP at perimeter, rate-limit ICMP</td>
+      </tr>
+      <tr>
+        <td class="tk">DNS Amplification</td>
+        <td>L4/L7</td>
+        <td>Send spoofed DNS queries (victim's IP) to open resolvers. Resolvers send large responses to victim. ~50× amplification factor</td>
+        <td class="tr">Extremely high — amplification multiplies traffic</td>
+        <td>BCP38 (block spoofed IPs), close open resolvers, DNSSEC</td>
+      </tr>
+      <tr>
+        <td class="tk">NTP Amplification</td>
+        <td>L4/L7</td>
+        <td>monlist command in NTP returns last 600 clients — 206× amplification. Small query → huge response to victim</td>
+        <td class="tr">Largest attacks reached 300+ Gbps</td>
+        <td>Disable monlist (ntpd config), restrict NTP to authorized clients</td>
+      </tr>
+      <tr>
+        <td class="tk">HTTP Flood (L7)</td>
+        <td>L7</td>
+        <td>Legitimate-looking GET/POST requests that bypass network-layer filtering. Target's web server / DB exhausted serving requests</td>
+        <td class="ta">Moderate — hard to scale but hard to block</td>
+        <td>WAF, rate limiting per IP/session, CAPTCHAs, CDN</td>
+      </tr>
+      <tr>
+        <td class="tk">Slowloris</td>
+        <td>L7</td>
+        <td>Open many HTTP connections, send partial requests slowly — never completing. Exhausts server connection limit with minimal traffic</td>
+        <td class="ta">Low traffic — single machine can DoS a server</td>
+        <td>Connection timeout settings, max connections per IP, Nginx (not Apache)</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="practical open">
+    <div class="prac-head" onclick="toggleP(this)">
+      <span class="ph-i">💥</span>
+      <span class="ph-t">Lab 7.1 — Simulate SYN flood against Metasploitable2 and observe effects</span>
+      <span class="ph-tag pt-lab">DoS Lab</span>
+      <span class="ph-chev">▶</span>
+    </div>
+    <div class="prac-body">
+      <div class="note red"><span class="ni">⚠</span><span>Only perform against your own Metasploitable2 VM. This will temporarily disrupt the target service. Keep test duration short (10–30 seconds).</span></div>
+      <ol class="steps" style="margin-top:12px;">
+        <li class="step">
+          <span class="sn">1</span>
+          <div class="sc">
+            <div class="st">Monitor connection state on Metasploitable2 before attack</div>
+            <div class="code" data-label="metasploitable2 bash">
+<span class="cm"># On Metasploitable2 SSH session — watch connection state table</span>
+<span class="cmd">watch</span> <span class="flag">-n 0.5</span> <span class="val">"ss -s"</span>
+<span class="cm"># Show socket statistics — note SYN-RECV count</span>
+            </div>
+          </div>
+        </li>
+        <li class="step">
+          <span class="sn">2</span>
+          <div class="sc">
+            <div class="st">Launch SYN flood from Kali with hping3</div>
+            <div class="code" data-label="kali bash">
+<span class="cmd">sudo hping3</span> <span class="flag">-S --flood -V</span> <span class="flag">-p</span> 80 192.168.56.101
+<span class="cm"># -S: SYN flag | --flood: send as fast as possible</span>
+<span class="cm"># -V: verbose | -p 80: target port 80 (HTTP)</span>
+
+<span class="cm"># Randomize source IP (amplifies effect, harder to block)</span>
+<span class="cmd">sudo hping3</span> <span class="flag">-S --flood --rand-source -p</span> 80 192.168.56.101
+
+<span class="cm"># Run for 15 seconds, then Ctrl+C</span>
+<span class="cm"># Observe: SYN-RECV count on Metasploitable2 rising rapidly</span>
+            </div>
+          </div>
+        </li>
+        <li class="step">
+          <span class="sn">3</span>
+          <div class="sc">
+            <div class="st">Apply SYN cookie mitigation with iptables</div>
+            <div class="code" data-label="bash (defense)">
+<span class="cm"># Enable SYN cookies (Linux kernel-level protection)</span>
+<span class="cmd">sudo sysctl</span> <span class="flag">-w</span> net.ipv4.tcp_syncookies=1
+<span class="cmd">sudo sysctl</span> <span class="flag">-w</span> net.ipv4.tcp_max_syn_backlog=4096
+
+<span class="cm"># Rate-limit SYN packets with iptables</span>
+<span class="cmd">sudo iptables -A INPUT -p tcp</span> <span class="flag">--syn -m limit</span> \
+  <span class="flag">--limit</span> 1/s <span class="flag">--limit-burst</span> 4 <span class="flag">-j ACCEPT</span>
+<span class="cmd">sudo iptables -A INPUT -p tcp</span> <span class="flag">--syn -j DROP</span>
+
+<span class="cm"># Verify SYN cookies are active</span>
+<span class="cmd">sysctl</span> net.ipv4.tcp_syncookies
+<span class="out"># net.ipv4.tcp_syncookies = 1</span>
+            </div>
+          </div>
+        </li>
+      </ol>
+    </div>
+  </div>
+</div>
+
+<hr class="hdiv">
+
+<!-- ══════════════════
+08 — Firewalls & WAF
+══════════════════ -->
+<div class="section" id="s8">
+  <div class="sec-head">
+    <span class="sec-num">08</span>
+    <div class="sec-meta">
+      <div class="sec-title">Firewalls & Web Application Firewalls</div>
+      <div class="sec-sub">Packet filters, stateful firewalls, NGFWs, iptables rules, WAF configuration</div>
+    </div>
+    <span class="badge b-green">Defence</span>
+  </div>
+
+  <div class="theory green">
+    <h4>Firewall Types — Know All Four</h4>
+    <p><strong>Packet filter (L3/L4):</strong> Inspects each packet in isolation based on source/dest IP, port, protocol. Stateless — doesn't track connection state. Fast but limited — can't distinguish SYN from ACK flood, can't detect protocol abuse.</p>
+    <p><strong>Stateful inspection (L4):</strong> Tracks connection state table. Allows return traffic automatically. Blocks packets that don't match established connections. Most modern firewalls. Vulnerable to state table exhaustion.</p>
+    <p><strong>Application-layer / proxy (L7):</strong> Deep packet inspection at L7. Understands HTTP, DNS, FTP content. Can block by URL, user-agent, payload content. Slower but powerful. Used as reverse proxies.</p>
+    <p><strong>NGFW (Next-Generation Firewall):</strong> Combines stateful + application awareness + IPS + SSL inspection + user identity (from AD). Can block specific applications (block Tor but allow HTTPS). Examples: Palo Alto, Fortinet, Check Point.</p>
+  </div>
+
+  <div class="practical open">
+    <div class="prac-head" onclick="toggleP(this)">
+      <span class="ph-i">🔥</span>
+      <span class="ph-t">Lab 8.1 — iptables firewall rules — build a comprehensive ruleset</span>
+      <span class="ph-tag pt-cfg">iptables</span>
+      <span class="ph-chev">▶</span>
+    </div>
+    <div class="prac-body">
+      <ol class="steps">
+        <li class="step">
+          <span class="sn">1</span>
+          <div class="sc">
+            <div class="st">Understand iptables chains and tables</div>
+            <div class="code" data-label="bash">
+<span class="cm"># iptables uses 3 main tables: filter (default), nat, mangle</span>
+<span class="cm"># filter table has 3 chains:</span>
+<span class="cm"># INPUT   — packets destined for this host</span>
+<span class="cm"># OUTPUT  — packets originating from this host</span>
+<span class="cm"># FORWARD — packets routed through this host (firewall/router)</span>
+
+<span class="cm"># View current rules</span>
+<span class="cmd">sudo iptables -L -v -n</span>      <span class="cm"># list rules with counters</span>
+<span class="cmd">sudo iptables -L -v -n --line-numbers</span>  <span class="cm"># with line numbers</span>
+<span class="cmd">sudo iptables-save</span>           <span class="cm"># show all rules in iptables-restore format</span>
+            </div>
+          </div>
+        </li>
+        <li class="step">
+          <span class="sn">2</span>
+          <div class="sc">
+            <div class="st">Build a secure iptables ruleset from scratch</div>
+            <div class="code" data-label="bash">
+<span class="cm">#!/bin/bash — firewall-setup.sh</span>
+
+<span class="cm"># Flush existing rules</span>
+<span class="cmd">iptables -F</span>
+<span class="cmd">iptables -X</span>
+<span class="cmd">iptables -Z</span>
+
+<span class="cm"># Set default policies: DROP everything by default</span>
+<span class="cmd">iptables -P INPUT DROP</span>
+<span class="cmd">iptables -P OUTPUT DROP</span>
+<span class="cmd">iptables -P FORWARD DROP</span>
+
+<span class="cm"># Allow loopback (localhost)</span>
+<span class="cmd">iptables -A INPUT -i lo -j ACCEPT</span>
+<span class="cmd">iptables -A OUTPUT -o lo -j ACCEPT</span>
+
+<span class="cm"># Allow established/related connections (return traffic)</span>
+<span class="cmd">iptables -A INPUT -m conntrack --ctstate ESTABLISHED,RELATED -j ACCEPT</span>
+<span class="cmd">iptables -A OUTPUT -m conntrack --ctstate ESTABLISHED,RELATED -j ACCEPT</span>
+
+<span class="cm"># Allow SSH (restrict to your IP only — replace YOUR_IP)</span>
+<span class="cmd">iptables -A INPUT -p tcp --dport</span> 22 -s <span class="val">YOUR_IP/32</span> <span class="flag">-j ACCEPT</span>
+
+<span class="cm"># Allow HTTP/HTTPS inbound (web server)</span>
+<span class="cmd">iptables -A INPUT -p tcp --dport</span> 80 <span class="flag">-j ACCEPT</span>
+<span class="cmd">iptables -A INPUT -p tcp --dport</span> 443 <span class="flag">-j ACCEPT</span>
+
+<span class="cm"># Allow DNS queries outbound</span>
+<span class="cmd">iptables -A OUTPUT -p udp --dport</span> 53 <span class="flag">-j ACCEPT</span>
+<span class="cmd">iptables -A OUTPUT -p tcp --dport</span> 53 <span class="flag">-j ACCEPT</span>
+
+<span class="cm"># Allow outbound HTTP/HTTPS for updates</span>
+<span class="cmd">iptables -A OUTPUT -p tcp --dport</span> 80 <span class="flag">-j ACCEPT</span>
+<span class="cmd">iptables -A OUTPUT -p tcp --dport</span> 443 <span class="flag">-j ACCEPT</span>
+
+<span class="cm"># Rate-limit SSH to prevent brute force</span>
+<span class="cmd">iptables -A INPUT -p tcp --dport</span> 22 \
+  <span class="flag">-m state --state</span> NEW \
+  <span class="flag">-m recent --set --name</span> ssh_brute
+<span class="cmd">iptables -A INPUT -p tcp --dport</span> 22 \
+  <span class="flag">-m state --state</span> NEW \
+  <span class="flag">-m recent --update --seconds</span> 60 <span class="flag">--hitcount</span> 4 <span class="flag">--name</span> ssh_brute \
+  <span class="flag">-j DROP</span>
+
+<span class="cm"># Block invalid packets</span>
+<span class="cmd">iptables -A INPUT -m conntrack --ctstate INVALID -j DROP</span>
+
+<span class="cm"># Log and drop everything else</span>
+<span class="cmd">iptables -A INPUT -j LOG --log-prefix</span> <span class="val">"iptables-DROP-IN: "</span>
+<span class="cmd">iptables -A INPUT -j DROP</span>
+
+<span class="cm"># Save rules permanently (Debian/Ubuntu)</span>
+<span class="cmd">sudo netfilter-persistent save</span>
+            </div>
+          </div>
+        </li>
+        <li class="step">
+          <span class="sn">3</span>
+          <div class="sc">
+            <div class="st">Test your firewall rules</div>
+            <div class="code" data-label="bash (from another machine)">
+<span class="cm"># Test port is open (expect success)</span>
+<span class="cmd">nmap</span> <span class="flag">-p</span> 22,80,443 FIREWALL_IP
+
+<span class="cm"># Test blocked ports (expect filtered)</span>
+<span class="cmd">nmap</span> <span class="flag">-p</span> 3306,5432,23 FIREWALL_IP
+
+<span class="cm"># Test SSH brute force rate limiting</span>
+<span class="cmd">hydra</span> <span class="flag">-l root -P</span> /usr/share/wordlists/rockyou.txt <span class="flag">-t 4</span> ssh://FIREWALL_IP
+<span class="cm"># Should hit rate limit after 4 attempts and drop connections</span>
+            </div>
+          </div>
+        </li>
+      </ol>
+    </div>
+  </div>
+
+  <div class="theory" style="margin-top:14px;">
+    <h4>WAF — Web Application Firewall</h4>
+    <p>A <strong>WAF</strong> operates at L7 (HTTP/HTTPS) and filters malicious web requests: SQLi, XSS, CSRF, path traversal, command injection. It can be deployed inline (reverse proxy), out-of-band (monitoring), or as a cloud service (Cloudflare WAF, AWS WAF, Azure Front Door WAF). WAFs use signature rules, behavioral analysis, and ML to detect attacks.</p>
+  </div>
+
+  <div class="practical">
+    <div class="prac-head" onclick="toggleP(this)">
+      <span class="ph-i">🛡️</span>
+      <span class="ph-t">Lab 8.2 — Install ModSecurity WAF with OWASP CRS rules on Nginx</span>
+      <span class="ph-tag pt-cfg">WAF Setup</span>
+      <span class="ph-chev">▶</span>
+    </div>
+    <div class="prac-body">
+      <ol class="steps">
+        <li class="step">
+          <span class="sn">1</span>
+          <div class="sc">
+            <div class="st">Install Nginx + ModSecurity</div>
+            <div class="code" data-label="bash">
+<span class="cmd">sudo apt install</span> nginx libmodsecurity3 libmodsecurity-dev
+<span class="cmd">sudo apt install</span> libnginx-mod-http-modsecurity
+
+<span class="cm"># Enable ModSecurity module in nginx</span>
+<span class="cmd">sudo nano</span> /etc/nginx/nginx.conf
+<span class="cm"># Add in http block: modsecurity on;</span>
+<span class="cm">#                    modsecurity_rules_file /etc/nginx/modsec/main.conf;</span>
+            </div>
+          </div>
+        </li>
+        <li class="step">
+          <span class="sn">2</span>
+          <div class="sc">
+            <div class="st">Download and configure OWASP Core Rule Set</div>
+            <div class="code" data-label="bash">
+<span class="cmd">sudo mkdir -p</span> /etc/nginx/modsec
+<span class="cmd">sudo cp</span> /usr/share/modsecurity-crs/modsecurity.conf-recommended \
+     /etc/nginx/modsec/modsecurity.conf
+
+<span class="cm"># Switch from detection to prevention mode</span>
+<span class="cmd">sudo sed -i</span> <span class="val">'s/SecRuleEngine DetectionOnly/SecRuleEngine On/'</span> \
+  /etc/nginx/modsec/modsecurity.conf
+
+<span class="cm"># Download OWASP CRS (Core Rule Set)</span>
+<span class="cmd">cd</span> /etc/nginx/modsec
+<span class="cmd">sudo git clone</span> https://github.com/coreruleset/coreruleset.git crs
+<span class="cmd">sudo cp</span> crs/crs-setup.conf.example crs/crs-setup.conf
+            </div>
+          </div>
+        </li>
+        <li class="step">
+          <span class="sn">3</span>
+          <div class="sc">
+            <div class="st">Test WAF is blocking SQLi and XSS</div>
+            <div class="code" data-label="bash">
+<span class="cmd">sudo systemctl restart</span> nginx
+
+<span class="cm"># Test SQLi blocking</span>
+<span class="cmd">curl</span> <span class="flag">-v</span> <span class="val">"http://localhost/?id=1' OR '1'='1"</span>
+<span class="cm"># Expected: HTTP 403 Forbidden — WAF blocked the request</span>
+
+<span class="cm"># Test XSS blocking</span>
+<span class="cmd">curl</span> <span class="flag">-v</span> <span class="val">"http://localhost/?q=&lt;script&gt;alert(1)&lt;/script&gt;"</span>
+<span class="cm"># Expected: HTTP 403 Forbidden</span>
+
+<span class="cm"># View ModSecurity audit log</span>
+<span class="cmd">sudo tail -f</span> /var/log/modsec_audit.log
+<span class="cm"># Shows: matched rule ID, client IP, request, which CRS rule triggered</span>
+            </div>
+          </div>
+        </li>
+      </ol>
+    </div>
+  </div>
+</div>
+
+<hr class="hdiv">
+
+<!-- ══════════════════
+09 — IDS / IPS
+══════════════════ -->
+<div class="section" id="s9">
+  <div class="sec-head">
+    <span class="sec-num">09</span>
+    <div class="sec-meta">
+      <div class="sec-title">IDS & IPS</div>
+      <div class="sec-sub">Snort rules, Suricata, signature vs anomaly detection, placement, and evasion</div>
+    </div>
+    <span class="badge b-amber">Detection</span>
+  </div>
+
+  <div class="theory amber">
+    <h4>IDS vs IPS — Detection vs Prevention</h4>
+    <p><strong>IDS (Intrusion Detection System)</strong> monitors traffic, compares against signatures/baselines, and <em>alerts</em> when malicious activity is detected. It's passive — doesn't block anything. <strong>IPS (Intrusion Prevention System)</strong> is inline — traffic flows through it, and it actively <em>drops</em> malicious packets. IPS prevents attacks in real-time but can cause false-positive outages if misconfigured.</p>
+  </div>
+
+  <div class="grid">
+    <div class="card">
+      <div class="ck">NIDS/NIPS</div>
+      <div class="cv">Network-based — monitor traffic at a network segment. See all traffic passing a chokepoint. Can't see encrypted traffic without SSL inspection. Deployed at DMZ, internet edge.</div>
+    </div>
+    <div class="card">
+      <div class="ck a">HIDS/HIPS</div>
+      <div class="cv">Host-based — agent on each endpoint. Monitors system calls, file changes, process creation, registry. Can see traffic after decryption. Wazuh, OSSEC are HIDS examples.</div>
+    </div>
+    <div class="card">
+      <div class="ck g">Signature-based</div>
+      <div class="cv">Match against known attack patterns (like AV signatures). Fast and accurate for known attacks. Zero-days and novel attacks evade signature detection entirely.</div>
+    </div>
+    <div class="card">
+      <div class="ck b">Anomaly-based</div>
+      <div class="cv">Establish baseline "normal" traffic, alert on deviations. Detects novel attacks. High false-positive rate — "unusual" is not always malicious. ML improves this significantly.</div>
+    </div>
+    <div class="card">
+      <div class="ck c">Snort</div>
+      <div class="cv">Most widely used open-source IDS/IPS. Rule-based, signature detection. Uses custom rule language. Active in enterprise and MSSP environments. Large rule community (Emerging Threats).</div>
+    </div>
+    <div class="card">
+      <div class="ck ro">Suricata</div>
+      <div class="cv">Modern multi-threaded alternative to Snort. Snort-compatible rules + additional features. Built-in network metadata extraction, TLS fingerprinting (JA3), HTTP/DNS logging.</div>
+    </div>
+  </div>
+
+  <div class="practical open">
+    <div class="prac-head" onclick="toggleP(this)">
+      <span class="ph-i">📡</span>
+      <span class="ph-t">Lab 9.1 — Write Snort/Suricata rules and detect port scans + SQLi</span>
+      <span class="ph-tag pt-cfg">IDS Rules</span>
+      <span class="ph-chev">▶</span>
+    </div>
+    <div class="prac-body">
+      <ol class="steps">
+        <li class="step">
+          <span class="sn">1</span>
+          <div class="sc">
+            <div class="st">Install Suricata</div>
+            <div class="code" data-label="bash">
+<span class="cmd">sudo apt install</span> suricata
+<span class="cmd">sudo suricata-update</span>  <span class="cm"># download Emerging Threats community rules</span>
+<span class="cm"># Config file: /etc/suricata/suricata.yaml</span>
+<span class="cm"># Rules directory: /var/lib/suricata/rules/</span>
+            </div>
+          </div>
+        </li>
+        <li class="step">
+          <span class="sn">2</span>
+          <div class="sc">
+            <div class="st">Understand Snort/Suricata rule anatomy</div>
+            <div class="code" data-label="rule anatomy">
+<span class="kw">action</span>  <span class="val">proto</span>  <span class="ok">src_ip</span>  <span class="ok">src_port</span>  direction  <span class="warn">dst_ip</span>  <span class="warn">dst_port</span>  (options)
+
+<span class="cm"># Example: alert on any TCP to port 22</span>
+<span class="kw">alert</span> tcp any any <span class="flag">-></span> any 22 (msg:<span class="val">"SSH Connection"</span>; sid:1000001; rev:1;)
+
+<span class="cm"># Actions: alert | drop | reject | pass | log</span>
+<span class="cm"># Protocols: tcp | udp | icmp | ip | http | dns | tls</span>
+<span class="cm"># Direction: -> (one-way) | <> (bidirectional)</span>
+<span class="cm"># Common options: msg content nocase pcre threshold detection_filter</span>
+            </div>
+          </div>
+        </li>
+        <li class="step">
+          <span class="sn">3</span>
+          <div class="sc">
+            <div class="st">Write custom rules for common attacks</div>
+            <div class="code" data-label="local.rules">
+<span class="cm"># Detect port scan (nmap SYN scan — many SYN to different ports)</span>
+<span class="kw">alert</span> tcp any any <span class="flag">-></span> <span class="val">$HOME_NET</span> any (
+  msg:<span class="val">"PORT SCAN Detected"</span>;
+  flags:S;
+  detection_filter:track by_src, count 20, seconds 3;
+  sid:9000001; rev:1;
+)
+
+<span class="cm"># Detect SQL injection attempt in HTTP URI</span>
+<span class="kw">alert</span> http any any <span class="flag">-></span> <span class="val">$HTTP_SERVERS</span> <span class="val">$HTTP_PORTS</span> (
+  msg:<span class="val">"SQL INJECTION Attempt — UNION SELECT"</span>;
+  flow:to_server,established;
+  content:<span class="val">"UNION"</span>; nocase;
+  content:<span class="val">"SELECT"</span>; nocase;
+  pcre:<span class="val">"/UNION\s+(ALL\s+)?SELECT/i"</span>;
+  classtype:web-application-attack;
+  sid:9000002; rev:1;
+)
+
+<span class="cm"># Detect XSS attempt</span>
+<span class="kw">alert</span> http any any <span class="flag">-></span> <span class="val">$HTTP_SERVERS</span> any (
+  msg:<span class="val">"XSS Attempt — script tag"</span>;
+  flow:to_server,established;
+  content:<span class="val">"&lt;script"</span>; nocase;
+  http_uri;
+  sid:9000003; rev:1;
+)
+
+<span class="cm"># Detect ICMP ping sweep</span>
+<span class="kw">alert</span> icmp any any <span class="flag">-></span> <span class="val">$HOME_NET</span> any (
+  msg:<span class="val">"ICMP Ping Sweep"</span>;
+  itype:8;
+  detection_filter:track by_src, count 10, seconds 2;
+  sid:9000004; rev:1;
+)
+            </div>
+          </div>
+        </li>
+        <li class="step">
+          <span class="sn">4</span>
+          <div class="sc">
+            <div class="st">Run Suricata and generate test traffic</div>
+            <div class="code" data-label="bash">
+<span class="cm"># Run Suricata in IDS mode on your interface</span>
+<span class="cmd">sudo suricata</span> <span class="flag">-c</span> /etc/suricata/suricata.yaml <span class="flag">-i</span> eth1 <span class="flag">-l</span> /var/log/suricata
+
+<span class="cm"># Generate test traffic (in another terminal)</span>
+<span class="cmd">nmap</span> <span class="flag">-sS</span> 192.168.56.101        <span class="cm"># triggers port scan rule</span>
+<span class="cmd">curl</span> <span class="val">"http://192.168.56.101/?id=1 UNION SELECT 1,2,3--"</span>
+
+<span class="cm"># Watch Suricata alerts</span>
+<span class="cmd">sudo tail -f</span> /var/log/suricata/fast.log
+<span class="out"># 11/15/2024-14:32:01 [**] [1:9000001:1] PORT SCAN Detected [**]</span>
+<span class="out"># 11/15/2024-14:32:05 [**] [1:9000002:1] SQL INJECTION Attempt [**]</span>
+            </div>
+          </div>
+        </li>
+      </ol>
+    </div>
+  </div>
+</div>
+
+<hr class="hdiv">
+
+<!-- ══════════════════
+10 — VPN & Zero Trust
+══════════════════ -->
+<div class="section" id="s10">
+  <div class="sec-head">
+    <span class="sec-num">10</span>
+    <div class="sec-meta">
+      <div class="sec-title">VPN & Zero Trust Network Access</div>
+      <div class="sec-sub">IPSec, SSL/TLS VPN, WireGuard, site-to-site, remote access, and ZTNA architecture</div>
+    </div>
+    <span class="badge b-blue">Secure Access</span>
+  </div>
+
+  <div class="theory blue">
+    <h4>VPN — Encrypted Tunnel Over Untrusted Network</h4>
+    <p>A <strong>VPN (Virtual Private Network)</strong> creates an encrypted tunnel between endpoints over an untrusted network (internet), making it appear as if they're on the same private network. Used for: remote worker access to corporate resources, site-to-site branch connectivity, and securing traffic over public Wi-Fi.</p>
+    <p><strong>IPSec VPN</strong> operates at L3 (IP layer) — entire IP packets are encrypted and encapsulated. Two modes: <em>Transport</em> (encrypts payload only, original IP header preserved) and <em>Tunnel</em> (encrypts entire original packet, wraps in new IP header). Components: IKE (key exchange), AH (authentication), ESP (encryption + authentication).</p>
+  </div>
+
+  <table class="dtable">
+    <thead><tr><th>VPN Protocol</th><th>Layer</th><th>Encryption</th><th>Speed</th><th>Use Case</th></tr></thead>
+    <tbody>
+      <tr><td class="tk">IPSec/IKEv2</td><td>L3</td><td class="tg">AES-256-GCM, SHA-256</td><td>Fast (hardware)</td><td>Enterprise site-to-site, corporate remote access</td></tr>
+      <tr><td class="tk">OpenVPN</td><td>L3–L7 (TLS)</td><td class="tg">AES-256-GCM, TLS 1.3</td><td>Medium</td><td>Remote access, firewall traversal (runs on 443)</td></tr>
+      <tr><td class="tk">WireGuard ★</td><td>L3</td><td class="tg">ChaCha20-Poly1305, Curve25519</td><td>Fastest</td><td>Modern VPN, server-to-server, road warrior</td></tr>
+      <tr><td class="tk">L2TP/IPSec</td><td>L2 over L3</td><td class="ta">AES (via IPSec)</td><td>Medium</td><td>Windows built-in VPN, legacy compatibility</td></tr>
+      <tr><td class="tk">PPTP</td><td>L2</td><td class="tr">RC4 (MS-CHAPv2) — BROKEN</td><td>Fast</td><td>Never use — MS-CHAPv2 cracked in 23 hours</td></tr>
+    </tbody>
+  </table>
+
+  <div class="theory cyan" style="margin-top:14px;">
+    <h4>Zero Trust — "Never Trust, Always Verify"</h4>
+    <p><strong>Zero Trust</strong> replaces the old "castle and moat" model (trust everything inside the perimeter). In Zero Trust: <em>every access request is authenticated, authorized, and continuously validated</em> regardless of whether it comes from inside or outside the network. <strong>Identity is the new perimeter.</strong></p>
+    <p>Core principles: <strong>Verify explicitly</strong> — always authenticate and authorize. <strong>Least privilege access</strong> — only access what's needed. <strong>Assume breach</strong> — design as if the network is already compromised. Implemented via: MFA, conditional access, microsegmentation, device compliance checks, continuous monitoring.</p>
+    <p><strong>ZTNA (Zero Trust Network Access)</strong> replaces VPN: users access specific applications (not the whole network), based on identity + device posture + location. Applications are never exposed to the internet — accessed only through a service broker. Examples: Cloudflare Access, Zscaler Private Access, Palo Alto Prisma Access.</p>
+  </div>
+
+  <div class="practical open">
+    <div class="prac-head" onclick="toggleP(this)">
+      <span class="ph-i">🔒</span>
+      <span class="ph-t">Lab 10.1 — Set up WireGuard VPN between Kali and Ubuntu VM</span>
+      <span class="ph-tag pt-cfg">WireGuard Lab</span>
+      <span class="ph-chev">▶</span>
+    </div>
+    <div class="prac-body">
+      <ol class="steps">
+        <li class="step">
+          <span class="sn">1</span>
+          <div class="sc">
+            <div class="st">Install WireGuard on both VMs</div>
+            <div class="code" data-label="bash (both VMs)">
+<span class="cmd">sudo apt install</span> wireguard
+            </div>
+          </div>
+        </li>
+        <li class="step">
+          <span class="sn">2</span>
+          <div class="sc">
+            <div class="st">Generate key pairs on server (Ubuntu)</div>
+            <div class="code" data-label="ubuntu bash">
+<span class="cm"># Generate server key pair</span>
+<span class="cmd">wg genkey</span> | <span class="cmd">sudo tee</span> /etc/wireguard/server_private.key | \
+  <span class="cmd">wg pubkey</span> | <span class="cmd">sudo tee</span> /etc/wireguard/server_public.key
+
+<span class="cm"># Read the keys (you'll need both)</span>
+<span class="cmd">sudo cat</span> /etc/wireguard/server_private.key
+<span class="cmd">sudo cat</span> /etc/wireguard/server_public.key
+            </div>
+          </div>
+        </li>
+        <li class="step">
+          <span class="sn">3</span>
+          <div class="sc">
+            <div class="st">Create server config</div>
+            <div class="code" data-label="/etc/wireguard/wg0.conf (server)">
+[Interface]
+Address = <span class="val">10.0.0.1/24</span>          <span class="cm"># VPN IP for server</span>
+ListenPort = <span class="val">51820</span>             <span class="cm"># UDP port</span>
+PrivateKey = <span class="val">SERVER_PRIVATE_KEY</span>
+
+<span class="cm"># Enable IP forwarding (for routing)</span>
+PostUp = <span class="cmd">iptables -A FORWARD -i wg0 -j ACCEPT</span>; \
+         <span class="cmd">iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE</span>
+PostDown = <span class="cmd">iptables -D FORWARD -i wg0 -j ACCEPT</span>; \
+           <span class="cmd">iptables -t nat -D POSTROUTING -o eth0 -j MASQUERADE</span>
+
+[Peer]  <span class="cm"># The client (Kali)</span>
+PublicKey = <span class="val">CLIENT_PUBLIC_KEY</span>
+AllowedIPs = <span class="val">10.0.0.2/32</span>       <span class="cm"># client's VPN IP</span>
+            </div>
+          </div>
+        </li>
+        <li class="step">
+          <span class="sn">4</span>
+          <div class="sc">
+            <div class="st">Create client config (Kali) and connect</div>
+            <div class="code" data-label="/etc/wireguard/wg0.conf (client)">
+[Interface]
+Address = <span class="val">10.0.0.2/24</span>
+PrivateKey = <span class="val">CLIENT_PRIVATE_KEY</span>
+
+[Peer]  <span class="cm"># The server (Ubuntu)</span>
+PublicKey = <span class="val">SERVER_PUBLIC_KEY</span>
+Endpoint = <span class="val">192.168.56.20:51820</span>  <span class="cm"># server's real IP</span>
+AllowedIPs = <span class="val">0.0.0.0/0</span>           <span class="cm"># route all traffic through VPN</span>
+PersistentKeepalive = 25
+            </div>
+            <div class="code" data-label="both VMs — start WireGuard">
+<span class="cmd">sudo wg-quick up</span> wg0           <span class="cm"># start</span>
+<span class="cmd">sudo wg show</span>                   <span class="cm"># view connection status</span>
+<span class="cmd">ping</span> 10.0.0.1                  <span class="cm"># ping server through VPN tunnel</span>
+<span class="cm"># Success = encrypted tunnel established!</span>
+            </div>
+          </div>
+        </li>
+      </ol>
+    </div>
+  </div>
+</div>
+
+<hr class="hdiv">
+
+<!-- ══════════════════
+11 — Network Segmentation
+══════════════════ -->
+<div class="section" id="s11">
+  <div class="sec-head">
+    <span class="sec-num">11</span>
+    <div class="sec-meta">
+      <div class="sec-title">Network Segmentation</div>
+      <div class="sec-sub">VLANs, DMZ architecture, microsegmentation, and jump servers</div>
+    </div>
+    <span class="badge b-orange">Architecture</span>
+  </div>
+
+  <div class="theory">
+    <h4>Why Segmentation Is Your Most Powerful Defence</h4>
+    <p><strong>Network segmentation</strong> divides a network into isolated zones, limiting lateral movement after a breach. If an attacker compromises a workstation in the user segment, segmentation prevents them from directly reaching database servers, financial systems, or backup infrastructure. Without segmentation, one compromised endpoint can pivot to compromise everything.</p>
+    <p>The principle: <em>each segment should contain only systems that need to communicate with each other, with firewall/ACL enforcement between segments.</em></p>
+  </div>
+
+  <div class="grid">
+    <div class="card">
+      <div class="ck">DMZ</div>
+      <div class="cv"><strong>Demilitarized Zone.</strong> Isolated segment for internet-facing services (web servers, email gateways, DNS). Two firewalls: internet-facing and internal-facing. Compromise of DMZ doesn't directly reach internal LAN.</div>
+    </div>
+    <div class="card">
+      <div class="ck a">VLANs</div>
+      <div class="cv"><strong>Virtual LANs</strong> segment at L2 using switch configuration. Tagged frames carry VLAN ID. Separate broadcast domains. VLAN 10: users, VLAN 20: servers, VLAN 30: management. Inter-VLAN routing via L3 switch or firewall.</div>
+    </div>
+    <div class="card">
+      <div class="ck g">Microsegmentation</div>
+      <div class="cv">Fine-grained segmentation at workload level — each VM/container in its own security zone. East-west firewall policies between individual workloads. Implemented with SDN, NSX, or cloud security groups.</div>
+    </div>
+    <div class="card">
+      <div class="ck b">Jump Server / Bastion</div>
+      <div class="cv">Single hardened host in DMZ used to access internal sensitive systems (servers, network devices). Admins connect to bastion first, then jump to internal targets. Provides audit trail and access control choke point.</div>
+    </div>
+    <div class="card">
+      <div class="ck c">Air Gap</div>
+      <div class="cv">Physical isolation — no network connection between segments. Used for: nuclear control systems, classified military networks, HSMs (Hardware Security Modules). Data transferred via physical media under strict controls.</div>
+    </div>
+    <div class="card">
+      <div class="ck ro">NAC — Network Access Control</div>
+      <div class="cv">802.1X authentication at port level. Before a device gets network access, it authenticates (username+cert), compliance is checked (AV running? Patched?), and placed in appropriate VLAN based on identity/posture.</div>
+    </div>
+  </div>
+
+  <div class="practical open">
+    <div class="prac-head" onclick="toggleP(this)">
+      <span class="ph-i">🏗️</span>
+      <span class="ph-t">Lab 11.1 — Design and document a segmented network architecture</span>
+      <span class="ph-tag pt-design">Design Lab</span>
+      <span class="ph-chev">▶</span>
+    </div>
+    <div class="prac-body">
+      <ol class="steps">
+        <li class="step">
+          <span class="sn">1</span>
+          <div class="sc">
+            <div class="st">Design a 4-zone network for a 200-person Indian IT company</div>
+            <div class="code" data-label="network design">
+<span class="kw">Zone 1 — Internet Edge (DMZ)</span>
+  Network: 203.0.113.0/28 (public IPs)
+  Devices: Edge router, DDoS scrubber, Perimeter firewall
+  Inbound: Allow 80/443 only → DMZ servers
+
+<span class="kw">Zone 2 — DMZ (VLAN 10)</span>
+  Network: 10.1.10.0/24 (private, NATed)
+  Devices: Web servers, Email gateway, DNS resolver, WAF
+  Rules: Allow from internet on 80/443 only
+         Allow to Internal only on specific ports (DB queries)
+         Block DMZ→DMZ (server isolation)
+
+<span class="kw">Zone 3 — Internal LAN</span>
+  VLAN 20 — Workstations:  10.1.20.0/24  (users, 150 hosts)
+  VLAN 30 — Servers:       10.1.30.0/24  (app/file/print servers)
+  VLAN 40 — Databases:     10.1.40.0/24  (SQL, Oracle — no direct access)
+  VLAN 50 — Management:    10.1.50.0/28  (network devices, out-of-band)
+  Rules: Workstations → App Servers (specific ports only)
+         App Servers → Databases (3306, 5432 only, from app server IPs)
+         Workstations → NO direct database access
+         Management VLAN → all devices (admin access)
+
+<span class="kw">Zone 4 — Guest WiFi (VLAN 99)</span>
+  Network: 10.99.0.0/23
+  Rules: Internet only, block all internal access
+         Rate limited (50 Mbps cap per user)
+            </div>
+          </div>
+        </li>
+        <li class="step">
+          <span class="sn">2</span>
+          <div class="sc">
+            <div class="st">Implement VLAN segmentation with iptables (simulated)</div>
+            <div class="code" data-label="bash">
+<span class="cm"># Block workstation VLAN from accessing database VLAN directly</span>
+<span class="cm"># (on the firewall/router between VLANs)</span>
+
+<span class="cm"># On the firewall with interfaces vlan20 (users) and vlan40 (databases)</span>
+<span class="cm"># Block users from reaching databases</span>
+<span class="cmd">iptables -A FORWARD -i vlan20 -o vlan40 -j DROP</span>
+
+<span class="cm"># Allow app servers (VLAN 30) to reach databases on MySQL port only</span>
+<span class="cmd">iptables -A FORWARD -i vlan30 -o vlan40 -p tcp --dport</span> 3306 \
+  -s <span class="val">10.1.30.0/24</span> -d <span class="val">10.1.40.0/24</span> <span class="flag">-j ACCEPT</span>
+<span class="cmd">iptables -A FORWARD -i vlan30 -o vlan40 -j DROP</span>
+
+<span class="cm"># Guest WiFi: allow internet only, block internal</span>
+<span class="cmd">iptables -A FORWARD -i vlan99 -o eth0 -j ACCEPT</span>  <span class="cm"># internet</span>
+<span class="cmd">iptables -A FORWARD -i vlan99 -j DROP</span>             <span class="cm"># block all internal</span>
+            </div>
+          </div>
+        </li>
+      </ol>
+    </div>
+  </div>
+</div>
+
+<hr class="hdiv">
+
+<!-- ══════════════════
+12 — Wireless Security
+══════════════════ -->
+<div class="section" id="s12">
+  <div class="sec-head">
+    <span class="sec-num">12</span>
+    <div class="sec-meta">
+      <div class="sec-title">Wireless Network Security</div>
+      <div class="sec-sub">WEP/WPA/WPA2/WPA3, evil twin attacks, deauthentication, and wireless auditing</div>
+    </div>
+    <span class="badge b-rose">Wireless</span>
+  </div>
+
+  <div class="theory rose">
+    <h4>Wireless Security Evolution</h4>
+    <p><strong>WEP (1997):</strong> RC4 stream cipher with static keys. Completely broken — crackable in under 60 seconds with aircrack-ng. Never use. <strong>WPA (2003):</strong> TKIP (Temporal Key Integrity Protocol). Better than WEP but TKIP is vulnerable. Legacy only. <strong>WPA2 (2004):</strong> AES-CCMP encryption. Secure when used with strong passphrases. WPA2-Personal (pre-shared key) vulnerable to offline dictionary attack on captured handshake. WPA2-Enterprise (802.1X/RADIUS) significantly more secure. <strong>WPA3 (2018):</strong> SAE (Simultaneous Authentication of Equals) replaces PSK — resistant to offline dictionary attacks. Forward secrecy. OWE for open networks. Required for Wi-Fi 6 devices.</p>
+  </div>
+
+  <table class="dtable">
+    <thead><tr><th>Protocol</th><th>Encryption</th><th>Authentication</th><th>Status</th><th>Attack</th></tr></thead>
+    <tbody>
+      <tr><td class="tk">WEP</td><td class="tr">RC4 (broken)</td><td>Open/Shared Key</td><td class="tr">BROKEN — never use</td><td>aircrack-ng cracks in &lt;60s</td></tr>
+      <tr><td class="tk">WPA-TKIP</td><td class="ta">RC4 + TKIP</td><td>PSK / 802.1X</td><td class="ta">Deprecated 2012</td><td>TKIP crackable, chop-chop attack</td></tr>
+      <tr><td class="tk">WPA2-Personal</td><td class="ta">AES-CCMP</td><td>PSK (password)</td><td class="ta">Secure with strong password</td><td>4-way handshake capture + hashcat</td></tr>
+      <tr><td class="tk">WPA2-Enterprise</td><td class="tg">AES-CCMP</td><td>802.1X / RADIUS</td><td class="tg">Secure — recommended</td><td>Evil twin RADIUS attack (complex)</td></tr>
+      <tr><td class="tk">WPA3-Personal</td><td class="tg">AES-GCMP-256</td><td>SAE (Dragonfly)</td><td class="tg">Best — use where available</td><td>Dragonblood (partially patched)</td></tr>
+      <tr><td class="tk">WPA3-Enterprise</td><td class="tg">AES-GCMP-256</td><td>802.1X + TLS 1.3</td><td class="tg">Best — for corporate</td><td>No known practical attacks</td></tr>
+    </tbody>
+  </table>
+
+  <div class="practical open">
+    <div class="prac-head" onclick="toggleP(this)">
+      <span class="ph-i">📶</span>
+      <span class="ph-t">Lab 12.1 — Wireless auditing: capture WPA2 handshake and test password strength</span>
+      <span class="ph-tag pt-lab">Wireless Lab</span>
+      <span class="ph-chev">▶</span>
+    </div>
+    <div class="prac-body">
+      <div class="note red"><span class="ni">⚠</span><span>Only perform against your own access point or a test AP you set up for this purpose. Unauthorized wireless testing is a criminal offence under IT Act 2000.</span></div>
+      <ol class="steps" style="margin-top:12px;">
+        <li class="step">
+          <span class="sn">1</span>
+          <div class="sc">
+            <div class="st">Enable monitor mode on wireless adapter</div>
+            <div class="code" data-label="kali bash">
+<span class="cm"># Check wireless interfaces</span>
+<span class="cmd">iwconfig</span>
+<span class="cmd">airmon-ng</span>  <span class="cm"># list wireless cards and drivers</span>
+
+<span class="cm"># Kill interfering processes</span>
+<span class="cmd">sudo airmon-ng check kill</span>
+
+<span class="cm"># Start monitor mode</span>
+<span class="cmd">sudo airmon-ng start</span> wlan0
+<span class="cm"># Creates wlan0mon interface in monitor mode</span>
+            </div>
+          </div>
+        </li>
+        <li class="step">
+          <span class="sn">2</span>
+          <div class="sc">
+            <div class="st">Discover nearby access points</div>
+            <div class="code" data-label="kali bash">
+<span class="cmd">sudo airodump-ng</span> wlan0mon
+<span class="cm"># Shows: BSSID (AP MAC), Channel, ESSID (network name), Encryption, Clients</span>
+<span class="cm"># Find YOUR test AP in the list, note BSSID and Channel</span>
+            </div>
+          </div>
+        </li>
+        <li class="step">
+          <span class="sn">3</span>
+          <div class="sc">
+            <div class="st">Capture WPA2 4-way handshake from YOUR test AP</div>
+            <div class="code" data-label="kali bash">
+<span class="cm"># Target your test AP specifically</span>
+<span class="cmd">sudo airodump-ng</span> <span class="flag">-c</span> 6 <span class="flag">--bssid</span> AA:BB:CC:DD:EE:FF \
+  <span class="flag">-w</span> handshake_capture wlan0mon
+<span class="cm"># -c: channel | --bssid: target AP | -w: save to file</span>
+
+<span class="cm"># Deauthenticate a client (forces re-auth and handshake) — separate terminal</span>
+<span class="cmd">sudo aireplay-ng</span> <span class="flag">-0</span> 1 <span class="flag">-a</span> AA:BB:CC:DD:EE:FF <span class="flag">-c</span> CLIENT_MAC wlan0mon
+<span class="cm"># -0: deauth | -1: send 1 deauth | -a: AP | -c: client</span>
+<span class="cm"># WPA HANDSHAKE captured (shown in airodump-ng top right)</span>
+            </div>
+          </div>
+        </li>
+        <li class="step">
+          <span class="sn">4</span>
+          <div class="sc">
+            <div class="st">Test password strength with hashcat (demonstrates weak password danger)</div>
+            <div class="code" data-label="bash">
+<span class="cm"># Convert capture to hashcat format</span>
+<span class="cmd">hcxpcapngtool</span> <span class="flag">-o</span> handshake.hc22000 handshake_capture.cap
+
+<span class="cm"># Dictionary attack</span>
+<span class="cmd">hashcat</span> <span class="flag">-m</span> 22000 handshake.hc22000 /usr/share/wordlists/rockyou.txt
+<span class="cm"># -m 22000: WPA2 PMKID/MIC mode</span>
+<span class="cm"># If password is in rockyou.txt (14M common passwords) → cracked</span>
+<span class="cm"># Strong password (20+ random chars) → will not crack in reasonable time</span>
+<span class="cm"># LESSON: Use WPA3 or strong random WPA2 passphrases (20+ chars)</span>
+            </div>
+          </div>
+        </li>
+      </ol>
+    </div>
+  </div>
+</div>
+
+<hr class="hdiv">
+
+<!-- ══════════════════
+13 — Wireshark Packet Analysis
+══════════════════ -->
+<div class="section" id="s13">
+  <div class="sec-head">
+    <span class="sec-num">13</span>
+    <div class="sec-meta">
+      <div class="sec-title">Wireshark — Packet Analysis Mastery</div>
+      <div class="sec-sub">Display filters, following streams, IO graphs, expert analysis, and protocol dissection</div>
+    </div>
+    <span class="badge b-cyan">Analysis Tool</span>
+  </div>
+
+  <div class="theory cyan">
+    <h4>Wireshark — The Network Analyst's Primary Weapon</h4>
+    <p>Wireshark is the world's most used network protocol analyser. It captures live traffic or reads pcap files, dissects every protocol layer, and lets you filter, follow streams, and extract artifacts. Every SOC analyst, network engineer, and pen tester uses Wireshark regularly. Mastering filters is the key skill — without them, you're drowning in noise.</p>
+  </div>
+
+  <div class="practical open">
+    <div class="prac-head" onclick="toggleP(this)">
+      <span class="ph-i">🦈</span>
+      <span class="ph-t">Lab 13.1 — Wireshark deep dive: filters, streams, and IOC extraction</span>
+      <span class="ph-tag pt-tool">Wireshark</span>
+      <span class="ph-chev">▶</span>
+    </div>
+    <div class="prac-body">
+      <ol class="steps">
+        <li class="step">
+          <span class="sn">1</span>
+          <div class="sc">
+            <div class="st">Essential Wireshark display filter reference</div>
+            <div class="code" data-label="wireshark display filters">
+<span class="cm">── IP FILTERS ──────────────────────────────────────────</span>
+<span class="val">ip.addr == 192.168.1.100</span>        <span class="cm"># any direction involving this IP</span>
+<span class="val">ip.src == 192.168.1.100</span>         <span class="cm"># only traffic FROM this IP</span>
+<span class="val">ip.dst == 192.168.1.100</span>         <span class="cm"># only traffic TO this IP</span>
+<span class="val">ip.addr == 10.0.0.0/8</span>          <span class="cm"># entire subnet</span>
+<span class="val">!(ip.addr == 192.168.1.1)</span>       <span class="cm"># exclude an IP</span>
+
+<span class="cm">── PORT / PROTOCOL FILTERS ─────────────────────────────</span>
+<span class="val">tcp.port == 443</span>                 <span class="cm"># any direction port 443</span>
+<span class="val">tcp.dstport == 80</span>               <span class="cm"># HTTP requests</span>
+<span class="val">udp.port == 53</span>                  <span class="cm"># DNS</span>
+<span class="val">tcp.flags.syn == 1</span>              <span class="cm"># SYN packets</span>
+<span class="val">tcp.flags == 0x002</span>             <span class="cm"># pure SYN (binary flags)</span>
+<span class="val">tcp.flags.reset == 1</span>           <span class="cm"># RST packets</span>
+
+<span class="cm">── PROTOCOL FILTERS ─────────────────────────────────────</span>
+<span class="val">http</span>           <span class="val">dns</span>       <span class="val">dhcp</span>      <span class="val">arp</span>
+<span class="val">smtp</span>           <span class="val">ftp</span>       <span class="val">ssh</span>       <span class="val">icmp</span>
+<span class="val">tls</span>            <span class="val">snmp</span>      <span class="val">telnet</span>    <span class="val">smb</span>
+
+<span class="cm">── CONTENT FILTERS ──────────────────────────────────────</span>
+<span class="val">http.request.method == "POST"</span>   <span class="cm"># HTTP POST requests</span>
+<span class="val">http.response.code == 200</span>       <span class="cm"># successful HTTP responses</span>
+<span class="val">http.response.code >= 400</span>       <span class="cm"># HTTP error responses</span>
+<span class="val">http.host contains "bank"</span>       <span class="cm"># HTTP to banking domains</span>
+<span class="val">dns.qry.name contains "evil"</span>    <span class="cm"># suspicious DNS queries</span>
+<span class="val">frame contains "password"</span>       <span class="cm"># frame with "password" in payload</span>
+<span class="val">frame contains "SELECT"</span>         <span class="cm"># SQL in any frame</span>
+
+<span class="cm">── COMBINED FILTERS ─────────────────────────────────────</span>
+<span class="val">ip.src == 192.168.1.5 and tcp.dstport == 443</span>
+<span class="val">http and ip.addr == 192.168.1.100</span>
+<span class="val">tcp.flags.syn == 1 and not tcp.flags.ack == 1</span>
+<span class="val">!(arp or dns or dhcp)</span>          <span class="cm"># hide noise</span>
+            </div>
+          </div>
+        </li>
+        <li class="step">
+          <span class="sn">2</span>
+          <div class="sc">
+            <div class="st">Follow streams and extract credentials / files</div>
+            <div class="code" data-label="wireshark operations">
+<span class="cm"># Follow TCP Stream: Right-click any packet → Follow → TCP Stream</span>
+<span class="cm"># Shows entire conversation as readable text</span>
+<span class="cm"># Use for: HTTP sessions, FTP, Telnet, cleartext credentials</span>
+
+<span class="cm"># Follow HTTP Stream → Right-click HTTP packet → Follow → HTTP Stream</span>
+<span class="cm"># Shows: complete HTTP request + response as browser would see it</span>
+
+<span class="cm"># Extract files from HTTP: File → Export Objects → HTTP</span>
+<span class="cm"># Extracts all HTTP transferred files: images, executables, documents</span>
+<span class="cm"># Key for: malware analysis, finding exfiltrated documents</span>
+
+<span class="cm"># IO Graph: Statistics → IO Graph</span>
+<span class="cm"># Visualize traffic volume over time — spikes = attack traffic</span>
+<span class="cm"># Filter by protocol to see: HTTP vs DNS vs TCP traffic share</span>
+            </div>
+          </div>
+        </li>
+        <li class="step">
+          <span class="sn">3</span>
+          <div class="sc">
+            <div class="st">Detect attacks in a captured pcap</div>
+            <div class="code" data-label="wireshark + tshark">
+<span class="cm"># Use tshark (command-line Wireshark) for scripted analysis</span>
+
+<span class="cm"># Count packets per source IP (find top talkers)</span>
+<span class="cmd">tshark</span> <span class="flag">-r</span> capture.pcap <span class="flag">-T fields -e ip.src | sort | uniq -c | sort -rn | head -20</span>
+
+<span class="cm"># Find all DNS queries in a capture</span>
+<span class="cmd">tshark</span> <span class="flag">-r</span> capture.pcap <span class="flag">-Y</span> <span class="val">"dns.flags.response == 0"</span> \
+  <span class="flag">-T fields -e ip.src -e dns.qry.name</span>
+
+<span class="cm"># Find HTTP POST data (credential submissions)</span>
+<span class="cmd">tshark</span> <span class="flag">-r</span> capture.pcap <span class="flag">-Y</span> <span class="val">"http.request.method == POST"</span> \
+  <span class="flag">-T fields -e ip.src -e http.host -e http.request.uri</span>
+
+<span class="cm"># Detect large data transfers (potential exfiltration)</span>
+<span class="cmd">tshark</span> <span class="flag">-r</span> capture.pcap <span class="flag">-q -z</span> conv,ip \
+  | <span class="cmd">awk</span> <span class="val">'$6 > 1000000 {print $0}'</span>   <span class="cm"># flows >1MB</span>
+            </div>
+          </div>
+        </li>
+      </ol>
+    </div>
+  </div>
+</div>
+
+<hr class="hdiv">
+
+<!-- ══════════════════
+14 — Network Forensics
+══════════════════ -->
+<div class="section" id="s14">
+  <div class="sec-head">
+    <span class="sec-num">14</span>
+    <div class="sec-meta">
+      <div class="sec-title">Network Forensics</div>
+      <div class="sec-sub">Timeline reconstruction, log analysis, IOC extraction, and incident investigation</div>
+    </div>
+    <span class="badge b-amber">Forensics</span>
+  </div>
+
+  <div class="theory amber">
+    <h4>Network Forensics — Reconstructing What Happened</h4>
+    <p>Network forensics is the capture, recording, and analysis of network traffic for the purposes of incident investigation, evidence gathering, and attack reconstruction. Unlike host forensics (examining disk/memory), network forensics works with packet captures, NetFlow records, firewall logs, IDS alerts, and DNS logs to reconstruct the attack timeline.</p>
+    <p>Key principle: <strong>collect first, analyze later.</strong> Traffic doesn't persist — if you don't capture it, it's gone. This is why perimeter packet capture (TAP or SPAN port) is essential infrastructure, not an afterthought.</p>
+  </div>
+
+  <div class="practical open">
+    <div class="prac-head" onclick="toggleP(this)">
+      <span class="ph-i">🔎</span>
+      <span class="ph-t">Lab 14.1 — Investigate a simulated network breach using a pcap file</span>
+      <span class="ph-tag pt-lab">Forensics Lab</span>
+      <span class="ph-chev">▶</span>
+    </div>
+    <div class="prac-body">
+      <div class="note orange"><span class="ni">💡</span><span>Use the Wireshark sample capture files at <code style="color:var(--cyan)">wiki.wireshark.org/SampleCaptures</code> or practice pcaps from malware-traffic-analysis.net (educational site with real malware pcaps).</span></div>
+      <ol class="steps" style="margin-top:12px;">
+        <li class="step">
+          <span class="sn">1</span>
+          <div class="sc">
+            <div class="st">Forensic questions to answer for any incident pcap</div>
+            <div class="code" data-label="investigation checklist">
+<span class="kw">1. SCOPE</span>
+  What time period does the capture cover?
+  Which IPs are involved? Internal vs external?
+  What protocols are present?
+
+<span class="kw">2. INITIAL COMPROMISE</span>
+  What was the first suspicious event?
+  Was there a port scan before exploitation?
+  What was the entry vector? (Phishing? Web exploit? Brute force?)
+
+<span class="kw">3. MALICIOUS TRAFFIC</span>
+  C2 beaconing: regular periodic connections to external IP?
+  Data exfiltration: large outbound transfers? DNS tunneling?
+  Lateral movement: unexpected internal connections?
+  Privilege escalation: unusual protocol on unexpected port?
+
+<span class="kw">4. IOC EXTRACTION</span>
+  Malicious IPs and domains contacted
+  User agents (malware often has distinctive UA strings)
+  File hashes of downloaded files
+  JA3 TLS fingerprints of malware's TLS connections
+            </div>
+          </div>
+        </li>
+        <li class="step">
+          <span class="sn">2</span>
+          <div class="sc">
+            <div class="st">Automated analysis with NetworkMiner</div>
+            <div class="code" data-label="bash">
+<span class="cm"># Install NetworkMiner (Windows) or use on Kali via Mono</span>
+<span class="cm"># Open pcap: automatically extracts:</span>
+<span class="cm"># - All hosts with OS fingerprint</span>
+<span class="cm"># - All DNS queries and responses</span>
+<span class="cm"># - All files transferred over HTTP (reassembled)</span>
+<span class="cm"># - All credentials from cleartext protocols</span>
+<span class="cm"># - All images transferred</span>
+<span class="cm"># - Anomalies tab</span>
+            </div>
+          </div>
+        </li>
+        <li class="step">
+          <span class="sn">3</span>
+          <div class="sc">
+            <div class="st">Extract IOCs with tshark and correlate with threat intelligence</div>
+            <div class="code" data-label="bash">
+<span class="cm"># Extract all unique external IPs</span>
+<span class="cmd">tshark</span> <span class="flag">-r</span> incident.pcap <span class="flag">-T fields -e ip.dst</span> | \
+  <span class="cmd">grep</span> <span class="flag">-v</span> <span class="val">"192.168.\|10\.\|172\.1[6-9]\|172\.2[0-9]\|172\.3[01]"</span> | \
+  <span class="cmd">sort -u</span> > external_ips.txt
+
+<span class="cm"># Check each IP against AbuseIPDB</span>
+<span class="cmd">while</span> read ip; do
+  score=$(<span class="cmd">curl</span> <span class="flag">-s -G</span> https://api.abuseipdb.com/api/v2/check \
+    <span class="flag">-d</span> <span class="val">"ipAddress=$ip"</span> <span class="flag">-H</span> <span class="val">"Key: YOUR_KEY"</span> | \
+    <span class="cmd">python3 -c</span> <span class="val">"import sys,json; d=json.load(sys.stdin); print(d['data']['abuseConfidenceScore'])"</span>)
+  <span class="cmd">echo</span> "$score $ip"
+done < external_ips.txt | <span class="cmd">sort -rn</span>
+<span class="cm"># High confidence scores (>50) = known malicious IPs — document as IOCs</span>
+
+<span class="cm"># Extract all DNS queries (potential C2 domain names)</span>
+<span class="cmd">tshark</span> <span class="flag">-r</span> incident.pcap \
+  <span class="flag">-Y</span> <span class="val">"dns.flags.response == 0"</span> \
+  <span class="flag">-T fields -e dns.qry.name</span> | <span class="cmd">sort -u</span> > dns_queries.txt
+<span class="cm"># Look for: DGA domains (random-looking), new domains, unusual TLDs</span>
+            </div>
+          </div>
+        </li>
+        <li class="step">
+          <span class="sn">4</span>
+          <div class="sc">
+            <div class="st">Detect C2 beaconing pattern (regular periodic connections)</div>
+            <div class="code" data-label="python3">
+<span class="cm"># Parse pcap and find hosts with suspiciously regular connection intervals</span>
+<span class="kw">import</span> pyshark
+<span class="kw">from</span> collections <span class="kw">import</span> defaultdict
+<span class="kw">import</span> numpy <span class="kw">as</span> np
+
+cap = pyshark.FileCapture(<span class="val">'incident.pcap'</span>, display_filter=<span class="val">'tcp.flags.syn==1 and tcp.flags.ack==0'</span>)
+connections = defaultdict(list)
+
+<span class="kw">for</span> pkt <span class="kw">in</span> cap:
+    <span class="kw">try</span>:
+        key = f<span class="val">"{pkt.ip.src}->{pkt.ip.dst}:{pkt.tcp.dstport}"</span>
+        connections[key].append(float(pkt.sniff_timestamp))
+    <span class="kw">except</span>: pass
+
+<span class="kw">for</span> conn, times <span class="kw">in</span> connections.items():
+    <span class="kw">if</span> len(times) > 5:
+        intervals = np.diff(times)
+        jitter = np.std(intervals)
+        mean_interval = np.mean(intervals)
+        <span class="kw">if</span> jitter < 5 <span class="kw">and</span> mean_interval > 30:  <span class="cm"># low jitter = beaconing</span>
+            print(f<span class="val">"BEACON: {conn} — interval: {mean_interval:.0f}s jitter: {jitter:.2f}s"</span>)
+            </div>
+          </div>
+        </li>
+      </ol>
+    </div>
+  </div>
+</div>
+
+<hr class="hdiv">
+
+<!-- ══════════════════
+15 — Capstone
+══════════════════ -->
+<div class="section" id="s15">
+  <div class="sec-head">
+    <span class="sec-num">15</span>
+    <div class="sec-meta">
+      <div class="sec-title">Capstone — Network Security Audit</div>
+      <div class="sec-sub">Full network security assessment report for a fictional organization</div>
+    </div>
+    <span class="badge b-green">Capstone</span>
+  </div>
+
+  <div class="theory green">
+    <h4>The Capstone Deliverable</h4>
+    <p>A network security audit assesses an organization's entire network posture — scanning, protocol analysis, firewall review, segmentation verification, wireless testing, and vulnerability identification — producing a structured report with findings and remediation steps. This deliverable, built from your lab work in this module, is your portfolio evidence for SOC analyst and security engineer roles.</p>
+  </div>
+
+  <div class="practical open">
+    <div class="prac-head" onclick="toggleP(this)">
+      <span class="ph-i">📋</span>
+      <span class="ph-t">Capstone — Write a network security audit report for your lab environment</span>
+      <span class="ph-tag pt-design">Portfolio Deliverable</span>
+      <span class="ph-chev">▶</span>
+    </div>
+    <div class="prac-body">
+      <ol class="steps">
+        <li class="step">
+          <span class="sn">1</span>
+          <div class="sc">
+            <div class="st">Conduct the assessment (compile from all labs)</div>
+            <div class="code" data-label="assessment scope">
+<span class="kw">Target:</span>      Metasploitable2 (192.168.56.101) + your lab network
+<span class="kw">Type:</span>        Internal network security assessment
+<span class="kw">Scope:</span>       192.168.56.0/24 (host-only adapter)
+<span class="kw">Tools Used:</span>  Nmap, Wireshark, hping3, arpwatch, tshark, Suricata
+<span class="kw">Duration:</span>    [Your testing dates]
+            </div>
+          </div>
+        </li>
+        <li class="step">
+          <span class="sn">2</span>
+          <div class="sc">
+            <div class="st">Network security audit report structure</div>
+            <div class="code" data-label="report outline">
+<span class="kw">1. EXECUTIVE SUMMARY</span>
+   Overall risk: CRITICAL (Metasploitable2 has critical vulns)
+   Total findings: X (Critical: Y, High: Z, Medium: W, Low: V)
+   Immediate actions: [top 3 critical items]
+
+<span class="kw">2. NETWORK TOPOLOGY FINDINGS</span>
+   Hosts discovered: X
+   Subnetting: Assessment of address space management
+   Exposed segments: Are databases in same subnet as users?
+
+<span class="kw">3. PORT & SERVICE FINDINGS</span>
+   Open ports by risk level (use nmap -oA results)
+   HIGH RISK: 21 (FTP), 23 (Telnet), 5900 (VNC unauthenticated)
+   Key: Service → Version → Known CVEs → Risk Rating → Remediation
+
+<span class="kw">4. PROTOCOL SECURITY FINDINGS</span>
+   Cleartext protocols in use: FTP, Telnet, HTTP (sniffing lab)
+   DNS configuration: Zone transfer open/closed?
+   DHCP: Rogue DHCP protection in place?
+
+<span class="kw">5. NETWORK ATTACK EXPOSURE</span>
+   ARP poisoning: Is DAI enabled on switches?
+   DDoS mitigation: SYN cookies enabled? Rate limiting?
+   IDS/IPS: Deployed? Rules up to date?
+
+<span class="kw">6. FIREWALL & SEGMENTATION REVIEW</span>
+   Default deny policy: Yes/No
+   Ingress filtering: BCP38 implemented?
+   Segmentation: Are databases isolated from workstations?
+
+<span class="kw">7. WIRELESS SECURITY</span>
+   WPA version in use, encryption strength, guest isolation
+
+<span class="kw">8. REMEDIATION ROADMAP</span>
+   Priority 1 (Immediate): Disable Telnet, FTP; Enable SYN cookies
+   Priority 2 (30 days): Implement VLANs, enable IDS, DAI on switches
+   Priority 3 (90 days): Zero Trust architecture planning, NAC
+
+<span class="kw">9. APPENDIX</span>
+   Full Nmap scan output
+   Wireshark capture excerpts
+   IDS alert logs
+            </div>
+          </div>
+        </li>
+      </ol>
+    </div>
+  </div>
+
+  <div class="theory" style="margin-top:18px;">
+    <h4>Module Completion Checklist</h4>
+    <ul class="checklist">
+      <li onclick="toggleCheck(this)"><span class="cb"></span><span>Lab 1.1 — Captured packets in Wireshark; identified all OSI layers in HTTP packet</span></li>
+      <li onclick="toggleCheck(this)"><span class="cb"></span><span>Lab 2.1 — Calculated subnet ranges using Python ipaddress module; checked host IPs</span></li>
+      <li onclick="toggleCheck(this)"><span class="cb"></span><span>Lab 3.1 — Captured and analyzed TCP handshake, DNS queries, and DHCP DORA in Wireshark</span></li>
+      <li onclick="toggleCheck(this)"><span class="cb"></span><span>Lab 4.1 — Ran Nmap full scan on Metasploitable2; identified all open ports with services</span></li>
+      <li onclick="toggleCheck(this)"><span class="cb"></span><span>Lab 5.1 — Captured cleartext FTP and HTTP credentials with tcpdump/Wireshark</span></li>
+      <li onclick="toggleCheck(this)"><span class="cb"></span><span>Lab 6.1 — ARP poisoning MITM with arpspoof; detected with arpwatch; applied static ARP entry</span></li>
+      <li onclick="toggleCheck(this)"><span class="cb"></span><span>Lab 6.2 — DNS zone transfer test; DNS spoofing demo; checked DNSSEC status</span></li>
+      <li onclick="toggleCheck(this)"><span class="cb"></span><span>Lab 7.1 — SYN flood with hping3; observed half-open connections; applied SYN cookie mitigation</span></li>
+      <li onclick="toggleCheck(this)"><span class="cb"></span><span>Lab 8.1 — Built comprehensive iptables ruleset with SSH rate-limiting and default deny</span></li>
+      <li onclick="toggleCheck(this)"><span class="cb"></span><span>Lab 8.2 — Installed ModSecurity + OWASP CRS on Nginx; verified SQLi and XSS blocking</span></li>
+      <li onclick="toggleCheck(this)"><span class="cb"></span><span>Lab 9.1 — Wrote 4 custom Suricata rules; triggered and verified alerts for scan and SQLi</span></li>
+      <li onclick="toggleCheck(this)"><span class="cb"></span><span>Lab 10.1 — Set up WireGuard VPN tunnel between two VMs; verified encrypted connectivity</span></li>
+      <li onclick="toggleCheck(this)"><span class="cb"></span><span>Lab 11.1 — Designed 4-zone segmented network architecture with VLAN rules</span></li>
+      <li onclick="toggleCheck(this)"><span class="cb"></span><span>Lab 12.1 — Captured WPA2 4-way handshake; tested against dictionary to demonstrate weak password risk</span></li>
+      <li onclick="toggleCheck(this)"><span class="cb"></span><span>Lab 13.1 — Mastered Wireshark display filters; extracted IOCs from sample pcap with tshark</span></li>
+      <li onclick="toggleCheck(this)"><span class="cb"></span><span>Lab 14.1 — Investigated forensic pcap; extracted external IPs; detected C2 beaconing pattern</span></li>
+      <li onclick="toggleCheck(this)"><span class="cb"></span><span>Capstone — Wrote full network security audit report — pushed to GitHub portfolio</span></li>
+    </ul>
+  </div>
+
+  <div class="note green" style="margin-top:14px;">
+    <span class="ni">🏆</span>
+    <span><strong>Portfolio package:</strong> (1) Network security audit report PDF, (2) Custom Suricata rules file (.rules), (3) iptables hardened firewall script (.sh), (4) Wireshark filter reference (markdown), (5) Subnet calculator Python script. Network security breadth + documented labs makes you stand out at Indian SOC/network security roles — TCS, Infosys, HCL, Wipro Network Security, Cisco India, and MSSPs all test these skills.</span>
+  </div>
+
+</div>
+
+</div><!-- /content -->
+</main>
+</div><!-- /layout -->
+
+<script>
+function toggleP(header) {
+  header.closest('.practical').classList.toggle('open');
+  updateProgress();
+}
+
+function toggleCheck(li) {
+  li.classList.toggle('done');
+  updateProgress();
+}
+
+function updateProgress() {
+  const all = document.querySelectorAll('.checklist li');
+  const done = document.querySelectorAll('.checklist li.done');
+  const pct = all.length > 0 ? Math.round((done.length / all.length) * 100) : 0;
+  document.getElementById('sb-fill').style.width = pct + '%';
+  document.getElementById('sb-pct').textContent = pct + '%';
+}
+
+// Sidebar active scroll tracking
+const sections = document.querySelectorAll('.section');
+const navItems = document.querySelectorAll('.nav-item');
+
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      const id = entry.target.id;
+      navItems.forEach(item => {
+        item.classList.toggle('active', item.getAttribute('href') === '#' + id);
+      });
+    }
+  });
+}, { rootMargin: '-20% 0px -70% 0px' });
+
+sections.forEach(s => observer.observe(s));
+
+navItems.forEach(item => {
+  item.addEventListener('click', e => {
+    const href = item.getAttribute('href');
+    if (href && href.startsWith('#')) {
+      e.preventDefault();
+      document.querySelector(href)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  });
+});
+
+updateProgress();
+</script>
+</body>
+</html>

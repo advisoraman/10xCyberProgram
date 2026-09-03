@@ -1,0 +1,2142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GRC — Governance, Risk & Compliance Module</title>
+<link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Source+Code+Pro:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:         #faf8f4;
+  --bg2:        #f4f1eb;
+  --bg3:        #ede9e0;
+  --bg4:        #e5e0d4;
+  --border:     #d8d2c4;
+  --border2:    #c8c0ae;
+  --text:       #2a2520;
+  --text-muted: #6b6155;
+  --text-dim:   #a89e8e;
+  --navy:       #1a2744;
+  --navy-mid:   #2d3f6b;
+  --navy-light: #e8ecf5;
+  --navy-glow:  rgba(26,39,68,0.06);
+  --rust:       #8b2c1a;
+  --rust-light: #fdf0ed;
+  --rust-mid:   #c0392b;
+  --green:      #1a4a2e;
+  --green-light:#eef5f0;
+  --green-mid:  #27ae60;
+  --amber:      #7a4a00;
+  --amber-light:#fdf6e8;
+  --amber-mid:  #e67e22;
+  --teal:       #0d3d4a;
+  --teal-light: #e8f4f7;
+  --teal-mid:   #16a085;
+  --sidebar-w:  255px;
+}
+
+*{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+
+body{
+  font-family:'Libre Baskerville',serif;
+  background:var(--bg);
+  color:var(--text);
+  font-size:13.5px;
+  line-height:1.8;
+  min-height:100vh;
+}
+
+/* subtle paper texture via gradient */
+body::before{
+  content:'';
+  position:fixed;top:0;left:0;right:0;bottom:0;
+  background:
+    radial-gradient(ellipse at 80% 20%, rgba(26,39,68,0.02) 0%, transparent 50%),
+    radial-gradient(ellipse at 20% 80%, rgba(139,44,26,0.015) 0%, transparent 50%);
+  pointer-events:none;z-index:0;
+}
+
+.layout{display:flex;min-height:100vh;position:relative;z-index:1;}
+
+/* ── SIDEBAR ── */
+.sidebar{
+  width:var(--sidebar-w);flex-shrink:0;
+  background:var(--navy);
+  position:sticky;top:0;height:100vh;
+  overflow-y:auto;display:flex;flex-direction:column;
+}
+
+.sidebar::-webkit-scrollbar{width:3px;}
+.sidebar::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.1);}
+
+.sb-head{
+  padding:24px 20px 18px;
+  border-bottom:1px solid rgba(255,255,255,0.08);
+}
+
+.sb-seal{
+  width:36px;height:36px;
+  border:1px solid rgba(255,255,255,0.2);
+  border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  font-size:16px;margin-bottom:12px;
+  background:rgba(255,255,255,0.04);
+}
+
+.sb-title{
+  font-family:'Libre Baskerville',serif;
+  font-size:15px;font-weight:700;
+  color:#ffffff;line-height:1.3;
+  letter-spacing:0.01em;
+}
+
+.sb-sub{
+  font-family:'Source Code Pro',monospace;
+  font-size:9.5px;color:rgba(255,255,255,0.35);
+  margin-top:6px;letter-spacing:0.04em;text-transform:uppercase;
+}
+
+.nav-section-label{
+  padding:14px 20px 4px;
+  font-family:'Source Code Pro',monospace;
+  font-size:9px;letter-spacing:0.1em;text-transform:uppercase;
+  color:rgba(255,255,255,0.25);font-weight:500;
+}
+
+.nav-item{
+  display:flex;align-items:center;gap:10px;
+  padding:7px 20px;
+  font-family:'Source Code Pro',monospace;
+  font-size:11px;color:rgba(255,255,255,0.45);
+  cursor:pointer;transition:all 0.15s;
+  text-decoration:none;
+  border-left:2px solid transparent;
+}
+.nav-item:hover{color:rgba(255,255,255,0.8);background:rgba(255,255,255,0.04);}
+.nav-item.active{color:#ffffff;background:rgba(255,255,255,0.07);border-left-color:rgba(255,255,255,0.4);}
+
+.nav-num{font-size:9px;color:rgba(255,255,255,0.2);min-width:18px;text-align:right;}
+
+.sb-footer{
+  margin-top:auto;padding:16px 20px;
+  border-top:1px solid rgba(255,255,255,0.08);
+}
+.sb-prog-label{
+  display:flex;justify-content:space-between;
+  font-family:'Source Code Pro',monospace;
+  font-size:9.5px;color:rgba(255,255,255,0.3);margin-bottom:6px;
+}
+.sb-prog-track{height:2px;background:rgba(255,255,255,0.1);border-radius:99px;overflow:hidden;}
+.sb-prog-fill{height:100%;background:rgba(255,255,255,0.5);border-radius:99px;transition:width 0.5s ease;}
+
+/* ── MAIN ── */
+.main{flex:1;overflow-x:hidden;}
+
+/* Hero */
+.hero{
+  padding:56px 68px 44px;
+  border-bottom:2px solid var(--border);
+  position:relative;
+  background:linear-gradient(180deg, var(--bg) 0%, var(--bg2) 100%);
+}
+
+.hero::after{
+  content:'GRC';
+  position:absolute;right:60px;top:50%;transform:translateY(-50%);
+  font-family:'Libre Baskerville',serif;
+  font-size:160px;font-weight:700;font-style:italic;
+  color:rgba(26,39,68,0.04);
+  pointer-events:none;user-select:none;
+  letter-spacing:-6px;
+}
+
+.hero-label{
+  font-family:'Source Code Pro',monospace;
+  font-size:10px;letter-spacing:0.14em;text-transform:uppercase;
+  color:var(--navy-mid);font-weight:500;margin-bottom:14px;
+  display:flex;align-items:center;gap:10px;
+}
+.hero-label::after{content:'';flex:1;max-width:40px;height:1px;background:var(--border2);}
+
+.hero-title{
+  font-family:'Libre Baskerville',serif;
+  font-size:46px;font-weight:700;
+  color:var(--navy);line-height:1.05;
+  letter-spacing:-0.02em;margin-bottom:6px;
+}
+
+.hero-title em{color:var(--rust-mid);font-style:italic;}
+
+.hero-subtitle{
+  font-family:'Libre Baskerville',serif;
+  font-size:16px;font-weight:400;font-style:italic;
+  color:var(--text-muted);margin-bottom:20px;
+}
+
+.hero-desc{
+  font-size:13.5px;color:var(--text-muted);
+  max-width:600px;line-height:1.8;
+  padding-left:16px;
+  border-left:3px solid var(--border2);
+}
+
+.hero-stats{
+  display:inline-flex;margin-top:32px;
+  border:1px solid var(--border);
+  border-radius:2px;overflow:hidden;
+}
+
+.hero-stat{
+  padding:12px 24px;
+  border-right:1px solid var(--border);
+  display:flex;flex-direction:column;gap:2px;
+}
+.hero-stat:last-child{border-right:none;}
+
+.hs-val{
+  font-family:'Libre Baskerville',serif;
+  font-size:22px;font-weight:700;color:var(--navy);
+}
+.hs-val.r{color:var(--rust-mid);}
+.hs-val.g{color:var(--green-mid);}
+.hs-val.a{color:var(--amber-mid);}
+.hs-label{
+  font-family:'Source Code Pro',monospace;
+  font-size:9px;color:var(--text-dim);
+  letter-spacing:0.06em;text-transform:uppercase;
+}
+
+/* Content */
+.content{padding:0 68px 80px;}
+
+/* Section */
+.section{
+  margin-top:56px;
+  animation:slideUp 0.35s ease both;
+}
+
+@keyframes slideUp{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:translateY(0);}}
+
+.sec-head{
+  display:flex;align-items:flex-start;gap:18px;
+  margin-bottom:28px;padding-bottom:18px;
+  border-bottom:2px solid var(--border);
+  position:relative;
+}
+.sec-head::after{
+  content:'';position:absolute;bottom:-2px;left:0;
+  width:50px;height:2px;background:var(--navy);
+}
+
+.sec-num{
+  font-family:'Source Code Pro',monospace;
+  font-size:11px;color:var(--text-dim);padding-top:5px;min-width:24px;
+}
+.sec-meta{flex:1;}
+.sec-title{
+  font-family:'Libre Baskerville',serif;
+  font-size:26px;font-weight:700;color:var(--navy);
+  line-height:1.15;margin-bottom:4px;
+  letter-spacing:-0.01em;
+}
+.sec-sub{
+  font-family:'Source Code Pro',monospace;
+  font-size:10.5px;color:var(--text-muted);
+}
+.sec-badge{
+  font-family:'Source Code Pro',monospace;
+  font-size:9px;font-weight:500;letter-spacing:0.08em;
+  text-transform:uppercase;padding:4px 10px;
+  border-radius:1px;flex-shrink:0;margin-top:3px;
+  border:1px solid;
+}
+.b-navy{background:var(--navy-light);color:var(--navy);border-color:rgba(26,39,68,0.2);}
+.b-rust{background:var(--rust-light);color:var(--rust);border-color:rgba(139,44,26,0.2);}
+.b-green{background:var(--green-light);color:var(--green);border-color:rgba(26,74,46,0.2);}
+.b-amber{background:var(--amber-light);color:var(--amber);border-color:rgba(122,74,0,0.2);}
+.b-teal{background:var(--teal-light);color:var(--teal);border-color:rgba(13,61,74,0.2);}
+
+/* Theory */
+.theory{
+  background:var(--bg2);
+  border:1px solid var(--border);
+  border-left:3px solid var(--navy);
+  border-radius:2px;
+  padding:20px 24px;
+  margin-bottom:16px;
+}
+.theory h4{
+  font-family:'Libre Baskerville',serif;
+  font-size:14px;font-weight:700;
+  color:var(--navy);margin-bottom:10px;
+}
+.theory p{font-size:13px;color:var(--text-muted);margin-bottom:8px;line-height:1.8;}
+.theory p:last-child{margin-bottom:0;}
+.theory strong{color:var(--text);font-weight:700;}
+.theory em{color:var(--navy-mid);font-style:italic;}
+
+.theory.rust{border-left-color:var(--rust-mid);}
+.theory.green{border-left-color:var(--green-mid);}
+.theory.amber{border-left-color:var(--amber-mid);}
+.theory.teal{border-left-color:var(--teal-mid);}
+
+/* Grid */
+.grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(220px,1fr));
+  gap:8px;margin:12px 0;
+}
+
+.card{
+  background:var(--bg);
+  border:1px solid var(--border);
+  border-radius:2px;padding:14px 16px;
+  transition:border-color 0.15s,background 0.12s;
+}
+.card:hover{border-color:var(--border2);background:var(--bg2);}
+
+.card-key{
+  font-family:'Source Code Pro',monospace;
+  font-size:10px;font-weight:500;letter-spacing:0.05em;
+  text-transform:uppercase;margin-bottom:6px;
+  color:var(--navy);
+}
+.card-key.r{color:var(--rust);}
+.card-key.g{color:var(--green);}
+.card-key.a{color:var(--amber);}
+.card-key.t{color:var(--teal);}
+
+.card-val{font-size:12.5px;color:var(--text-muted);line-height:1.7;}
+
+/* Table */
+.dtable{width:100%;border-collapse:collapse;margin:14px 0;font-size:12.5px;}
+.dtable th{
+  text-align:left;padding:8px 12px;
+  background:var(--navy);color:rgba(255,255,255,0.85);
+  font-family:'Source Code Pro',monospace;
+  font-size:9.5px;text-transform:uppercase;letter-spacing:0.07em;
+  font-weight:500;
+}
+.dtable td{
+  padding:9px 12px;border-bottom:1px solid var(--border);
+  color:var(--text-muted);vertical-align:top;
+}
+.dtable tr:last-child td{border-bottom:none;}
+.dtable tr:hover td{background:var(--bg2);color:var(--text);}
+.dtable tbody tr:nth-child(even) td{background:var(--bg2);}
+.dtable tbody tr:nth-child(even):hover td{background:var(--bg3);}
+
+.td-k{color:var(--navy);font-weight:700;}
+.td-r{color:var(--rust);font-weight:600;}
+.td-g{color:var(--green);font-weight:600;}
+.td-a{color:var(--amber);font-weight:600;}
+.td-t{color:var(--teal);font-weight:600;}
+
+/* Practical */
+.practical{
+  border:1px solid var(--border);
+  border-radius:2px;overflow:hidden;
+  margin-bottom:14px;
+}
+
+.prac-head{
+  background:var(--bg3);
+  padding:11px 16px;
+  display:flex;align-items:center;gap:10px;
+  border-bottom:1px solid var(--border);
+  cursor:pointer;user-select:none;
+  transition:background 0.12s;
+}
+.prac-head:hover{background:var(--bg4);}
+
+.ph-ico{font-size:14px;}
+.ph-title{
+  font-size:12px;font-weight:700;color:var(--text);flex:1;
+  font-family:'Libre Baskerville',serif;
+}
+.ph-tag{
+  font-family:'Source Code Pro',monospace;
+  font-size:9px;font-weight:500;text-transform:uppercase;
+  letter-spacing:0.07em;padding:2px 8px;border-radius:1px;border:1px solid;
+}
+.pt-lab{background:var(--rust-light);color:var(--rust);border-color:rgba(139,44,26,0.2);}
+.pt-doc{background:var(--navy-light);color:var(--navy);border-color:rgba(26,39,68,0.2);}
+.pt-template{background:var(--amber-light);color:var(--amber);border-color:rgba(122,74,0,0.2);}
+.pt-audit{background:var(--green-light);color:var(--green);border-color:rgba(26,74,46,0.2);}
+.pt-india{background:var(--teal-light);color:var(--teal);border-color:rgba(13,61,74,0.2);}
+
+.ph-chevron{font-size:9px;color:var(--text-dim);transition:transform 0.2s;}
+.practical.open .ph-chevron{transform:rotate(90deg);}
+
+.prac-body{display:none;padding:20px 24px;background:var(--bg);}
+.practical.open .prac-body{display:block;}
+
+/* Steps */
+.steps{list-style:none;}
+.step{display:flex;gap:16px;margin-bottom:20px;padding-bottom:20px;border-bottom:1px dashed var(--border);}
+.step:last-child{margin-bottom:0;padding-bottom:0;border-bottom:none;}
+.step-num{
+  width:24px;height:24px;border-radius:50%;
+  border:1px solid var(--navy);
+  background:var(--navy-light);
+  display:flex;align-items:center;justify-content:center;
+  font-family:'Source Code Pro',monospace;
+  font-size:10px;font-weight:600;color:var(--navy);
+  flex-shrink:0;margin-top:2px;
+}
+.step-content{flex:1;}
+.step-title{font-size:13px;font-weight:700;color:var(--text);margin-bottom:5px;}
+.step-desc{font-size:12.5px;color:var(--text-muted);line-height:1.8;margin-bottom:8px;}
+.step-desc:last-child{margin-bottom:0;}
+
+/* Code / Document blocks */
+.code{
+  background:var(--bg2);
+  border:1px solid var(--border);
+  border-radius:2px;
+  padding:14px 16px;
+  font-family:'Source Code Pro',monospace;
+  font-size:11.5px;
+  color:var(--text-muted);
+  overflow-x:auto;margin:8px 0;
+  position:relative;line-height:1.75;
+}
+.code .cm{color:var(--text-dim);}
+.code .kw{color:var(--navy-mid);font-weight:600;}
+.code .val{color:var(--text);}
+.code .hi{color:var(--rust);font-weight:600;}
+.code .ok{color:var(--green);font-weight:600;}
+.code .warn{color:var(--amber);font-weight:600;}
+.code::before{
+  content:attr(data-label);
+  position:absolute;top:6px;right:10px;
+  font-size:9px;color:var(--text-dim);
+  letter-spacing:0.07em;text-transform:uppercase;
+}
+
+/* Callout notes */
+.note{
+  display:flex;gap:10px;align-items:flex-start;
+  border-radius:2px;padding:12px 16px;
+  font-size:12.5px;margin:10px 0;line-height:1.75;
+}
+.note.navy{background:var(--navy-light);border:1px solid rgba(26,39,68,0.15);color:var(--text-muted);}
+.note.rust{background:var(--rust-light);border:1px solid rgba(139,44,26,0.15);color:var(--text-muted);}
+.note.green{background:var(--green-light);border:1px solid rgba(26,74,46,0.15);color:var(--text-muted);}
+.note.amber{background:var(--amber-light);border:1px solid rgba(122,74,0,0.15);color:var(--text-muted);}
+.note.teal{background:var(--teal-light);border:1px solid rgba(13,61,74,0.15);color:var(--text-muted);}
+.note .ni{font-size:14px;flex-shrink:0;margin-top:1px;}
+.note strong{color:var(--text);font-weight:700;}
+
+/* divider */
+.hdiv{border:none;border-top:1px solid var(--border);margin:44px 0 0;}
+
+/* Framework comparison */
+.fw-grid{
+  display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));
+  gap:10px;margin:14px 0;
+}
+
+.fw-card{
+  border:1px solid var(--border);border-radius:2px;
+  overflow:hidden;transition:border-color 0.15s;
+}
+.fw-card:hover{border-color:var(--border2);}
+
+.fw-card-head{
+  padding:12px 16px;
+  background:var(--navy);
+  display:flex;align-items:center;justify-content:space-between;
+}
+.fw-card-name{
+  font-family:'Libre Baskerville',serif;
+  font-size:14px;font-weight:700;color:#fff;
+}
+.fw-card-tag{
+  font-family:'Source Code Pro',monospace;
+  font-size:9px;color:rgba(255,255,255,0.5);
+  letter-spacing:0.06em;text-transform:uppercase;
+}
+.fw-card-body{padding:14px 16px;background:var(--bg);}
+.fw-card-body p{font-size:12px;color:var(--text-muted);margin-bottom:8px;line-height:1.7;}
+.fw-card-body p:last-child{margin-bottom:0;}
+.fw-card-body strong{color:var(--text);font-weight:700;}
+
+/* Risk matrix */
+.risk-matrix{
+  border:1px solid var(--border);border-radius:2px;
+  overflow:hidden;margin:14px 0;
+}
+
+.rm-head{
+  padding:10px 16px;background:var(--navy);
+  font-family:'Source Code Pro',monospace;
+  font-size:9.5px;color:rgba(255,255,255,0.6);
+  text-transform:uppercase;letter-spacing:0.08em;
+}
+
+.rm-grid{
+  display:grid;grid-template-columns:auto repeat(4,1fr);
+  border-top:1px solid var(--border);
+}
+
+.rm-cell{
+  padding:10px 12px;border-right:1px solid var(--border);border-bottom:1px solid var(--border);
+  font-size:11.5px;text-align:center;
+}
+.rm-cell:last-child{border-right:none;}
+.rm-label{
+  background:var(--bg2);font-weight:700;
+  font-family:'Source Code Pro',monospace;
+  font-size:10px;color:var(--text-muted);
+  display:flex;align-items:center;justify-content:center;
+}
+.rm-header{
+  background:var(--bg3);
+  font-family:'Source Code Pro',monospace;
+  font-size:10px;color:var(--text-muted);font-weight:600;
+}
+
+.rm-low{background:#eef5f0;color:var(--green);}
+.rm-med{background:#fdf6e8;color:var(--amber);}
+.rm-high{background:#fdf2ee;color:#c0392b;}
+.rm-crit{background:#fce8e6;color:var(--rust);}
+
+/* Annex A accordion */
+.annex-domain{
+  border:1px solid var(--border);border-radius:2px;
+  margin-bottom:6px;overflow:hidden;
+}
+.annex-head{
+  display:flex;align-items:center;gap:12px;
+  padding:10px 16px;background:var(--bg2);cursor:pointer;
+  user-select:none;transition:background 0.12s;
+  border-bottom:1px solid transparent;
+}
+.annex-head:hover{background:var(--bg3);}
+.annex-domain.open .annex-head{
+  background:var(--navy);border-bottom-color:transparent;
+}
+.annex-domain.open .annex-head .ad-num,
+.annex-domain.open .annex-head .ad-name{color:#fff;}
+.annex-domain.open .annex-head .ad-count{color:rgba(255,255,255,0.5);}
+.annex-domain.open .annex-head .ad-chev{color:rgba(255,255,255,0.5);}
+
+.ad-num{
+  font-family:'Source Code Pro',monospace;
+  font-size:10px;color:var(--text-dim);min-width:28px;
+}
+.ad-name{font-size:13px;font-weight:700;color:var(--navy);flex:1;}
+.ad-count{
+  font-family:'Source Code Pro',monospace;
+  font-size:10px;color:var(--text-dim);
+}
+.ad-chev{font-size:9px;color:var(--text-dim);transition:transform 0.2s;}
+.annex-domain.open .ad-chev{transform:rotate(90deg);}
+
+.annex-body{display:none;padding:14px 16px 16px;}
+.annex-domain.open .annex-body{display:block;}
+
+.control-list{list-style:none;}
+.control-item{
+  display:flex;align-items:flex-start;gap:10px;
+  padding:6px 8px;border-radius:2px;
+  font-size:12.5px;color:var(--text-muted);
+  cursor:pointer;transition:background 0.1s;
+}
+.control-item:hover{background:var(--bg2);color:var(--text);}
+.ci-box{
+  width:14px;height:14px;border:1px solid var(--border2);
+  border-radius:2px;flex-shrink:0;margin-top:3px;
+  display:flex;align-items:center;justify-content:center;
+  transition:all 0.15s;
+}
+.control-item.done .ci-box{background:var(--green-mid);border-color:var(--green-mid);}
+.control-item.done .ci-box::after{content:'✓';font-size:9px;color:#fff;font-weight:bold;}
+.control-item.done span:last-child{text-decoration:line-through;color:var(--text-dim);}
+.ci-num{
+  font-family:'Source Code Pro',monospace;
+  font-size:10px;color:var(--text-dim);min-width:44px;flex-shrink:0;
+}
+
+/* Compliance checklist */
+.checklist{list-style:none;}
+.checklist li{
+  display:flex;align-items:flex-start;gap:10px;
+  padding:5px 8px;border-radius:2px;
+  font-size:12.5px;color:var(--text-muted);cursor:pointer;
+  transition:background 0.1s;
+}
+.checklist li:hover{background:var(--bg2);color:var(--text);}
+.cb{
+  width:14px;height:14px;border:1px solid var(--border2);
+  border-radius:2px;flex-shrink:0;margin-top:3px;
+  display:flex;align-items:center;justify-content:center;
+  transition:all 0.15s;
+}
+.checklist li.done .cb{background:var(--green-mid);border-color:var(--green-mid);}
+.checklist li.done .cb::after{content:'✓';font-size:9px;color:#fff;font-weight:bold;}
+.checklist li.done span:last-child{text-decoration:line-through;color:var(--text-dim);}
+
+/* DPDP highlight */
+.india-box{
+  background:linear-gradient(135deg,rgba(13,61,74,0.04) 0%, var(--bg2) 100%);
+  border:1px solid var(--teal-mid);border-radius:2px;
+  padding:18px 22px;margin:14px 0;
+}
+.india-box h4{
+  font-family:'Libre Baskerville',serif;
+  font-size:14px;font-weight:700;color:var(--teal);
+  margin-bottom:10px;
+  display:flex;align-items:center;gap:8px;
+}
+.india-flag{font-size:16px;}
+
+/* Gap analysis bar */
+.gap-bar{
+  display:flex;align-items:center;gap:12px;margin:6px 0;
+}
+.gap-label{font-family:'Source Code Pro',monospace;font-size:11px;color:var(--text-muted);min-width:200px;}
+.gap-track{flex:1;height:8px;background:var(--bg3);border-radius:1px;overflow:hidden;}
+.gap-fill{height:100%;border-radius:1px;transition:width 0.6s ease;}
+.gap-pct{font-family:'Source Code Pro',monospace;font-size:10px;color:var(--text-dim);min-width:32px;text-align:right;}
+
+.gf-high{background:var(--green-mid);}
+.gf-med{background:var(--amber-mid);}
+.gf-low{background:var(--rust-mid);}
+
+/* scrollbar */
+::-webkit-scrollbar{width:5px;height:5px;}
+::-webkit-scrollbar-track{background:transparent;}
+::-webkit-scrollbar-thumb{background:var(--border2);border-radius:3px;}
+
+@media(max-width:900px){
+  .sidebar{display:none;}
+  .hero,.content{padding-left:24px;padding-right:24px;}
+  .hero-title{font-size:32px;}
+  .hero::after{display:none;}
+  .grid{grid-template-columns:1fr 1fr;}
+  .fw-grid{grid-template-columns:1fr;}
+  .rm-grid{grid-template-columns:auto repeat(3,1fr);}
+}
+</style>
+</head>
+<body>
+<div class="layout">
+
+<!-- ── SIDEBAR ── -->
+<nav class="sidebar">
+  <div class="sb-head">
+    <div class="sb-seal">⚖️</div>
+    <div class="sb-title">Governance, Risk<br>& Compliance</div>
+    <div class="sb-sub">GRC Module · Week 8–9</div>
+  </div>
+
+  <div class="nav-section-label">Governance</div>
+  <a class="nav-item active" href="#s1"><span class="nav-num">01</span> GRC Mental Model</a>
+  <a class="nav-item" href="#s2"><span class="nav-num">02</span> Frameworks Overview</a>
+  <a class="nav-item" href="#s3"><span class="nav-num">03</span> ISO 27001 Deep Dive</a>
+  <a class="nav-item" href="#s4"><span class="nav-num">04</span> NIST CSF 2.0</a>
+
+  <div class="nav-section-label">Risk</div>
+  <a class="nav-item" href="#s5"><span class="nav-num">05</span> Risk Management</a>
+  <a class="nav-item" href="#s6"><span class="nav-num">06</span> Risk Register — Lab</a>
+  <a class="nav-item" href="#s7"><span class="nav-num">07</span> Threat Modelling</a>
+  <a class="nav-item" href="#s8"><span class="nav-num">08</span> BCP / DRP</a>
+
+  <div class="nav-section-label">Compliance</div>
+  <a class="nav-item" href="#s9"><span class="nav-num">09</span> DPDP Act 2023 🇮🇳</a>
+  <a class="nav-item" href="#s10"><span class="nav-num">10</span> CERT-In Directions 🇮🇳</a>
+  <a class="nav-item" href="#s11"><span class="nav-num">11</span> Gap Analysis — Lab</a>
+  <a class="nav-item" href="#s12"><span class="nav-num">12</span> Audit & Policy Writing</a>
+
+  <div class="nav-section-label">Capstone</div>
+  <a class="nav-item" href="#s13"><span class="nav-num">13</span> SOA & Capstone</a>
+
+  <div class="sb-footer">
+    <div class="sb-prog-label"><span>Progress</span><span id="sb-pct">0%</span></div>
+    <div class="sb-prog-track"><div class="sb-prog-fill" id="sb-fill" style="width:0%"></div></div>
+  </div>
+</nav>
+
+<!-- ── MAIN ── -->
+<main class="main">
+
+<div class="hero">
+  <div class="hero-label">Module 08 · GRC Track</div>
+  <h1 class="hero-title">Governance, Risk<br>& <em>Compliance</em></h1>
+  <p class="hero-subtitle">From frameworks to filed audits — the complete practitioner's guide</p>
+  <p class="hero-desc">Detailed theory, practical templates, and India-specific compliance coverage. Built for analysts targeting GRC roles at Big 4, BFSI, MSSPs, and IT/GRC consulting firms.</p>
+  <div class="hero-stats">
+    <div class="hero-stat"><span class="hs-val">13</span><span class="hs-label">Topics</span></div>
+    <div class="hero-stat"><span class="hs-val r">10+</span><span class="hs-label">Labs</span></div>
+    <div class="hero-stat"><span class="hs-val g">ISO · NIST · DPDP</span><span class="hs-label">Key Frameworks</span></div>
+    <div class="hero-stat"><span class="hs-val a">Week 8–9</span><span class="hs-label">Timeline</span></div>
+  </div>
+</div>
+
+<div class="content">
+
+<!-- ══════════════════════════
+01 — GRC Mental Model
+══════════════════════════ -->
+<div class="section" id="s1">
+  <div class="sec-head">
+    <span class="sec-num">01</span>
+    <div class="sec-meta">
+      <div class="sec-title">The GRC Mental Model</div>
+      <div class="sec-sub">Understanding what GRC is, how the three pillars relate, and where you fit</div>
+    </div>
+    <span class="sec-badge b-navy">Foundation</span>
+  </div>
+
+  <div class="theory">
+    <h4>GRC in One Paragraph</h4>
+    <p><strong>Governance</strong> is about who makes security decisions and how accountability flows. <strong>Risk Management</strong> is about identifying what can go wrong, how likely it is, and what it costs — then deciding what to do about it. <strong>Compliance</strong> is about meeting the specific rules set by laws, regulators, and industry standards. All three are interdependent: governance without risk management is guesswork; compliance without governance is theatre.</p>
+    <p>In practice, a GRC analyst helps organizations understand their obligations, assess their current posture, identify gaps, and build evidence that controls are working. Every deliverable you produce — a risk register, a gap assessment, an audit report — is a structured argument that the organization is managing its security responsibly.</p>
+  </div>
+
+  <div class="grid">
+    <div class="card">
+      <div class="card-key">Governance</div>
+      <div class="card-val"><strong>Structures decisions.</strong> Who owns security? What policies exist? How is accountability enforced? Board, CISO, ISO 27001 ISMS scope, policy hierarchy.</div>
+    </div>
+    <div class="card">
+      <div class="card-key a">Risk Management</div>
+      <div class="card-val"><strong>Quantifies uncertainty.</strong> What assets exist? What threatens them? How likely? What's the impact? What do we do about it? Risk registers, threat models, BCP.</div>
+    </div>
+    <div class="card">
+      <div class="card-key r">Compliance</div>
+      <div class="card-val"><strong>Satisfies obligations.</strong> What laws, standards, and contracts require us to do? DPDP Act, CERT-In, ISO 27001, PCI-DSS, SEBI guidelines for Indian BFSI.</div>
+    </div>
+    <div class="card">
+      <div class="card-key t">Audit</div>
+      <div class="card-val"><strong>Provides evidence.</strong> Are the controls we say we have actually working? Independent verification of governance, risk, and compliance claims.</div>
+    </div>
+  </div>
+
+  <div class="theory" style="margin-top:16px;">
+    <h4>The Three Lines of Defence Model</h4>
+    <p>Most large organizations use this model to assign GRC responsibilities clearly:</p>
+    <ul style="margin-top:8px;padding-left:20px;color:var(--text-muted);font-size:13px;line-height:2;">
+      <li><strong>1st Line:</strong> Business units — own and manage risk day-to-day (IT, Operations)</li>
+      <li><strong>2nd Line:</strong> Risk and Compliance functions — set standards, monitor, report (GRC team, CISO office)</li>
+      <li><strong>3rd Line:</strong> Internal and external audit — independently verify that lines 1 and 2 are working</li>
+    </ul>
+    <p style="margin-top:12px;">As a GRC analyst, you typically sit in the <em>2nd line</em> — you don't operate controls, you define, measure, and report on them.</p>
+  </div>
+
+  <div class="note navy">
+    <span class="ni">💡</span>
+    <span><strong>For Indian job interviews:</strong> Big 4 GRC practices (Deloitte, KPMG, EY, PwC), Infosys Cyber, TCS Risk Advisory — all ask you to explain Governance vs Risk vs Compliance with examples. Know this cold. Also study ISO 27001 + DPDP Act as the two most asked frameworks in India interviews.</span>
+  </div>
+</div>
+
+<hr class="hdiv">
+
+<!-- ══════════════════════════
+02 — Frameworks Overview
+══════════════════════════ -->
+<div class="section" id="s2">
+  <div class="sec-head">
+    <span class="sec-num">02</span>
+    <div class="sec-meta">
+      <div class="sec-title">Security Frameworks Overview</div>
+      <div class="sec-sub">When to use what, and how they relate to each other</div>
+    </div>
+    <span class="sec-badge b-navy">Orientation</span>
+  </div>
+
+  <div class="theory">
+    <h4>Why So Many Frameworks?</h4>
+    <p>Each framework was created for a different context. <strong>ISO 27001</strong> is a certifiable management system standard for any organization globally. <strong>NIST CSF</strong> is a voluntary risk management framework from the US government. <strong>CIS Controls</strong> is a prioritized technical control set. <strong>SOC 2</strong> is a US audit standard for SaaS companies. <strong>DPDP</strong> is Indian law. They're not competing — they complement each other and often overlap ~60–70%.</p>
+  </div>
+
+  <div class="fw-grid">
+    <div class="fw-card">
+      <div class="fw-card-head">
+        <span class="fw-card-name">ISO/IEC 27001:2022</span>
+        <span class="fw-card-tag">International Standard</span>
+      </div>
+      <div class="fw-card-body">
+        <p><strong>What:</strong> Certifiable ISMS (Information Security Management System) standard. Clauses 4–10 define mandatory requirements; Annex A has 93 controls.</p>
+        <p><strong>When to use:</strong> When a client or contract demands it; when building enterprise security governance from scratch; most common GRC certification in India.</p>
+        <p><strong>Cert possible:</strong> Yes — ISO 27001 Lead Auditor (LA) or Lead Implementer (LI). Highly valued.</p>
+      </div>
+    </div>
+    <div class="fw-card">
+      <div class="fw-card-head" style="background:#1a3a52;">
+        <span class="fw-card-name">NIST CSF 2.0</span>
+        <span class="fw-card-tag">US Gov Framework</span>
+      </div>
+      <div class="fw-card-body">
+        <p><strong>What:</strong> Six functions: Govern, Identify, Protect, Detect, Respond, Recover. Non-prescriptive, outcome-based. Widely used in US; growing adoption in India.</p>
+        <p><strong>When to use:</strong> Risk-based conversations, board-level security posture reporting, mapping to other frameworks. Great companion to ISO 27001.</p>
+        <p><strong>Cert possible:</strong> No formal cert; NIST Cybersecurity Professional (NCSP) available.</p>
+      </div>
+    </div>
+    <div class="fw-card">
+      <div class="fw-card-head" style="background:#1a4a2e;">
+        <span class="fw-card-name">CIS Controls v8</span>
+        <span class="fw-card-tag">Technical Prioritized</span>
+      </div>
+      <div class="fw-card-body">
+        <p><strong>What:</strong> 18 controls organized into Implementation Groups (IG1/2/3). IG1 is "basic cyber hygiene" — 56 safeguards. Very practical, tool-mapped.</p>
+        <p><strong>When to use:</strong> SMB security baseline, quick wins prioritization. IG1 is the minimum for any organization. Maps well to ISO 27001 Annex A.</p>
+        <p><strong>Cert possible:</strong> CIS SecureSuite membership; no standalone cert.</p>
+      </div>
+    </div>
+    <div class="fw-card">
+      <div class="fw-card-head" style="background:#4a2a08;">
+        <span class="fw-card-name">SOC 2 (AICPA)</span>
+        <span class="fw-card-tag">Audit Standard</span>
+      </div>
+      <div class="fw-card-body">
+        <p><strong>What:</strong> Trust Service Criteria (TSC): Security, Availability, Confidentiality, Processing Integrity, Privacy. Type I = design; Type II = 6-month operating effectiveness.</p>
+        <p><strong>When to use:</strong> SaaS companies selling to US enterprise customers. Increasingly required by Indian IT companies with US clients.</p>
+        <p><strong>Cert possible:</strong> Not a certification — it's an audit report issued by a CPA firm.</p>
+      </div>
+    </div>
+    <div class="fw-card">
+      <div class="fw-card-head" style="background:var(--teal);">
+        <span class="fw-card-name">DPDP Act 2023 🇮🇳</span>
+        <span class="fw-card-tag">Indian Law</span>
+      </div>
+      <div class="fw-card-body">
+        <p><strong>What:</strong> India's primary data protection law. Governs processing of digital personal data. Data fiduciaries must implement security safeguards, manage consent, notify breaches.</p>
+        <p><strong>When to use:</strong> Any Indian organization processing personal data. Mandatory — not voluntary. Penalties up to ₹250 crore.</p>
+        <p><strong>Cert possible:</strong> No cert yet; DPDP Compliance Auditor role emerging.</p>
+      </div>
+    </div>
+    <div class="fw-card">
+      <div class="fw-card-head" style="background:#5a2070;">
+        <span class="fw-card-name">PCI-DSS v4.0</span>
+        <span class="fw-card-tag">Payment Card Industry</span>
+      </div>
+      <div class="fw-card-body">
+        <p><strong>What:</strong> 12 requirements for organizations that store/process/transmit cardholder data. Mandated by card networks (Visa, Mastercard). 64 requirements in v4.0.</p>
+        <p><strong>When to use:</strong> Banks, payment gateways, fintech, e-commerce. Mandatory for Indian BFSI sector handling card data.</p>
+        <p><strong>Cert possible:</strong> PCI QSA (Qualified Security Assessor) — demanding but well-paid.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="practical open">
+    <div class="prac-head" onclick="toggleP(this)">
+      <span class="ph-ico">📊</span>
+      <span class="ph-title">Lab 2.1 — Map ISO 27001 controls to NIST CSF functions</span>
+      <span class="ph-tag pt-doc">Mapping Exercise</span>
+      <span class="ph-chevron">▶</span>
+    </div>
+    <div class="prac-body">
+      <div class="note navy"><span class="ni">💡</span><span><strong>Goal:</strong> Build a crosswalk table showing how ISO 27001 Annex A domains map to NIST CSF functions. This skill is in high demand at consulting firms doing multi-framework engagements.</span></div>
+      <ol class="steps" style="margin-top:14px;">
+        <li class="step">
+          <span class="step-num">1</span>
+          <div class="step-content">
+            <div class="step-title">Open a blank spreadsheet with these columns</div>
+            <div class="code" data-label="spreadsheet structure">
+<span class="kw">Column A:</span> <span class="val">ISO 27001 Control ID (e.g., A.5.1)</span>
+<span class="kw">Column B:</span> <span class="val">ISO 27001 Control Name</span>
+<span class="kw">Column C:</span> <span class="val">NIST CSF Function (GV/ID/PR/DE/RS/RC)</span>
+<span class="kw">Column D:</span> <span class="val">NIST CSF Category (e.g., PR.AC)</span>
+<span class="kw">Column E:</span> <span class="val">Notes</span>
+            </div>
+          </div>
+        </li>
+        <li class="step">
+          <span class="step-num">2</span>
+          <div class="step-content">
+            <div class="step-title">Complete 10 rows as practice (see examples below)</div>
+            <div class="code" data-label="mapping examples">
+<span class="kw">A.5.1</span>  | Policies for info sec      | <span class="ok">GV</span> (Govern) | GV.PO     | Policy management
+<span class="kw">A.5.9</span>  | Inventory of information   | <span class="ok">ID</span> (Identify)| ID.AM     | Asset management
+<span class="kw">A.8.2</span>  | Privileged access rights   | <span class="ok">PR</span> (Protect) | PR.AA     | Access control
+<span class="kw">A.8.8</span>  | Mgmt of technical vulns    | <span class="ok">ID</span> (Identify)| ID.RA     | Risk assessment
+<span class="kw">A.8.16</span> | Monitoring activities      | <span class="ok">DE</span> (Detect)  | DE.CM     | Continuous monitoring
+<span class="kw">A.5.26</span> | Response to info sec inc.  | <span class="ok">RS</span> (Respond) | RS.MA     | Incident management
+<span class="kw">A.5.30</span> | ICT readiness for BCP      | <span class="ok">RC</span> (Recover) | RC.RP     | Recovery planning
+            </div>
+          </div>
+        </li>
+        <li class="step">
+          <span class="step-num">3</span>
+          <div class="step-content">
+            <div class="step-title">Save and push the spreadsheet to GitHub</div>
+            <div class="step-desc">This crosswalk table is a real consulting deliverable. Having it in your portfolio demonstrates practical GRC knowledge that most candidates don't show.</div>
+          </div>
+        </li>
+      </ol>
+    </div>
+  </div>
+</div>
+
+<hr class="hdiv">
+
+<!-- ══════════════════════════
+03 — ISO 27001 Deep Dive
+══════════════════════════ -->
+<div class="section" id="s3">
+  <div class="sec-head">
+    <span class="sec-num">03</span>
+    <div class="sec-meta">
+      <div class="sec-title">ISO 27001:2022 — Full Walkthrough</div>
+      <div class="sec-sub">Clauses 4–10, Annex A controls, ISMS lifecycle</div>
+    </div>
+    <span class="sec-badge b-rust">Deep Dive</span>
+  </div>
+
+  <div class="theory rust">
+    <h4>ISO 27001 Structure</h4>
+    <p>ISO 27001 has two parts: <strong>Clauses 4–10</strong> are the mandatory management requirements — every clause must be addressed for certification. <strong>Annex A</strong> contains 93 controls across 4 themes (Organisational, People, Physical, Technological). You don't implement all 93 — you decide which apply via the <em>Statement of Applicability (SoA)</em>.</p>
+    <p>The standard is built on the <strong>Plan-Do-Check-Act (PDCA)</strong> cycle. You don't implement security once — you run a continuous improvement loop.</p>
+  </div>
+
+  <div class="grid" style="grid-template-columns:repeat(2,1fr);">
+    <div class="card">
+      <div class="card-key">Clause 4 — Context</div>
+      <div class="card-val">Understand the organization: internal/external issues, interested parties (regulators, customers), ISMS scope definition. <strong>Where does the ISMS apply?</strong></div>
+    </div>
+    <div class="card">
+      <div class="card-key">Clause 5 — Leadership</div>
+      <div class="card-val">Top management commitment, security policy at board level, CISO/ISO roles and responsibilities. Leadership must <em>demonstrate</em> commitment, not just sign a policy.</div>
+    </div>
+    <div class="card">
+      <div class="card-key a">Clause 6 — Planning</div>
+      <div class="card-val">Risk assessment methodology, risk treatment plan, Statement of Applicability (SoA), security objectives. <strong>Core of GRC work.</strong></div>
+    </div>
+    <div class="card">
+      <div class="card-key a">Clause 7 — Support</div>
+      <div class="card-val">Resources, competence, awareness training, communication plan, documented information (policy, records). Everything needed to run the ISMS.</div>
+    </div>
+    <div class="card">
+      <div class="card-key g">Clause 8 — Operation</div>
+      <div class="card-val">Implement the risk treatment plan. Control the processes. Manage information security objectives in day-to-day operations.</div>
+    </div>
+    <div class="card">
+      <div class="card-key g">Clause 9 — Performance</div>
+      <div class="card-val">Monitoring and measurement, internal audit programme, management review. <strong>Prove the ISMS is working</strong> — metrics, KPIs, audit reports.</div>
+    </div>
+    <div class="card" style="grid-column:span 2;">
+      <div class="card-key r">Clause 10 — Improvement</div>
+      <div class="card-val">Nonconformities, corrective actions, continual improvement. When something goes wrong or the audit finds a gap — document it, fix the root cause, verify the fix. Close the PDCA loop.</div>
+    </div>
+  </div>
+
+  <div class="theory" style="margin-top:18px;">
+    <h4>Annex A — 4 Themes, 93 Controls (ISO 27001:2022)</h4>
+  </div>
+
+  <!-- Annex A interactive accordion -->
+  <div class="annex-domain open">
+    <div class="annex-head" onclick="toggleAnnex(this)">
+      <span class="ad-num">5</span>
+      <span class="ad-name">Organisational Controls</span>
+      <span class="ad-count">37 controls</span>
+      <span class="ad-chev">▶</span>
+    </div>
+    <div class="annex-body">
+      <ul class="control-list">
+        <li class="control-item" onclick="toggleControl(this)"><span class="ci-box"></span><span class="ci-num">5.1</span><span>Policies for information security — top-level policy, approved by management</span></li>
+        <li class="control-item" onclick="toggleControl(this)"><span class="ci-box"></span><span class="ci-num">5.2</span><span>Information security roles and responsibilities — CISO, data owners, custodians</span></li>
+        <li class="control-item" onclick="toggleControl(this)"><span class="ci-box"></span><span class="ci-num">5.3</span><span>Segregation of duties — no single person controls a complete sensitive process</span></li>
+        <li class="control-item" onclick="toggleControl(this)"><span class="ci-box"></span><span class="ci-num">5.9</span><span>Inventory of information and other associated assets — asset register maintained</span></li>
+        <li class="control-item" onclick="toggleControl(this)"><span class="ci-box"></span><span class="ci-num">5.12</span><span>Classification of information — Public, Internal, Confidential, Restricted</span></li>
+        <li class="control-item" onclick="toggleControl(this)"><span class="ci-box"></span><span class="ci-num">5.19</span><span>Information security in supplier relationships — vendor risk management</span></li>
+        <li class="control-item" onclick="toggleControl(this)"><span class="ci-box"></span><span class="ci-num">5.23</span><span>Information security for use of cloud services (NEW in 2022)</span></li>
+        <li class="control-item" onclick="toggleControl(this)"><span class="ci-box"></span><span class="ci-num">5.26</span><span>Response to information security incidents — IR plan, roles, escalation</span></li>
+        <li class="control-item" onclick="toggleControl(this)"><span class="ci-box"></span><span class="ci-num">5.29</span><span>Information security during disruption — continuity controls</span></li>
+        <li class="control-item" onclick="toggleControl(this)"><span class="ci-box"></span><span class="ci-num">5.35</span><span>Independent review of information security — internal audit, third-party audit</span></li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="annex-domain">
+    <div class="annex-head" onclick="toggleAnnex(this)">
+      <span class="ad-num">6</span>
+      <span class="ad-name">People Controls</span>
+      <span class="ad-count">8 controls</span>
+      <span class="ad-chev">▶</span>
+    </div>
+    <div class="annex-body">
+      <ul class="control-list">
+        <li class="control-item" onclick="toggleControl(this)"><span class="ci-box"></span><span class="ci-num">6.1</span><span>Screening — background verification before employment for sensitive roles</span></li>
+        <li class="control-item" onclick="toggleControl(this)"><span class="ci-box"></span><span class="ci-num">6.2</span><span>Terms and conditions of employment — security obligations in contracts</span></li>
+        <li class="control-item" onclick="toggleControl(this)"><span class="ci-box"></span><span class="ci-num">6.3</span><span>Information security awareness, education and training — mandatory annual training</span></li>
+        <li class="control-item" onclick="toggleControl(this)"><span class="ci-box"></span><span class="ci-num">6.4</span><span>Disciplinary process — consequences for security policy violations</span></li>
+        <li class="control-item" onclick="toggleControl(this)"><span class="ci-box"></span><span class="ci-num">6.5</span><span>Responsibilities after termination or change of employment — access revocation checklist</span></li>
+        <li class="control-item" onclick="toggleControl(this)"><span class="ci-box"></span><span class="ci-num">6.7</span><span>Remote working — policies for WFH security (device, network, physical)</span></li>
+        <li class="control-item" onclick="toggleControl(this)"><span class="ci-box"></span><span class="ci-num">6.8</span><span>Information security event reporting — how staff report security incidents</span></li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="annex-domain">
+    <div class="annex-head" onclick="toggleAnnex(this)">
+      <span class="ad-num">7</span>
+      <span class="ad-name">Physical Controls</span>
+      <span class="ad-count">14 controls</span>
+      <span class="ad-chev">▶</span>
+    </div>
+    <div class="annex-body">
+      <ul class="control-list">
+        <li class="control-item" onclick="toggleControl(this)"><span class="ci-box"></span><span class="ci-num">7.1</span><span>Physical security perimeter — defined secure areas (server rooms, data centres)</span></li>
+        <li class="control-item" onclick="toggleControl(this)"><span class="ci-box"></span><span class="ci-num">7.2</span><span>Physical entry — access controls (biometric, RFID, visitor register)</span></li>
+        <li class="control-item" onclick="toggleControl(this)"><span class="ci-box"></span><span class="ci-num">7.4</span><span>Physical security monitoring — CCTV, guards, intrusion detection (NEW 2022)</span></li>
+        <li class="control-item" onclick="toggleControl(this)"><span class="ci-box"></span><span class="ci-num">7.6</span><span>Working in secure areas — clean desk policy, screen locks in sensitive areas</span></li>
+        <li class="control-item" onclick="toggleControl(this)"><span class="ci-box"></span><span class="ci-num">7.8</span><span>Equipment siting and protection — server placement, cable management</span></li>
+        <li class="control-item" onclick="toggleControl(this)"><span class="ci-box"></span><span class="ci-num">7.10</span><span>Storage media — secure labelling, handling, destruction of hard drives and tapes</span></li>
+        <li class="control-item" onclick="toggleControl(this)"><span class="ci-box"></span><span class="ci-num">7.14</span><span>Secure disposal or re-use of equipment — data wiping (NIST 800-88) before disposal</span></li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="annex-domain">
+    <div class="annex-head" onclick="toggleAnnex(this)">
+      <span class="ad-num">8</span>
+      <span class="ad-name">Technological Controls</span>
+      <span class="ad-count">34 controls</span>
+      <span class="ad-chev">▶</span>
+    </div>
+    <div class="annex-body">
+      <ul class="control-list">
+        <li class="control-item" onclick="toggleControl(this)"><span class="ci-box"></span><span class="ci-num">8.2</span><span>Privileged access rights — least privilege, just-in-time access, PAM tools</span></li>
+        <li class="control-item" onclick="toggleControl(this)"><span class="ci-box"></span><span class="ci-num">8.5</span><span>Secure authentication — MFA mandatory for privileged accounts</span></li>
+        <li class="control-item" onclick="toggleControl(this)"><span class="ci-box"></span><span class="ci-num">8.7</span><span>Protection against malware — EDR, AV, sandboxing, email gateway</span></li>
+        <li class="control-item" onclick="toggleControl(this)"><span class="ci-box"></span><span class="ci-num">8.8</span><span>Management of technical vulnerabilities — patch management SLA, vulnerability scanning</span></li>
+        <li class="control-item" onclick="toggleControl(this)"><span class="ci-box"></span><span class="ci-num">8.12</span><span>Data leakage prevention — DLP tools, monitoring for sensitive data egress (NEW 2022)</span></li>
+        <li class="control-item" onclick="toggleControl(this)"><span class="ci-box"></span><span class="ci-num">8.15</span><span>Logging — audit logs for privileged access, security events, application activity</span></li>
+        <li class="control-item" onclick="toggleControl(this)"><span class="ci-box"></span><span class="ci-num">8.16</span><span>Monitoring activities — SIEM, IDS/IPS, anomaly detection (NEW 2022)</span></li>
+        <li class="control-item" onclick="toggleControl(this)"><span class="ci-box"></span><span class="ci-num">8.24</span><span>Use of cryptography — encryption standards, key management policy</span></li>
+        <li class="control-item" onclick="toggleControl(this)"><span class="ci-box"></span><span class="ci-num">8.28</span><span>Secure coding — SSDLC, OWASP integration, code reviews (NEW 2022)</span></li>
+        <li class="control-item" onclick="toggleControl(this)"><span class="ci-box"></span><span class="ci-num">8.32</span><span>Change management — tested, approved, rolled-back-capable change process</span></li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<hr class="hdiv">
+
+<!-- ══════════════════════════
+04 — NIST CSF 2.0
+══════════════════════════ -->
+<div class="section" id="s4">
+  <div class="sec-head">
+    <span class="sec-num">04</span>
+    <div class="sec-meta">
+      <div class="sec-title">NIST Cybersecurity Framework 2.0</div>
+      <div class="sec-sub">Six functions, outcome-based security posture assessment</div>
+    </div>
+    <span class="sec-badge b-navy">Framework</span>
+  </div>
+
+  <div class="theory">
+    <h4>NIST CSF 2.0 — What Changed from 1.1</h4>
+    <p>NIST CSF 2.0 (released February 2024) added a new sixth function — <strong>Govern</strong> — acknowledging that cybersecurity is a business risk decision, not just an IT problem. The other five functions (Identify, Protect, Detect, Respond, Recover) remain but were substantially updated. The framework now explicitly addresses supply chain risk and cloud security.</p>
+  </div>
+
+  <table class="dtable">
+    <thead><tr><th>Function</th><th>Core Goal</th><th>Key Categories</th><th>GRC Analyst Role</th></tr></thead>
+    <tbody>
+      <tr>
+        <td><span class="td-k">GV — Govern</span></td>
+        <td>Establish context, strategy, and accountability</td>
+        <td>Org context, risk strategy, roles, policy, supply chain risk oversight</td>
+        <td class="td-g">Draft security policy, define risk appetite, establish ISMS governance</td>
+      </tr>
+      <tr>
+        <td><span class="td-k">ID — Identify</span></td>
+        <td>Know your assets and risks</td>
+        <td>Asset management, risk assessment, improvement planning</td>
+        <td class="td-g">Build asset inventory, conduct risk assessments, classify data</td>
+      </tr>
+      <tr>
+        <td><span class="td-k">PR — Protect</span></td>
+        <td>Implement safeguards</td>
+        <td>Identity management, awareness training, data security, platform security</td>
+        <td class="td-a">Review control implementation, gap analysis, policy compliance checks</td>
+      </tr>
+      <tr>
+        <td><span class="td-k">DE — Detect</span></td>
+        <td>Find incidents fast</td>
+        <td>Continuous monitoring, anomaly detection</td>
+        <td class="td-a">Define monitoring requirements, review SIEM coverage, KPI for MTTD</td>
+      </tr>
+      <tr>
+        <td><span class="td-k">RS — Respond</span></td>
+        <td>Act on incidents</td>
+        <td>Incident management, analysis, mitigation, communication</td>
+        <td class="td-r">Maintain IR policy, review playbooks, test IR plan annually</td>
+      </tr>
+      <tr>
+        <td><span class="td-k">RC — Recover</span></td>
+        <td>Restore and learn</td>
+        <td>Incident recovery, communication, recovery plan testing</td>
+        <td class="td-r">Ensure BCP/DRP alignment, track lessons learned, update controls post-incident</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<hr class="hdiv">
+
+<!-- ══════════════════════════
+05 — Risk Management
+══════════════════════════ -->
+<div class="section" id="s5">
+  <div class="sec-head">
+    <span class="sec-num">05</span>
+    <div class="sec-meta">
+      <div class="sec-title">Risk Management — Theory to Practice</div>
+      <div class="sec-sub">Methodologies, terminology, treatment options, and quantification</div>
+    </div>
+    <span class="sec-badge b-amber">Core Skill</span>
+  </div>
+
+  <div class="theory amber">
+    <h4>Risk = Threat × Vulnerability × Impact</h4>
+    <p>A <strong>risk</strong> is the potential for a <em>threat</em> to exploit a <em>vulnerability</em> and cause harm to an asset. Risk management doesn't eliminate risk — it brings risk to an <strong>acceptable level</strong> (within risk appetite) at a justifiable cost.</p>
+    <p>Key terms: <strong>Asset</strong> — what has value (data, systems, reputation). <strong>Threat</strong> — what could harm it (attackers, fire, staff error). <strong>Vulnerability</strong> — weakness that enables the threat. <strong>Impact</strong> — harm caused if threat succeeds. <strong>Likelihood</strong> — probability it happens. <strong>Risk</strong> = Likelihood × Impact.</p>
+  </div>
+
+  <div class="grid">
+    <div class="card">
+      <div class="card-key">Qualitative Assessment</div>
+      <div class="card-val">Rates likelihood and impact on scales (Low/Medium/High or 1–5). Fast, good for initial assessments. Subjective — requires expert judgment.</div>
+    </div>
+    <div class="card">
+      <div class="card-key a">Quantitative Assessment</div>
+      <div class="card-val">Uses numbers and money. <strong>SLE</strong> (Single Loss Expectancy) = Asset Value × Exposure Factor. <strong>ALE</strong> = SLE × ARO (Annual Rate of Occurrence). Harder, more defensible for budget decisions.</div>
+    </div>
+    <div class="card">
+      <div class="card-key g">Treat — Mitigate</div>
+      <div class="card-val">Implement a control to reduce likelihood or impact. Most common treatment. Must be cost-justified — control cost &lt; risk cost.</div>
+    </div>
+    <div class="card">
+      <div class="card-key">Treat — Accept</div>
+      <div class="card-val">Consciously accept the risk. Risk within appetite, or control cost exceeds risk cost. Must be formally documented and signed off by risk owner.</div>
+    </div>
+    <div class="card">
+      <div class="card-key t">Treat — Transfer</div>
+      <div class="card-val">Cyber insurance, contracts with SLAs and liability clauses, third-party processing agreements. Transfers financial impact, not the underlying risk.</div>
+    </div>
+    <div class="card">
+      <div class="card-key r">Treat — Avoid</div>
+      <div class="card-val">Stop doing the activity that creates the risk. Stop collecting unnecessary personal data. Don't deploy a vulnerable system. Eliminates risk entirely — sometimes the right call.</div>
+    </div>
+  </div>
+
+  <!-- Risk Matrix -->
+  <div class="risk-matrix" style="margin-top:20px;">
+    <div class="rm-head">Risk Matrix — Likelihood × Impact</div>
+    <div class="rm-grid">
+      <div class="rm-cell rm-header rm-label">Likelihood ↓ / Impact →</div>
+      <div class="rm-cell rm-header">Low (1)</div>
+      <div class="rm-cell rm-header">Medium (2)</div>
+      <div class="rm-cell rm-header">High (3)</div>
+      <div class="rm-cell rm-header">Critical (4)</div>
+
+      <div class="rm-cell rm-label">Rare (1)</div>
+      <div class="rm-cell rm-low">Low (1)</div>
+      <div class="rm-cell rm-low">Low (2)</div>
+      <div class="rm-cell rm-med">Med (3)</div>
+      <div class="rm-cell rm-med">Med (4)</div>
+
+      <div class="rm-cell rm-label">Unlikely (2)</div>
+      <div class="rm-cell rm-low">Low (2)</div>
+      <div class="rm-cell rm-med">Med (4)</div>
+      <div class="rm-cell rm-med">Med (6)</div>
+      <div class="rm-cell rm-high">High (8)</div>
+
+      <div class="rm-cell rm-label">Possible (3)</div>
+      <div class="rm-cell rm-med">Med (3)</div>
+      <div class="rm-cell rm-med">Med (6)</div>
+      <div class="rm-cell rm-high">High (9)</div>
+      <div class="rm-cell rm-crit">Crit (12)</div>
+
+      <div class="rm-cell rm-label">Likely (4)</div>
+      <div class="rm-cell rm-med">Med (4)</div>
+      <div class="rm-cell rm-high">High (8)</div>
+      <div class="rm-cell rm-crit">Crit (12)</div>
+      <div class="rm-cell rm-crit">Crit (16)</div>
+    </div>
+  </div>
+
+  <div class="note amber">
+    <span class="ni">📌</span>
+    <span><strong>Risk Appetite vs Tolerance:</strong> Risk appetite is the <em>amount</em> of risk an org is willing to accept in pursuit of objectives ("we accept residual risks below score 6"). Risk tolerance is the <em>acceptable variation</em> around that appetite. Risks above appetite must be treated or escalated to the board.</span>
+  </div>
+</div>
+
+<hr class="hdiv">
+
+<!-- ══════════════════════════
+06 — Risk Register Lab
+══════════════════════════ -->
+<div class="section" id="s6">
+  <div class="sec-head">
+    <span class="sec-num">06</span>
+    <div class="sec-meta">
+      <div class="sec-title">Risk Register — Build From Scratch</div>
+      <div class="sec-sub">Complete hands-on lab: identify, assess, treat, and document risks</div>
+    </div>
+    <span class="sec-badge b-amber">Full Lab</span>
+  </div>
+
+  <div class="practical open">
+    <div class="prac-head" onclick="toggleP(this)">
+      <span class="ph-ico">📋</span>
+      <span class="ph-title">Lab 6.1 — Build a complete risk register for a 100-person IT company</span>
+      <span class="ph-tag pt-template">Portfolio Deliverable</span>
+      <span class="ph-chevron">▶</span>
+    </div>
+    <div class="prac-body">
+      <div class="note navy"><span class="ni">💡</span><span><strong>Scenario:</strong> TechNova Pvt Ltd — 100-person Indian SaaS company. Offices in Bangalore. Product: HR management SaaS. Customer data includes salary, Aadhaar numbers, bank details. AWS-hosted infrastructure.</span></div>
+      <ol class="steps" style="margin-top:16px;">
+        <li class="step">
+          <span class="step-num">1</span>
+          <div class="step-content">
+            <div class="step-title">Create a spreadsheet with this Risk Register structure</div>
+            <div class="code" data-label="risk register columns">
+<span class="kw">RID</span>    | Risk Unique ID (RR-001, RR-002...)
+<span class="kw">Asset</span>   | Affected asset (Customer DB, AWS Infrastructure, HR Portal...)
+<span class="kw">Threat</span>  | What could harm it (Ransomware, Data breach, Insider threat...)
+<span class="kw">Vuln</span>    | Enabling weakness (No MFA, unpatched OS, excessive access rights...)
+<span class="kw">Like</span>    | Likelihood score 1–4 (Rare/Unlikely/Possible/Likely)
+<span class="kw">Impact</span>  | Impact score 1–4 (Low/Medium/High/Critical)
+<span class="kw">InhRisk</span> | Inherent Risk = Likelihood × Impact (before controls)
+<span class="kw">Controls</span>| Existing controls already in place
+<span class="kw">ResRisk</span> | Residual Risk after controls (recalculate Like × Impact)
+<span class="kw">Treat</span>   | Treatment: Mitigate / Accept / Transfer / Avoid
+<span class="kw">Action</span>  | Specific next action (e.g., "Deploy MFA by Dec 2024")
+<span class="kw">Owner</span>   | Risk owner (CTO, CISO, Head of DevOps...)
+<span class="kw">Due</span>     | Target date for treatment action
+<span class="kw">Status</span>  | Open / In Progress / Closed
+            </div>
+          </div>
+        </li>
+        <li class="step">
+          <span class="step-num">2</span>
+          <div class="step-content">
+            <div class="step-title">Add these 8 risks to start your register</div>
+            <div class="code" data-label="risk entries">
+<span class="kw">RR-001</span> | Customer DB (Aadhaar/salary data) | Ransomware attack
+  Vuln: No offline backups, unpatched Linux servers
+  Likelihood: 3 (Possible) | Impact: 4 (Critical) | <span class="hi">Inherent: 12 HIGH</span>
+  Existing control: AV on endpoints
+  Residual: 8 | Treatment: <span class="warn">Mitigate</span> — deploy Wazuh, immutable backups, patch SLA
+  Owner: CTO | Due: 2025-01-31
+
+<span class="kw">RR-002</span> | AWS IAM (Admin accounts) | Credential compromise
+  Vuln: No MFA on AWS root and admin accounts
+  Likelihood: 3 | Impact: 4 | <span class="hi">Inherent: 12 HIGH</span>
+  Existing control: Strong password policy
+  Residual: 4 | Treatment: <span class="warn">Mitigate</span> — enforce MFA immediately (quick win)
+  Owner: DevOps Lead | Due: 2024-12-15
+
+<span class="kw">RR-003</span> | Employee devices | Data leakage via personal device
+  Vuln: No MDM, employees use personal laptops
+  Likelihood: 3 | Impact: 3 | <span class="warn">Inherent: 9 MEDIUM</span>
+  Treatment: <span class="warn">Mitigate</span> — deploy MDM (Jamf/Intune), BYOD policy
+
+<span class="kw">RR-004</span> | Source code (GitHub) | Accidental secret exposure
+  Vuln: No pre-commit hooks, devs push API keys to public repo
+  Likelihood: 4 | Impact: 3 | <span class="hi">Inherent: 12 HIGH</span>
+  Treatment: <span class="warn">Mitigate</span> — GitGuardian/Gitleaks pre-commit, secret scanning
+
+<span class="kw">RR-005</span> | DPDP Compliance | Regulatory fine for breach notification failure
+  Vuln: No documented breach notification procedure; >72hr likely
+  Likelihood: 2 | Impact: 4 | <span class="warn">Inherent: 8 MEDIUM</span>
+  Treatment: <span class="warn">Mitigate</span> — write breach notification SOP aligned to DPDP Act
+
+<span class="kw">RR-006</span> | Third-party payroll provider | Supply chain data breach
+  Vuln: No security assessment of vendor; processes employee salary data
+  Likelihood: 2 | Impact: 3 | <span class="warn">Inherent: 6 MEDIUM</span>
+  Treatment: <span class="ok">Transfer</span> (SLA + liability clause) + <span class="warn">Mitigate</span> (vendor VAPT requirement)
+
+<span class="kw">RR-007</span> | Physical server room | Unauthorized physical access
+  Vuln: Server room uses padlock, no access log, no CCTV
+  Likelihood: 2 | Impact: 3 | <span class="warn">Inherent: 6 MEDIUM</span>
+  Treatment: <span class="warn">Mitigate</span> — install RFID access, CCTV, visitor register
+
+<span class="kw">RR-008</span> | Business operations | Key person dependency (single DevOps engineer)
+  Vuln: Only one person has production AWS access
+  Likelihood: 2 | Impact: 3 | <span class="warn">Inherent: 6 MEDIUM</span>
+  Treatment: <span class="ok">Accept</span> (short-term) + <span class="warn">Mitigate</span> — cross-train, document runbooks
+            </div>
+          </div>
+        </li>
+        <li class="step">
+          <span class="step-num">3</span>
+          <div class="step-content">
+            <div class="step-title">Add a Risk Heatmap tab using conditional formatting</div>
+            <div class="step-desc">In Excel/Google Sheets, colour-code the Inherent Risk and Residual Risk columns: Red = Critical/High (≥9), Orange = Medium (5–8), Green = Low (1–4). This visually communicates which risks need urgent attention.</div>
+          </div>
+        </li>
+        <li class="step">
+          <span class="step-num">4</span>
+          <div class="step-content">
+            <div class="step-title">Add a Risk Treatment Summary tab</div>
+            <div class="step-desc">Use COUNTIF to tally: Total risks, Risks above appetite (≥9), Risks Mitigated/Accepted/Transferred/Avoided, Risks overdue for treatment. This becomes your monthly GRC dashboard for the CISO.</div>
+          </div>
+        </li>
+        <li class="step">
+          <span class="step-num">5</span>
+          <div class="step-content">
+            <div class="step-title">Export, push to GitHub, add to portfolio</div>
+            <div class="step-desc">Name it <code style="color:var(--navy-mid)">risk-register-technova-2024.xlsx</code>. In interviews, walk through RR-001 to RR-004 — these four cover cloud, ransomware, supply chain, and developer hygiene — common interview scenarios.</div>
+          </div>
+        </li>
+      </ol>
+    </div>
+  </div>
+</div>
+
+<hr class="hdiv">
+
+<!-- ══════════════════════════
+07 — Threat Modelling
+══════════════════════════ -->
+<div class="section" id="s7">
+  <div class="sec-head">
+    <span class="sec-num">07</span>
+    <div class="sec-meta">
+      <div class="sec-title">Threat Modelling — STRIDE & PASTA</div>
+      <div class="sec-sub">Structured methods for identifying threats before they materialise</div>
+    </div>
+    <span class="sec-badge b-rust">Technique</span>
+  </div>
+
+  <div class="theory rust">
+    <h4>What is Threat Modelling?</h4>
+    <p>Threat modelling is a structured exercise to identify threats to a system <strong>before it is built or deployed</strong>. It's GRC's contribution to the SDLC — shifting security left. The output is a prioritized list of threats and mitigations that feeds directly into risk register entries and security design decisions.</p>
+  </div>
+
+  <div class="grid">
+    <div class="card" style="border-left:3px solid var(--rust-mid);">
+      <div class="card-key r">S — Spoofing</div>
+      <div class="card-val">Pretending to be something you're not. Fake login, session hijack, IP spoofing. <strong>Violated property: Authentication.</strong></div>
+    </div>
+    <div class="card" style="border-left:3px solid var(--amber-mid);">
+      <div class="card-key a">T — Tampering</div>
+      <div class="card-val">Modifying data or code without authorization. SQL injection changing records, man-in-the-middle altering packets. <strong>Integrity.</strong></div>
+    </div>
+    <div class="card" style="border-left:3px solid var(--text-muted);">
+      <div class="card-key">R — Repudiation</div>
+      <div class="card-val">Denying having performed an action. No audit logs = can't prove who changed the database. <strong>Non-repudiation.</strong></div>
+    </div>
+    <div class="card" style="border-left:3px solid var(--navy);">
+      <div class="card-key">I — Info Disclosure</div>
+      <div class="card-val">Exposing data to unauthorized parties. API returning PII in responses, error messages revealing stack traces. <strong>Confidentiality.</strong></div>
+    </div>
+    <div class="card" style="border-left:3px solid var(--green-mid);">
+      <div class="card-key g">D — Denial of Service</div>
+      <div class="card-val">Preventing legitimate users from accessing a service. DDoS, resource exhaustion attacks. <strong>Availability.</strong></div>
+    </div>
+    <div class="card" style="border-left:3px solid var(--teal-mid);">
+      <div class="card-key t">E — Elevation of Privilege</div>
+      <div class="card-val">Gaining capabilities beyond what is authorized. Privilege escalation from user to admin. <strong>Authorization.</strong></div>
+    </div>
+  </div>
+
+  <div class="practical open">
+    <div class="prac-head" onclick="toggleP(this)">
+      <span class="ph-ico">🎯</span>
+      <span class="ph-title">Lab 7.1 — STRIDE threat model for TechNova's HR Portal login flow</span>
+      <span class="ph-tag pt-doc">Threat Model</span>
+      <span class="ph-chevron">▶</span>
+    </div>
+    <div class="prac-body">
+      <ol class="steps">
+        <li class="step">
+          <span class="step-num">1</span>
+          <div class="step-content">
+            <div class="step-title">Draw the Data Flow Diagram (DFD) for the login flow</div>
+            <div class="code" data-label="DFD components">
+<span class="kw">Entities (External):</span>   [Employee Browser] [Admin Browser]
+<span class="kw">Processes:</span>             [Login Service] [Auth Token Service] [Session Manager]
+<span class="kw">Data Stores:</span>           [User DB] [Audit Log DB] [Session Cache (Redis)]
+<span class="kw">Data Flows:</span>
+  Employee → Login Service:       credentials (HTTPS)
+  Login Service → User DB:        credential lookup query
+  Login Service → Auth Service:   authentication request
+  Auth Service → Session Manager: token issue
+  Session Manager → Employee:     JWT token (HTTPS)
+  All services → Audit Log DB:    activity records
+            </div>
+          </div>
+        </li>
+        <li class="step">
+          <span class="step-num">2</span>
+          <div class="step-content">
+            <div class="step-title">Apply STRIDE to each component</div>
+            <div class="code" data-label="STRIDE application">
+<span class="kw">Login Service:</span>
+  <span class="hi">S-Spoofing:</span>    Attacker brute forces login with stolen credentials
+    Mitigation: MFA, account lockout after 5 failures, CAPTCHA
+  <span class="warn">T-Tampering:</span>  Injected SQL modifies auth query logic
+    Mitigation: Parameterized queries, WAF, input validation
+  <span class="ok">I-Disclosure:</span> Error message reveals "user exists" vs "wrong password"
+    Mitigation: Generic error messages, no user enumeration
+
+<span class="kw">JWT Token (Data Flow):</span>
+  <span class="hi">S-Spoofing:</span>    Forged JWT with weak signing key
+    Mitigation: Use RS256 (asymmetric), rotate keys, validate all claims
+  <span class="warn">T-Tampering:</span>  Attacker modifies token payload (change role: "admin")
+    Mitigation: Validate signature on every request, server-side session check
+
+<span class="kw">User DB:</span>
+  <span class="hi">I-Disclosure:</span> DB breach exposes plaintext passwords
+    Mitigation: bcrypt/Argon2 hashing, encrypt PII columns at rest
+  <span class="ok">E-Elevation:</span>  App DB user has DROP TABLE privileges
+    Mitigation: Least privilege — app user SELECT/INSERT only
+            </div>
+          </div>
+        </li>
+        <li class="step">
+          <span class="step-num">3</span>
+          <div class="step-content">
+            <div class="step-title">Map STRIDE threats back to risk register entries</div>
+            <div class="step-desc">Each identified threat becomes a candidate risk register entry. The STRIDE exercise has now fed directly into RR-009 (JWT token forgery), RR-010 (SQL injection against auth), etc. This is how threat modelling connects to the risk register in practice.</div>
+          </div>
+        </li>
+      </ol>
+    </div>
+  </div>
+</div>
+
+<hr class="hdiv">
+
+<!-- ══════════════════════════
+08 — BCP / DRP
+══════════════════════════ -->
+<div class="section" id="s8">
+  <div class="sec-head">
+    <span class="sec-num">08</span>
+    <div class="sec-meta">
+      <div class="sec-title">Business Continuity & Disaster Recovery</div>
+      <div class="sec-sub">BCP vs DRP, key metrics, and writing a simple continuity plan</div>
+    </div>
+    <span class="sec-badge b-teal">Planning</span>
+  </div>
+
+  <div class="theory teal">
+    <h4>BCP vs DRP — The Crucial Distinction</h4>
+    <p><strong>BCP (Business Continuity Plan)</strong> is the broader plan: how does the <em>business</em> keep running during and after a disruptive event? It covers people, processes, suppliers, communications, alternative locations. <strong>DRP (Disaster Recovery Plan)</strong> is specifically about restoring <em>IT systems and data</em> after a disaster. DRP is a subset of BCP.</p>
+  </div>
+
+  <div class="grid">
+    <div class="card">
+      <div class="card-key t">RTO — Recovery Time Objective</div>
+      <div class="card-val">Maximum time a system can be down before unacceptable business impact. "Our payment system must be restored within 4 hours." Sets the deadline for your DRP.</div>
+    </div>
+    <div class="card">
+      <div class="card-key t">RPO — Recovery Point Objective</div>
+      <div class="card-val">Maximum data loss acceptable. "We can afford to lose 1 hour of transaction data." Determines backup frequency — RPO of 1 hour means backups at least hourly.</div>
+    </div>
+    <div class="card">
+      <div class="card-key">MTD — Maximum Tolerable Downtime</div>
+      <div class="card-val">The absolute maximum time a business function can be unavailable before it threatens organizational survival. Always MTD > RTO — or your RTO is too ambitious.</div>
+    </div>
+    <div class="card">
+      <div class="card-key a">WRT — Work Recovery Time</div>
+      <div class="card-val">Time to restore and validate systems AFTER they're technically up. RTO + WRT = total time from disaster to normal operations. Often forgotten in DRP planning.</div>
+    </div>
+  </div>
+
+  <div class="practical open">
+    <div class="prac-head" onclick="toggleP(this)">
+      <span class="ph-ico">📄</span>
+      <span class="ph-title">Lab 8.1 — Write a simple BCP for TechNova using the standard template</span>
+      <span class="ph-tag pt-template">Template Lab</span>
+      <span class="ph-chevron">▶</span>
+    </div>
+    <div class="prac-body">
+      <ol class="steps">
+        <li class="step">
+          <span class="step-num">1</span>
+          <div class="step-content">
+            <div class="step-title">Conduct a Business Impact Analysis (BIA) first</div>
+            <div class="code" data-label="BIA — TechNova critical functions">
+<span class="kw">Function</span>               | <span class="kw">RTO</span>  | <span class="kw">RPO</span>   | <span class="kw">MTD</span>   | <span class="kw">Priority</span>
+Customer data access    | 4 hrs| 1 hr  | 8 hrs | <span class="hi">P1 Critical</span>
+HR portal (SaaS prod)   | 4 hrs| 1 hr  | 12 hrs| <span class="hi">P1 Critical</span>
+Internal email          | 8 hrs| 4 hrs | 24 hrs| <span class="warn">P2 High</span>
+Development environment | 48 hrs|24 hrs| 7 days| <span class="ok">P3 Medium</span>
+Finance/accounting      | 24 hrs|4 hrs | 72 hrs| <span class="warn">P2 High</span>
+            </div>
+          </div>
+        </li>
+        <li class="step">
+          <span class="step-num">2</span>
+          <div class="step-content">
+            <div class="step-title">Define the BCP structure (write one section per page in Google Docs)</div>
+            <div class="code" data-label="BCP document structure">
+<span class="kw">Section 1: Purpose, Scope & Objectives</span>
+  Purpose: Ensure TechNova can deliver services during disruption
+  Scope: All IT systems, data, and business processes
+  Objectives: Meet RTO/RPO targets defined in BIA
+
+<span class="kw">Section 2: Threat Scenarios Covered</span>
+  - AWS regional outage
+  - Ransomware attack (data encrypted)
+  - Key personnel unavailable (illness, resignation)
+  - Office inaccessible (fire, flood, civil unrest)
+  - Internet/ISP outage
+
+<span class="kw">Section 3: Recovery Teams & Escalation</span>
+  Incident Commander:    CTO (primary), CEO (backup)
+  IT Recovery Lead:      Head of DevOps
+  Communications Lead:   Head of Customer Success
+  HR/People Lead:        HR Manager
+  Contact list:          [Name | Role | Mobile | Personal email]
+
+<span class="kw">Section 4: Recovery Procedures Per Scenario</span>
+  [Scenario: AWS Regional Outage]
+  Step 1: DevOps Lead confirms outage via AWS Status Page
+  Step 2: Activate multi-region failover (pre-configured)
+  Step 3: Notify customers within 30 min (template in Annex B)
+  Step 4: Restore from S3 cross-region replicated backups
+  RTO target: 4 hrs | Tested: [date]
+
+<span class="kw">Section 5: Testing & Review Schedule</span>
+  Tabletop exercise:     Annually (simulate ransomware scenario)
+  Backup restore test:   Quarterly (verify RPO met)
+  Failover test:         Semi-annually (verify RTO met)
+  BCP review:            Annually or after major incident
+            </div>
+          </div>
+        </li>
+        <li class="step">
+          <span class="step-num">3</span>
+          <div class="step-content">
+            <div class="step-title">Run a tabletop exercise against the ransomware scenario</div>
+            <div class="step-desc">Walk through the scenario verbally: "It's 2 AM. Your AWS CloudWatch alert fires — 90% of your EBS volumes are encrypted. Walk me through exactly what happens in the next 4 hours." Document where the BCP has gaps — this becomes your improvement actions in ISO 27001 Clause 10.</div>
+          </div>
+        </li>
+      </ol>
+    </div>
+  </div>
+</div>
+
+<hr class="hdiv">
+
+<!-- ══════════════════════════
+09 — DPDP Act 2023
+══════════════════════════ -->
+<div class="section" id="s9">
+  <div class="sec-head">
+    <span class="sec-num">09</span>
+    <div class="sec-meta">
+      <div class="sec-title">Digital Personal Data Protection Act 2023 🇮🇳</div>
+      <div class="sec-sub">India's primary data protection law — every GRC analyst must know this</div>
+    </div>
+    <span class="sec-badge b-teal">Indian Law ★</span>
+  </div>
+
+  <div class="india-box">
+    <h4><span class="india-flag">🇮🇳</span> Why DPDP is Critical for Indian GRC Careers</h4>
+    <p style="font-size:12.5px;color:var(--text-muted);line-height:1.8;">The DPDP Act 2023 is India's GDPR equivalent — passed in August 2023, with rules still being notified. Every organization processing digital personal data of Indian citizens is covered. Penalties reach <strong>₹250 crore per violation</strong>. The DPDP Act is the most-asked Indian regulatory question in GRC interviews at Big 4, BFSI, and consulting firms.</p>
+  </div>
+
+  <div class="theory teal">
+    <h4>Key Definitions — Know These Cold</h4>
+    <p><strong>Personal Data:</strong> Any data that can identify an individual — name, email, phone, Aadhaar, IP address, biometrics, location.</p>
+    <p><strong>Data Fiduciary:</strong> The entity that determines the purpose and means of processing personal data — analogous to GDPR's "data controller." An Indian bank collecting customer KYC data is a data fiduciary.</p>
+    <p><strong>Data Principal:</strong> The individual to whom the personal data belongs — the customer, employee, user. Has fundamental rights under the Act.</p>
+    <p><strong>Data Processor:</strong> Processes data on behalf of a data fiduciary (e.g., cloud provider, payroll processor). Must follow fiduciary's instructions.</p>
+    <p><strong>Significant Data Fiduciary (SDF):</strong> Entities designated by the government due to volume/sensitivity of data — banks, hospitals, large tech platforms. Additional obligations apply.</p>
+  </div>
+
+  <table class="dtable">
+    <thead><tr><th>Obligation</th><th>What It Requires</th><th>GRC Compliance Action</th></tr></thead>
+    <tbody>
+      <tr>
+        <td class="td-k">Consent Management</td>
+        <td>Free, specific, informed, unconditional, unambiguous consent before processing. Consent can be withdrawn.</td>
+        <td class="td-g">Build consent management system. Maintain consent records. Design "withdraw consent" mechanism on portal.</td>
+      </tr>
+      <tr>
+        <td class="td-k">Purpose Limitation</td>
+        <td>Collect only data necessary for declared purpose. Cannot use data for a different purpose without fresh consent.</td>
+        <td class="td-g">Data mapping exercise. Document purpose for each data element. Delete data when purpose fulfilled (storage limitation).</td>
+      </tr>
+      <tr>
+        <td class="td-k">Data Principal Rights</td>
+        <td>Right to access, right to correction, right to erasure, right to grievance redressal, right to nominate.</td>
+        <td class="td-a">Build request handling process. Respond within prescribed timeline. Designate Data Protection Officer (DPO) contact.</td>
+      </tr>
+      <tr>
+        <td class="td-k">Security Safeguards</td>
+        <td>Implement "reasonable security safeguards" to prevent breaches. Comparable to ISO 27001 implementation.</td>
+        <td class="td-a">Gap assess current controls against DPDP requirements. Implement encryption, access controls, audit logging.</td>
+      </tr>
+      <tr>
+        <td class="td-k">Breach Notification</td>
+        <td>Notify the Data Protection Board AND affected data principals of a personal data breach "without delay." Timeline TBD in rules.</td>
+        <td class="td-r">Write breach notification SOP. Draft notification templates. Test with tabletop exercise. Target: notify within 72 hours.</td>
+      </tr>
+      <tr>
+        <td class="td-k">Children's Data</td>
+        <td>Verifiable parental consent for processing data of children under 18. No behavioural tracking or targeted advertising.</td>
+        <td class="td-r">Age verification mechanism. Parental consent workflow. Audit ad targeting systems.</td>
+      </tr>
+      <tr>
+        <td class="td-k">Cross-Border Transfer</td>
+        <td>Transfer to countries notified by Government as permitted. Pending notification of allowed countries list.</td>
+        <td class="td-a">Map all cross-border data flows. Identify data processors outside India. Await government's "whitelist" notification.</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="practical open">
+    <div class="prac-head" onclick="toggleP(this)">
+      <span class="ph-ico">🇮🇳</span>
+      <span class="ph-title">Lab 9.1 — DPDP compliance gap assessment for TechNova</span>
+      <span class="ph-tag pt-india">India Compliance</span>
+      <span class="ph-chevron">▶</span>
+    </div>
+    <div class="prac-body">
+      <ol class="steps">
+        <li class="step">
+          <span class="step-num">1</span>
+          <div class="step-content">
+            <div class="step-title">Conduct a data mapping exercise first (prerequisite)</div>
+            <div class="code" data-label="data mapping — TechNova">
+<span class="kw">Data Type</span>        | <span class="kw">Category</span>   | <span class="kw">Purpose</span>          | <span class="kw">Location</span>   | <span class="kw">Shared With</span>
+Employee Name     | Personal   | HR management    | AWS RDS    | Payroll vendor (IN)
+Employee Aadhaar  | Sensitive  | KYC/identity     | AWS RDS    | Government portal
+Employee Salary   | Financial  | Payroll          | AWS RDS    | Payroll vendor (IN)
+Customer Name+Email| Personal  | SaaS account     | AWS RDS    | Email vendor (US!)
+Customer usage logs| Personal  | Product analytics| AWS S3     | Analytics vendor (US!)
+IP addresses      | Personal   | Security logging | Wazuh (IN) | None
+            </div>
+            <div class="note rust" style="margin-top:8px;"><span class="ni">⚠️</span><span><strong>Red flag:</strong> Customer data shared with US-based vendors. Under DPDP Act, this is a cross-border transfer requiring government-approved destination. Action: Review contracts, add data processing agreements, monitor government notification on permitted countries.</span></div>
+          </div>
+        </li>
+        <li class="step">
+          <span class="step-num">2</span>
+          <div class="step-content">
+            <div class="step-title">Score compliance against each DPDP obligation</div>
+            <div class="code" data-label="gap assessment scoring">
+<span class="kw">Obligation</span>               | <span class="kw">Current State</span>      | <span class="ok">Score</span>  | <span class="kw">Gap</span>
+Consent management        | No consent mechanism  | <span class="hi">0/5</span>   | Build consent portal
+Purpose limitation        | No documented purpose | <span class="hi">1/5</span>   | Data mapping done above
+Data principal rights     | No rights mechanism   | <span class="hi">0/5</span>   | Build request handling
+Security safeguards       | Basic security in place| <span class="warn">3/5</span>  | Add DLP, full audit logs
+Breach notification SOP   | No SOP exists         | <span class="hi">0/5</span>   | Write notification procedure
+Children's data controls  | No age verification   | <span class="warn">2/5</span>  | Add age gate to signup
+Cross-border transfer docs| No DPAs with US vendors| <span class="hi">0/5</span>  | Execute DPAs immediately
+            </div>
+          </div>
+        </li>
+        <li class="step">
+          <span class="step-num">3</span>
+          <div class="step-content">
+            <div class="step-title">Visualize compliance maturity</div>
+            <div class="step-desc">Add this maturity snapshot to your report (recreate in a bar chart in your spreadsheet):</div>
+            <div style="margin-top:12px;">
+              <div class="gap-bar"><span class="gap-label">Security Safeguards</span><div class="gap-track"><div class="gap-fill gf-med" style="width:60%"></div></div><span class="gap-pct">60%</span></div>
+              <div class="gap-bar"><span class="gap-label">Purpose Limitation</span><div class="gap-track"><div class="gap-fill gf-low" style="width:20%"></div></div><span class="gap-pct">20%</span></div>
+              <div class="gap-bar"><span class="gap-label">Children's Data</span><div class="gap-track"><div class="gap-fill gf-low" style="width:40%"></div></div><span class="gap-pct">40%</span></div>
+              <div class="gap-bar"><span class="gap-label">Consent Management</span><div class="gap-track"><div class="gap-fill gf-low" style="width:0%"></div></div><span class="gap-pct">0%</span></div>
+              <div class="gap-bar"><span class="gap-label">Data Principal Rights</span><div class="gap-track"><div class="gap-fill gf-low" style="width:0%"></div></div><span class="gap-pct">0%</span></div>
+              <div class="gap-bar"><span class="gap-label">Breach Notification</span><div class="gap-track"><div class="gap-fill gf-low" style="width:0%"></div></div><span class="gap-pct">0%</span></div>
+              <div class="gap-bar"><span class="gap-label">Cross-Border Transfer</span><div class="gap-track"><div class="gap-fill gf-low" style="width:0%"></div></div><span class="gap-pct">0%</span></div>
+            </div>
+          </div>
+        </li>
+      </ol>
+    </div>
+  </div>
+</div>
+
+<hr class="hdiv">
+
+<!-- ══════════════════════════
+10 — CERT-In Directions
+══════════════════════════ -->
+<div class="section" id="s10">
+  <div class="sec-head">
+    <span class="sec-num">10</span>
+    <div class="sec-meta">
+      <div class="sec-title">CERT-In Directions 2022 🇮🇳</div>
+      <div class="sec-sub">Mandatory cybersecurity reporting requirements for all Indian organisations</div>
+    </div>
+    <span class="sec-badge b-teal">Indian Law ★</span>
+  </div>
+
+  <div class="india-box">
+    <h4><span class="india-flag">🇮🇳</span> CERT-In (Indian Computer Emergency Response Team) Directions — April 2022</h4>
+    <p style="font-size:12.5px;color:var(--text-muted);line-height:1.8;">Issued under Section 70B of the IT Act 2000. Mandatory for all service providers, intermediaries, data centres, cloud service providers and government organisations in India. Non-compliance can result in imprisonment up to 1 year and fines. These are <strong>not guidelines — they are legal obligations</strong>.</p>
+  </div>
+
+  <table class="dtable">
+    <thead><tr><th>Direction</th><th>Requirement</th><th>GRC Action</th></tr></thead>
+    <tbody>
+      <tr>
+        <td class="td-k">6-Hour Incident Reporting</td>
+        <td>Report 20 categories of cybersecurity incidents to CERT-In within 6 hours of noticing. Includes: data breaches, ransomware, phishing with data theft, website defacement, DDoS.</td>
+        <td class="td-r">Write 6-hour notification SOP. Designate a CERT-In Point of Contact. Integrate with your IR playbook. Register your org at cert-in.org.in.</td>
+      </tr>
+      <tr>
+        <td class="td-k">ICT System Clocks (NTP)</td>
+        <td>Synchronize all ICT system clocks with the National Physical Laboratory (NPL) or NPLI NTP server. Mandatory for log integrity and forensics.</td>
+        <td class="td-a">Audit all servers for NTP configuration. Set to: time.nplindia.org or nplindia.in NTP server. Critical for SIEM log correlation accuracy.</td>
+      </tr>
+      <tr>
+        <td class="td-k">Log Retention — 180 Days</td>
+        <td>All ICT system logs must be maintained securely within India for a rolling 180 days (6 months). Logs must be available for CERT-In inspection on demand.</td>
+        <td class="td-a">Audit log retention policies. Ensure SIEM/log storage retains 180 days. Ensure logs stored in Indian data centres (AWS Mumbai, Azure India).</td>
+      </tr>
+      <tr>
+        <td class="td-k">VPN/Cloud Provider Logs</td>
+        <td>VPN service providers must maintain logs of subscribers including validated names, IP addresses, usage patterns for 5 years. Cloud providers: log all subscriber activity.</td>
+        <td class="td-a">If you provide VPN or cloud services: implement subscriber logging infrastructure. For customers: ensure your cloud/VPN vendor complies.</td>
+      </tr>
+      <tr>
+        <td class="td-k">Data Localisation</td>
+        <td>Logs and data subject to CERT-In directions must be maintained in India. Cannot store required logs solely in foreign jurisdictions.</td>
+        <td class="td-g">Review cloud architecture. Ensure primary log storage is AWS Mumbai/Azure India/GCP Mumbai. Cross-border replication for DR is acceptable.</td>
+      </tr>
+      <tr>
+        <td class="td-k">KYC for Subscribers</td>
+        <td>VPN providers, crypto exchanges, cloud service providers must maintain verified KYC details of subscribers including name, email, phone, address, ownership pattern.</td>
+        <td class="td-a">If providing these services: implement KYC collection and verification. Retain for 5 years post-subscriber relationship end.</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="note rust">
+    <span class="ni">⚠️</span>
+    <span><strong>The 20 Reportable Incident Categories include:</strong> Targeted scanning/probing, compromise of critical systems/networks, unauthorised access to IT systems, defacement, malware/ransomware deployment, data breach, data theft, attacks on digital payment systems, fake mobile apps impersonating companies, and 11 others. See the full list at cert-in.org.in.</span>
+  </div>
+</div>
+
+<hr class="hdiv">
+
+<!-- ══════════════════════════
+11 — Gap Analysis Lab
+══════════════════════════ -->
+<div class="section" id="s11">
+  <div class="sec-head">
+    <span class="sec-num">11</span>
+    <div class="sec-meta">
+      <div class="sec-title">Gap Analysis — Process & Lab</div>
+      <div class="sec-sub">Structured methodology to measure distance from target state</div>
+    </div>
+    <span class="sec-badge b-green">Full Lab</span>
+  </div>
+
+  <div class="theory green">
+    <h4>What is a Gap Analysis?</h4>
+    <p>A gap analysis compares your organisation's <strong>current state</strong> (what you actually have) against a <strong>target state</strong> (what a standard or law requires). The "gap" is the delta — what's missing, partially implemented, or not working effectively. The output is a prioritized remediation roadmap.</p>
+    <p>Gap analysis is typically the <em>first engagement</em> a GRC consultant does with a new client. Everything else — risk register, SoA, policy work — follows from it.</p>
+  </div>
+
+  <div class="practical open">
+    <div class="prac-head" onclick="toggleP(this)">
+      <span class="ph-ico">🔍</span>
+      <span class="ph-title">Lab 11.1 — ISO 27001 gap analysis for TechNova (full worksheet)</span>
+      <span class="ph-tag pt-audit">Audit Lab</span>
+      <span class="ph-chevron">▶</span>
+    </div>
+    <div class="prac-body">
+      <ol class="steps">
+        <li class="step">
+          <span class="step-num">1</span>
+          <div class="step-content">
+            <div class="step-title">Set up the gap analysis spreadsheet structure</div>
+            <div class="code" data-label="gap analysis columns">
+<span class="kw">Col A:</span> Clause/Control ID (e.g., 5.1 or A.8.2)
+<span class="kw">Col B:</span> Clause/Control Name
+<span class="kw">Col C:</span> Requirement Summary (what ISO 27001 requires)
+<span class="kw">Col D:</span> Evidence Requested (what you need to see)
+<span class="kw">Col E:</span> Current State (what you found — interview notes)
+<span class="kw">Col F:</span> Maturity Score (0=None / 1=Initial / 2=Managed / 3=Defined / 4=Optimised)
+<span class="kw">Col G:</span> Gap Description (what's missing)
+<span class="kw">Col H:</span> Risk Level (High/Med/Low if not addressed)
+<span class="kw">Col I:</span> Priority (1=Critical / 2=High / 3=Medium)
+<span class="kw">Col J:</span> Recommendation
+<span class="kw">Col K:</span> Effort Estimate (days)
+            </div>
+          </div>
+        </li>
+        <li class="step">
+          <span class="step-num">2</span>
+          <div class="step-content">
+            <div class="step-title">Complete gap analysis for ISO 27001 Clauses 4–10</div>
+            <div class="code" data-label="clause gap findings — TechNova">
+<span class="kw">Clause 4 — Context:</span>
+  Evidence requested: ISMS scope document, stakeholder register
+  Finding: No formal ISMS scope defined. No interested parties analysis.
+  Score: <span class="hi">1/4</span> (Initial) | Gap: HIGH | Priority: 1
+  Recommendation: Define ISMS scope document — 2 days effort
+
+<span class="kw">Clause 5 — Leadership:</span>
+  Evidence requested: Signed information security policy, org chart with CISO role
+  Finding: Security policy exists but unsigned by CEO. No CISO role; CTO handles ad-hoc.
+  Score: <span class="warn">2/4</span> (Managed) | Gap: MEDIUM | Priority: 2
+  Recommendation: CEO signs policy; assign formal ISO role — 1 day effort
+
+<span class="kw">Clause 6 — Planning (Risk Assessment):</span>
+  Evidence requested: Risk assessment methodology doc, completed risk register
+  Finding: No documented risk assessment process. No risk register exists.
+  Score: <span class="hi">0/4</span> (None) | Gap: CRITICAL | Priority: 1
+  Recommendation: Complete risk register (Lab 6.1 deliverable) — 5 days effort
+
+<span class="kw">Clause 7 — Support (Awareness Training):</span>
+  Evidence requested: Training records, completion certificates, training content
+  Finding: No formal security training. New joiners get verbal briefing only.
+  Score: <span class="hi">1/4</span> (Initial) | Gap: HIGH | Priority: 1
+  Recommendation: Deploy security awareness platform (KnowBe4/Proofpoint free tier) — 3 days
+
+<span class="kw">Clause 9 — Internal Audit:</span>
+  Evidence requested: Internal audit programme, past audit reports
+  Finding: No internal audit programme. No internal audits ever conducted.
+  Score: <span class="hi">0/4</span> (None) | Gap: HIGH | Priority: 1
+  Recommendation: Establish annual audit programme; conduct first audit — 10 days
+            </div>
+          </div>
+        </li>
+        <li class="step">
+          <span class="step-num">3</span>
+          <div class="step-content">
+            <div class="step-title">Calculate overall maturity score and create remediation roadmap</div>
+            <div class="code" data-label="maturity summary">
+<span class="kw">Overall Maturity:</span>  1.4 / 4.0 (Initial–Managed transition)
+<span class="kw">Critical gaps:</span>     4 (Clause 6 risk process, no audit, no training, no ISMS scope)
+<span class="kw">High gaps:</span>         8
+<span class="kw">Medium gaps:</span>       12
+<span class="kw">Low/Compliant:</span>    11
+
+<span class="kw">Certification Readiness:</span> <span class="hi">NOT READY</span> — estimated 6-9 months to certification readiness
+<span class="kw">Quick wins (0-30 days):</span>
+  1. CEO signs security policy (1 day)
+  2. Enable MFA on AWS (1 day)
+  3. Complete risk register (5 days)
+  4. Deploy free security awareness training (3 days)
+<span class="kw">Medium term (30-90 days):</span>
+  5. ISMS scope document
+  6. Statement of Applicability (SoA)
+  7. Supplier contracts with security clauses
+  8. Internal audit programme
+            </div>
+          </div>
+        </li>
+      </ol>
+    </div>
+  </div>
+</div>
+
+<hr class="hdiv">
+
+<!-- ══════════════════════════
+12 — Audit & Policy Writing
+══════════════════════════ -->
+<div class="section" id="s12">
+  <div class="sec-head">
+    <span class="sec-num">12</span>
+    <div class="sec-meta">
+      <div class="sec-title">Audit Process & Policy Writing</div>
+      <div class="sec-sub">Evidence collection, control testing, and creating effective security policies</div>
+    </div>
+    <span class="sec-badge b-navy">Core GRC</span>
+  </div>
+
+  <div class="theory">
+    <h4>Types of Audit Evidence</h4>
+    <p>An auditor's job is to gather sufficient, appropriate evidence that a control either works or doesn't. Evidence comes in four types, in descending order of reliability: <strong>Observation</strong> (you saw it yourself — most reliable), <strong>Inspection</strong> (you reviewed the document/config), <strong>Re-performance</strong> (you ran the process yourself), <strong>Inquiry</strong> (someone told you — least reliable alone, must corroborate).</p>
+  </div>
+
+  <table class="dtable">
+    <thead><tr><th>Control Type</th><th>What Audit Tests</th><th>Evidence To Collect</th></tr></thead>
+    <tbody>
+      <tr><td class="td-k">Access Control — MFA</td><td>Is MFA enforced for privileged accounts?</td><td>Screenshot of Azure AD/AWS IAM MFA policy config; user list with MFA status report</td></tr>
+      <tr><td class="td-k">Patch Management</td><td>Are critical patches applied within SLA?</td><td>Nessus/Qualys report; patch log from SCCM/Ansible; sample 10 servers vs patch date</td></tr>
+      <tr><td class="td-k">Backup & Recovery</td><td>Are backups taken and tested?</td><td>Backup job logs; restore test record; backup policy document; last successful restore date</td></tr>
+      <tr><td class="td-k">Security Training</td><td>Do all employees complete annual training?</td><td">Training platform completion report; HR-signed evidence of 100% completion; training content</td></tr>
+      <tr><td class="td-k">Supplier Assessment</td><td>Are key vendors security-assessed annually?</td><td>Vendor risk assessment questionnaires; vendor security certification copies; assessment schedule</td></tr>
+      <tr><td class="td-k">Incident Response</td><td>Was the IR plan tested in last 12 months?</td><td>Tabletop exercise report; attendance list; lessons learned document; updated IR plan date</td></tr>
+    </tbody>
+  </table>
+
+  <div class="practical open">
+    <div class="prac-head" onclick="toggleP(this)">
+      <span class="ph-ico">📝</span>
+      <span class="ph-title">Lab 12.1 — Write three key security policies for TechNova</span>
+      <span class="ph-tag pt-template">Policy Writing</span>
+      <span class="ph-chevron">▶</span>
+    </div>
+    <div class="prac-body">
+      <div class="note navy"><span class="ni">💡</span><span>Every policy needs: <strong>Purpose, Scope, Policy Statements, Roles & Responsibilities, Compliance & Consequences, Review Date.</strong> Keep policies short — long policies are never read. Put procedures in separate documents.</span></div>
+      <ol class="steps" style="margin-top:14px;">
+        <li class="step">
+          <span class="step-num">1</span>
+          <div class="step-content">
+            <div class="step-title">Information Security Policy (Top-Level)</div>
+            <div class="code" data-label="policy template">
+<span class="kw">Document:</span>    Information Security Policy
+<span class="kw">Version:</span>     1.0 | <span class="kw">Status:</span> Approved | <span class="kw">Owner:</span> CTO
+<span class="kw">Review Date:</span> Annual (or after major incident)
+<span class="kw">Approver:</span>    CEO
+
+<span class="kw">1. PURPOSE</span>
+Protect TechNova's information assets from unauthorized access,
+disclosure, modification, or destruction.
+
+<span class="kw">2. SCOPE</span>
+All employees, contractors, and third parties accessing TechNova
+systems, data, or premises.
+
+<span class="kw">3. POLICY STATEMENTS</span>
+3.1 All systems handling customer personal data must use encryption at rest and in transit.
+3.2 MFA is mandatory for all cloud platform administrator accounts.
+3.3 All information security incidents must be reported to security@technova.in within 1 hour.
+3.4 Annual information security awareness training is mandatory for all staff.
+3.5 Vendors processing TechNova personal data must sign a Data Processing Agreement (DPA).
+3.6 Security vulnerabilities rated CVSS ≥7.0 must be remediated within 30 days.
+
+<span class="kw">4. ROLES & RESPONSIBILITIES</span>
+CTO:           Owns this policy; accountable for security programme
+ISO (CISO):    Maintains policy; conducts risk assessments; reports to board
+All Staff:     Comply with this policy; report incidents promptly
+IT Team:       Implement technical controls; maintain audit logs
+
+<span class="kw">5. COMPLIANCE & CONSEQUENCES</span>
+Violations may result in disciplinary action up to termination.
+Serious violations (e.g., intentional data breach) reported to CERT-In
+and law enforcement per IT Act 2000.
+
+<span class="kw">Signed:</span> ___________________ [CEO Name] | Date: ___________
+            </div>
+          </div>
+        </li>
+        <li class="step">
+          <span class="step-num">2</span>
+          <div class="step-content">
+            <div class="step-title">Acceptable Use Policy (AUP)</div>
+            <div class="step-desc">Write a 1-page AUP covering: permitted use of company devices, prohibition on installing unauthorized software, prohibition on accessing inappropriate content, clear desk requirements, prohibition on sharing credentials, and social media guidelines. Keep it readable — this goes to all employees.</div>
+          </div>
+        </li>
+        <li class="step">
+          <span class="step-num">3</span>
+          <div class="step-content">
+            <div class="step-title">Incident Response Policy</div>
+            <div class="code" data-label="IR policy outline">
+<span class="kw">1. PURPOSE:</span>      Ensure timely, effective response to security incidents
+<span class="kw">2. SCOPE:</span>        All security incidents affecting TechNova systems or data
+<span class="kw">3. DEFINITIONS:</span>  Security Event vs Security Incident vs Data Breach
+<span class="kw">4. INCIDENT CATEGORIES:</span>
+   P1 Critical: Active breach, ransomware, CERT-In reportable incident
+   P2 High:    Confirmed malware, unauthorized access, service outage >4hrs
+   P3 Medium:  Policy violation, failed attack attempt, single phishing victim
+   P4 Low:     Security query, false positive, awareness issue
+
+<span class="kw">5. RESPONSE PROCEDURES BY CATEGORY:</span>
+   P1: Incident Commander activated within 15 min; CERT-In notified 6 hrs
+   P2: Response within 1 hr; escalation at 4 hrs if unresolved
+   P3: Response within 24 hrs; document and close
+   P4: Document; no escalation required
+
+<span class="kw">6. POST-INCIDENT:</span>  Lessons learned within 5 business days of resolution
+<span class="kw">7. TESTING:</span>        Annual tabletop exercise mandatory
+<span class="kw">8. DPDP/CERT-In ALIGNMENT:</span> This policy satisfies DPDP Act breach
+                   notification requirement and CERT-In 6-hour reporting direction
+            </div>
+          </div>
+        </li>
+      </ol>
+    </div>
+  </div>
+</div>
+
+<hr class="hdiv">
+
+<!-- ══════════════════════════
+13 — SoA & Capstone
+══════════════════════════ -->
+<div class="section" id="s13">
+  <div class="sec-head">
+    <span class="sec-num">13</span>
+    <div class="sec-meta">
+      <div class="sec-title">Statement of Applicability & Capstone</div>
+      <div class="sec-sub">The SoA — ISO 27001's most important document</div>
+    </div>
+    <span class="sec-badge b-rust">Capstone</span>
+  </div>
+
+  <div class="theory rust">
+    <h4>What is the Statement of Applicability (SoA)?</h4>
+    <p>The <strong>SoA</strong> is a mandatory ISO 27001 document that lists all 93 Annex A controls and declares for each: <em>Is it applicable to your ISMS? If not, why? If yes, is it implemented?</em> It's the bridge between your risk treatment plan and the Annex A control set. An auditor will request the SoA on Day 1 of a certification audit.</p>
+    <p>A control can be excluded only if it is <strong>not applicable</strong> (e.g., a software company might exclude A.7.14 "secure disposal of equipment" if they are cloud-only). You cannot exclude a control simply because it's difficult or expensive — only because it genuinely doesn't apply to your context.</p>
+  </div>
+
+  <div class="practical open">
+    <div class="prac-head" onclick="toggleP(this)">
+      <span class="ph-ico">📋</span>
+      <span class="ph-title">Capstone Lab — Build TechNova's Statement of Applicability</span>
+      <span class="ph-tag pt-template">Capstone Deliverable</span>
+      <span class="ph-chevron">▶</span>
+    </div>
+    <div class="prac-body">
+      <ol class="steps">
+        <li class="step">
+          <span class="step-num">1</span>
+          <div class="step-content">
+            <div class="step-title">Create the SoA spreadsheet</div>
+            <div class="code" data-label="SoA columns">
+<span class="kw">Control ID</span>   | e.g., 5.1, 5.2, ... 8.34
+<span class="kw">Control Name</span> | Full name from ISO 27001:2022 Annex A
+<span class="kw">Applicable?</span>  | Yes / No
+<span class="kw">Justification</span>| Why applicable OR why excluded
+<span class="kw">Implementation</span>| Implemented / Partially / Planned / Not started
+<span class="kw">Evidence</span>     | Document/system reference proving implementation
+<span class="kw">Risk Ref</span>     | Links to risk register entry (RR-001, etc.)
+<span class="kw">Owner</span>        | Person responsible for this control
+            </div>
+          </div>
+        </li>
+        <li class="step">
+          <span class="step-num">2</span>
+          <div class="step-content">
+            <div class="step-title">Complete SoA entries for 20 controls as practice</div>
+            <div class="code" data-label="SoA sample entries">
+<span class="kw">5.1</span>  Policies for info security  | <span class="ok">Yes</span> | Risk: all | <span class="warn">Partially</span>
+     Evidence: InfoSec Policy v1.0 (unsigned) | Owner: CTO
+     Gap: Policy exists but not signed by CEO → Action required
+
+<span class="kw">5.9</span>  Inventory of assets          | <span class="ok">Yes</span> | RR-002 | <span class="hi">Not started</span>
+     Evidence: None | Owner: Head of DevOps
+     Action: Build AWS asset inventory via AWS Config
+
+<span class="kw">7.2</span>  Physical entry controls       | <span class="ok">Yes</span> | RR-007 | <span class="warn">Partially</span>
+     Evidence: RFID entry to office. No server room access log.
+     Action: Install server room RFID + CCTV
+
+<span class="kw">7.14</span> Secure disposal of equipment  | <span class="hi">No</span> | N/A
+     Justification: TechNova is cloud-only (AWS). No physical
+     servers owned. All compute is IaaS. AWS manages hardware
+     disposal per their ISO 27001 certification (Annex A 7.14).
+
+<span class="kw">8.5</span>  Secure authentication         | <span class="ok">Yes</span> | RR-002 | <span class="hi">Not started</span>
+     Evidence: MFA not yet deployed on AWS admin accounts
+     Action: Deploy MFA within 30 days (Priority 1)
+
+<span class="kw">8.16</span> Monitoring activities         | <span class="ok">Yes</span> | RR-001 | <span class="warn">Partially</span>
+     Evidence: Wazuh SIEM deployed on prod servers only.
+     Dev and staging environments not monitored.
+     Action: Extend Wazuh agents to all environments
+            </div>
+          </div>
+        </li>
+        <li class="step">
+          <span class="step-num">3</span>
+          <div class="step-content">
+            <div class="step-title">Add a SoA Summary tab with these metrics</div>
+            <div class="code" data-label="SoA summary statistics">
+<span class="kw">Total Annex A controls:</span>     93
+<span class="kw">Applicable:</span>                 86  (7 excluded — cloud-only org)
+<span class="kw">Implemented:</span>                32  (37%)
+<span class="kw">Partially implemented:</span>      28  (33%)
+<span class="kw">Planned (not started):</span>      26  (30%)
+<span class="kw">Overall implementation %:</span>   37% (certification needs ~90%+)
+<span class="kw">Estimated time to cert-ready:</span> 6–9 months
+            </div>
+          </div>
+        </li>
+      </ol>
+    </div>
+  </div>
+
+  <div class="theory" style="margin-top:20px;">
+    <h4>Module Completion Checklist</h4>
+    <ul class="checklist">
+      <li onclick="toggleCheck(this)"><span class="cb"></span><span>Lab 2.1 — Completed ISO 27001 to NIST CSF crosswalk table (GitHub)</span></li>
+      <li onclick="toggleCheck(this)"><span class="cb"></span><span>Section 3 — Marked off all Annex A controls reviewed in the accordion</span></li>
+      <li onclick="toggleCheck(this)"><span class="cb"></span><span>Lab 6.1 — Built complete risk register for TechNova (8+ entries, heatmap tab)</span></li>
+      <li onclick="toggleCheck(this)"><span class="cb"></span><span>Lab 7.1 — Completed STRIDE threat model for login flow</span></li>
+      <li onclick="toggleCheck(this)"><span class="cb"></span><span>Lab 8.1 — Wrote BCP with BIA table, tabletop scenario, and recovery procedures</span></li>
+      <li onclick="toggleCheck(this)"><span class="cb"></span><span>Lab 9.1 — Completed DPDP Act gap assessment with maturity scores</span></li>
+      <li onclick="toggleCheck(this)"><span class="cb"></span><span>Section 10 — Can explain all 6 CERT-In directions from memory</span></li>
+      <li onclick="toggleCheck(this)"><span class="cb"></span><span>Lab 11.1 — Completed ISO 27001 gap analysis worksheet with maturity scores</span></li>
+      <li onclick="toggleCheck(this)"><span class="cb"></span><span>Lab 12.1 — Wrote InfoSec Policy, AUP, and IR Policy for TechNova</span></li>
+      <li onclick="toggleCheck(this)"><span class="cb"></span><span>Capstone — Built complete SoA for TechNova with 20+ entries (GitHub)</span></li>
+    </ul>
+  </div>
+
+  <div class="note green" style="margin-top:16px;">
+    <span class="ni">🏆</span>
+    <span><strong>Portfolio package for GRC job applications:</strong> Push these 5 deliverables to GitHub as a "GRC Portfolio" repo: (1) ISO 27001–NIST CSF crosswalk.xlsx, (2) TechNova Risk Register.xlsx with heatmap, (3) DPDP Act Gap Assessment.xlsx, (4) Security Policies folder (3 policies), (5) Statement of Applicability.xlsx. In Indian GRC interviews at Big 4 and BFSI, this portfolio level is rare — most candidates only have certifications, not actual deliverables.</span>
+  </div>
+
+</div>
+
+</div><!-- /content -->
+</main>
+</div><!-- /layout -->
+
+<script>
+function toggleP(header) {
+  header.closest('.practical').classList.toggle('open');
+  updateProgress();
+}
+
+function toggleAnnex(header) {
+  const domain = header.closest('.annex-domain');
+  domain.classList.toggle('open');
+  updateProgress();
+}
+
+function toggleControl(li) {
+  li.classList.toggle('done');
+  updateProgress();
+}
+
+function toggleCheck(li) {
+  li.classList.toggle('done');
+  updateProgress();
+}
+
+function updateProgress() {
+  const allItems = document.querySelectorAll('.control-item, .checklist li');
+  const doneItems = document.querySelectorAll('.control-item.done, .checklist li.done');
+  const total = allItems.length;
+  const done = doneItems.length;
+  const pct = total > 0 ? Math.round((done / total) * 100) : 0;
+  document.getElementById('sb-fill').style.width = pct + '%';
+  document.getElementById('sb-pct').textContent = pct + '%';
+}
+
+// Sidebar active scroll tracking
+const sections = document.querySelectorAll('.section');
+const navItems = document.querySelectorAll('.nav-item');
+
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      const id = entry.target.id;
+      navItems.forEach(item => {
+        item.classList.toggle('active', item.getAttribute('href') === '#' + id);
+      });
+    }
+  });
+}, { rootMargin: '-20% 0px -70% 0px' });
+
+sections.forEach(s => observer.observe(s));
+
+navItems.forEach(item => {
+  item.addEventListener('click', e => {
+    const href = item.getAttribute('href');
+    if (href && href.startsWith('#')) {
+      e.preventDefault();
+      document.querySelector(href)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  });
+});
+
+updateProgress();
+</script>
+</body>
+</html>

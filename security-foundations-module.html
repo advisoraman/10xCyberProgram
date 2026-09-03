@@ -1,0 +1,2430 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cybersecurity Foundations — Study Module</title>
+<link href="https://fonts.googleapis.com/css2?family=Spectral:ital,wght@0,300;0,400;0,600;0,700;1,400;1,600&family=Overpass+Mono:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:         #fdfaf5;
+  --bg2:        #f7f3ec;
+  --bg3:        #f0ebe1;
+  --bg4:        #e8e1d4;
+  --surface:    #ffffff;
+  --border:     #ddd7ca;
+  --border2:    #c9c1b0;
+  --text:       #1c1a14;
+  --text-muted: #5c5648;
+  --text-dim:   #9a9080;
+  --indigo:     #312e81;
+  --indigo-mid: #4338ca;
+  --indigo-light:#eef2ff;
+  --indigo-glow:rgba(67,56,202,0.07);
+  --crimson:    #881337;
+  --crimson-mid:#be123c;
+  --crimson-light:#fff1f2;
+  --forest:     #14532d;
+  --forest-mid: #16a34a;
+  --forest-light:#f0fdf4;
+  --gold:       #713f12;
+  --gold-mid:   #ca8a04;
+  --gold-light: #fefce8;
+  --ocean:      #0c4a6e;
+  --ocean-mid:  #0284c7;
+  --ocean-light:#f0f9ff;
+  --plum:       #4a044e;
+  --plum-mid:   #9333ea;
+  --plum-light: #faf5ff;
+  --sidebar-w:  262px;
+}
+
+*{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+
+body{
+  font-family:'Spectral',serif;
+  background:var(--bg);
+  color:var(--text);
+  font-size:14px;
+  line-height:1.82;
+  min-height:100vh;
+}
+
+/* subtle warm paper texture */
+body::before{
+  content:'';
+  position:fixed;top:0;left:0;right:0;bottom:0;
+  background:
+    radial-gradient(ellipse at 10% 10%, rgba(67,56,202,0.025) 0%, transparent 50%),
+    radial-gradient(ellipse at 90% 90%, rgba(136,19,55,0.02) 0%, transparent 50%);
+  pointer-events:none;z-index:0;
+}
+
+.layout{display:flex;min-height:100vh;position:relative;z-index:1;}
+
+/* ── SIDEBAR ── */
+.sidebar{
+  width:var(--sidebar-w);flex-shrink:0;
+  background:var(--indigo);
+  position:sticky;top:0;height:100vh;
+  overflow-y:auto;display:flex;flex-direction:column;
+}
+.sidebar::-webkit-scrollbar{width:3px;}
+.sidebar::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.15);}
+
+.sb-head{
+  padding:24px 20px 18px;
+  border-bottom:1px solid rgba(255,255,255,0.1);
+}
+
+.sb-eyebrow{
+  font-family:'Overpass Mono',monospace;
+  font-size:9px;letter-spacing:0.15em;text-transform:uppercase;
+  color:rgba(255,255,255,0.4);margin-bottom:10px;
+}
+
+.sb-title{
+  font-family:'Spectral',serif;
+  font-size:18px;font-weight:700;font-style:italic;
+  color:#fff;line-height:1.25;
+}
+
+.sb-sub{
+  font-family:'Overpass Mono',monospace;
+  font-size:9px;color:rgba(255,255,255,0.3);
+  margin-top:5px;letter-spacing:0.05em;
+}
+
+.nav-grp{
+  padding:14px 20px 4px;
+  font-family:'Overpass Mono',monospace;
+  font-size:8.5px;letter-spacing:0.12em;text-transform:uppercase;
+  color:rgba(255,255,255,0.22);
+}
+
+.nav-item{
+  display:flex;align-items:center;gap:10px;
+  padding:7px 20px;
+  font-family:'Overpass Mono',monospace;
+  font-size:11px;color:rgba(255,255,255,0.44);
+  cursor:pointer;transition:all 0.13s;
+  text-decoration:none;
+  border-left:2px solid transparent;
+}
+.nav-item:hover{color:rgba(255,255,255,0.8);background:rgba(255,255,255,0.06);}
+.nav-item.active{color:#fff;background:rgba(255,255,255,0.1);border-left-color:rgba(255,255,255,0.5);}
+
+.nav-n{font-size:9px;color:rgba(255,255,255,0.2);min-width:18px;text-align:right;}
+
+.sb-foot{
+  margin-top:auto;padding:16px 20px;
+  border-top:1px solid rgba(255,255,255,0.1);
+}
+.sf-row{
+  display:flex;justify-content:space-between;
+  font-family:'Overpass Mono',monospace;
+  font-size:9.5px;color:rgba(255,255,255,0.28);margin-bottom:6px;
+}
+.sf-track{height:2px;background:rgba(255,255,255,0.12);border-radius:99px;overflow:hidden;}
+.sf-fill{height:100%;background:rgba(255,255,255,0.55);border-radius:99px;transition:width 0.5s;}
+
+/* ── MAIN ── */
+.main{flex:1;overflow-x:hidden;}
+
+/* Hero */
+.hero{
+  padding:56px 68px 44px;
+  border-bottom:2px solid var(--border);
+  background:linear-gradient(160deg,var(--surface) 0%,var(--bg2) 100%);
+  position:relative;overflow:hidden;
+}
+
+.hero::after{
+  content:'"Security is a process, not a product."';
+  position:absolute;right:48px;bottom:20px;
+  font-family:'Spectral',serif;
+  font-size:13px;font-style:italic;
+  color:rgba(49,46,129,0.12);
+  pointer-events:none;user-select:none;
+  letter-spacing:0.02em;
+}
+
+.hero-label{
+  font-family:'Overpass Mono',monospace;
+  font-size:10px;letter-spacing:0.14em;text-transform:uppercase;
+  color:var(--indigo-mid);font-weight:500;margin-bottom:14px;
+  display:flex;align-items:center;gap:8px;
+}
+.hero-label::before{content:'§';color:var(--border2);}
+
+.hero-title{
+  font-family:'Spectral',serif;
+  font-size:52px;font-weight:700;font-style:italic;
+  color:var(--indigo);line-height:1.0;
+  letter-spacing:-0.02em;margin-bottom:6px;
+}
+
+.hero-subtitle{
+  font-size:16px;font-weight:300;
+  color:var(--text-muted);margin-bottom:18px;
+  font-style:normal;letter-spacing:0.01em;
+}
+
+.hero-desc{
+  font-size:14px;color:var(--text-muted);
+  max-width:580px;line-height:1.85;
+  border-left:3px solid var(--indigo-mid);
+  padding-left:18px;margin-bottom:30px;
+}
+
+.hero-stats{
+  display:inline-flex;
+  border:1px solid var(--border);
+  border-radius:3px;overflow:hidden;
+  background:var(--surface);
+  box-shadow:0 2px 12px rgba(49,46,129,0.06);
+}
+.hs{
+  padding:12px 22px;border-right:1px solid var(--border);
+  display:flex;flex-direction:column;gap:2px;
+}
+.hs:last-child{border-right:none;}
+.hs-v{
+  font-family:'Spectral',serif;
+  font-size:22px;font-weight:700;font-style:italic;color:var(--indigo);
+}
+.hs-v.g{color:var(--forest-mid);}
+.hs-v.r{color:var(--crimson-mid);}
+.hs-v.a{color:var(--gold-mid);}
+.hs-l{
+  font-family:'Overpass Mono',monospace;
+  font-size:9px;color:var(--text-dim);letter-spacing:0.07em;text-transform:uppercase;
+}
+
+/* Content */
+.content{padding:0 68px 80px;}
+
+/* Section */
+.section{margin-top:52px;animation:fadeUp 0.35s ease both;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:translateY(0);}}
+
+.sec-head{
+  display:flex;align-items:flex-start;gap:18px;
+  margin-bottom:26px;padding-bottom:18px;
+  border-bottom:1px solid var(--border);
+  position:relative;
+}
+.sec-head::after{
+  content:'';position:absolute;bottom:-1px;left:0;
+  width:56px;height:2px;background:var(--indigo-mid);
+}
+
+.sec-num{
+  font-family:'Spectral',serif;
+  font-size:13px;font-style:italic;color:var(--text-dim);
+  padding-top:4px;min-width:22px;
+}
+.sec-meta{flex:1;}
+.sec-title{
+  font-family:'Spectral',serif;
+  font-size:28px;font-weight:700;font-style:italic;
+  color:var(--indigo);line-height:1.15;margin-bottom:3px;
+}
+.sec-sub{
+  font-family:'Overpass Mono',monospace;
+  font-size:10.5px;color:var(--text-muted);
+}
+
+.badge{
+  font-family:'Overpass Mono',monospace;
+  font-size:9px;font-weight:500;letter-spacing:0.09em;
+  text-transform:uppercase;padding:4px 11px;
+  border-radius:2px;flex-shrink:0;margin-top:3px;border:1px solid;
+}
+.b-indigo{background:var(--indigo-light);color:var(--indigo);border-color:rgba(49,46,129,0.2);}
+.b-crimson{background:var(--crimson-light);color:var(--crimson);border-color:rgba(136,19,55,0.2);}
+.b-forest{background:var(--forest-light);color:var(--forest);border-color:rgba(20,83,45,0.2);}
+.b-gold{background:var(--gold-light);color:var(--gold);border-color:rgba(113,63,18,0.2);}
+.b-ocean{background:var(--ocean-light);color:var(--ocean);border-color:rgba(12,74,110,0.2);}
+.b-plum{background:var(--plum-light);color:var(--plum);border-color:rgba(74,4,78,0.2);}
+
+/* Theory */
+.theory{
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-left:3px solid var(--indigo-mid);
+  border-radius:3px;padding:18px 22px;margin-bottom:14px;
+}
+.theory.crimson{border-left-color:var(--crimson-mid);}
+.theory.forest{border-left-color:var(--forest-mid);}
+.theory.gold{border-left-color:var(--gold-mid);}
+.theory.ocean{border-left-color:var(--ocean-mid);}
+.theory.plum{border-left-color:var(--plum-mid);}
+
+.theory h4{
+  font-family:'Spectral',serif;
+  font-size:15.5px;font-weight:700;font-style:italic;
+  color:var(--indigo);margin-bottom:10px;
+}
+.theory.crimson h4{color:var(--crimson);}
+.theory.forest h4{color:var(--forest);}
+.theory.gold h4{color:var(--gold);}
+.theory.ocean h4{color:var(--ocean);}
+.theory.plum h4{color:var(--plum-mid);}
+
+.theory p{font-size:13.5px;color:var(--text-muted);margin-bottom:8px;line-height:1.85;}
+.theory p:last-child{margin-bottom:0;}
+.theory strong{color:var(--text);font-weight:700;}
+.theory em{color:var(--indigo-mid);font-style:normal;font-weight:600;}
+
+/* Quote / callout */
+.blockquote{
+  border-left:4px solid var(--gold-mid);
+  background:var(--gold-light);
+  padding:14px 18px;margin:14px 0;
+  border-radius:2px;
+}
+.blockquote p{
+  font-family:'Spectral',serif;
+  font-size:14px;font-style:italic;
+  color:var(--gold);line-height:1.75;
+}
+.blockquote cite{
+  display:block;margin-top:6px;
+  font-family:'Overpass Mono',monospace;
+  font-size:10px;color:var(--text-dim);
+  font-style:normal;letter-spacing:0.04em;
+}
+
+/* Grid */
+.grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(215px,1fr));
+  gap:8px;margin:12px 0;
+}
+.card{
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:3px;padding:14px 16px;
+  transition:all 0.13s;
+}
+.card:hover{border-color:var(--border2);box-shadow:0 3px 10px rgba(49,46,129,0.06);}
+
+.ck{
+  font-family:'Overpass Mono',monospace;
+  font-size:9.5px;font-weight:600;letter-spacing:0.06em;
+  text-transform:uppercase;margin-bottom:6px;color:var(--indigo-mid);
+}
+.ck.c{color:var(--crimson-mid);}
+.ck.f{color:var(--forest-mid);}
+.ck.g{color:var(--gold-mid);}
+.ck.o{color:var(--ocean-mid);}
+.ck.p{color:var(--plum-mid);}
+.cv{font-size:13px;color:var(--text-muted);line-height:1.72;}
+
+/* Table */
+.dtable{width:100%;border-collapse:collapse;margin:14px 0;font-size:13px;}
+.dtable th{
+  text-align:left;padding:9px 14px;
+  background:var(--indigo);color:rgba(255,255,255,0.88);
+  font-family:'Overpass Mono',monospace;
+  font-size:9px;text-transform:uppercase;letter-spacing:0.09em;font-weight:500;
+}
+.dtable td{
+  padding:10px 14px;border-bottom:1px solid var(--border);
+  color:var(--text-muted);vertical-align:top;
+  font-size:13px;
+}
+.dtable tr:last-child td{border-bottom:none;}
+.dtable tr:hover td{background:var(--bg2);color:var(--text);}
+.dtable tbody tr:nth-child(even) td{background:var(--bg);}
+
+.ti{color:var(--indigo);font-weight:700;}
+.tc{color:var(--crimson-mid);font-weight:600;}
+.tf{color:var(--forest-mid);font-weight:600;}
+.tg{color:var(--gold-mid);font-weight:600;}
+.to{color:var(--ocean-mid);font-weight:600;}
+
+/* Practical */
+.practical{
+  border:1px solid var(--border);border-radius:3px;
+  overflow:hidden;margin-bottom:14px;background:var(--surface);
+}
+.prac-head{
+  background:var(--bg2);padding:12px 16px;
+  display:flex;align-items:center;gap:10px;
+  border-bottom:1px solid var(--border);
+  cursor:pointer;user-select:none;transition:background 0.12s;
+}
+.prac-head:hover{background:var(--bg3);}
+
+.ph-i{font-size:14px;}
+.ph-t{
+  font-family:'Spectral',serif;
+  font-size:15px;font-style:italic;color:var(--indigo);flex:1;font-weight:600;
+}
+.ph-tag{
+  font-family:'Overpass Mono',monospace;
+  font-size:9px;font-weight:500;text-transform:uppercase;
+  letter-spacing:0.08em;padding:2px 9px;border-radius:2px;border:1px solid;
+}
+.pt-lab{background:var(--crimson-light);color:var(--crimson);border-color:rgba(136,19,55,0.2);}
+.pt-setup{background:var(--ocean-light);color:var(--ocean);border-color:rgba(12,74,110,0.2);}
+.pt-exercise{background:var(--forest-light);color:var(--forest);border-color:rgba(20,83,45,0.2);}
+.pt-concept{background:var(--plum-light);color:var(--plum);border-color:rgba(74,4,78,0.2);}
+.pt-scenario{background:var(--gold-light);color:var(--gold);border-color:rgba(113,63,18,0.2);}
+
+.ph-chev{font-size:9px;color:var(--text-dim);transition:transform 0.2s;}
+.practical.open .ph-chev{transform:rotate(90deg);}
+.prac-body{display:none;padding:18px 22px;}
+.practical.open .prac-body{display:block;}
+
+/* Steps */
+.steps{list-style:none;}
+.step{display:flex;gap:16px;margin-bottom:18px;padding-bottom:18px;border-bottom:1px dashed var(--border);}
+.step:last-child{margin-bottom:0;padding-bottom:0;border-bottom:none;}
+.sn{
+  width:24px;height:24px;border-radius:3px;
+  background:var(--indigo-light);border:1px solid rgba(49,46,129,0.2);
+  display:flex;align-items:center;justify-content:center;
+  font-family:'Spectral',serif;
+  font-size:12px;font-style:italic;color:var(--indigo);
+  flex-shrink:0;margin-top:2px;
+}
+.sc{flex:1;}
+.st{
+  font-family:'Spectral',serif;
+  font-size:15px;font-style:italic;font-weight:700;color:var(--indigo);margin-bottom:5px;
+}
+.sd{font-size:13px;color:var(--text-muted);line-height:1.82;margin-bottom:8px;}
+.sd:last-child{margin-bottom:0;}
+
+/* Code */
+.code{
+  background:#1e1b2e;
+  border:1px solid rgba(67,56,202,0.15);
+  border-radius:3px;padding:13px 16px;
+  font-family:'Overpass Mono',monospace;
+  font-size:11.5px;color:#94a3b8;
+  overflow-x:auto;margin:8px 0;
+  position:relative;line-height:1.8;
+}
+.code .cm{color:#334155;}
+.code .cmd{color:#86efac;}
+.code .flag{color:#fde68a;}
+.code .val{color:#bae6fd;}
+.code .kw{color:#c4b5fd;}
+.code .hi{color:#fca5a5;}
+.code .ok{color:#86efac;}
+.code .warn{color:#fde68a;}
+.code::before{
+  content:attr(data-label);
+  position:absolute;top:7px;right:12px;
+  font-size:8.5px;color:#334155;
+  letter-spacing:0.08em;text-transform:uppercase;
+}
+
+/* Notes */
+.note{
+  display:flex;gap:10px;align-items:flex-start;
+  border-radius:3px;padding:12px 16px;
+  font-size:13px;margin:10px 0;line-height:1.8;
+}
+.note.indigo{background:var(--indigo-light);border:1px solid rgba(49,46,129,0.15);color:var(--text-muted);}
+.note.crimson{background:var(--crimson-light);border:1px solid rgba(136,19,55,0.15);color:var(--text-muted);}
+.note.forest{background:var(--forest-light);border:1px solid rgba(20,83,45,0.15);color:var(--text-muted);}
+.note.gold{background:var(--gold-light);border:1px solid rgba(113,63,18,0.15);color:var(--text-muted);}
+.note.ocean{background:var(--ocean-light);border:1px solid rgba(12,74,110,0.15);color:var(--text-muted);}
+.note .ni{font-size:14px;flex-shrink:0;margin-top:1px;}
+.note strong{color:var(--text);}
+
+/* divider */
+.hdiv{border:none;border-top:1px solid var(--border);margin:44px 0 0;}
+
+/* CIA triad visual */
+.cia{
+  display:grid;grid-template-columns:repeat(3,1fr);
+  gap:0;border:1px solid var(--border);
+  border-radius:3px;overflow:hidden;margin:14px 0;
+}
+.cia-pillar{
+  padding:20px 18px;
+  border-right:1px solid var(--border);
+}
+.cia-pillar:last-child{border-right:none;}
+.cp-letter{
+  font-family:'Spectral',serif;
+  font-size:52px;font-weight:700;font-style:italic;
+  line-height:1;margin-bottom:8px;opacity:0.85;
+}
+.cp-name{
+  font-family:'Spectral',serif;
+  font-size:16px;font-weight:700;
+  margin-bottom:8px;
+}
+.cp-def{font-size:12.5px;color:var(--text-muted);line-height:1.72;margin-bottom:10px;}
+.cp-example{
+  font-family:'Overpass Mono',monospace;
+  font-size:10.5px;color:var(--text-dim);
+  background:var(--bg2);padding:6px 10px;border-radius:2px;
+  line-height:1.6;
+}
+.cp-attack{
+  font-size:11.5px;margin-top:8px;
+  padding:4px 8px;border-radius:2px;
+  border:1px solid;
+}
+
+/* Threat landscape visual */
+.threat-row{
+  display:flex;align-items:center;gap:12px;
+  padding:10px 14px;
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:3px;margin-bottom:5px;
+  transition:all 0.12s;
+}
+.threat-row:hover{border-color:var(--border2);}
+.tr-icon{font-size:18px;flex-shrink:0;}
+.tr-name{font-weight:700;color:var(--text);font-size:13.5px;min-width:140px;}
+.tr-desc{font-size:12.5px;color:var(--text-muted);flex:1;}
+.tr-sev{
+  font-family:'Overpass Mono',monospace;
+  font-size:9.5px;padding:3px 8px;border-radius:2px;
+  flex-shrink:0;border:1px solid;font-weight:600;
+}
+
+/* AAA flow */
+.aaa-flow{
+  display:grid;grid-template-columns:repeat(3,1fr);
+  gap:8px;margin:12px 0;
+}
+.aaa-box{
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:3px;padding:16px;
+  border-top:3px solid;
+}
+.ab-title{
+  font-family:'Spectral',serif;
+  font-size:16px;font-weight:700;font-style:italic;
+  margin-bottom:8px;
+}
+.ab-desc{font-size:12.5px;color:var(--text-muted);line-height:1.72;margin-bottom:8px;}
+.ab-examples{
+  font-family:'Overpass Mono',monospace;
+  font-size:10.5px;color:var(--text-dim);
+  line-height:1.65;
+}
+
+/* Defence-in-depth layers */
+.did-layers{
+  position:relative;margin:16px auto;
+  max-width:580px;
+}
+.did-layer{
+  margin:4px auto;border-radius:3px;
+  padding:10px 16px;text-align:center;
+  border:1px solid var(--border);
+  transition:all 0.12s;cursor:default;
+}
+.did-layer:hover{border-color:var(--border2);}
+.dl-name{
+  font-family:'Spectral',serif;
+  font-size:14px;font-weight:700;font-style:italic;
+}
+.dl-desc{font-size:11.5px;color:var(--text-muted);margin-top:2px;}
+
+/* Attack type categorization */
+.attack-grid{
+  display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:12px 0;
+}
+.attack-cat{
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:3px;padding:16px;
+}
+.ac-head{
+  font-family:'Spectral',serif;
+  font-size:15px;font-weight:700;font-style:italic;
+  margin-bottom:10px;display:flex;align-items:center;gap:8px;
+}
+.ac-item{
+  display:flex;align-items:flex-start;gap:8px;
+  padding:5px 0;border-bottom:1px dashed var(--border);
+  font-size:12.5px;color:var(--text-muted);
+}
+.ac-item:last-child{border-bottom:none;}
+.ac-bullet{flex-shrink:0;margin-top:3px;}
+
+/* Checklist */
+.checklist{list-style:none;}
+.checklist li{
+  display:flex;align-items:flex-start;gap:10px;
+  padding:6px 8px;border-radius:3px;
+  font-size:13px;color:var(--text-muted);cursor:pointer;transition:background 0.1s;
+}
+.checklist li:hover{background:var(--bg2);color:var(--text);}
+.cb{
+  width:14px;height:14px;border:1.5px solid var(--border2);
+  border-radius:2px;flex-shrink:0;margin-top:3px;
+  display:flex;align-items:center;justify-content:center;transition:all 0.15s;
+}
+.checklist li.done .cb{background:var(--forest-mid);border-color:var(--forest-mid);}
+.checklist li.done .cb::after{content:'✓';font-size:9px;color:#fff;font-weight:bold;}
+.checklist li.done span:last-child{text-decoration:line-through;color:var(--text-dim);}
+
+/* scrollbar */
+::-webkit-scrollbar{width:5px;height:5px;}
+::-webkit-scrollbar-track{background:transparent;}
+::-webkit-scrollbar-thumb{background:var(--border2);border-radius:3px;}
+
+@media(max-width:900px){
+  .sidebar{display:none;}
+  .hero,.content{padding-left:22px;padding-right:22px;}
+  .hero-title{font-size:36px;}
+  .hero::after{display:none;}
+  .grid{grid-template-columns:1fr 1fr;}
+  .cia{grid-template-columns:1fr;}
+  .cia-pillar{border-right:none;border-bottom:1px solid var(--border);}
+  .cia-pillar:last-child{border-bottom:none;}
+  .aaa-flow{grid-template-columns:1fr;}
+  .attack-grid{grid-template-columns:1fr;}
+}
+</style>
+</head>
+<body>
+<div class="layout">
+
+<!-- SIDEBAR -->
+<nav class="sidebar">
+  <div class="sb-head">
+    <div class="sb-eyebrow">// Cybersecurity Track</div>
+    <div class="sb-title">Security<br>Foundations</div>
+    <div class="sb-sub">Module 00 · Week 1 · Core Concepts</div>
+  </div>
+
+  <div class="nav-grp">Core Concepts</div>
+  <a class="nav-item active" href="#s1"><span class="nav-n">01</span>What Is Cybersecurity?</a>
+  <a class="nav-item" href="#s2"><span class="nav-n">02</span>CIA Triad — Deep Dive</a>
+  <a class="nav-item" href="#s3"><span class="nav-n">03</span>AAA Model</a>
+  <a class="nav-item" href="#s4"><span class="nav-n">04</span>Threat Landscape</a>
+  <a class="nav-item" href="#s5"><span class="nav-n">05</span>Threat Actors & Motives</a>
+
+  <div class="nav-grp">Attack Types</div>
+  <a class="nav-item" href="#s6"><span class="nav-n">06</span>Attack Categories</a>
+  <a class="nav-item" href="#s7"><span class="nav-n">07</span>Common Attack Types</a>
+  <a class="nav-item" href="#s8"><span class="nav-n">08</span>Malware Deep Dive</a>
+
+  <div class="nav-grp">Controls & Principles</div>
+  <a class="nav-item" href="#s9"><span class="nav-n">09</span>Security Controls</a>
+  <a class="nav-item" href="#s10"><span class="nav-n">10</span>Defence-in-Depth</a>
+  <a class="nav-item" href="#s11"><span class="nav-n">11</span>Least Privilege & Need-to-Know</a>
+  <a class="nav-item" href="#s12"><span class="nav-n">12</span>Zero Trust Principles</a>
+
+  <div class="nav-grp">Operating Systems</div>
+  <a class="nav-item" href="#s13"><span class="nav-n">13</span>Windows Security Fundamentals</a>
+  <a class="nav-item" href="#s14"><span class="nav-n">14</span>Linux Security Fundamentals</a>
+
+  <div class="nav-grp">Lab Setup</div>
+  <a class="nav-item" href="#s15"><span class="nav-n">15</span>Lab Environment Setup</a>
+  <a class="nav-item" href="#s16"><span class="nav-n">16</span>Capstone — Foundations Review</a>
+
+  <div class="sb-foot">
+    <div class="sf-row"><span>Progress</span><span id="sb-pct">0%</span></div>
+    <div class="sf-track"><div class="sf-fill" id="sb-fill" style="width:0%"></div></div>
+  </div>
+</nav>
+
+<!-- MAIN -->
+<main class="main">
+
+<div class="hero">
+  <div class="hero-label">Module 00 · Security Core</div>
+  <h1 class="hero-title">Security Foundations</h1>
+  <p class="hero-subtitle">Everything before you touch a tool</p>
+  <p class="hero-desc">CIA Triad, threat actors, attack types, security controls, and OS security basics — the conceptual framework that everything else in cybersecurity builds upon. Master these and every advanced topic clicks into place.</p>
+  <div class="hero-stats">
+    <div class="hs"><span class="hs-v">16</span><span class="hs-l">Topics</span></div>
+    <div class="hs"><span class="hs-v g">8+</span><span class="hs-l">Labs</span></div>
+    <div class="hs"><span class="hs-v r">Week 1</span><span class="hs-l">Timeline</span></div>
+    <div class="hs"><span class="hs-v a">All Roles</span><span class="hs-l">Relevant To</span></div>
+  </div>
+</div>
+
+<div class="content">
+
+<!-- ══════════════════════
+01 — What Is Cybersecurity?
+══════════════════════ -->
+<div class="section" id="s1">
+  <div class="sec-head">
+    <span class="sec-num">I</span>
+    <div class="sec-meta">
+      <div class="sec-title">What Is Cybersecurity?</div>
+      <div class="sec-sub">Definition, scope, career paths, and why it matters for India</div>
+    </div>
+    <span class="badge b-indigo">Foundation</span>
+  </div>
+
+  <div class="theory">
+    <h4>Cybersecurity — A Working Definition</h4>
+    <p><strong>Cybersecurity</strong> is the practice of protecting digital systems, networks, programs, and data from attack, damage, unauthorized access, and disruption. It is the intersection of technology, process, and people — no single tool or policy is sufficient on its own.</p>
+    <p>The field encompasses everything from writing secure code and configuring firewalls to drafting compliance policies and training employees not to click phishing links. <em>Security is a property of the entire sociotechnical system</em>, not of any individual component.</p>
+    <p>Bruce Schneier's formulation remains accurate: <strong>"Security is not a product, but a process."</strong> You don't achieve security once and move on — you manage it continuously as threats, technology, and organizations evolve.</p>
+  </div>
+
+  <div class="blockquote">
+    <p>"The goal of security is not to prevent all attacks — that is impossible. The goal is to make attacks sufficiently difficult, expensive, and detectable that adversaries choose easier targets or accept the risk of exposure."</p>
+    <cite>— Security engineering principle</cite>
+  </div>
+
+  <div class="theory crimson" style="margin-top:14px;">
+    <h4>Why Cybersecurity Is Critical — The Indian Context</h4>
+    <p><strong>India's digital footprint is massive and growing:</strong> 900M+ internet users, 2nd largest smartphone market, UPI processing 10B+ transactions/month, Aadhaar used by 1.4B people, and a ₹8 lakh crore digital payments ecosystem. Each of these creates attack surface.</p>
+    <p><strong>The threat is real and local:</strong> India was the 2nd most attacked country in Asia-Pacific in 2023 (IBM X-Force). CERT-In received over 1.4 million cybersecurity incident reports in 2022. Indian healthcare, BFSI, and government are primary targets. The AIIMS ransomware attack (2022) disrupted patient care for weeks. The CoWIN data leak exposed vaccination records of crores of citizens.</p>
+    <p><strong>The workforce gap:</strong> India needs 1+ million cybersecurity professionals; only ~140,000 are currently working in the field (NASSCOM 2023). Entry-level SOC analysts with verifiable skills command ₹5–12 LPA. GRC specialists at Big 4 earn ₹8–18 LPA with 2 years experience.</p>
+  </div>
+
+  <div class="grid">
+    <div class="card">
+      <div class="ck">SOC Analyst</div>
+      <div class="cv">Monitor alerts, triage incidents, escalate threats. Entry point: L1 at MSSP. Requires: log analysis, SIEM, incident response basics. 0–2 yrs experience.</div>
+    </div>
+    <div class="card">
+      <div class="ck g">GRC Analyst</div>
+      <div class="cv">Governance, Risk, Compliance. ISO 27001, DPDP Act, risk registers. Big 4 and BFSI focused. Requires policy writing, audit skills, framework knowledge.</div>
+    </div>
+    <div class="card">
+      <div class="ck c">Penetration Tester</div>
+      <div class="cv">Simulate attacks against authorized targets. Report vulnerabilities. Requires: CEH/OSCP, hands-on hacking skills, report writing. 1–3 yrs lab experience.</div>
+    </div>
+    <div class="card">
+      <div class="ck o">Cloud Security Eng.</div>
+      <div class="cv">Secure AWS/Azure/GCP environments. IAM, CSPM, cloud-native security tools. Fastest growing role. Requires cloud platform + security knowledge.</div>
+    </div>
+    <div class="card">
+      <div class="ck p">Threat Intelligence</div>
+      <div class="cv">Track threat actors, IOCs, campaigns. Feed intel to SOC and IR teams. Requires OSINT skills, CTI platforms (MISP), analytical writing.</div>
+    </div>
+    <div class="card">
+      <div class="ck g">CISO / Security Mgr</div>
+      <div class="cv">Oversees security programme, budgets, board reporting. Requires 10+ years across domains. Usually a generalist with deep expertise in 2–3 areas.</div>
+    </div>
+  </div>
+</div>
+
+<hr class="hdiv">
+
+<!-- ══════════════════════
+02 — CIA Triad
+══════════════════════ -->
+<div class="section" id="s2">
+  <div class="sec-head">
+    <span class="sec-num">II</span>
+    <div class="sec-meta">
+      <div class="sec-title">The CIA Triad — Deep Dive</div>
+      <div class="sec-sub">Confidentiality, Integrity, Availability — the foundational security model</div>
+    </div>
+    <span class="badge b-indigo">Core Model</span>
+  </div>
+
+  <div class="theory">
+    <h4>The CIA Triad — Why It Anchors Everything</h4>
+    <p>Every security control, every policy, every attack can be mapped to one or more of the three CIA properties. When you analyse a vulnerability, you ask: "Does this compromise confidentiality, integrity, availability, or all three?" When you design a control, you ask: "Which CIA property does this protect?" It's the lingua franca of information security.</p>
+    <p>The model is deceptively simple. The hard part is that the three properties often <em>trade off against each other</em>: maximum confidentiality (encrypt everything, share nothing) reduces availability; maximum availability (always accessible, minimal auth) reduces confidentiality. Security engineering is about finding the right balance for your risk context.</p>
+  </div>
+
+  <div class="cia">
+    <div class="cia-pillar">
+      <div class="cp-letter" style="color:var(--indigo);">C</div>
+      <div class="cp-name" style="color:var(--indigo);">Confidentiality</div>
+      <div class="cp-def">Information is accessible only to those authorised to access it. Prevents unauthorized disclosure. Not just about encryption — also about access control, data classification, and need-to-know.</div>
+      <div class="cp-example">Examples: Encrypting customer PII at rest and in transit. Role-based access so HR sees salary data but Finance does not see medical records. VPN for remote worker traffic.</div>
+      <div class="cp-attack" style="background:var(--indigo-light);border-color:rgba(49,46,129,0.2);color:var(--indigo);">Attacks: Data breach, eavesdropping, MITM, credential theft, SQL injection dumping database</div>
+    </div>
+    <div class="cia-pillar">
+      <div class="cp-letter" style="color:var(--crimson);">I</div>
+      <div class="cp-name" style="color:var(--crimson);">Integrity</div>
+      <div class="cp-def">Information is accurate, complete, and has not been modified in an unauthorised way. Includes both data integrity (the stored data) and system integrity (the software/config). Non-repudiation is a related concept.</div>
+      <div class="cp-example">Examples: SHA-256 hashes to verify downloaded files. Digital signatures on software. Database audit logs that record every change with who made it and when. File Integrity Monitoring (Wazuh FIM).</div>
+      <div class="cp-attack" style="background:var(--crimson-light);border-color:rgba(136,19,55,0.2);color:var(--crimson);">Attacks: Malware modifying system files, SQL injection altering records, ransomware encrypting files, DNS poisoning, supply chain tampering</div>
+    </div>
+    <div class="cia-pillar">
+      <div class="cp-letter" style="color:var(--forest);">A</div>
+      <div class="cp-name" style="color:var(--forest);">Availability</div>
+      <div class="cp-def">Systems and information are accessible when needed by authorised users. Includes uptime, performance, and resilience. Often the CIA property that directly costs businesses money when violated — downtime = lost revenue.</div>
+      <div class="cp-example">Examples: Load balancers, redundant data centres, backup power (UPS), DDoS mitigation, cloud auto-scaling. RTO/RPO targets in BCP/DRP. Health monitoring and automated failover.</div>
+      <div class="cp-attack" style="background:var(--forest-light);border-color:rgba(20,83,45,0.2);color:var(--forest);">Attacks: DDoS, ransomware, disk failure without backup, network outage, hardware destruction, Slowloris exhausting web server connections</div>
+    </div>
+  </div>
+
+  <div class="theory forest" style="margin-top:14px;">
+    <h4>Real-World CIA Triad Analysis — AIIMS Ransomware Attack (2022)</h4>
+    <p>In November 2022, the All India Institute of Medical Sciences (AIIMS) Delhi suffered a ransomware attack. Map it to CIA:</p>
+    <p><strong>Confidentiality violated:</strong> Patient records — including prominent politicians' medical data — were potentially exfiltrated. The attackers reportedly demanded ₹200 crore (later reported as a figure in crypto).</p>
+    <p><strong>Integrity violated:</strong> Ransomware encrypted files, rendering them unreadable and effectively corrupted from the hospital's perspective. Systems could not be trusted even after decryption (potential backdoors).</p>
+    <p><strong>Availability severely violated:</strong> Servers offline for 15+ days. Lab reports, billing, patient admission systems all went manual. Patient care was disrupted. This is the most visible impact.</p>
+    <p>Root causes (reported): unpatched systems, no multi-factor authentication, inadequate network segmentation, insufficient backups. Every one of these is a foundational security failure.</p>
+  </div>
+
+  <div class="practical open">
+    <div class="prac-head" onclick="toggleP(this)">
+      <span class="ph-i">📋</span>
+      <span class="ph-t">Exercise 2.1 — CIA Triad mapping for real-world incidents</span>
+      <span class="ph-tag pt-exercise">Concept Exercise</span>
+      <span class="ph-chev">▶</span>
+    </div>
+    <div class="prac-body">
+      <div class="note indigo"><span class="ni">💡</span><span>For each scenario below, identify: which CIA properties are violated, what the impact is, and what control would have prevented it. Write your answers in a Google Doc — this becomes an interview prep resource.</span></div>
+      <ol class="steps" style="margin-top:14px;">
+        <li class="step">
+          <span class="sn">1</span>
+          <div class="sc">
+            <div class="st">Scenario A — Database password file stolen</div>
+            <div class="sd">An attacker exploits a public-facing web application, downloads the application's database password file, and sells it on the dark web. No customers notice anything. Systems are still running.</div>
+            <div class="code" data-label="analysis framework">
+<span class="kw">CIA Violated:</span>   Confidentiality (data stolen, unauthorised access)
+<span class="kw">Impact:</span>         Customer credentials exposed; regulatory penalties (DPDP Act)
+<span class="kw">Control gaps:</span>   No WAF, unpatched application, no data classification,
+                no monitoring for abnormal data export volumes
+<span class="kw">Prevention:</span>     WAF + patch management + DLP + anomaly alerting
+            </div>
+          </div>
+        </li>
+        <li class="step">
+          <span class="sn">2</span>
+          <div class="sc">
+            <div class="st">Scenario B — Insider modifies financial records</div>
+            <div class="sd">A disgruntled finance employee with database access changes salary figures in the payroll system before their last day. The changes aren't noticed until the next payroll run.</div>
+            <div class="code" data-label="your analysis">
+<span class="kw">CIA Violated:</span>   [Write here — what is primarily violated?]
+<span class="kw">Secondary violation:</span> [Availability affected?]
+<span class="kw">Control gaps:</span>   [What controls were missing?]
+<span class="kw">Prevention:</span>     Audit logs + separation of duties + DB activity monitoring
+            </div>
+          </div>
+        </li>
+        <li class="step">
+          <span class="sn">3</span>
+          <div class="sc">
+            <div class="st">Scenario C — UPI payment platform DDoS</div>
+            <div class="sd">A competitor pays a criminal group to DDoS a fintech company's UPI gateway during Diwali peak shopping hours. The platform is unreachable for 3 hours. No data is stolen or modified.</div>
+            <div class="sd">Identify: CIA violation, business impact in Indian context (₹ lost per hour), controls that would mitigate this.</div>
+          </div>
+        </li>
+        <li class="step">
+          <span class="sn">4</span>
+          <div class="sc">
+            <div class="st">Scenario D — Ransomware at a hospital</div>
+            <div class="sd">Ransomware encrypts all files on hospital servers. Some data is exfiltrated before encryption. Servers are unavailable. Medical staff use paper records. Some files are corrupted even after decryption.</div>
+            <div class="sd">This scenario violates ALL THREE CIA properties. Map each violation specifically and rank by severity.</div>
+          </div>
+        </li>
+      </ol>
+    </div>
+  </div>
+
+  <div class="theory gold" style="margin-top:14px;">
+    <h4>Extended Models — Beyond CIA</h4>
+    <p>The CIA triad is sometimes extended with additional properties: <strong>Authenticity</strong> — verifying that communication or data is genuinely from the claimed source (digital signatures). <strong>Non-repudiation</strong> — the sender cannot later deny having sent the message (audit logs, digital signatures). <strong>Accountability</strong> — actions can be traced to individual users (user-specific credentials, audit trails, no shared accounts). These are often grouped as the <em>Parkerian Hexad</em> or the <em>CIA+ model</em>.</p>
+  </div>
+</div>
+
+<hr class="hdiv">
+
+<!-- ══════════════════════
+03 — AAA Model
+══════════════════════ -->
+<div class="section" id="s3">
+  <div class="sec-head">
+    <span class="sec-num">III</span>
+    <div class="sec-meta">
+      <div class="sec-title">The AAA Model</div>
+      <div class="sec-sub">Authentication, Authorization, Accounting — the identity security framework</div>
+    </div>
+    <span class="badge b-ocean">Identity</span>
+  </div>
+
+  <div class="theory ocean">
+    <h4>AAA — How Systems Control and Track Access</h4>
+    <p>Every time you access a system, three questions are answered: <strong>Are you who you claim to be?</strong> (Authentication) <strong>Are you allowed to do this?</strong> (Authorization) <strong>What did you do, and when?</strong> (Accounting/Auditing). Together, these three form the AAA framework — the foundation of access control in every enterprise system.</p>
+    <p>AAA is implemented in networks via RADIUS, TACACS+, and 802.1X. In cloud via IAM policies. In applications via OAuth 2.0 and OIDC. Understanding AAA is prerequisite to understanding firewalls, VPNs, cloud security, and identity management — all of which implement these three concepts.</p>
+  </div>
+
+  <div class="aaa-flow">
+    <div class="aaa-box" style="border-top-color:var(--indigo-mid);">
+      <div class="ab-title" style="color:var(--indigo);">Authentication</div>
+      <div class="ab-desc">Verifying <strong>identity</strong> — proving you are who you claim to be. Not what you're allowed to do — just confirming your identity.</div>
+      <div class="ab-examples">
+        Something you know: Password, PIN, security question<br>
+        Something you have: OTP token, smart card, FIDO2 key<br>
+        Something you are: Fingerprint, face, retina (biometrics)<br><br>
+        MFA combines 2+ factors — significantly stronger than single-factor. Required by DPDP Act for data fiduciaries.
+      </div>
+    </div>
+    <div class="aaa-box" style="border-top-color:var(--crimson-mid);">
+      <div class="ab-title" style="color:var(--crimson);">Authorization</div>
+      <div class="ab-desc">Determining <strong>permissions</strong> — what an authenticated identity is allowed to do. Runs after authentication, not before.</div>
+      <div class="ab-examples">
+        DAC — Discretionary Access Control: owner grants access<br>
+        MAC — Mandatory Access Control: labels (Secret, Top Secret)<br>
+        RBAC — Role-Based: permissions tied to roles (Admin, User)<br>
+        ABAC — Attribute-Based: context-aware (location, device, time)<br><br>
+        Principle: grant minimum permissions needed. Regularly review and revoke.
+      </div>
+    </div>
+    <div class="aaa-box" style="border-top-color:var(--forest-mid);">
+      <div class="ab-title" style="color:var(--forest);">Accounting / Auditing</div>
+      <div class="ab-desc">Recording <strong>what happened</strong> — who did what, when, from where, to which resource, with what outcome.</div>
+      <div class="ab-examples">
+        Audit logs: Windows Event Logs (4624, 4625, 4688...)<br>
+        Syslog: Linux auth.log, application logs<br>
+        SIEM: Aggregated, searchable, alert-capable<br>
+        CERT-In requires 180-day log retention<br><br>
+        Without accounting: no forensics, no incident investigation, no compliance evidence.
+      </div>
+    </div>
+  </div>
+
+  <div class="practical open">
+    <div class="prac-head" onclick="toggleP(this)">
+      <span class="ph-i">🔑</span>
+      <span class="ph-t">Lab 3.1 — Observe AAA in action on Linux and Windows</span>
+      <span class="ph-tag pt-lab">Observation Lab</span>
+      <span class="ph-chev">▶</span>
+    </div>
+    <div class="prac-body">
+      <ol class="steps">
+        <li class="step">
+          <span class="sn">1</span>
+          <div class="sc">
+            <div class="st">Authentication — try to login with wrong password, then correct</div>
+            <div class="code" data-label="linux bash">
+<span class="cm"># Attempt failed login (wrong password)</span>
+<span class="cmd">su</span> - wronguser
+<span class="cm"># Expected: Authentication failure</span>
+
+<span class="cm"># Successful login</span>
+<span class="cmd">sudo</span> ls /root
+<span class="cm"># Enter correct password — succeeds</span>
+
+<span class="cm"># Now observe that auth.log recorded both attempts</span>
+<span class="cmd">sudo tail</span> <span class="flag">-20</span> /var/log/auth.log
+<span class="cm"># Failed: "Failed password for wronguser from..."</span>
+<span class="cm"># Success: "sudo: YOUR_USER : TTY=pts/0 ; PWD=... ; COMMAND=/bin/ls"</span>
+            </div>
+          </div>
+        </li>
+        <li class="step">
+          <span class="sn">2</span>
+          <div class="sc">
+            <div class="st">Authorization — test access control by creating a restricted file</div>
+            <div class="code" data-label="linux bash">
+<span class="cm"># Create a file accessible only by root</span>
+<span class="cmd">sudo bash -c</span> <span class="val">'echo "top secret" > /tmp/restricted.txt'</span>
+<span class="cmd">sudo chmod</span> 600 /tmp/restricted.txt  <span class="cm"># owner read/write only</span>
+<span class="cmd">sudo chown</span> root:root /tmp/restricted.txt
+
+<span class="cm"># Try to read as normal user — should fail</span>
+<span class="cmd">cat</span> /tmp/restricted.txt
+<span class="cm"># cat: /tmp/restricted.txt: Permission denied</span>
+
+<span class="cm"># Read permissions with ls -la</span>
+<span class="cmd">ls -la</span> /tmp/restricted.txt
+<span class="cm"># -rw------- 1 root root ... = only root can read/write</span>
+            </div>
+          </div>
+        </li>
+        <li class="step">
+          <span class="sn">3</span>
+          <div class="sc">
+            <div class="st">Accounting — view sudo audit trail</div>
+            <div class="code" data-label="linux bash">
+<span class="cm"># View all sudo commands run by your user today</span>
+<span class="cmd">sudo journalctl</span> <span class="flag">-u</span> sudo <span class="flag">--since today</span>
+<span class="cm"># OR</span>
+<span class="cmd">sudo grep</span> <span class="val">"sudo:"</span> /var/log/auth.log | <span class="cmd">tail -20</span>
+<span class="cm"># Each entry: user, TTY, directory, command, timestamp</span>
+<span class="cm"># This is the audit trail — "Accounting" in AAA</span>
+
+<span class="cm"># Windows equivalent: Event ID 4688 (process creation) in Security log</span>
+<span class="cm"># View in PowerShell:</span>
+<span class="cm"># Get-WinEvent -FilterHashtable @{LogName='Security';Id=4688} -MaxEvents 10</span>
+            </div>
+          </div>
+        </li>
+        <li class="step">
+          <span class="sn">4</span>
+          <div class="sc">
+            <div class="st">Multi-Factor Authentication — enable TOTP for SSH</div>
+            <div class="code" data-label="bash">
+<span class="cmd">sudo apt install</span> libpam-google-authenticator
+<span class="cmd">google-authenticator</span>
+<span class="cm"># Follow prompts to set up TOTP</span>
+<span class="cm"># Scan QR code with Google Authenticator / Authy app</span>
+<span class="cm"># Now SSH login requires: password + 6-digit TOTP code</span>
+<span class="cm"># This is MFA: Something you know (password) + Something you have (phone)</span>
+            </div>
+          </div>
+        </li>
+      </ol>
+    </div>
+  </div>
+</div>
+
+<hr class="hdiv">
+
+<!-- ══════════════════════
+04 — Threat Landscape
+══════════════════════ -->
+<div class="section" id="s4">
+  <div class="sec-head">
+    <span class="sec-num">IV</span>
+    <div class="sec-meta">
+      <div class="sec-title">The Threat Landscape</div>
+      <div class="sec-sub">Vulnerabilities, threats, risks, and the risk management equation</div>
+    </div>
+    <span class="badge b-crimson">Threats</span>
+  </div>
+
+  <div class="theory crimson">
+    <h4>Vulnerability, Threat, Risk — Three Different Things</h4>
+    <p>These three terms are often conflated but mean very different things. <strong>A vulnerability</strong> is a weakness in a system — an unpatched CVE, a misconfigured firewall rule, an employee who hasn't had security training. A vulnerability alone causes no harm.</p>
+    <p><strong>A threat</strong> is any potential event that could exploit a vulnerability — a ransomware group, a disgruntled employee, a software bug. A threat without a vulnerability has nothing to exploit.</p>
+    <p><strong>Risk</strong> is the combination of likelihood (how probable is a threat exploiting a vulnerability?) and impact (how bad would it be?). Risk = Likelihood × Impact. This equation drives every resource allocation decision in security. You don't treat every risk equally — you treat the highest risks first.</p>
+  </div>
+
+  <div class="theory" style="margin-top:12px;">
+    <h4>The Risk Equation in Practice</h4>
+    <p>An ancient server running Telnet (vulnerability: cleartext protocol, unpatched OS) in a sealed, disconnected research lab with no internet access has a <em>low risk</em> — the threat (external attacker) has no pathway to reach it. The same server on your public-facing DMZ has a <em>critical risk</em>. Same vulnerability, radically different risk, because the threat landscape changed.</p>
+    <p>Risk can be reduced by: eliminating the vulnerability (patch, reconfigure), reducing likelihood (firewalls, IDS, monitoring), reducing impact (backups, incident response plan, cyber insurance), or accepting the residual risk after controls are applied.</p>
+  </div>
+
+  <table class="dtable">
+    <thead><tr><th>Term</th><th>Definition</th><th>Example</th><th>Who Manages It</th></tr></thead>
+    <tbody>
+      <tr>
+        <td class="ti">Vulnerability</td>
+        <td>Weakness that can be exploited</td>
+        <td>Unpatched Apache web server (CVE-2021-41773), misconfigured S3 bucket, no MFA on admin account</td>
+        <td class="tf">IT/Security team — patch, configure, harden</td>
+      </tr>
+      <tr>
+        <td class="ti">Threat</td>
+        <td>Potential cause of harm (agent or event)</td>
+        <td>Ransomware group, insider threat, accidental data deletion, natural disaster, software bug</td>
+        <td class="to">Threat intelligence — understand, monitor, anticipate</td>
+      </tr>
+      <tr>
+        <td class="ti">Risk</td>
+        <td>Likelihood × Impact of a threat exploiting a vulnerability</td>
+        <td>"Probability that ransomware encrypts our backup server × financial impact of 1 week downtime"</td>
+        <td class="tg">Risk manager — assess, treat, accept, transfer, avoid</td>
+      </tr>
+      <tr>
+        <td class="ti">Asset</td>
+        <td>Anything of value to the organization</td>
+        <td>Customer database, source code, brand reputation, employee data, physical servers, IP</td>
+        <td class="to">Asset owners — classify, protect, inventory</td>
+      </tr>
+      <tr>
+        <td class="ti">Impact</td>
+        <td>Consequence if the risk materialises</td>
+        <td>Financial loss (₹), regulatory fine (DPDP ₹250cr), reputational damage, operational disruption</td>
+        <td class="tg">Business + security jointly assess</td>
+      </tr>
+      <tr>
+        <td class="ti">Exposure</td>
+        <td>Degree to which a vulnerability is accessible to threats</td>
+        <td>Port 22 open to the internet = high exposure. Port 22 open only from VPN = low exposure</td>
+        <td class="tf">Architecture and network security team</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="practical open">
+    <div class="prac-head" onclick="toggleP(this)">
+      <span class="ph-i">⚖️</span>
+      <span class="ph-t">Exercise 4.1 — Build a mini risk assessment for a small business</span>
+      <span class="ph-tag pt-exercise">Risk Exercise</span>
+      <span class="ph-chev">▶</span>
+    </div>
+    <div class="prac-body">
+      <div class="note indigo"><span class="ni">💡</span><span><strong>Scenario:</strong> A 20-person CA firm in Ujjain processes client GST filings and tax returns. They store financial data on a shared Windows PC with no antivirus. All employees use a single shared password for the Wi-Fi. Accounting software is 3 years out of support.</span></div>
+      <ol class="steps" style="margin-top:14px;">
+        <li class="step">
+          <span class="sn">1</span>
+          <div class="sc">
+            <div class="st">List the top 5 vulnerabilities</div>
+            <div class="code" data-label="vulnerability list">
+<span class="kw">V1:</span> No antivirus on Windows PCs — malware can execute undetected
+<span class="kw">V2:</span> Unsupported accounting software — unpatched CVEs exploitable
+<span class="kw">V3:</span> Shared Wi-Fi password — any ex-employee or visitor can access LAN
+<span class="kw">V4:</span> No data backup — ransomware = permanent loss
+<span class="kw">V5:</span> Single shared login for accounting software — no audit trail
+
+<span class="cm"># Your additions based on the scenario:</span>
+<span class="kw">V6:</span> [Add another you identify]
+            </div>
+          </div>
+        </li>
+        <li class="step">
+          <span class="sn">2</span>
+          <div class="sc">
+            <div class="st">Score each risk (Likelihood 1–5 × Impact 1–5)</div>
+            <div class="code" data-label="risk scoring">
+<span class="kw">Risk</span>                    | <span class="kw">Likelihood</span> | <span class="kw">Impact</span> | <span class="kw">Score</span> | <span class="kw">Priority</span>
+No backups + ransomware | 4 (possible) | 5 (critical) | <span class="hi">20</span>    | P1 - CRITICAL
+No AV - malware infect  | 4            | 4            | <span class="hi">16</span>    | P1 - HIGH
+Unsupported software    | 3            | 4            | 12    | P2 - HIGH
+Shared Wi-Fi password   | 3            | 3            | 9     | P2 - MEDIUM
+No individual accounts  | 2            | 3            | 6     | P3 - MEDIUM
+
+<span class="cm"># Treatment plan for P1 risks:</span>
+<span class="kw">Backup:</span>     3-2-1 rule (3 copies, 2 media types, 1 offsite)
+<span class="kw">Antivirus:</span>  Install free Windows Defender + configure updates
+            </div>
+          </div>
+        </li>
+      </ol>
+    </div>
+  </div>
+</div>
+
+<hr class="hdiv">
+
+<!-- ══════════════════════
+05 — Threat Actors & Motives
+══════════════════════ -->
+<div class="section" id="s5">
+  <div class="sec-head">
+    <span class="sec-num">V</span>
+    <div class="sec-meta">
+      <div class="sec-title">Threat Actors & Motives</div>
+      <div class="sec-sub">Who attacks, why they attack, and what resources they have</div>
+    </div>
+    <span class="badge b-crimson">Adversary</span>
+  </div>
+
+  <div class="theory crimson">
+    <h4>Knowing Your Adversary Changes Your Defence</h4>
+    <p>Not all attackers are the same. A nation-state group (APT) with unlimited budget and zero-day exploits requires different defences than an opportunistic script kiddie running automated vulnerability scanners. Understanding who is likely to target you — based on your industry, size, geography, and data — helps you prioritize defences correctly.</p>
+    <p>Threat actor profiling is a core CTI (Cyber Threat Intelligence) skill. The key attributes: <strong>motivation</strong> (why are they attacking?), <strong>capability</strong> (what tools and skills do they have?), <strong>opportunity</strong> (what access or vulnerability enables the attack?), and <strong>target selection</strong> (who do they attack?).</p>
+  </div>
+
+  <div class="threat-row">
+    <span class="tr-icon">🏛️</span>
+    <span class="tr-name">Nation-State / APT</span>
+    <div class="tr-desc">Government-sponsored groups (APT28/Russia, APT41/China, Lazarus/North Korea). Motivation: espionage, sabotage, financial gain (sanctions evasion). Capability: highest — zero-days, custom malware, unlimited budget. Target: government, defence, critical infrastructure, BFSI. India-specific risk: HIGH from Chinese and Pakistani state actors.</div>
+    <span class="tr-sev" style="background:var(--crimson-light);color:var(--crimson);border-color:rgba(136,19,55,0.2);">CRITICAL</span>
+  </div>
+  <div class="threat-row">
+    <span class="tr-icon">💰</span>
+    <span class="tr-name">Cybercriminals</span>
+    <div class="tr-desc">Financially motivated organised crime groups. Ransomware-as-a-Service operators, card fraud rings, BEC (Business Email Compromise) groups. Motivation: money. Capability: moderate to high — use affiliate model to scale. Target: anyone who can pay or has valuable data. Indian BFSI and healthcare are primary targets.</div>
+    <span class="tr-sev" style="background:var(--crimson-light);color:var(--crimson);border-color:rgba(136,19,55,0.2);">HIGH</span>
+  </div>
+  <div class="threat-row">
+    <span class="tr-icon">😤</span>
+    <span class="tr-name">Insider Threat</span>
+    <div class="tr-desc">Employees, contractors, partners with legitimate access. Disgruntled employees (intentional harm), negligent users (accidental), or compromised accounts (used by external attackers). Motivation: revenge, financial (selling data), ideology, or simply carelessness. Most damaging per incident — have authorised access and know the systems.</div>
+    <span class="tr-sev" style="background:var(--gold-light);color:var(--gold);border-color:rgba(113,63,18,0.2);">HIGH</span>
+  </div>
+  <div class="threat-row">
+    <span class="tr-icon">✊</span>
+    <span class="tr-name">Hacktivists</span>
+    <div class="tr-desc">Ideologically motivated attackers. Anonymous, Team Poison. Motivation: political, social, environmental causes. Capability: low to moderate — usually DDoS and website defacement. Target: organizations whose actions they oppose. Common during political events, elections, social controversies in India.</div>
+    <span class="tr-sev" style="background:var(--gold-light);color:var(--gold);border-color:rgba(113,63,18,0.2);">MEDIUM</span>
+  </div>
+  <div class="threat-row">
+    <span class="tr-icon">🧑‍💻</span>
+    <span class="tr-name">Script Kiddies</span>
+    <div class="tr-desc">Inexperienced attackers using pre-built tools without understanding them. Motivation: notoriety, curiosity, vandalism. Capability: low — running automated scanners, using public exploits. Opportunistic — attack whatever is vulnerable, not targeting specifically. Volume-based: they scan everything, and unpatched systems get hit regardless of importance.</div>
+    <span class="tr-sev" style="background:var(--forest-light);color:var(--forest);border-color:rgba(20,83,45,0.2);">LOW–MED</span>
+  </div>
+  <div class="threat-row">
+    <span class="tr-icon">🔍</span>
+    <span class="tr-name">Competitive Intelligence</span>
+    <div class="tr-desc">Corporate espionage — stealing trade secrets, customer lists, pricing, R&D. May use hired hackers, social engineering, or corrupt insiders. Motivation: competitive advantage. Target: tech companies, pharmaceutical R&D (significant for Indian pharma), startups before IPO. Often goes unreported.</div>
+    <span class="tr-sev" style="background:var(--gold-light);color:var(--gold);border-color:rgba(113,63,18,0.2);">MEDIUM</span>
+  </div>
+</div>
+
+<hr class="hdiv">
+
+<!-- ══════════════════════
+06 — Attack Categories
+══════════════════════ -->
+<div class="section" id="s6">
+  <div class="sec-head">
+    <span class="sec-num">VI</span>
+    <div class="sec-meta">
+      <div class="sec-title">Attack Categories</div>
+      <div class="sec-sub">Active vs passive, internal vs external, targeted vs opportunistic</div>
+    </div>
+    <span class="badge b-gold">Classification</span>
+  </div>
+
+  <div class="theory gold">
+    <h4>Why Classification Matters</h4>
+    <p>Attack classification isn't academic — it directly affects detection and response strategies. A passive attack (eavesdropping) leaves no trace on the target system; your firewall can't see it. An active attack modifies something and can be detected. Understanding these distinctions shapes how you design your monitoring and response capabilities.</p>
+  </div>
+
+  <div class="attack-grid">
+    <div class="attack-cat">
+      <div class="ac-head" style="color:var(--indigo);">
+        <span>👁️</span> Passive Attacks
+      </div>
+      <div class="ac-item"><span class="ac-bullet" style="color:var(--indigo);">▸</span><div><strong>Eavesdropping / Sniffing:</strong> Monitoring network traffic to capture data, credentials, or metadata. Leaves no trace on the target. Example: capturing cleartext FTP credentials on a shared network.</div></div>
+      <div class="ac-item"><span class="ac-bullet" style="color:var(--indigo);">▸</span><div><strong>Traffic Analysis:</strong> Even encrypted traffic reveals patterns — who communicates with whom, how often, data volumes. Used for profiling and timing attacks.</div></div>
+      <div class="ac-item"><span class="ac-bullet" style="color:var(--indigo);">▸</span><div><strong>Reconnaissance:</strong> OSINT gathering before an attack — LinkedIn scraping, Shodan scanning, DNS enumeration. Entirely passive from the target's perspective.</div></div>
+      <div style="margin-top:10px;padding:8px;background:var(--indigo-light);border-radius:2px;font-size:12px;color:var(--text-muted);">
+        <strong>Detection challenge:</strong> Passive attacks are hard to detect because nothing is changed on the target. Prevention focuses on encryption (TLS, VPN, SSH) so captured traffic is useless.
+      </div>
+    </div>
+    <div class="attack-cat">
+      <div class="ac-head" style="color:var(--crimson);">
+        <span>⚡</span> Active Attacks
+      </div>
+      <div class="ac-item"><span class="ac-bullet" style="color:var(--crimson);">▸</span><div><strong>Masquerade:</strong> Impersonating a legitimate user or system to gain access. Involves forged credentials, spoofed IP addresses, or fake identity.</div></div>
+      <div class="ac-item"><span class="ac-bullet" style="color:var(--crimson);">▸</span><div><strong>Replay Attack:</strong> Capturing a valid authentication sequence and replaying it later to gain access — without knowing the actual credentials.</div></div>
+      <div class="ac-item"><span class="ac-bullet" style="color:var(--crimson);">▸</span><div><strong>Modification:</strong> Altering data in transit or at rest. SQL injection modifying database records. File system modifications by malware. DNS cache poisoning.</div></div>
+      <div class="ac-item"><span class="ac-bullet" style="color:var(--crimson);">▸</span><div><strong>Denial of Service:</strong> Preventing legitimate users from accessing resources. DDoS, Slowloris, resource exhaustion, ransomware encrypting files.</div></div>
+      <div style="margin-top:10px;padding:8px;background:var(--crimson-light);border-radius:2px;font-size:12px;color:var(--text-muted);">
+        <strong>Detection opportunity:</strong> Active attacks modify system state — network traffic anomalies, log entries, file changes — which IDS/SIEM can detect.
+      </div>
+    </div>
+  </div>
+
+  <div class="grid" style="margin-top:14px;">
+    <div class="card">
+      <div class="ck">Targeted Attack</div>
+      <div class="cv"><strong>Specific victim selected deliberately.</strong> APT groups research target, craft spear-phishing. Time-consuming, expensive. You've been chosen because of what you have or know. Harder to prevent with generic controls.</div>
+    </div>
+    <div class="card">
+      <div class="ck c">Opportunistic Attack</div>
+      <div class="cv"><strong>Mass scanning for easy victims.</strong> Script kiddies, automated exploit kits. "Spray and pray" — hit everything that's vulnerable. Basic patching and configuration significantly reduces exposure.</div>
+    </div>
+    <div class="card">
+      <div class="ck o">Internal Attack</div>
+      <div class="cv"><strong>Originates from inside the perimeter.</strong> Has network access already. Can bypass perimeter controls. Requires internal network segmentation, least privilege, and behavioural monitoring to detect.</div>
+    </div>
+    <div class="card">
+      <div class="ck f">External Attack</div>
+      <div class="cv"><strong>Originates from outside the network.</strong> Must penetrate perimeter defences first. Firewall and IPS most effective here. Once inside, behaves like internal attack.</div>
+    </div>
+  </div>
+</div>
+
+<hr class="hdiv">
+
+<!-- ══════════════════════
+07 — Common Attack Types
+══════════════════════ -->
+<div class="section" id="s7">
+  <div class="sec-head">
+    <span class="sec-num">VII</span>
+    <div class="sec-meta">
+      <div class="sec-title">Common Attack Types</div>
+      <div class="sec-sub">Phishing, social engineering, MitM, injection, brute force, and more</div>
+    </div>
+    <span class="badge b-crimson">Attack Types</span>
+  </div>
+
+  <div class="theory crimson">
+    <h4>The Attack Surface Is Humans + Technology</h4>
+    <p>The majority of successful attacks begin with the human layer before moving to technical exploitation. A technically perfect firewall cannot prevent an employee from being manipulated into emailing credentials to an attacker. Understanding attack types bridges the technical and human dimensions of security.</p>
+  </div>
+
+  <table class="dtable">
+    <thead><tr><th>Attack Type</th><th>Description</th><th>Real Example</th><th>Primary Prevention</th></tr></thead>
+    <tbody>
+      <tr>
+        <td class="ti">Phishing</td>
+        <td>Deceptive emails impersonating trusted entities to steal credentials or deliver malware</td>
+        <td>Fake SBI email asking customer to verify account — leads to credential harvest page</td>
+        <td class="tf">Email filtering, DMARC/SPF, security awareness training</td>
+      </tr>
+      <tr>
+        <td class="ti">Spear Phishing</td>
+        <td>Highly targeted phishing using OSINT about the specific victim (name, role, recent activity)</td>
+        <td>Email to CFO from "CEO" requesting urgent NEFT transfer — Business Email Compromise</td>
+        <td class="tf">Strict fund transfer procedures, phone verification for large transfers</td>
+      </tr>
+      <tr>
+        <td class="ti">Vishing</td>
+        <td>Voice phishing — phone calls impersonating IT support, bank fraud teams, government</td>
+        <td>"This is your bank's fraud prevention team — we need your OTP to block a suspicious transaction"</td>
+        <td class="tf">Never share OTP by phone. Banks never ask for OTP. Staff training.</td>
+      </tr>
+      <tr>
+        <td class="ti">Pretexting</td>
+        <td>Fabricating a scenario (pretext) to manipulate someone into revealing information or taking an action</td>
+        <td>Caller pretends to be IT support: "I need your password to fix your account access issue"</td>
+        <td class="tf">Policy: IT will never ask for passwords. Identity verification procedures.</td>
+      </tr>
+      <tr>
+        <td class="ti">MITM</td>
+        <td>Attacker positions between two communicating parties, intercepting and potentially modifying traffic</td>
+        <td>ARP poisoning on corporate LAN allows attacker to intercept traffic between employees and file server</td>
+        <td class="tf">Encryption (TLS everywhere), HTTPS enforcement, VPN, certificate pinning</td>
+      </tr>
+      <tr>
+        <td class="ti">Brute Force</td>
+        <td>Systematically trying all possible passwords or keys until the correct one is found</td>
+        <td>Automated tool trying millions of password combinations against an SSH login page</td>
+        <td class="tf">Account lockout, MFA, fail2ban, strong password policy, rate limiting</td>
+      </tr>
+      <tr>
+        <td class="ti">Credential Stuffing</td>
+        <td>Using leaked username+password pairs from one breach to log into other services</td>
+        <td>Zomato breach credentials used to log into Swiggy accounts (password reuse)</td>
+        <td class="tf">MFA, unique passwords per service, password manager, breach monitoring</td>
+      </tr>
+      <tr>
+        <td class="ti">SQL Injection</td>
+        <td>Inserting malicious SQL code into application inputs that gets executed by the database</td>
+        <td>Login form accepts <code style="color:var(--indigo-mid);">' OR '1'='1</code> to bypass authentication</td>
+        <td class="tf">Parameterized queries, input validation, WAF, least privilege DB accounts</td>
+      </tr>
+      <tr>
+        <td class="ti">XSS</td>
+        <td>Injecting malicious scripts into web pages viewed by other users — steals sessions</td>
+        <td>Comment field on a website stores <code style="color:var(--indigo-mid);">&lt;script&gt;steal_cookie()&lt;/script&gt;</code></td>
+        <td class="tf">Output encoding, CSP headers, HTTPOnly cookie flags</td>
+      </tr>
+      <tr>
+        <td class="ti">Supply Chain Attack</td>
+        <td>Compromising trusted software or hardware before it reaches the target organization</td>
+        <td>SolarWinds Orion: 18,000+ organizations compromised via a software update</td>
+        <td class="tf">Software composition analysis, vendor security assessment, code signing verification</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<hr class="hdiv">
+
+<!-- ══════════════════════
+08 — Malware Deep Dive
+══════════════════════ -->
+<div class="section" id="s8">
+  <div class="sec-head">
+    <span class="sec-num">VIII</span>
+    <div class="sec-meta">
+      <div class="sec-title">Malware — Types, Behaviour & Detection</div>
+      <div class="sec-sub">Virus, worm, trojan, ransomware, rootkit, spyware, keylogger — complete taxonomy</div>
+    </div>
+    <span class="badge b-crimson">Malware</span>
+  </div>
+
+  <div class="theory crimson">
+    <h4>Malware — Malicious Software in All Forms</h4>
+    <p><strong>Malware</strong> (malicious software) is any software intentionally designed to cause harm to a computer, server, client, or network. Understanding malware types is foundational — they differ in how they spread, what they do, how they persist, and how they're detected. Each type demands different defensive and response measures.</p>
+  </div>
+
+  <table class="dtable">
+    <thead><tr><th>Type</th><th>Self-Replication</th><th>Primary Action</th><th>Persistence</th><th>Detection Signal</th></tr></thead>
+    <tbody>
+      <tr>
+        <td class="ti">Virus</td>
+        <td class="tf">Yes — attaches to files</td>
+        <td>Corrupts/deletes files, delivers payload. Must be executed by user opening infected file.</td>
+        <td>Infects executables. Registry modifications.</td>
+        <td>AV signature match, file hash change (FIM)</td>
+      </tr>
+      <tr>
+        <td class="ti">Worm</td>
+        <td class="tf">Yes — autonomous spread</td>
+        <td>Spreads across networks exploiting vulnerabilities. No user interaction needed. WannaCry was a worm using EternalBlue.</td>
+        <td>Copies itself to new hosts continuously</td>
+        <td>High outbound network scanning, lateral connections</td>
+      </tr>
+      <tr>
+        <td class="ti">Trojan</td>
+        <td>No — user installs it</td>
+        <td>Appears legitimate (game, tool) but contains hidden malicious payload. Installs backdoor, steals data.</td>
+        <td>Registry Run keys, scheduled tasks, services</td>
+        <td>Unusual process spawning, unexpected network connections</td>
+      </tr>
+      <tr>
+        <td class="ti">Ransomware</td>
+        <td>Sometimes (worm-based)</td>
+        <td>Encrypts victim's files, demands payment for decryption key. Exfiltrates data before encrypting (double extortion).</td>
+        <td>Often doesn't — destroys itself after encrypting. Some establish persistence.</td>
+        <td>Mass file renames, vssadmin delete shadows, high disk I/O, C2 communication</td>
+      </tr>
+      <tr>
+        <td class="ti">Rootkit</td>
+        <td>No</td>
+        <td>Hides itself and other malware at OS level. Intercepts system calls. Attacker maintains hidden, persistent access. Very hard to detect.</td>
+        <td>Kernel-level modification, boot sector infection</td>
+        <td>Discrepancy between process list and raw disk scan; BSOD on AV scan</td>
+      </tr>
+      <tr>
+        <td class="ti">Keylogger</td>
+        <td>No</td>
+        <td>Records all keystrokes, capturing passwords, PINs, credit card numbers, messages. Can be hardware or software.</td>
+        <td>Registry, startup folder, browser extension</td>
+        <td>Unusual process with keyboard API hooks, data written to hidden files</td>
+      </tr>
+      <tr>
+        <td class="ti">Spyware</td>
+        <td>No</td>
+        <td>Secretly monitors user activity — browsing, location, microphone, camera. Often bundled with free software.</td>
+        <td>Browser extensions, scheduled tasks</td>
+        <td>Unexpected data transmissions, battery drain, camera/mic activation</td>
+      </tr>
+      <tr>
+        <td class="ti">RAT (Remote Access Trojan)</td>
+        <td>No</td>
+        <td>Full remote control of victim machine — screenshot, file access, webcam, keylog, command execution. Used by APTs. Agent Tesla, AsyncRAT, njRAT.</td>
+        <td>Service, registry, scheduled task, startup</td>
+        <td>Outbound C2 connections, periodic beaconing, unusual process network activity</td>
+      </tr>
+      <tr>
+        <td class="ti">Botnet / Bot</td>
+        <td>Yes (via exploitation)</td>
+        <td>Infected device joins a botnet under attacker's command. Used for: DDoS, spam, credential stuffing, crypto mining, proxy. Mirai botnet had 600k IoT devices.</td>
+        <td>Cron, registry, service</td>
+        <td>Unusual outbound traffic to C2 server, mass email sending, resource exhaustion</td>
+      </tr>
+      <tr>
+        <td class="ti">Fileless Malware</td>
+        <td>No file on disk</td>
+        <td>Runs entirely in memory. Uses legitimate Windows tools (PowerShell, WMI, mshta). No file = no file-based AV detection. Increasingly used by APTs.</td>
+        <td>Registry, scheduled tasks, WMI subscriptions</td>
+        <td>Powershell with encoded commands, unusual LOLBin activity, Sysmon Event ID 1</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="practical open">
+    <div class="prac-head" onclick="toggleP(this)">
+      <span class="ph-i">🧪</span>
+      <span class="ph-t">Lab 8.1 — Analyse malware behaviour in Any.run sandbox</span>
+      <span class="ph-tag pt-lab">Sandbox Analysis</span>
+      <span class="ph-chev">▶</span>
+    </div>
+    <div class="prac-body">
+      <div class="note forest"><span class="ni">✅</span><span>Any.run (any.run) is a free interactive malware sandbox. You can analyse suspicious files in a safe environment and observe their behaviour. Free tier allows 3-minute public analysis sessions. <strong>Never run actual malware outside a sandbox.</strong></span></div>
+      <ol class="steps" style="margin-top:14px;">
+        <li class="step">
+          <span class="sn">1</span>
+          <div class="sc">
+            <div class="st">Create a free Any.run account and explore public analyses</div>
+            <div class="sd">Go to <code style="color:var(--indigo-mid)">app.any.run</code>. You don't need to upload malware — there's a huge database of public analyses. Search for "AsyncRAT" or "Emotet" to see real analyses of these malware families.</div>
+          </div>
+        </li>
+        <li class="step">
+          <span class="sn">2</span>
+          <div class="sc">
+            <div class="st">Analyse what a RAT does — identify its behaviours</div>
+            <div class="sd">In an AsyncRAT analysis, observe and note each behaviour category:</div>
+            <div class="code" data-label="what to document">
+<span class="kw">PROCESS TREE:</span>
+  Which parent process spawned the malware?
+  Did it launch cmd.exe or powershell.exe?
+  Did it inject into another process? (e.g., explorer.exe)
+
+<span class="kw">NETWORK ACTIVITY:</span>
+  What IP/port did it connect to? (C2 server)
+  Is there a beaconing pattern (regular intervals)?
+  DNS queries to unusual domains?
+
+<span class="kw">PERSISTENCE MECHANISMS:</span>
+  Registry Run key added?
+  Scheduled task created?
+  File copied to AppData or Temp folder?
+
+<span class="kw">FILE SYSTEM:</span>
+  Files written to disk? Where?
+  Files read? (Looking for credentials, documents?)
+  Mutex created? (Prevents multiple instances)
+
+<span class="kw">CIA MAPPING:</span>
+  Does this malware violate C? I? A? All three?
+  What data is at risk if this runs on a corporate PC?
+            </div>
+          </div>
+        </li>
+        <li class="step">
+          <span class="sn">3</span>
+          <div class="sc">
+            <div class="st">Check the malware's hash on VirusTotal</div>
+            <div class="code" data-label="virustotal">
+<span class="cm"># Find the SHA256 hash in the Any.run report (file details section)</span>
+<span class="cm"># Go to virustotal.com and search for the hash</span>
+
+<span class="cm"># What to record:</span>
+<span class="kw">Detection rate:</span>   X/72 engines detected it
+<span class="kw">Malware family:</span>   AsyncRAT / Emotet / etc.
+<span class="kw">MITRE ATT&CK:</span>    Which techniques are mapped?
+<span class="kw">Behavior tab:</span>    Files dropped, registry changes, network connections
+<span class="kw">Relations tab:</span>   Other files/domains/IPs related to this malware
+            </div>
+          </div>
+        </li>
+      </ol>
+    </div>
+  </div>
+</div>
+
+<hr class="hdiv">
+
+<!-- ══════════════════════
+09 — Security Controls
+══════════════════════ -->
+<div class="section" id="s9">
+  <div class="sec-head">
+    <span class="sec-num">IX</span>
+    <div class="sec-meta">
+      <div class="sec-title">Security Controls</div>
+      <div class="sec-sub">Preventive, detective, corrective, and deterrent — the control taxonomy</div>
+    </div>
+    <span class="badge b-forest">Controls</span>
+  </div>
+
+  <div class="theory forest">
+    <h4>Controls — The Implementation of Security Policy</h4>
+    <p>A <strong>security control</strong> is any safeguard, countermeasure, or action taken to reduce security risk. Controls are the bridge between policy ("we must protect customer data") and reality ("here's the AES-256 encryption, access control list, and audit log that implements that policy").</p>
+    <p>Controls are classified in two ways: by <em>function</em> (what they do) and by <em>type</em> (how they do it). Understanding both dimensions helps you identify gaps: if you have many preventive controls but no detective controls, you may be breached without knowing it.</p>
+  </div>
+
+  <div class="grid">
+    <div class="card" style="border-top:3px solid var(--forest-mid);">
+      <div class="ck f">Preventive</div>
+      <div class="cv">Stop an attack before it succeeds. Firewall blocking inbound connections. MFA preventing unauthorized login. Encryption making stolen data useless. Input validation preventing SQL injection. <strong>Goal: make the attack impossible or fail.</strong></div>
+    </div>
+    <div class="card" style="border-top:3px solid var(--indigo-mid);">
+      <div class="ck">Detective</div>
+      <div class="cv">Identify that an attack has occurred or is occurring. IDS/SIEM alerts. CCTV. Audit logs showing failed logins. File integrity monitoring alerting to modified system files. <strong>Goal: detect breaches, minimize dwell time.</strong></div>
+    </div>
+    <div class="card" style="border-top:3px solid var(--ocean-mid);">
+      <div class="ck o">Corrective</div>
+      <div class="cv">Restore normal operations after a security event. Restoring from backup after ransomware. Patching the vulnerability that was exploited. Revoking compromised credentials. IR plan execution. <strong>Goal: reduce impact, restore service.</strong></div>
+    </div>
+    <div class="card" style="border-top:3px solid var(--gold-mid);">
+      <div class="ck g">Deterrent</div>
+      <div class="cv">Discourage potential attackers without blocking them. CCTV signage. "All activity is monitored and logged" banners. Legal warnings. Visible security presence. <strong>Goal: make attacker choose an easier target.</strong></div>
+    </div>
+    <div class="card" style="border-top:3px solid var(--plum-mid);">
+      <div class="ck p">Compensating</div>
+      <div class="cv">Alternative controls when primary controls can't be implemented. Can't patch a legacy medical device OS (manufacturer doesn't support it)? Network isolate it instead. <strong>Goal: achieve equivalent security outcome differently.</strong></div>
+    </div>
+    <div class="card" style="border-top:3px solid var(--crimson-mid);">
+      <div class="ck c">Recovery</div>
+      <div class="cv">Restore capabilities after a major incident. Disaster recovery plan. Backup restoration procedures. Business continuity arrangements. IR retainer. <strong>Goal: ensure organization survives even severe incidents.</strong></div>
+    </div>
+  </div>
+
+  <div class="theory ocean" style="margin-top:14px;">
+    <h4>Control Types — Administrative, Technical, Physical</h4>
+    <p><strong>Administrative (Management) controls:</strong> Policies, procedures, training, standards. "No sharing of passwords" policy. Annual security awareness training. Background checks for new employees. Vendor security assessment questionnaires. These define expected behaviour but rely on people following them.</p>
+    <p><strong>Technical (Logical) controls:</strong> Software and hardware enforcing security. Firewalls, IDS/IPS, encryption, MFA, access control lists, audit logs, antivirus, SIEM. These enforce requirements automatically regardless of human behaviour. Generally more reliable than administrative controls.</p>
+    <p><strong>Physical controls:</strong> Protect physical access to systems and facilities. Biometric locks, CCTV cameras, security guards, server room access logs, cable locks on laptops, badge readers, visitor logs. Prevent physical theft, hardware tampering, and unauthorized physical access.</p>
+  </div>
+
+  <div class="practical open">
+    <div class="prac-head" onclick="toggleP(this)">
+      <span class="ph-i">🗂️</span>
+      <span class="ph-t">Exercise 9.1 — Map controls to a real-world breach scenario</span>
+      <span class="ph-tag pt-exercise">Mapping Exercise</span>
+      <span class="ph-chev">▶</span>
+    </div>
+    <div class="prac-body">
+      <div class="note forest"><span class="ni">💡</span><span><strong>Scenario:</strong> A hospital employee clicked a phishing email attachment. Ransomware encrypted all patient records. Attackers also exfiltrated 50,000 patient records. Systems were down for 10 days. No offline backups existed. No IDS was deployed.</span></div>
+      <ol class="steps" style="margin-top:14px;">
+        <li class="step">
+          <span class="sn">1</span>
+          <div class="sc">
+            <div class="st">Identify which controls were absent</div>
+            <div class="code" data-label="control gap analysis">
+<span class="cm"># Preventive controls that should have been in place:</span>
+<span class="kw">Missing:</span>  Email gateway with attachment sandboxing (would catch malicious .docx)
+<span class="kw">Missing:</span>  Endpoint protection with behaviour detection (catch ransomware execution)
+<span class="kw">Missing:</span>  User security awareness training (don't open unsolicited attachments)
+<span class="kw">Missing:</span>  Network segmentation (patient records isolated from general workstations)
+<span class="kw">Missing:</span>  Application whitelisting (only approved executables run)
+
+<span class="cm"># Detective controls that should have been in place:</span>
+<span class="kw">Missing:</span>  IDS/SIEM — would have flagged mass file encryption and C2 communication
+<span class="kw">Missing:</span>  DLP — would have alerted on 50,000 records exfiltrating outbound
+
+<span class="cm"># Corrective/Recovery controls that should have been in place:</span>
+<span class="kw">Missing:</span>  Offline backups (3-2-1 rule) — 10-day outage instead of hours
+<span class="kw">Missing:</span>  IR plan and retainer — no tested procedure = chaos during incident
+            </div>
+          </div>
+        </li>
+        <li class="step">
+          <span class="sn">2</span>
+          <div class="sc">
+            <div class="st">Write a control recommendation for each gap</div>
+            <div class="sd">For each missing control, write: (1) what control to implement, (2) whether it's administrative/technical/physical, (3) what CIA property it protects, (4) approximate effort/cost to implement. This is GRC analyst work.</div>
+          </div>
+        </li>
+      </ol>
+    </div>
+  </div>
+</div>
+
+<hr class="hdiv">
+
+<!-- ══════════════════════
+10 — Defence-in-Depth
+══════════════════════ -->
+<div class="section" id="s10">
+  <div class="sec-head">
+    <span class="sec-num">X</span>
+    <div class="sec-meta">
+      <div class="sec-title">Defence-in-Depth</div>
+      <div class="sec-sub">Layered security — why no single control is sufficient</div>
+    </div>
+    <span class="badge b-forest">Strategy</span>
+  </div>
+
+  <div class="theory forest">
+    <h4>The Onion Model of Security</h4>
+    <p><strong>Defence-in-depth</strong> (also called layered security or the onion model) means implementing <em>multiple independent layers</em> of security controls so that if one fails, others still protect the asset. It is the most important strategic principle in security architecture.</p>
+    <p>Single points of failure are the enemy of security. If your only defence is a perimeter firewall and an attacker bypasses it (via phishing, VPN credentials, insider threat), they have unrestricted access to everything. With defence-in-depth, each layer forces the attacker to defeat additional controls — increasing cost, time, noise, and chance of detection.</p>
+    <p>The concept comes from military doctrine: multiple lines of defence (outposts, fortifications, fallback positions) mean an enemy who breaks through the first line still faces resistance. In security: the perimeter is not the only line.</p>
+  </div>
+
+  <div class="did-layers">
+    <div class="did-layer" style="width:100%;background:var(--bg3);border-color:var(--border2);">
+      <div class="dl-name" style="color:var(--text-muted);">Policies, Procedures & Awareness</div>
+      <div class="dl-desc">Outermost layer — the human and process foundation. Security training, acceptable use policy, incident response plan, background checks.</div>
+    </div>
+    <div class="did-layer" style="width:90%;margin-left:auto;margin-right:auto;background:var(--bg2);">
+      <div class="dl-name" style="color:var(--text-muted);">Physical Security</div>
+      <div class="dl-desc">Locked server rooms, badge access, CCTV, cable locks. Prevents physical theft and tampering.</div>
+    </div>
+    <div class="did-layer" style="width:80%;margin-left:auto;margin-right:auto;background:var(--surface);">
+      <div class="dl-name" style="color:var(--ocean);">Perimeter Security</div>
+      <div class="dl-desc">Firewall, IDS/IPS, DMZ, DDoS mitigation. First technical line — filters what enters the network.</div>
+    </div>
+    <div class="did-layer" style="width:70%;margin-left:auto;margin-right:auto;background:var(--indigo-light);">
+      <div class="dl-name" style="color:var(--indigo);">Network Security</div>
+      <div class="dl-desc">VLANs, network segmentation, ACLs, VPN. Limits lateral movement if perimeter is breached.</div>
+    </div>
+    <div class="did-layer" style="width:60%;margin-left:auto;margin-right:auto;background:var(--forest-light);">
+      <div class="dl-name" style="color:var(--forest);">Host Security</div>
+      <div class="dl-desc">EDR, antivirus, host firewall, OS hardening, patch management. Protects individual systems.</div>
+    </div>
+    <div class="did-layer" style="width:50%;margin-left:auto;margin-right:auto;background:var(--gold-light);">
+      <div class="dl-name" style="color:var(--gold);">Application Security</div>
+      <div class="dl-desc">WAF, secure coding, SSDLC, input validation. Protects applications from exploitation.</div>
+    </div>
+    <div class="did-layer" style="width:40%;margin-left:auto;margin-right:auto;background:var(--crimson-light);border-color:rgba(136,19,55,0.2);">
+      <div class="dl-name" style="color:var(--crimson);">Data Security</div>
+      <div class="dl-desc">Encryption at rest and in transit, access controls, DLP, data classification. Final line — protects the asset itself.</div>
+    </div>
+  </div>
+
+  <div class="note gold" style="margin-top:16px;">
+    <span class="ni">💡</span>
+    <span><strong>Key insight:</strong> An attacker who bypasses the perimeter firewall still faces network segmentation (VLAN), then host security (EDR catches the malware), then application security (WAF blocks injection), then data security (encrypted data is useless). Each layer forces additional effort and creates detection opportunities.</span>
+  </div>
+</div>
+
+<hr class="hdiv">
+
+<!-- ══════════════════════
+11 — Least Privilege & Need-to-Know
+══════════════════════ -->
+<div class="section" id="s11">
+  <div class="sec-head">
+    <span class="sec-num">XI</span>
+    <div class="sec-meta">
+      <div class="sec-title">Least Privilege & Need-to-Know</div>
+      <div class="sec-sub">Core access control principles that reduce attack surface dramatically</div>
+    </div>
+    <span class="badge b-indigo">Principles</span>
+  </div>
+
+  <div class="theory">
+    <h4>Least Privilege — The Single Most Effective Security Principle</h4>
+    <p>The <strong>principle of least privilege (PoLP)</strong> states that every user, process, or system component should have access to <em>only the minimum resources and permissions necessary to perform its function</em> — nothing more. This is the most consistently effective security principle across all domains.</p>
+    <p>Why it works: It reduces the <em>blast radius</em> of any security incident. If an attacker compromises a low-privilege account, they can only do what that account can do. If they compromise an admin account, they can do everything. Keeping admin privileges rare and time-limited is one of the highest-value security investments an organization can make.</p>
+  </div>
+
+  <div class="grid">
+    <div class="card">
+      <div class="ck">User Accounts</div>
+      <div class="cv">Regular users get no admin rights. Admin tasks require a separate, dedicated admin account with MFA. Service accounts get only the permissions the specific service needs — not domain admin. Audit quarterly.</div>
+    </div>
+    <div class="card">
+      <div class="ck o">Database Access</div>
+      <div class="cv">Web application's DB user should have SELECT, INSERT, UPDATE on specific tables — never DROP, CREATE, or system privileges. Separate read-only accounts for reporting tools. Never connect as root/sa.</div>
+    </div>
+    <div class="card">
+      <div class="ck f">File System</div>
+      <div class="cv">Files and directories have only the permissions users need. /etc/shadow readable only by root. Web server reads web root but cannot write to system directories. Regular audits of overpermissive directories.</div>
+    </div>
+    <div class="card">
+      <div class="ck g">Cloud IAM</div>
+      <div class="cv">AWS/Azure roles and policies grant specific actions on specific resources. Avoid AdministratorAccess unless necessary. Use IAM Access Analyzer to find overpermissive policies. Rotate/expire access keys.</div>
+    </div>
+    <div class="card">
+      <div class="ck c">Application Processes</div>
+      <div class="cv">Web server runs as www-data, not root. Docker containers run as non-root user. Linux capabilities instead of full sudo. If the web server is compromised, attacker is limited to www-data permissions.</div>
+    </div>
+    <div class="card">
+      <div class="ck p">Network Access</div>
+      <div class="cv">Firewall rules: allow only required ports between specific hosts. Developers cannot access production databases directly — go through application layer. DBAs access DB via bastion host, not direct internet.</div>
+    </div>
+  </div>
+
+  <div class="theory crimson" style="margin-top:14px;">
+    <h4>Need-to-Know — Confidentiality-Focused Least Privilege</h4>
+    <p><strong>Need-to-know</strong> is the confidentiality-specific version of least privilege: users should only have access to the information they need to perform their specific job function. An HR manager needs employee salary data — they don't need access to the source code repository. A developer needs production logs for debugging — they don't need to see customer PII in those logs.</p>
+    <p>Need-to-know is implemented through data classification (categorize data by sensitivity), access controls (enforce at system level), and data masking (show developers logs with PII masked out). Violating need-to-know is a common DPDP Act compliance gap — organizations give too broad data access by default.</p>
+  </div>
+
+  <div class="practical open">
+    <div class="prac-head" onclick="toggleP(this)">
+      <span class="ph-i">🔒</span>
+      <span class="ph-t">Lab 11.1 — Implement least privilege on Linux: file permissions, sudo, and service accounts</span>
+      <span class="ph-tag pt-lab">Linux Lab</span>
+      <span class="ph-chev">▶</span>
+    </div>
+    <div class="prac-body">
+      <ol class="steps">
+        <li class="step">
+          <span class="sn">1</span>
+          <div class="sc">
+            <div class="st">Audit and fix file permissions</div>
+            <div class="code" data-label="bash">
+<span class="cm"># Find world-writable files (any user can write — dangerous)</span>
+<span class="cmd">find</span> /etc <span class="flag">-type f -perm -o+w</span> 2>/dev/null
+<span class="cmd">find</span> /var/www <span class="flag">-type f -perm -o+w</span> 2>/dev/null
+
+<span class="cm"># Find SUID/SGID binaries (run as owner, often root)</span>
+<span class="cmd">find</span> / <span class="flag">-type f \( -perm -4000 -o -perm -2000 \)</span> 2>/dev/null
+
+<span class="cm"># Fix an overpermissive file</span>
+<span class="cmd">ls -la</span> /var/www/html/config.php
+<span class="cm"># If it shows -rw-rw-rw- (world readable — bad!)</span>
+<span class="cmd">sudo chmod</span> 640 /var/www/html/config.php
+<span class="cmd">sudo chown</span> www-data:www-data /var/www/html/config.php
+<span class="cm"># Now: -rw-r----- → www-data can read/write, group can read, others nothing</span>
+            </div>
+          </div>
+        </li>
+        <li class="step">
+          <span class="sn">2</span>
+          <div class="sc">
+            <div class="st">Create a restricted service account</div>
+            <div class="code" data-label="bash">
+<span class="cm"># Create a service account with no shell (cannot login interactively)</span>
+<span class="cmd">sudo useradd</span> <span class="flag">-r -s</span> /usr/sbin/nologin <span class="flag">-d</span> /var/lib/myservice myservice-user
+<span class="cm"># -r: system account | -s: shell = nologin | -d: home directory</span>
+
+<span class="cm"># Run a service as this restricted user instead of root</span>
+<span class="cm"># In /etc/systemd/system/myservice.service:</span>
+<span class="cm"># User=myservice-user</span>
+<span class="cm"># Group=myservice-user</span>
+
+<span class="cm"># If this service is compromised, attacker is limited to myservice-user</span>
+<span class="cm"># Cannot ssh in, cannot access other users' files, cannot escalate easily</span>
+            </div>
+          </div>
+        </li>
+        <li class="step">
+          <span class="sn">3</span>
+          <div class="sc">
+            <div class="st">Configure sudo with minimal required permissions</div>
+            <div class="code" data-label="bash">
+<span class="cm"># Bad practice (too much privilege):</span>
+<span class="cm"># developer ALL=(ALL) NOPASSWD: ALL</span>
+
+<span class="cm"># Good practice (only what's needed):</span>
+<span class="cmd">sudo visudo</span>
+<span class="cm"># Add: developer ALL=(ALL) /usr/bin/systemctl restart nginx</span>
+<span class="cm"># Developer can ONLY restart nginx — nothing else</span>
+
+<span class="cm"># Check what a user can sudo</span>
+<span class="cmd">sudo -l -U</span> developer
+<span class="cm"># Shows exactly what commands that user can run with sudo</span>
+
+<span class="cm"># Audit: find users with ALL privileges</span>
+<span class="cmd">grep</span> <span class="flag">-E</span> <span class="val">"ALL.*ALL"</span> /etc/sudoers /etc/sudoers.d/*
+            </div>
+          </div>
+        </li>
+      </ol>
+    </div>
+  </div>
+</div>
+
+<hr class="hdiv">
+
+<!-- ══════════════════════
+12 — Zero Trust Principles
+══════════════════════ -->
+<div class="section" id="s12">
+  <div class="sec-head">
+    <span class="sec-num">XII</span>
+    <div class="sec-meta">
+      <div class="sec-title">Zero Trust Principles</div>
+      <div class="sec-sub">Never trust, always verify — the modern security paradigm</div>
+    </div>
+    <span class="badge b-ocean">Modern Paradigm</span>
+  </div>
+
+  <div class="theory ocean">
+    <h4>From Castle-and-Moat to Zero Trust</h4>
+    <p>The traditional security model was "castle and moat": a hard perimeter (firewall) protects a trusted interior. Once inside the network, devices and users were implicitly trusted. This model assumed the perimeter held and that insider threats were rare. Both assumptions are now demonstrably false.</p>
+    <p><strong>Zero Trust</strong> assumes: <em>the network is always hostile, external threats exist, and internal threats exist</em>. No user, device, or network location is trusted by default — trust must be continually earned through authentication, authorization, device health checks, and behavioural monitoring. This is encapsulated in the phrase <strong>"never trust, always verify."</strong></p>
+  </div>
+
+  <div class="grid">
+    <div class="card">
+      <div class="ck o">Verify Explicitly</div>
+      <div class="cv">Always authenticate and authorize based on all available data points: identity, location, device health, service/workload, data classification, and anomalies. Not just username + password.</div>
+    </div>
+    <div class="card">
+      <div class="ck o">Least Privilege Access</div>
+      <div class="cv">Limit access to just-in-time, just-enough-access. Time-bound elevated privileges. Risk-based adaptive policies — higher sensitivity data requires stronger auth. Rotate credentials regularly.</div>
+    </div>
+    <div class="card">
+      <div class="ck o">Assume Breach</div>
+      <div class="cv">Design as if attackers are already inside. Minimize blast radius via segmentation. End-to-end encryption. Use analytics to detect threats, gain visibility, and improve defences.</div>
+    </div>
+    <div class="card">
+      <div class="ck o">Identity Is the Perimeter</div>
+      <div class="cv">The network perimeter is dissolved. Cloud, mobile, remote work mean users and data are everywhere. <em>Identity</em> — verified and continuously validated — becomes the new security boundary.</div>
+    </div>
+    <div class="card">
+      <div class="ck o">Microsegmentation</div>
+      <div class="cv">Divide the network into small, isolated zones. Each workload in its own segment with firewall rules. East-west traffic controlled as strictly as north-south. Lateral movement requires defeating per-segment controls.</div>
+    </div>
+    <div class="card">
+      <div class="ck o">Continuous Monitoring</div>
+      <div class="cv">Verify not just at login but throughout the session. Device compliance checked continuously. User behaviour baselines — deviation triggers step-up authentication or session termination.</div>
+    </div>
+  </div>
+
+  <div class="note ocean" style="margin-top:12px;">
+    <span class="ni">📌</span>
+    <span><strong>India enterprise context:</strong> Banks like HDFC and ICICI, IT majors like TCS and Infosys, and all BPOs handling sensitive customer data are actively implementing Zero Trust frameworks. CERT-In's 2022 directions implicitly require Zero Trust principles — 6-hour breach reporting assumes you have monitoring everywhere, not just at the perimeter. DPDP Act compliance requires continuous data access controls, not perimeter-only security.</span>
+  </div>
+</div>
+
+<hr class="hdiv">
+
+<!-- ══════════════════════
+13 — Windows Security Fundamentals
+══════════════════════ -->
+<div class="section" id="s13">
+  <div class="sec-head">
+    <span class="sec-num">XIII</span>
+    <div class="sec-meta">
+      <div class="sec-title">Windows Security Fundamentals</div>
+      <div class="sec-sub">Users, groups, permissions, registry, Active Directory, and Event Viewer</div>
+    </div>
+    <span class="badge b-ocean">Windows</span>
+  </div>
+
+  <div class="theory ocean">
+    <h4>Why Windows Security Is Foundational</h4>
+    <p>Over 70% of enterprise endpoints and servers run Windows. Active Directory is the identity backbone of most corporate networks worldwide — including virtually every Indian enterprise with more than 50 employees. A SOC analyst who cannot navigate Windows security events, understand AD, or work with Group Policy will miss the majority of real-world incidents.</p>
+    <p>Windows security has evolved significantly — Windows 10/11 and Server 2019/2022 have strong security features. Most Windows breaches are due to misconfiguration or unpatched vulnerabilities, not fundamental Windows design flaws.</p>
+  </div>
+
+  <div class="practical open">
+    <div class="prac-head" onclick="toggleP(this)">
+      <span class="ph-i">🪟</span>
+      <span class="ph-t">Lab 13.1 — Windows security hardening and Event Viewer analysis</span>
+      <span class="ph-tag pt-lab">Windows Lab</span>
+      <span class="ph-chev">▶</span>
+    </div>
+    <div class="prac-body">
+      <ol class="steps">
+        <li class="step">
+          <span class="sn">1</span>
+          <div class="sc">
+            <div class="st">Audit local users and groups</div>
+            <div class="code" data-label="powershell (admin)">
+<span class="cm"># List all local users</span>
+<span class="cmd">Get-LocalUser</span> | <span class="cmd">Select-Object</span> Name, Enabled, LastLogon, PasswordLastSet
+
+<span class="cm"># List all local groups</span>
+<span class="cmd">Get-LocalGroup</span>
+
+<span class="cm"># See who is in Administrators group (CRITICAL)</span>
+<span class="cmd">Get-LocalGroupMember</span> <span class="flag">-Group</span> <span class="val">"Administrators"</span>
+<span class="cm"># Every user here has full system control — minimize this list</span>
+
+<span class="cm"># Check for users with no password expiry (security risk)</span>
+<span class="cmd">Get-LocalUser</span> | <span class="cmd">Where-Object</span> {$_.PasswordNeverExpires}
+            </div>
+          </div>
+        </li>
+        <li class="step">
+          <span class="sn">2</span>
+          <div class="sc">
+            <div class="st">Check and harden the local security policy</div>
+            <div class="code" data-label="powershell">
+<span class="cm"># Check password policy</span>
+<span class="cmd">net accounts</span>
+<span class="cm"># Look for: Minimum password length, Maximum password age, lockout threshold</span>
+
+<span class="cm"># Harden via Local Security Policy (secpol.msc) or Group Policy</span>
+<span class="cm"># Recommended minimums:</span>
+<span class="cm"># Minimum password length: 12 characters</span>
+<span class="cm"># Password complexity: Enabled</span>
+<span class="cm"># Maximum password age: 90 days</span>
+<span class="cm"># Account lockout: 5 failed attempts → 30 min lockout</span>
+<span class="cm"># Audit: log success AND failure for logon events</span>
+            </div>
+          </div>
+        </li>
+        <li class="step">
+          <span class="sn">3</span>
+          <div class="sc">
+            <div class="st">Analyse security events in Event Viewer</div>
+            <div class="code" data-label="powershell">
+<span class="cm"># Find all failed login attempts in last 24 hours (Event ID 4625)</span>
+<span class="cmd">Get-WinEvent</span> <span class="flag">-FilterHashtable</span> @{
+  LogName=<span class="val">'Security'</span>; Id=<span class="val">4625</span>
+  StartTime=(Get-Date).AddDays(<span class="val">-1</span>)
+} | <span class="cmd">Select-Object</span> TimeCreated,
+  @{N=<span class="val">'User'</span>;E={$_.Properties[5].Value}},
+  @{N=<span class="val">'Source'</span>;E={$_.Properties[19].Value}} | <span class="cmd">Format-Table</span>
+
+<span class="cm"># Find successful logins (Event ID 4624)</span>
+<span class="cmd">Get-WinEvent</span> <span class="flag">-FilterHashtable</span> @{LogName=<span class="val">'Security'</span>;Id=<span class="val">4624</span>} \
+  <span class="flag">-MaxEvents</span> 20
+
+<span class="cm"># Find new user accounts created (Event ID 4720)</span>
+<span class="cmd">Get-WinEvent</span> <span class="flag">-FilterHashtable</span> @{LogName=<span class="val">'Security'</span>;Id=<span class="val">4720</span>}
+<span class="cm"># Any unexpected entries here = potential compromise (backdoor account)</span>
+            </div>
+          </div>
+        </li>
+        <li class="step">
+          <span class="sn">4</span>
+          <div class="sc">
+            <div class="st">Check startup locations for persistence</div>
+            <div class="code" data-label="powershell">
+<span class="cm"># Check registry Run keys (common malware persistence location)</span>
+<span class="cmd">Get-ItemProperty</span> <span class="val">"HKLM:\Software\Microsoft\Windows\CurrentVersion\Run"</span>
+<span class="cmd">Get-ItemProperty</span> <span class="val">"HKCU:\Software\Microsoft\Windows\CurrentVersion\Run"</span>
+<span class="cm"># Anything unexpected here = potential malware persistence</span>
+
+<span class="cm"># Check scheduled tasks</span>
+<span class="cmd">Get-ScheduledTask</span> | <span class="cmd">Where-Object</span> {$_.State -eq <span class="val">"Ready"</span>} | \
+  <span class="cmd">Select-Object</span> TaskName, TaskPath, @{N=<span class="val">"Author"</span>;E={$_.Principal.UserId}}
+
+<span class="cm"># Check Windows services for suspicious entries</span>
+<span class="cmd">Get-Service</span> | <span class="cmd">Where-Object</span> {$_.StartType -eq <span class="val">"Automatic"</span>} | \
+  <span class="cmd">Sort-Object</span> Name | <span class="cmd">Select-Object</span> Name, Status, DisplayName
+            </div>
+          </div>
+        </li>
+      </ol>
+    </div>
+  </div>
+</div>
+
+<hr class="hdiv">
+
+<!-- ══════════════════════
+14 — Linux Security Fundamentals
+══════════════════════ -->
+<div class="section" id="s14">
+  <div class="sec-head">
+    <span class="sec-num">XIV</span>
+    <div class="sec-meta">
+      <div class="sec-title">Linux Security Fundamentals</div>
+      <div class="sec-sub">File permissions, users, processes, services, logs, and hardening</div>
+    </div>
+    <span class="badge b-forest">Linux</span>
+  </div>
+
+  <div class="theory forest">
+    <h4>Linux Is the Foundation of Security Work</h4>
+    <p>Nearly every security tool runs on Linux. Web servers, cloud infrastructure, Docker containers, IoT devices, Android — all Linux-based. Kali Linux is the penetration testing platform. Wazuh, Suricata, ELK — all Linux. A security professional who cannot navigate Linux fluently is severely limited. These fundamentals are your entry fee.</p>
+  </div>
+
+  <div class="practical open">
+    <div class="prac-head" onclick="toggleP(this)">
+      <span class="ph-i">🐧</span>
+      <span class="ph-t">Lab 14.1 — Linux security hardening checklist</span>
+      <span class="ph-tag pt-lab">Linux Lab</span>
+      <span class="ph-chev">▶</span>
+    </div>
+    <div class="prac-body">
+      <ol class="steps">
+        <li class="step">
+          <span class="sn">1</span>
+          <div class="sc">
+            <div class="st">Users, groups, and privilege audit</div>
+            <div class="code" data-label="bash">
+<span class="cm"># List all users with login shells (can login interactively)</span>
+<span class="cmd">grep</span> <span class="flag">-v</span> <span class="val">"nologin\|false"</span> /etc/passwd | <span class="cmd">cut</span> <span class="flag">-d:</span> <span class="flag">-f1</span>
+
+<span class="cm"># Find users with UID=0 (root-equivalent — should be ONLY root)</span>
+<span class="cmd">awk</span> <span class="val">-F: '($3 == 0) {print}'</span> /etc/passwd
+
+<span class="cm"># Find users with empty passwords (CRITICAL security issue)</span>
+<span class="cmd">sudo awk</span> <span class="val">-F: '($2 == "") {print $1}'</span> /etc/shadow
+
+<span class="cm"># List all groups and members</span>
+<span class="cmd">cat</span> /etc/group | <span class="cmd">grep</span> <span class="flag">-v</span> <span class="val">"^#"</span>
+
+<span class="cm"># Check sudoers for dangerous ALL=(ALL) NOPASSWD: ALL entries</span>
+<span class="cmd">sudo cat</span> /etc/sudoers | <span class="cmd">grep</span> <span class="flag">-v</span> <span class="val">"^#"</span> | <span class="cmd">grep</span> <span class="flag">-v</span> <span class="val">"^$"</span>
+            </div>
+          </div>
+        </li>
+        <li class="step">
+          <span class="sn">2</span>
+          <div class="sc">
+            <div class="st">Running processes and network connections</div>
+            <div class="code" data-label="bash">
+<span class="cm"># List all listening ports and which process owns them</span>
+<span class="cmd">ss -tulpn</span>
+<span class="cm"># -t: TCP | -u: UDP | -l: listening | -p: show process | -n: numeric</span>
+<span class="cm"># Review every listening port — is this service intentional?</span>
+
+<span class="cm"># List all established connections (active network connections)</span>
+<span class="cmd">ss -tnp state established</span>
+
+<span class="cm"># Find processes running as root</span>
+<span class="cmd">ps aux</span> | <span class="cmd">awk</span> <span class="val">'$1 == "root" {print}'</span>
+<span class="cm"># Minimize root processes — each is an escalation target if compromised</span>
+
+<span class="cm"># Find processes with network connections but no associated file</span>
+<span class="cm"># (possible deleted-but-running malware)</span>
+<span class="cmd">ls -la /proc/*/exe</span> 2>/dev/null | <span class="cmd">grep</span> deleted
+            </div>
+          </div>
+        </li>
+        <li class="step">
+          <span class="sn">3</span>
+          <div class="sc">
+            <div class="st">Service hardening — disable unnecessary services</div>
+            <div class="code" data-label="bash">
+<span class="cm"># List all enabled services</span>
+<span class="cmd">systemctl list-unit-files --type=service --state=enabled</span>
+
+<span class="cm"># Disable services you don't need (principle of least service)</span>
+<span class="cmd">sudo systemctl disable --now</span> telnet  <span class="cm"># cleartext — always disable</span>
+<span class="cmd">sudo systemctl disable --now</span> rsh      <span class="cm"># cleartext remote shell — disable</span>
+<span class="cmd">sudo systemctl disable --now</span> finger   <span class="cm"># user info leakage — disable</span>
+
+<span class="cm"># Check if unnecessary packages are installed</span>
+<span class="cmd">dpkg -l | grep</span> telnet
+<span class="cmd">sudo apt remove --purge</span> telnetd   <span class="cm"># remove if found</span>
+            </div>
+          </div>
+        </li>
+        <li class="step">
+          <span class="sn">4</span>
+          <div class="sc">
+            <div class="st">Key log files every analyst must know</div>
+            <div class="code" data-label="bash">
+<span class="cm"># Authentication events (logins, sudo, su)</span>
+<span class="cmd">sudo tail -50</span> /var/log/auth.log
+
+<span class="cm"># System events (kernel, daemon, cron, general)</span>
+<span class="cmd">sudo tail -50</span> /var/log/syslog
+
+<span class="cm"># Login history (who logged in and from where)</span>
+<span class="cmd">last</span>              <span class="cm"># successful logins</span>
+<span class="cmd">lastb</span>             <span class="cm"># failed login attempts (sudo needed)</span>
+<span class="cmd">w</span>                 <span class="cm"># currently logged in users</span>
+<span class="cmd">who</span>               <span class="cm"># who is logged in</span>
+
+<span class="cm"># Kernel messages (hardware errors, module loads)</span>
+<span class="cmd">dmesg | tail -30</span>
+
+<span class="cm"># All log files in /var/log</span>
+<span class="cmd">ls -la</span> /var/log/
+            </div>
+          </div>
+        </li>
+        <li class="step">
+          <span class="sn">5</span>
+          <div class="sc">
+            <div class="st">Kernel and system hardening with sysctl</div>
+            <div class="code" data-label="bash">
+<span class="cm"># Disable IP forwarding (unless this is a router/firewall)</span>
+<span class="cmd">sudo sysctl</span> <span class="flag">-w</span> net.ipv4.ip_forward=0
+
+<span class="cm"># Enable SYN cookies (DDoS protection)</span>
+<span class="cmd">sudo sysctl</span> <span class="flag">-w</span> net.ipv4.tcp_syncookies=1
+
+<span class="cm"># Disable ICMP redirects (prevent routing manipulation)</span>
+<span class="cmd">sudo sysctl</span> <span class="flag">-w</span> net.ipv4.conf.all.accept_redirects=0
+<span class="cmd">sudo sysctl</span> <span class="flag">-w</span> net.ipv4.conf.all.send_redirects=0
+
+<span class="cm"># Ignore ICMP broadcast (Smurf DDoS protection)</span>
+<span class="cmd">sudo sysctl</span> <span class="flag">-w</span> net.ipv4.icmp_echo_ignore_broadcasts=1
+
+<span class="cm"># Make permanent: add to /etc/sysctl.conf</span>
+<span class="cmd">sudo sysctl -p</span>  <span class="cm"># reload after editing /etc/sysctl.conf</span>
+            </div>
+          </div>
+        </li>
+      </ol>
+    </div>
+  </div>
+</div>
+
+<hr class="hdiv">
+
+<!-- ══════════════════════
+15 — Lab Environment Setup
+══════════════════════ -->
+<div class="section" id="s15">
+  <div class="sec-head">
+    <span class="sec-num">XV</span>
+    <div class="sec-meta">
+      <div class="sec-title">Lab Environment Setup</div>
+      <div class="sec-sub">VirtualBox, Kali Linux, Metasploitable2, DVWA, and network configuration</div>
+    </div>
+    <span class="badge b-gold">Setup</span>
+  </div>
+
+  <div class="theory gold">
+    <h4>Your Practice Environment — Non-Negotiable</h4>
+    <p>Security is a hands-on field. Reading about SQL injection is useful; running it yourself and understanding exactly what happens at the database level is what builds real competence. Every interview will ask what labs you've run. Every senior practitioner you respect has hundreds of hours of lab time. <strong>Set this up first, everything else follows.</strong></p>
+    <p>All the software required is free. The entire lab runs on your existing laptop. A minimum of 8GB RAM and 50GB free disk space is recommended. All of this works on Windows, macOS, or Linux as the host OS.</p>
+  </div>
+
+  <div class="practical open">
+    <div class="prac-head" onclick="toggleP(this)">
+      <span class="ph-i">🏗️</span>
+      <span class="ph-t">Lab 15.1 — Complete lab environment setup from scratch</span>
+      <span class="ph-tag pt-setup">Setup Lab</span>
+      <span class="ph-chev">▶</span>
+    </div>
+    <div class="prac-body">
+      <ol class="steps">
+        <li class="step">
+          <span class="sn">1</span>
+          <div class="sc">
+            <div class="st">Install VirtualBox and set up networking</div>
+            <div class="code" data-label="bash / gui">
+<span class="cm"># Download VirtualBox from virtualbox.org (free, cross-platform)</span>
+<span class="cm"># Install VirtualBox Extension Pack too (USB 3.0, RDP support)</span>
+
+<span class="cm"># Create a Host-Only Network adapter (Tools → Network → Create)</span>
+<span class="cm"># Set to: 192.168.56.1/24 (this is the standard for VirtualBox labs)</span>
+<span class="cm"># This creates an isolated network — your VMs can talk to each other</span>
+<span class="cm"># but are isolated from the internet (safe for practice)</span>
+
+<span class="cm"># NETWORK CONFIGURATION for security lab VMs:</span>
+<span class="cm"># Adapter 1: NAT (for internet access — updates, downloads)</span>
+<span class="cm"># Adapter 2: Host-Only (for attacking/defending — isolated)</span>
+            </div>
+          </div>
+        </li>
+        <li class="step">
+          <span class="sn">2</span>
+          <div class="sc">
+            <div class="st">Install Kali Linux (attacker/analyst VM)</div>
+            <div class="code" data-label="bash">
+<span class="cm"># Download Kali Linux VirtualBox image from kali.org/get-kali</span>
+<span class="cm"># Choose "Pre-Built Virtual Machines" → VirtualBox 64-bit</span>
+<span class="cm"># Import: File → Import Appliance → select .ova file</span>
+
+<span class="cm"># Default credentials: kali / kali</span>
+<span class="cm"># First thing after import: update</span>
+<span class="cmd">sudo apt update</span> && <span class="cmd">sudo apt upgrade -y</span>
+
+<span class="cm"># Key tools already included: nmap, wireshark, metasploit, burp suite,</span>
+<span class="cm"># aircrack-ng, hashcat, hydra, sqlmap, gobuster, tcpdump, netcat</span>
+<span class="cm"># ~600 pre-installed security tools</span>
+            </div>
+          </div>
+        </li>
+        <li class="step">
+          <span class="sn">3</span>
+          <div class="sc">
+            <div class="st">Install Metasploitable2 (deliberately vulnerable Linux target)</div>
+            <div class="code" data-label="setup">
+<span class="cm"># Download from: rapid7.com (search "Metasploitable 2 download")</span>
+<span class="cm"># It's a .zip containing a .vmdk (virtual disk)</span>
+
+<span class="cm"># Create new VM in VirtualBox:</span>
+<span class="cm"># Type: Linux | Version: Ubuntu 64-bit</span>
+<span class="cm"># RAM: 512MB (minimum needed)</span>
+<span class="cm"># Hard disk: Use existing → select the .vmdk you downloaded</span>
+<span class="cm"># Network: Host-Only only (NO NAT — this VM is dangerous!)</span>
+
+<span class="cm"># Default credentials: msfadmin / msfadmin</span>
+<span class="cm"># Contains: vsftpd 2.3.4, Samba 3.x, MySQL, PostgreSQL, DVWA,</span>
+<span class="cm"># Mutillidae, UnrealIRCd, Tomcat, many more vulnerable services</span>
+
+<span class="cm"># IMPORTANT: NEVER expose Metasploitable2 to the internet</span>
+<span class="cm"># Keep it on Host-Only network ONLY</span>
+            </div>
+          </div>
+        </li>
+        <li class="step">
+          <span class="sn">4</span>
+          <div class="sc">
+            <div class="st">Set up DVWA via Docker (web application practice)</div>
+            <div class="code" data-label="kali bash">
+<span class="cm"># Install Docker on Kali</span>
+<span class="cmd">sudo apt install</span> docker.io docker-compose
+<span class="cmd">sudo systemctl enable --now</span> docker
+<span class="cmd">sudo usermod -aG docker</span> $USER
+
+<span class="cm"># Run DVWA (Damn Vulnerable Web Application)</span>
+<span class="cmd">docker run</span> <span class="flag">-d -p</span> 8080:80 vulnerables/web-dvwa
+<span class="cm"># Access at: http://localhost:8080</span>
+<span class="cm"># Login: admin / password</span>
+<span class="cm"># Setup: click "Create / Reset Database"</span>
+<span class="cm"># Set Security Level: Low (to start learning)</span>
+
+<span class="cm"># Add Juice Shop (Node.js app with OWASP Top 10 vulns)</span>
+<span class="cmd">docker run</span> <span class="flag">-d -p</span> 3000:3000 bkimminich/juice-shop
+<span class="cm"># Access at: http://localhost:3000</span>
+            </div>
+          </div>
+        </li>
+        <li class="step">
+          <span class="sn">5</span>
+          <div class="sc">
+            <div class="st">Verify your lab — test connectivity between VMs</div>
+            <div class="code" data-label="kali bash">
+<span class="cm"># Verify Kali can reach Metasploitable2</span>
+<span class="cmd">ping</span> <span class="flag">-c 4</span> 192.168.56.101  <span class="cm"># Metasploitable2's IP</span>
+<span class="cm"># Should get 4 replies</span>
+
+<span class="cm"># Quick connectivity check with nmap</span>
+<span class="cmd">nmap</span> <span class="flag">-sn</span> 192.168.56.0/24
+<span class="cm"># Should discover: 192.168.56.1 (your host), 192.168.56.101 (Metasploitable)</span>
+
+<span class="cm"># Verify DVWA is accessible</span>
+<span class="cmd">curl</span> <span class="flag">-s</span> http://localhost:8080 | <span class="cmd">grep</span> <span class="flag">-i</span> <span class="val">"dvwa"</span>
+
+<span class="cm"># Your lab is ready! Recommended lab snapshots:</span>
+<span class="cm"># Take a VirtualBox snapshot of each VM in clean state</span>
+<span class="cm"># VirtualBox → Machine → Take Snapshot → "Clean Install"</span>
+<span class="cm"># Restore anytime after damaging a VM during labs</span>
+            </div>
+          </div>
+        </li>
+      </ol>
+    </div>
+  </div>
+</div>
+
+<hr class="hdiv">
+
+<!-- ══════════════════════
+16 — Capstone: Foundations Review
+══════════════════════ -->
+<div class="section" id="s16">
+  <div class="sec-head">
+    <span class="sec-num">XVI</span>
+    <div class="sec-meta">
+      <div class="sec-title">Capstone — Foundations Review</div>
+      <div class="sec-sub">Knowledge consolidation, interview prep questions, and module checklist</div>
+    </div>
+    <span class="badge b-indigo">Capstone</span>
+  </div>
+
+  <div class="theory">
+    <h4>Interview Questions on Foundations — Every Role Asks These</h4>
+    <p>Whether you're applying for SOC analyst, GRC analyst, or penetration tester, the interviewer will start with foundations to gauge your understanding. These questions seem simple but reveal whether you've truly internalized the concepts or just memorized definitions.</p>
+  </div>
+
+  <div class="practical open">
+    <div class="prac-head" onclick="toggleP(this)">
+      <span class="ph-i">🎯</span>
+      <span class="ph-t">Interview Preparation — High-frequency foundations questions</span>
+      <span class="ph-tag pt-scenario">Interview Prep</span>
+      <span class="ph-chev">▶</span>
+    </div>
+    <div class="prac-body">
+      <ol class="steps">
+        <li class="step">
+          <span class="sn">1</span>
+          <div class="sc">
+            <div class="st">Explain the CIA Triad with a banking example</div>
+            <div class="code" data-label="model answer">
+<span class="kw">Sample answer:</span>
+"The CIA Triad stands for Confidentiality, Integrity, and Availability.
+In a banking context:
+
+Confidentiality means only you and the bank can see your account balance
+and transaction history — not other customers or unauthorized staff.
+We achieve this through encryption of data at rest and in transit, and
+role-based access control so only authorized employees can view accounts.
+
+Integrity means your balance accurately reflects all transactions — no
+unauthorized modifications. We achieve this through audit logs, database
+transaction integrity, and digital signatures on financial messages.
+
+Availability means you can access your account and make transactions
+when you need to. We achieve this through redundant servers, DDoS
+protection, and disaster recovery plans.
+
+A ransomware attack on a bank would violate all three: encrypted files
+compromise availability, exfiltrated records violate confidentiality,
+and corrupted data violates integrity."
+            </div>
+          </div>
+        </li>
+        <li class="step">
+          <span class="sn">2</span>
+          <div class="sc">
+            <div class="st">What is the difference between a vulnerability, a threat, and a risk?</div>
+            <div class="code" data-label="model answer">
+<span class="kw">Vulnerability:</span> A weakness or flaw that can be exploited.
+Example: An unpatched Apache server with a known CVE.
+
+<span class="kw">Threat:</span> An agent or event that could exploit the vulnerability.
+Example: A ransomware group scanning for vulnerable Apache servers.
+
+<span class="kw">Risk:</span> The combination of likelihood and impact.
+Risk = the chance that the ransomware group exploits our Apache server
+     × the business impact of that happening.
+
+<span class="kw">Key insight:</span> "We can't fix all vulnerabilities, so we prioritize based on
+risk — which vulnerabilities are most likely to be exploited, and what
+would the impact be? That's what risk management decides."
+            </div>
+          </div>
+        </li>
+        <li class="step">
+          <span class="sn">3</span>
+          <div class="sc">
+            <div class="st">What is defence-in-depth and why is it important?</div>
+            <div class="code" data-label="model answer">
+<span class="kw">Defence-in-depth</span> means implementing multiple independent layers of
+security controls so that if one fails, others still protect the asset.
+
+<span class="kw">Why important:</span> No single control is perfect. A firewall can be bypassed
+via phishing (human layer). If the perimeter is the ONLY control, bypass
+= game over. With defence-in-depth:
+  - Phishing bypasses the firewall (perimeter layer fails)
+  - But EDR detects the malware execution (host layer catches it)
+  - Or SIEM alerts on unusual behaviour (detection layer)
+  - Or network segmentation prevents lateral movement (network layer)
+
+Each layer forces the attacker to defeat additional controls — increasing
+their cost, time, and chance of detection.
+
+<span class="kw">Real example:</span> The AIIMS breach succeeded partly because there was no
+defence-in-depth — when the endpoint was compromised, there was little
+to stop lateral movement to servers.
+            </div>
+          </div>
+        </li>
+        <li class="step">
+          <span class="sn">4</span>
+          <div class="sc">
+            <div class="st">What is the principle of least privilege? Give an example.</div>
+            <div class="code" data-label="model answer">
+<span class="kw">Principle of Least Privilege:</span> Every user, process, or system should
+have only the minimum permissions necessary for their role — nothing more.
+
+<span class="kw">Example 1 — User accounts:</span> A content writer in a media company needs to
+log into WordPress and write articles. They should NOT have admin access
+to the WordPress dashboard, the underlying database, or the web server.
+If their account is phished, the damage is limited to what they could do.
+
+<span class="kw">Example 2 — Database:</span> A web application that reads products from a
+database should connect as a user with SELECT permission only on the
+products table — not as the database admin. If there's a SQL injection,
+the attacker can read products but cannot DROP tables or read other schemas.
+
+<span class="kw">Why it matters:</span> Every excess privilege is a potential escalation path
+for an attacker who compromises that account.
+            </div>
+          </div>
+        </li>
+      </ol>
+    </div>
+  </div>
+
+  <div class="theory" style="margin-top:20px;">
+    <h4>Module Completion Checklist</h4>
+    <ul class="checklist">
+      <li onclick="toggleCheck(this)"><span class="cb"></span><span>Section 1 — Can explain cybersecurity career paths in India with salary ranges</span></li>
+      <li onclick="toggleCheck(this)"><span class="cb"></span><span>Section 2 — Completed CIA Triad mapping exercise for all 4 scenarios; mapped AIIMS breach to CIA</span></li>
+      <li onclick="toggleCheck(this)"><span class="cb"></span><span>Lab 3.1 — Observed Authentication (failed/success login), Authorization (permission denied), and Accounting (audit log) on Linux</span></li>
+      <li onclick="toggleCheck(this)"><span class="cb"></span><span>Exercise 4.1 — Completed mini risk assessment for CA firm scenario with risk scoring matrix</span></li>
+      <li onclick="toggleCheck(this)"><span class="cb"></span><span>Section 5 — Can profile each threat actor type with motivation, capability, and India-specific relevance</span></li>
+      <li onclick="toggleCheck(this)"><span class="cb"></span><span>Section 6 — Can distinguish passive vs active attacks and explain detection implications of each</span></li>
+      <li onclick="toggleCheck(this)"><span class="cb"></span><span>Section 7 — Can explain 10 attack types with real Indian examples and primary prevention for each</span></li>
+      <li onclick="toggleCheck(this)"><span class="cb"></span><span>Lab 8.1 — Analysed a RAT in Any.run sandbox; documented process tree, network activity, persistence, and VirusTotal findings</span></li>
+      <li onclick="toggleCheck(this)"><span class="cb"></span><span>Exercise 9.1 — Mapped missing controls to the hospital breach scenario; categorized as administrative/technical/physical</span></li>
+      <li onclick="toggleCheck(this)"><span class="cb"></span><span>Section 10 — Can draw and explain the defence-in-depth layers from memory</span></li>
+      <li onclick="toggleCheck(this)"><span class="cb"></span><span>Lab 11.1 — Found world-writable files; created restricted service account; configured least-privilege sudo rule</span></li>
+      <li onclick="toggleCheck(this)"><span class="cb"></span><span>Section 12 — Can explain Zero Trust principles and contrast with castle-and-moat model</span></li>
+      <li onclick="toggleCheck(this)"><span class="cb"></span><span>Lab 13.1 — Audited Windows users/groups; found failed logins in Event Viewer (4625); checked registry Run keys</span></li>
+      <li onclick="toggleCheck(this)"><span class="cb"></span><span>Lab 14.1 — Audited Linux users; found listening ports with ss -tulpn; checked log files; applied sysctl hardening</span></li>
+      <li onclick="toggleCheck(this)"><span class="cb"></span><span>Lab 15.1 — Full lab setup: VirtualBox + Kali + Metasploitable2 + DVWA + Juice Shop; verified connectivity</span></li>
+      <li onclick="toggleCheck(this)"><span class="cb"></span><span>Capstone — Answered all 4 interview questions in writing; stored as interview prep notes</span></li>
+    </ul>
+  </div>
+
+  <div class="note forest" style="margin-top:16px;">
+    <span class="ni">🏆</span>
+    <span><strong>Foundation mastery signals:</strong> You're ready to move to Phase 2 (technical depth) when you can: (1) explain the CIA triad with 3 examples per property, (2) map any security incident to threat actor, vulnerability, risk, and controls, (3) navigate both Windows Event Viewer and Linux auth.log to find suspicious activity, (4) run and describe your lab environment to an interviewer without notes. These foundations will be tested in every cybersecurity interview at every level.</span>
+  </div>
+
+</div>
+
+</div><!-- /content -->
+</main>
+</div><!-- /layout -->
+
+<script>
+function toggleP(header) {
+  header.closest('.practical').classList.toggle('open');
+  updateProgress();
+}
+
+function toggleCheck(li) {
+  li.classList.toggle('done');
+  updateProgress();
+}
+
+function updateProgress() {
+  const all = document.querySelectorAll('.checklist li');
+  const done = document.querySelectorAll('.checklist li.done');
+  const pct = all.length > 0 ? Math.round((done.length / all.length) * 100) : 0;
+  document.getElementById('sb-fill').style.width = pct + '%';
+  document.getElementById('sb-pct').textContent = pct + '%';
+}
+
+// Sidebar active scroll tracking
+const sections = document.querySelectorAll('.section');
+const navItems = document.querySelectorAll('.nav-item');
+
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      const id = entry.target.id;
+      navItems.forEach(item => {
+        item.classList.toggle('active', item.getAttribute('href') === '#' + id);
+      });
+    }
+  });
+}, { rootMargin: '-20% 0px -70% 0px' });
+
+sections.forEach(s => observer.observe(s));
+
+navItems.forEach(item => {
+  item.addEventListener('click', e => {
+    const href = item.getAttribute('href');
+    if (href && href.startsWith('#')) {
+      e.preventDefault();
+      document.querySelector(href)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  });
+});
+
+updateProgress();
+</script>
+</body>
+</html>
