@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>10x Cyber Program - Course Modules</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 40px 20px;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        header {
+            text-align: center;
+            color: white;
+            margin-bottom: 50px;
+        }
+        h1 {
+            font-size: 3em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        .subtitle {
+            font-size: 1.2em;
+            opacity: 0.9;
+        }
+        .modules-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+        .module-card {
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            transition: transform 0.3s, box-shadow 0.3s;
+            text-decoration: none;
+            display: block;
+        }
+        .module-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.3);
+        }
+        .module-card h3 {
+            color: #667eea;
+            margin-bottom: 15px;
+            font-size: 1.3em;
+        }
+        .module-card p {
+            color: #666;
+            font-size: 0.95em;
+            line-height: 1.6;
+            margin-bottom: 15px;
+        }
+        .module-card .btn {
+            display: inline-block;
+            background: #667eea;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 6px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: background 0.3s;
+        }
+        .module-card .btn:hover {
+            background: #764ba2;
+        }
+        footer {
+            text-align: center;
+            color: white;
+            margin-top: 50px;
+            padding-top: 30px;
+            border-top: 1px solid rgba(255,255,255,0.2);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🔐 10x Cyber Program</h1>
+            <p class="subtitle">Comprehensive Cybersecurity Training Modules</p>
+        </header>
+
+        <div class="modules-grid">
+            <a href="security-foundations-module.html" class="module-card">
+                <h3>🛡️ Security Foundations</h3>
+                <p>Master the fundamental concepts of cybersecurity including threat landscapes, defense mechanisms, and core principles.</p>
+                <span class="btn">View Module →</span>
+            </a>
+
+            <a href="cloud-security-module.html" class="module-card">
+                <h3>☁️ Cloud Security</h3>
+                <p>Learn cloud infrastructure security, compliance, and best practices for AWS, Azure, and Google Cloud.</p>
+                <span class="btn">View Module →</span>
+            </a>
+
+            <a href="ethical-hacking-ceh-module.html" class="module-card">
+                <h3>🎯 Ethical Hacking & CEH</h3>
+                <p>Become a certified ethical hacker with hands-on penetration testing and vulnerability assessment techniques.</p>
+                <span class="btn">View Module →</span>
+            </a>
+
+            <a href="cryptography-pki-module.html" class="module-card">
+                <h3>🔑 Cryptography & PKI</h3>
+                <p>Deep dive into encryption, digital signatures, certificate authorities, and public key infrastructure.</p>
+                <span class="btn">View Module →</span>
+            </a>
+
+            <a href="grc-module.html" class="module-card">
+                <h3>⚖️ Governance, Risk & Compliance</h3>
+                <p>Understand regulatory frameworks, risk management, and compliance requirements like ISO 27001, SOC 2, and GDPR.</p>
+                <span class="btn">View Module →</span>
+            </a>
+
+            <a href="network-security-module.html" class="module-card">
+                <h3>🌐 Network Security</h3>
+                <p>Secure network architecture, firewalls, intrusion detection, and defense against network-based attacks.</p>
+                <span class="btn">View Module →</span>
+            </a>
+
+            <a href="soc-siem-module.html" class="module-card">
+                <h3>👁️ SOC & SIEM</h3>
+                <p>Monitor and respond to security incidents using Security Operations Centers and SIEM tools like Splunk and ELK.</p>
+                <span class="btn">View Module →</span>
+            </a>
+
+            <a href="threat-intelligence-module.html" class="module-card">
+                <h3>🔍 Threat Intelligence</h3>
+                <p>Gather, analyze, and act on threat intelligence to proactively defend against cyber threats.</p>
+                <span class="btn">View Module →</span>
+            </a>
+
+            <a href="web-app-vapt-module.html" class="module-card">
+                <h3>🕸️ Web App Security & VAPT</h3>
+                <p>Vulnerability Assessment and Penetration Testing for web applications and modern vulnerabilities.</p>
+                <span class="btn">View Module →</span>
+            </a>
+
+            <a href="ai-augmented-security-module.html" class="module-card">
+                <h3>🤖 AI-Augmented Security</h3>
+                <p>Leverage artificial intelligence and machine learning for advanced threat detection and response.</p>
+                <span class="btn">View Module →</span>
+            </a>
+
+            <a href="capstone-career-module.html" class="module-card">
+                <h3>🎓 Capstone & Career</h3>
+                <p>Capstone projects, career development, job preparation, and professional advancement strategies.</p>
+                <span class="btn">View Module →</span>
+            </a>
+        </div>
+
+        <footer>
+            <p>10x Cyber Program © 2024 | All Rights Reserved</p>
+        </footer>
+    </div>
+</body>
+</html>
